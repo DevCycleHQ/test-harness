@@ -1,5 +1,8 @@
 {
   "name": "@devcycle/test-harness",
+  "scripts": {
+    "test": "jest"
+  },
   "version": "1.0.0",
   "description": "A universal testing system for DevCycle SDKs",
   "main": "index.js",
