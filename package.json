@@ -1,0 +1,9 @@
+{
+  "name": "@devcycle/test-harness",
+  "version": "1.0.0",
+  "description": "A universal testing system for DevCycle SDKs",
+  "main": "index.js",
+  "repository": "git@github.com:DevCycleHQ/test-harness.git",
+  "author": "DevCycle <engineering@devcycle.com>",
+  "license": "MIT"
+}
