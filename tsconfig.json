@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "esnext",
+    "sourceMap": true,
+    "types": ["node", "jest"]
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
