@@ -11,8 +11,10 @@ export const initialize = () => {
     const router = new Router()
 
     router.all('/(.*)', async (ctx) => {
-        const { body, headers } = ctx
-        const response = await axios.put(`https://nock.com${ctx.request.path}`, body)
+        const { body, headers, request } = ctx
+        const response = await axios[request.method.toLowerCase()](`https://nock.com${ctx.request.path}`, body, {
+            headers
+        })
         ctx.body = response.data
         ctx.status = response.status
     })
