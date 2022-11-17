@@ -3,6 +3,7 @@
     "module": "commonjs",
     "target": "esnext",
     "sourceMap": true,
+    "esModuleInterop": true,
     "types": ["node", "jest"]
   },
   "exclude": [

@@ -1,5 +1,5 @@
-import { initialize } from '../routes'
-import { server } from '../mocks/server'
+import { initialize } from './routes'
+import { server } from './mocks/server'
 import { rest } from 'msw'
 const fetch = require('node-fetch')
 
