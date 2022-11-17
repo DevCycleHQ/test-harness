@@ -1,6 +1,6 @@
 import { TestcontainersEnvironment } from '@trendyol/jest-testcontainers';
 
-export class TestHarnessEnvrionment extends TestcontainersEnvironment {
+export class TestHarnessEnvironment extends TestcontainersEnvironment {
     public async setup() {
         // TODO set up mock API server and assign chosen port to global variable
         await super.setup();
@@ -12,4 +12,4 @@ export class TestHarnessEnvrionment extends TestcontainersEnvironment {
     }
 }
 
-export default TestHarnessEnvrionment
+export default TestHarnessEnvironment
