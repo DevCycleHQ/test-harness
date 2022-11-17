@@ -7,7 +7,7 @@ describe('nock', () => {
    it('intercepts requests', async () => {
         const clientId = '123'
 
-        scope.put(`/client/${clientId}`).times(2).reply(200, {
+        scope.put(`/client/${clientId}`).matchHeader('Content-Type', 'application/json').times(2).reply(200, {
             goats: 'Never in a million years'
         })
 
