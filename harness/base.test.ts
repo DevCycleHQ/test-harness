@@ -1,7 +1,6 @@
 import { initialize } from '../routes'
 import { server } from '../mocks/server'
 import { rest } from 'msw'
-const fetch = require('node-fetch')
 
 describe('runs a test', () => {
     beforeAll(async () => {
@@ -16,7 +15,7 @@ describe('runs a test', () => {
     beforeEach(() => {
         server.resetHandlers()
     })
-    it('has a test case', async () => {
+    it('should reset to default response after first call', async () => {
         const clientId = '123'
         server.use(
             rest.put(`https://goatsfordays.com/client/${clientId}`, (req, res, ctx) => {
@@ -25,21 +24,17 @@ describe('runs a test', () => {
                 }))
             }),
         )
-        await fetch(`http://localhost:3000/client/${clientId}`, {
+        const res1 = await fetch(`http://localhost:3000/client/${clientId}`, {
             method: 'put',
-            body: JSON.stringify({
-                yo: 's'
-            }),
             headers: {'Content-Type': 'application/json'}
         })
-
-        await fetch(`http://localhost:3000/client/${clientId}`, {
+        const resbody1 = await res1.json()
+        const res2 = await fetch(`http://localhost:3000/client/${clientId}`, {
             method: 'put',
-            body: JSON.stringify({
-                yo: 'a'
-            }),
             headers: {'Content-Type': 'application/json'}
         })
-
+        const resbody2 = await res2.json()
+        expect(resbody1.goats).toEqual('Never in a million years')
+        expect(resbody2.goats).toEqual('always')
     })
 })

@@ -12,12 +12,13 @@ export const initialize = () => {
             body: JSON.stringify(body),
             headers: {'Content-Type': 'application/json'}
         })
-        const resbody = await response.json()
-        console.log('Can you please tell me your thoughts on when its appropriate to marry a goat?')
-        // @ts-ignore
-        console.log(resbody.goats)
+        ctx.body = await response.json()
     })
     app
+        .use(async (ctx, next) => {
+            console.log('DEFAULT MIDDLEWARE')
+            await next()
+        })
         .use(router.routes())
         .use(router.allowedMethods())
     return app.listen(3000)
