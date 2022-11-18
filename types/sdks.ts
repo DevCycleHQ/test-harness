@@ -1,4 +1,3 @@
-export enum Sdks {
-    nodejs = "NodeJS",
-
+export const Sdks = {
+    nodejs: "NodeJS"
 }
