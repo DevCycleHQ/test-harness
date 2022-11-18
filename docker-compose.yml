@@ -2,7 +2,10 @@ version: "3.7"
 
 services:
   nodejs:
-    build: ./proxies/nodejs
+    build:
+      context: ./proxies/nodejs
+      args:
+        - NODEJS_SDK_VERSION=${NODEJS_SDK_VERSION}
     container_name: nodejs
     ports:
       - "3000"
