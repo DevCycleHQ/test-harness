@@ -1,15 +1,33 @@
-import {initialize} from '@devcycle/nodejs-server-sdk'
 import {Capabilities, Sdks} from '../../types'
+import { DVCClient, initialize } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import Router from 'koa-router'
+import KoaBody  from 'koa-body'
 
+const data = {
+  clients: {},
+  users: {},
+  commandResults: {}
+}
+
+const handleClient = async (ctx) => {
+  const body = ctx.request.body
+  if (body.clientId === undefined) {
+    ctx.status = 400
+    ctx.body = "Invalid request: missing clientId"
+  } else {
+    const client = initialize(body.sdkKey, body.options)
+    data.clients[body.clientId] = client
+    ctx.status = 200
+  }
+}
 
 async function start() {
-    await initialize('<TOKEN>').onClientInitialized()
-
     const app = new Koa()
+    app.use(KoaBody())
 
     var router = Router()
+
     router.get('/spec', (ctx) => {
       ctx.status = 200
       ctx.body = {
@@ -19,6 +37,8 @@ async function start() {
       }
     })
 
+    router.post('/client', handleClient)
+
     app.use(router.routes()).use(router.allowedMethods())
 
     // Server!
@@ -27,5 +47,3 @@ async function start() {
 }
 
 start()
-
-
