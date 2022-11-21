@@ -2,8 +2,7 @@ import {Capabilities, Sdks} from '../../types'
 import { DVCClient, initialize } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import Router from 'koa-router'
-import KoaBody  from 'koa-body'
-
+import bodyParser from 'koa-bodyparser'
 const data = {
   clients: {},
   users: {},
@@ -24,7 +23,7 @@ const handleClient = async (ctx) => {
 
 async function start() {
     const app = new Koa()
-    app.use(KoaBody())
+    app.use(bodyParser())
 
     var router = Router()
 
