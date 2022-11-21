@@ -1,4 +1,5 @@
-import { initialize } from '@devcycle/nodejs-server-sdk'
+import {initialize} from '@devcycle/nodejs-server-sdk'
+import {Capabilities, Sdks} from '../../types'
 import Koa from 'koa'
 import Router from 'koa-router'
 
@@ -12,12 +13,12 @@ async function start() {
     router.get('/spec', (ctx) => {
       ctx.status = 200
       ctx.body = {
-        name: "NodeJS",
+        name: Sdks.nodejs,
         version: "", // TODO add branch name or sdk version here
-        capabilities: ["EdgeDB", "LocalBucketing"],
+        capabilities: [Capabilities.edgeDB, Capabilities.local],
       }
     })
-    
+
     app.use(router.routes()).use(router.allowedMethods())
 
     // Server!
