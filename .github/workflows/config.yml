@@ -1,8 +1,14 @@
 name: Node.js CI
 
 on:
-  [workflow_dispatch, workflow_call]
-
+  workflow_dispatch:
+    inputs:
+      sdk:
+        type: string
+        description: The SDK to run the test harness against
+      sha:
+        type: string
+        description: The SHA that triggered this test harness run
 jobs:
   build:
     runs-on: ubuntu-latest
