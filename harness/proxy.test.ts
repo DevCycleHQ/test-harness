@@ -8,10 +8,10 @@ describe('nodejs proxy', () => {
         url = getConnectionStringForProxy('nodejs')
 
     })
-    it('receives requests from harness',  async () => {
-        console.log("testing connection to ", url)
-        const res = await fetch(url)
-        const response = await res.text()
-        expect(response).toEqual('Hello World')
+    it('receives requests from harness spec endpoint',  async () => {
+        const res = await fetch(`${url}/spec`)
+        const response = JSON.parse(await res.text())
+        expect(response.name).toEqual('NodeJS')
+        expect(response.capabilities).toEqual(['EdgeDB', 'LocalBucketing'])
     })
 })
