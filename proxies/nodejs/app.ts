@@ -1,31 +1,27 @@
-import { DVCClient, initialize } from '@devcycle/nodejs-server-sdk'
+import { DVCClient, DVCUser } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import Router from 'koa-router'
 import bodyParser from 'koa-bodyparser'
-const data = {
+import { handleUser } from './handlers/user'
+import { handleClient } from './handlers/client'
+
+type Data = {
+  clients: { [key: string]: DVCClient }
+  users: { [key: string]: DVCUser }
+  commandResults: { [key: string]: any }
+}
+
+const data: Data = {
   clients: {},
   users: {},
   commandResults: {}
-}
-
-const handleClient = async (ctx) => {
-  const body = ctx.request.body
-  if (body.clientId === undefined) {
-    ctx.status = 400
-    ctx.body = "Invalid request: missing clientId"
-  } else {
-    const client = initialize(body.sdkKey, body.options)
-    data.clients[body.clientId] = client
-    ctx.status = 201
-    ctx.set('Location',`client/${body.clientId}`)
-  }
 }
 
 async function start() {
     const app = new Koa()
     app.use(bodyParser())
 
-    var router = Router()
+    var router = new Router()
 
     router.get('/spec', (ctx) => {
       ctx.status = 200
@@ -36,7 +32,12 @@ async function start() {
       }
     })
 
-    router.post('/client', handleClient)
+    router.post('/client', (ctx: Koa.ParameterizedContext) => {
+      handleClient(ctx, data.clients)
+    })
+    router.post('/user', (ctx: Koa.ParameterizedContext) => {
+      handleUser(ctx, data.users)
+    })
 
     app.use(router.routes()).use(router.allowedMethods())
 
