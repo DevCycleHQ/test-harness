@@ -17,7 +17,8 @@ const handleClient = async (ctx) => {
   } else {
     const client = initialize(body.sdkKey, body.options)
     data.clients[body.clientId] = client
-    ctx.status = 200
+    ctx.status = 201
+    ctx.set('Location',`client/${body.clientId}`)
   }
 }
 
