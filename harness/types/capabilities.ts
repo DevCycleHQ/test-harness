@@ -4,3 +4,7 @@ export const Capabilities = {
     cloud: "CloudBucketing",
     sse: "SSE"
 }
+
+export const SDKCapabilities = {
+    NodeJS: [Capabilities.edgeDB, Capabilities.local]
+}
