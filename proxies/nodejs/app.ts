@@ -1,25 +1,25 @@
-import { DVCClient, DVCUser } from '@devcycle/nodejs-server-sdk'
-import Koa from 'koa'
-import Router from 'koa-router'
-import bodyParser from 'koa-bodyparser'
-import { handleUser } from './handlers/user'
-import { handleClient } from './handlers/client'
+import { DVCClient, DVCUser } from "@devcycle/nodejs-server-sdk";
+import Koa from "koa";
+import Router from "koa-router";
+import bodyParser from "koa-bodyparser";
+import { handleUser } from "./handlers/user";
+import { handleClient } from "./handlers/client";
 
 type Data = {
-  clients: { [key: string]: DVCClient }
-  users: { [key: string]: DVCUser }
-  commandResults: { [key: string]: any }
-}
+  clients: { [key: string]: DVCClient };
+  users: { [key: string]: DVCUser };
+  commandResults: { [key: string]: any };
+};
 
 const data: Data = {
-    clients: {},
-    users: {},
-    commandResults: {}
-}
+  clients: {},
+  users: {},
+  commandResults: {},
+};
 
 async function start() {
-    const app = new Koa()
-    app.use(bodyParser())
+  const app = new Koa();
+  app.use(bodyParser());
 
     const router = new Router()
 
@@ -39,11 +39,11 @@ async function start() {
         handleUser(ctx, data.users)
     })
 
-    app.use(router.routes()).use(router.allowedMethods())
+  app.use(router.routes()).use(router.allowedMethods());
 
-    // Server!
-    console.log('Server started on port 3000')
-    app.listen(3000)
+  // Server!
+  console.log("Server started on port 3000");
+  app.listen(3000);
 }
 
-start()
+start();
