@@ -1,4 +1,3 @@
-import {Capabilities, Sdks} from '../../types'
 import { DVCClient, initialize } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import Router from 'koa-router'
@@ -31,9 +30,9 @@ async function start() {
     router.get('/spec', (ctx) => {
       ctx.status = 200
       ctx.body = {
-        name: Sdks.nodejs,
+        name: "NodeJS",
         version: "", // TODO add branch name or sdk version here
-        capabilities: [Capabilities.edgeDB, Capabilities.local],
+        capabilities: ["EdgeDB", "LocalBucketing"],
       }
     })
 
