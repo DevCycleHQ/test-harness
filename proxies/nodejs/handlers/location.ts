@@ -39,11 +39,14 @@ export const handleLocation = async (
         JSON.parse(body.params),
         data
       );
+
+      // TODO: handle async commands
+      // TODO: handle callback before invoking command
       const resultData = entity[command](...params);
 
       ctx.status = 200;
       ctx.body = {
-        entityType: typeof resultData,
+        entityType: typeof resultData, // assuming this is the type of the entity for returned data
         data: resultData,
         logs: [], // TODO add logs here
       };
