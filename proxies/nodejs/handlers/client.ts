@@ -15,9 +15,16 @@ export const handleClient = async (ctx: Koa.ParameterizedContext, clients: { [ke
       error: "Invalid request: missing clientId"
     }
   } else {
-    const client = initialize(body.sdkKey, body.options)
-    clients[body.clientId] = client
-    ctx.status = 201
-    ctx.set('Location',`client/${body.clientId}`)
+    try {
+      const client = initialize(body.sdkKey, body.options)
+      clients[body.clientId] = client
+      ctx.status = 201
+      ctx.set('Location',`client/${body.clientId}`)
+    } catch (error) {
+      ctx.status = 200
+      ctx.body = {
+        exception: error.message
+      }
+    }
   }
 }
