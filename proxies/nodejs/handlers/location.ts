@@ -1,6 +1,7 @@
 import { DVCClient, DVCUser, DVCVariable } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import { getEntityFromType, Data } from '../entityTypes'
+import axios from 'axios'
 
 //HTTP request comes in as string
 type LocationRequestBody = {
@@ -9,7 +10,7 @@ type LocationRequestBody = {
     isAsync: boolean
 }
 
-type parsedParams = (string | boolean | number | object)[];
+type parsedParams = (string | boolean | number | object | URL)[];
 
 export const handleLocation = async (
     ctx: Koa.ParameterizedContext,
@@ -25,32 +26,51 @@ export const handleLocation = async (
             data
         )
 
-        // TODO: handle async commands
-        // TODO: handle callback before invoking command
-        const resultData = await invokeCommand(
-            entity,
-            command,
-            params,
-            body.isAsync
-        )
+        if (params[params.length - 1] instanceof URL) {
+            const callbackURL: URL = params[params.length - 1]
+            const onUpdateCallback = (data) => {
+                axios
+                    .post(callbackURL.href, { data: data }) //send back the updated data
+                    .then((resp) => console.log('onUpdatecallback resp ', resp))
+                    .catch((e) => console.error(e))
+            }
+            invokeCommand(entity, command, params, body.isAsync).then((data) => {
+                console.log('data', data)
+                onUpdateCallback(data)
+            })
+            ctx.status = 200
+            ctx.body = {
+                entityType: 'pending', // TODO: add pending entity type
+                data: 'pending',
+                logs: [], // TODO add logs here
+            }
+        } else {
+            // TODO: handle async commands
+            const resultData = await invokeCommand(
+                entity,
+                command,
+                params,
+                body.isAsync
+            )
 
-        const entityType = getEntityFromType(resultData.constructor.name)
+            const entityType = getEntityFromType(resultData.constructor.name)
 
-        const commandId = data.commandResults[entityType.toLowerCase()] !== undefined ?
-            Object.keys(data.commandResults[entityType.toLowerCase()]).length :
-            0
+            const commandId = data.commandResults[entityType.toLowerCase()] !== undefined ?
+                Object.keys(data.commandResults[entityType.toLowerCase()]).length :
+                0
 
-        if (data.commandResults[entityType.toLowerCase()] === undefined) {
-            data.commandResults[entityType.toLowerCase()] = {}
-        }
-        data.commandResults[entityType.toLowerCase()][commandId] = resultData
+            if (data.commandResults[entityType.toLowerCase()] === undefined) {
+                data.commandResults[entityType.toLowerCase()] = {}
+            }
+            data.commandResults[entityType.toLowerCase()][commandId] = resultData
 
-        ctx.status = 200
-        ctx.set('Location', `command/${entityType.toLowerCase()}/${commandId}`)
-        ctx.body = {
-            entityType: entityType,
-            data: resultData,
-            logs: [], // TODO add logs here
+            ctx.status = 200
+            ctx.set('Location', `command/${entityType.toLowerCase()}/${commandId}`)
+            ctx.body = {
+                entityType: entityType,
+                data: resultData,
+                logs: [], // TODO add logs here
+            }
         }
         console.log('dataObject: ', data)
         console.log('logger: ', entity.logger.info)
@@ -117,6 +137,8 @@ const parseParams = (params: object | any, data: Data): parsedParams => {
             parsedParams.push(element.value)
         } else if (element.location !== undefined) {
             parsedParams.push(getEntityFromLocation(element.location, data))
+        } else if (element.callbackURL !== undefined) {
+            parsedParams.push(new URL(element.callbackURL))
         }
     })
     return parsedParams
