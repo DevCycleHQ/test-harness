@@ -12,31 +12,31 @@ type Data = {
 }
 
 const data: Data = {
-  clients: {},
-  users: {},
-  commandResults: {}
+    clients: {},
+    users: {},
+    commandResults: {}
 }
 
 async function start() {
     const app = new Koa()
     app.use(bodyParser())
 
-    var router = new Router()
+    const router = new Router()
 
     router.get('/spec', (ctx) => {
-      ctx.status = 200
-      ctx.body = {
-        name: "NodeJS",
-        version: "", // TODO add branch name or sdk version here
-        capabilities: ["EdgeDB", "LocalBucketing"],
-      }
+        ctx.status = 200
+        ctx.body = {
+            name: 'NodeJS',
+            version: '', // TODO add branch name or sdk version here
+            capabilities: ['EdgeDB', 'LocalBucketing'],
+        }
     })
 
     router.post('/client', (ctx: Koa.ParameterizedContext) => {
-      handleClient(ctx, data.clients)
+        handleClient(ctx, data.clients)
     })
     router.post('/user', (ctx: Koa.ParameterizedContext) => {
-      handleUser(ctx, data.users)
+        handleUser(ctx, data.users)
     })
 
     app.use(router.routes()).use(router.allowedMethods())
