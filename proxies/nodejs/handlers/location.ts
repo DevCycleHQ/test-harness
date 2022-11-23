@@ -46,19 +46,19 @@ export const handleLocation = async (
 
       ctx.status = 200;
       ctx.body = {
-        entityType: typeof resultData, // assuming this is the type of the entity for returned data
+        entityType: resultData.constructor.name, // assuming this is the type of the entity for returned data
         data: resultData,
         logs: [], // TODO add logs here
       };
     } catch (error) {
       if (body.isAsync) {
-        ctx.status = 500;
+        ctx.status = 200;
         ctx.body = {
           asyncError: error.message,
           errorCode: error.code,
         };
       } else {
-        ctx.status = 500;
+        ctx.status = 200;
         ctx.body = {
           errorCode: error.code,
           exception: error.message,
