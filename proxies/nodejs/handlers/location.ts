@@ -43,7 +43,10 @@ export const handleLocation = async (
       if (params[params.length - 1] instanceof URL) {
         const callbackURL: URL = params[params.length - 1];
         const onUpdateCallback = (data) => {
-          axios.post(callbackURL.href, data); // send back the update data
+          axios
+            .post(callbackURL.href, { data: data }) //send back the updated data
+            .then((resp) => console.log("onUpdatecallback resp ", resp))
+            .catch((e) => console.error(e));
         };
         invokeCommand(entity, command, params, body.isAsync).then((data) => {
           console.log("data", data);
