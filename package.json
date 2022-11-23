@@ -26,6 +26,9 @@
     "ts-jest": "^29.0.3",
     "typescript": "^4.9.3"
   },
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
   "lint-staged": {
     "*.{ts,js}": [
       "eslint --fix"

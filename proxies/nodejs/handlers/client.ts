@@ -20,6 +20,9 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         dataStore.clients[body.clientId] = initialize(body.sdkKey, body.options)
         ctx.status = 201
         ctx.set('Location', `client/${body.clientId}`)
+        ctx.body = {
+            message: 'success'
+        }
     } catch (error) {
         ctx.status = 200
         ctx.body = {
