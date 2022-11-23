@@ -1,6 +1,8 @@
-name: Node.js CI
+name: Run Harness Tests
 
 on:
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       sdk:
@@ -9,14 +11,19 @@ on:
       sha:
         type: string
         description: The SHA that triggered this test harness run
-jobs:
-  build:
-    runs-on: ubuntu-latest
 
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    name: Run Tests
     steps:
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - uses: actions/checkout@v3
-    - run: yarn
-    - run: yarn test
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install Dependencies
+        run: yarn
+      - name: Run All Tests
+        run: yarn test
