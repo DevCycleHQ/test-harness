@@ -12,7 +12,7 @@ type LocationRequestBody = {
     isAsync: boolean
 }
 
-type ParsedParams = (string | boolean | number | object | URL)[];
+type ParsedParams = (string | boolean | number | object | URL)[]
 
 const SUPPORTED_COMMANDS = ['onClientInitialized']
 
@@ -22,7 +22,7 @@ export const handleLocation = async (
     const { entity, command, params, isAsync } = ctx.request.body as LocationRequestBody
     try {
         const parsedParams: ParsedParams = parseParams(
-            JSON.parse(params),
+            params,
             dataStore
         )
         const lastParam = parsedParams[parsedParams.length - 1]

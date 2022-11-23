@@ -16,10 +16,36 @@ export const forEachSDK = (tests) => {
     try {
         SDKs = JSON.parse(process.env.SDKS_TO_TEST)
     } catch (e) {
-        console.warn('Unable to parse SDKS to test env var')
+        console.log('No specified SDKs to test, running all tests')
         SDKs = Object.values(Sdks)
     }
     describe.each(SDKs)('%s SDK tests', tests)
+}
+
+export const createClient = async (url: string, clientId: string, sdkKey: string, options?: object) => {
+    return await fetch(`${url}/client`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            clientId,
+            sdkKey,
+            options
+        })
+    })
+}
+
+export const createUser = async (url: string, user: object) => {
+    return await fetch(`${url}/user`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            ...user
+        })
+    })
 }
 
 export const describeIf = (condition: boolean) => condition ? describe : describe.skip
