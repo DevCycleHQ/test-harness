@@ -1,4 +1,5 @@
 import Koa from "koa";
+import axios from "axios";
 import { DVCClient, DVCUser } from "@devcycle/nodejs-server-sdk";
 
 type LocationRequestBody = {
@@ -18,7 +19,6 @@ export const handleLocation = async (
   const urlParts = ctx.request.url.split("/");
   console.log(urlParts);
   let entity = getEntityFromLocation(ctx.request.url, data);
-  console.log("entity", entity);
 
   if (entity === undefined) {
     ctx.status = 400;
@@ -40,21 +40,37 @@ export const handleLocation = async (
         data
       );
 
-      // TODO: handle async commands
-      // TODO: handle callback before invoking command
-      const resultData = await invokeCommand(
-        entity,
-        command,
-        params,
-        body.isAsync
-      );
+      if (params[params.length - 1] instanceof URL) {
+        const callbackURL: URL = params[params.length - 1];
+        const onUpdateCallback = (data) => {
+          axios.post(callbackURL.href, data); // send back the update data
+        };
+        invokeCommand(entity, command, params, body.isAsync).then((data) => {
+          console.log("data", data);
+          onUpdateCallback(data);
+        });
+        ctx.status = 200;
+        ctx.body = {
+          entityType: "pending", // TODO: add pending entity type
+          data: "pending",
+          logs: [], // TODO add logs here
+        };
+      } else {
+        // TODO: handle callback before invoking command
+        const resultData = await invokeCommand(
+          entity,
+          command,
+          params,
+          body.isAsync
+        );
 
-      ctx.status = 200;
-      ctx.body = {
-        entityType: resultData.constructor.name, // assuming this is the type of the entity for returned data
-        data: resultData,
-        logs: [], // TODO add logs here
-      };
+        ctx.status = 200;
+        ctx.body = {
+          entityType: resultData.constructor.name, // assuming this is the type of the entity for returned data
+          data: resultData,
+          logs: [], // TODO add logs here
+        };
+      }
     } catch (error) {
       if (body.isAsync) {
         ctx.status = 200;
@@ -94,8 +110,11 @@ const parseParams = (params, data): (string | boolean | number | any)[] => {
       parsedParams.push(element.value);
     } else if (element.location !== undefined) {
       parsedParams.push(getEntityFromLocation(element.location, data));
+    } else if (element.callbackURL !== undefined) {
+      parsedParams.push(new URL(element.callbackURL));
     }
   });
+  console.log("parsedParams", parsedParams);
   return parsedParams;
 };
 
