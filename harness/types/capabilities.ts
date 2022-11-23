@@ -1,8 +1,8 @@
 export const Capabilities = {
-    edgeDB: "EdgeDB",
-    local: "LocalBucketing",
-    cloud: "CloudBucketing",
-    sse: "SSE"
+    edgeDB: 'EdgeDB',
+    local: 'LocalBucketing',
+    cloud: 'CloudBucketing',
+    sse: 'SSE'
 }
 
 export const SDKCapabilities = {
