@@ -42,7 +42,12 @@ export const handleLocation = async (
 
       // TODO: handle async commands
       // TODO: handle callback before invoking command
-      const resultData = entity[command](...params);
+      const resultData = await invokeCommand(
+        entity,
+        command,
+        params,
+        body.isAsync
+      );
 
       ctx.status = 200;
       ctx.body = {
@@ -92,4 +97,14 @@ const parseParams = (params, data): (string | boolean | number | any)[] => {
     }
   });
   return parsedParams;
+};
+
+const invokeCommand = async (entity, command, params, isAsync) => {
+  if (isAsync) {
+    const result = await entity[command](...params);
+    return result;
+  }
+  {
+    return entity[command](...params);
+  }
 };
