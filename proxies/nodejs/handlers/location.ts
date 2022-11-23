@@ -52,15 +52,15 @@ export const handleLocation = async (
       };
     } catch (error) {
       if (body.isAsync) {
-        ctx.status = 202;
+        ctx.status = 500;
         ctx.body = {
           asyncError: error.message,
           errorCode: error.code,
         };
       } else {
-        ctx.status = 200;
+        ctx.status = 500;
         ctx.body = {
-          errorCode: 200,
+          errorCode: error.code,
           exception: error.message,
         };
       }
