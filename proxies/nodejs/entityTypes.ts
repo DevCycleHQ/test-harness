@@ -5,7 +5,7 @@ export enum EntityTypes {
   object = 'Object',
 }
 
-export const convertEntityTypes = (value: string): EntityTypes => {
+export const getEntityModelFromType = (value: string): EntityTypes => {
     switch (value) {
         case 'DVCUser':
             return EntityTypes.user
@@ -17,5 +17,20 @@ export const convertEntityTypes = (value: string): EntityTypes => {
             return EntityTypes.object
         default:
             return EntityTypes.object
+    }
+}
+
+export const getEntityNameFromType = (value: string): string => {
+    switch (value) {
+        case 'DVCUser':
+            return 'user'
+        case 'DVCVariable':
+            return 'variable'
+        case 'DVCFeature':
+            return 'feature'
+        case 'DVCObject':
+            return 'object'
+        default:
+            return 'object'
     }
 }
