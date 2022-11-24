@@ -1,6 +1,5 @@
 import Koa from 'koa'
-import { DVCClient, DVCUser } from '@devcycle/nodejs-server-sdk'
-import { getEntityFromType } from '../entityTypes'
+import { getEntityFromType, Data } from '../entityTypes'
 
 //HTTP request comes in as string
 type LocationRequestBody = {
@@ -11,34 +10,15 @@ type LocationRequestBody = {
 
 export const handleLocation = async (
     ctx: Koa.ParameterizedContext,
-    data: {
-        clients: { [key: string]: DVCClient }
-        users: { [key: string]: DVCUser }
-        commandResults: { [key: string]: any }
-    }
+    data: Data
 ) => {
-    const body = ctx.request.body as LocationRequestBody
     const entity = getEntityFromLocation(ctx.request.url, data)
-    if (entity === undefined) {
-        ctx.status = 400
-        ctx.body = {
-            errorCode: 400,
-            errorMessage: 'Invalid request: missing entity',
-        }
-        return ctx
-    }
-    if (body.command === undefined) {
-        ctx.status = 400
-        ctx.body = {
-            errorCode: 400,
-            errorMessage: 'Invalid request: missing command',
-        }
-        return ctx
-    }
+    const body = ctx.request.body as LocationRequestBody
+    validateRequest(ctx, data, body, entity)
 
     try {
         const command = body.command
-        const params: any | string | boolean | number = parseParams(
+        const params: string | boolean | number | object = parseParams(
             JSON.parse(body.params),
             data
         )
@@ -121,7 +101,7 @@ const getEntityFromLocation = (location, data) => {
 }
 
 const parseParams = (params, data): (string | boolean | number | any)[] => {
-    const parsedParams: (string | boolean | number | any)[] = []
+    const parsedParams: (string | boolean | number | object)[] = []
     params.forEach((element) => {
         if (element.value !== undefined) {
             parsedParams.push(element.value)
@@ -139,4 +119,23 @@ const invokeCommand = async (entity, command, params, isAsync) => {
     }
     return entity[command](...params)
 
+}
+
+const validateRequest = (ctx: Koa.ParameterizedContext, data: Data, body: LocationRequestBody, entity: any) => {
+    if (entity === undefined) {
+        ctx.status = 400
+        ctx.body = {
+            errorCode: 400,
+            errorMessage: 'Invalid request: missing entity',
+        }
+        return ctx
+    }
+    if (body.command === undefined) {
+        ctx.status = 400
+        ctx.body = {
+            errorCode: 400,
+            errorMessage: 'Invalid request: missing command',
+        }
+        return ctx
+    }
 }

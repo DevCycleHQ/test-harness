@@ -1,3 +1,5 @@
+import { DVCClient, DVCUser } from '@devcycle/nodejs-server-sdk'
+
 export enum EntityTypes {
     user = 'User',
     variable = 'Variable',
@@ -8,6 +10,12 @@ export enum EntityTypes {
 type Entity = {
     type: EntityTypes,
     model: string
+}
+
+export type Data = {
+    clients: { [key: string]: DVCClient }
+    users: { [key: string]: DVCUser }
+    commandResults: { [key: string]: any }
 }
 
 export const getEntityFromType = (value: string): Entity => {

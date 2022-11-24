@@ -1,16 +1,11 @@
-import { DVCClient, DVCUser } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import Router from 'koa-router'
 import bodyParser from 'koa-bodyparser'
 import { handleUser } from './handlers/user'
 import { handleClient } from './handlers/client'
 import { handleLocation } from './handlers/location'
+import { Data } from './entityTypes'
 
-type Data = {
-  clients: { [key: string]: DVCClient }
-  users: { [key: string]: DVCUser }
-  commandResults: { [key: string]: any }
-}
 
 const data: Data = {
     clients: {},
