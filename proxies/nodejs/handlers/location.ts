@@ -1,89 +1,92 @@
 import Koa from 'koa'
 import { DVCClient, DVCUser } from '@devcycle/nodejs-server-sdk'
-import { getEntityModelFromType, getEntityNameFromType } from '../entityTypes'
+import { getEntityFromType } from '../entityTypes'
 
 //HTTP request comes in as string
 type LocationRequestBody = {
-  command: string;
-  params: string; //[{value: string | number | boolean} | {location: string} | {callbackUrl: string}] 
-  isAsync: boolean;
-};
+    command: string
+    params: string //[{value: string | number | boolean} | {location: string} | {callbackUrl: string}] 
+    isAsync: boolean
+}
 
 export const handleLocation = async (
     ctx: Koa.ParameterizedContext,
     data: {
-    clients: { [key: string]: DVCClient };
-    users: { [key: string]: DVCUser };
-    commandResults: { [key: string]: any };
-  }
+        clients: { [key: string]: DVCClient }
+        users: { [key: string]: DVCUser }
+        commandResults: { [key: string]: any }
+    }
 ) => {
     const body = ctx.request.body as LocationRequestBody
     const entity = getEntityFromLocation(ctx.request.url, data)
-
     if (entity === undefined) {
         ctx.status = 400
         ctx.body = {
             errorCode: 400,
             errorMessage: 'Invalid request: missing entity',
         }
-    } else if (body.command === undefined) {
+        return ctx
+    }
+    if (body.command === undefined) {
         ctx.status = 400
         ctx.body = {
             errorCode: 400,
             errorMessage: 'Invalid request: missing command',
         }
-    } else {
-        try {
-            const command = body.command
-            const params: any | string | boolean | number = parseParams(
-                JSON.parse(body.params),
-                data
-            )
+        return ctx
+    }
 
-            // TODO: handle async commands
-            // TODO: handle callback before invoking command
-            const resultData = await invokeCommand(
-                entity,
-                command,
-                params,
-                body.isAsync
-            )
+    try {
+        const command = body.command
+        const params: any | string | boolean | number = parseParams(
+            JSON.parse(body.params),
+            data
+        )
 
-            const entityType = getEntityModelFromType(resultData.constructor.name)
-            const entityName = getEntityNameFromType(resultData.constructor.name)
+        // TODO: handle async commands
+        // TODO: handle callback before invoking command
+        const resultData = await invokeCommand(
+            entity,
+            command,
+            params,
+            body.isAsync
+        )
 
-            const commandId = data.commandResults[entityName] !== undefined?
-                Object.keys(data.commandResults[entityName]).length :
-                0
+        const entityType = getEntityFromType(resultData.constructor.name)
 
-            if (data.commandResults[entityName] === undefined) {
-                data.commandResults[entityName] = {}
-            }
-            data.commandResults[entityName][commandId] = resultData
+        const commandId = data.commandResults[entityType.model] !== undefined ?
+            Object.keys(data.commandResults[entityType.model]).length :
+            0
 
+        if (data.commandResults[entityType.model] === undefined) {
+            data.commandResults[entityType.model] = {}
+        }
+        data.commandResults[entityType.model][commandId] = resultData
+
+        ctx.status = 200
+        ctx.set('Location', `command/${entityType.model}/${commandId}`)
+        ctx.body = {
+            entityType: entityType.type,
+            data: resultData,
+            logs: [], // TODO add logs here
+        }
+        console.log('dataObject: ', data)
+
+    } catch (error) {
+        console.error(error)
+        if (body.isAsync) {
             ctx.status = 200
-            ctx.set('Location', `command/${entityName}/${commandId}`)
             ctx.body = {
-                entityType: entityType,
-                data: resultData,
-                logs: [], // TODO add logs here
+                asyncError: error.message,
+                errorCode: error.code,
             }
-            console.log('dataObject: ', data)
-        } catch (error) {
-            console.error(error)
-            if (body.isAsync) {
-                ctx.status = 200
-                ctx.body = {
-                    asyncError: error.message,
-                    errorCode: error.code,
-                }
-            } else {
-                ctx.status = 200
-                ctx.body = {
-                    errorCode: error.code,
-                    exception: error.message,
-                }
+        } else {
+            ctx.status = 200
+            ctx.body = {
+                errorCode: error.code,
+                exception: error.message,
             }
+
         }
     }
 }
@@ -97,7 +100,7 @@ const getEntityFromLocation = (location, data) => {
      *  - body params = entityType/id
      * and therefore split on `/` will return an array of length 3 for URL and 2 for body params
      */
-    if (urlParts.length === 3 || urlParts.length === 2) { 
+    if (urlParts.length === 3 || urlParts.length === 2) {
         const entityType = urlParts[urlParts.length - 2]
         const id = urlParts[urlParts.length - 1]
         let entity
@@ -108,8 +111,8 @@ const getEntityFromLocation = (location, data) => {
             entity = data.clients[id]
         }
         return entity
-    } else if ( urlParts.length === 4) {
-        const  command = urlParts[urlParts.length - 2]
+    } else if (urlParts.length === 4) {
+        const command = urlParts[urlParts.length - 2]
         const entityType = urlParts[urlParts.length - 2]
         const id = urlParts[urlParts.length - 1]
         return data[command][entityType][id]
@@ -134,7 +137,6 @@ const invokeCommand = async (entity, command, params, isAsync) => {
         const result = await entity[command](...params)
         return result
     }
-    {
-        return entity[command](...params)
-    }
+    return entity[command](...params)
+
 }

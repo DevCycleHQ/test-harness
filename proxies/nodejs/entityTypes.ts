@@ -1,36 +1,26 @@
 export enum EntityTypes {
-  user = 'User',
-  variable = 'Variable',
-  feature = 'Feature',
-  object = 'Object',
+    user = 'User',
+    variable = 'Variable',
+    feature = 'Feature',
+    object = 'Object',
 }
 
-export const getEntityModelFromType = (value: string): EntityTypes => {
-    switch (value) {
-        case 'DVCUser':
-            return EntityTypes.user
-        case 'DVCVariable':
-            return EntityTypes.variable
-        case 'DVCFeature':
-            return EntityTypes.feature
-        case 'DVCObject':
-            return EntityTypes.object
-        default:
-            return EntityTypes.object
-    }
+type Entity = {
+    type: EntityTypes,
+    model: string
 }
 
-export const getEntityNameFromType = (value: string): string => {
+export const getEntityFromType = (value: string): Entity => {
     switch (value) {
         case 'DVCUser':
-            return 'user'
+            return { type: EntityTypes.user, model: 'user' }
         case 'DVCVariable':
-            return 'variable'
+            return { type: EntityTypes.variable, model: 'variable' }
         case 'DVCFeature':
-            return 'feature'
+            return { type: EntityTypes.feature, model: 'feature' }
         case 'DVCObject':
-            return 'object'
+            return { type: EntityTypes.object, model: 'object' }
         default:
-            return 'object'
+            return { type: EntityTypes.object, model: 'object' }
     }
 }

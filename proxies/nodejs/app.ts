@@ -7,10 +7,10 @@ import { handleClient } from './handlers/client'
 import { handleLocation } from './handlers/location'
 
 type Data = {
-  clients: { [key: string]: DVCClient };
-  users: { [key: string]: DVCUser };
-  commandResults: { [key: string]: any };
-};
+  clients: { [key: string]: DVCClient }
+  users: { [key: string]: DVCUser }
+  commandResults: { [key: string]: any }
+}
 
 const data: Data = {
     clients: {},
