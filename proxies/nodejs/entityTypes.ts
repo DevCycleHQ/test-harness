@@ -26,8 +26,6 @@ export const getEntityFromType = (value: string): Entity => {
             return { type: EntityTypes.variable, model: 'variable' }
         case 'DVCFeature':
             return { type: EntityTypes.feature, model: 'feature' }
-        case 'DVCObject':
-            return { type: EntityTypes.object, model: 'object' }
         default:
             return { type: EntityTypes.object, model: 'object' }
     }
