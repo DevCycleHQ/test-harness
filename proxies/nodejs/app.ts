@@ -3,9 +3,8 @@ import Router from 'koa-router'
 import bodyParser from 'koa-bodyparser'
 import { handleUser } from './handlers/user'
 import { handleClient } from './handlers/client'
-import { handleLocation } from './handlers/location'
+import { validateLocationRequest } from './handlers/location'
 import { Data } from './entityTypes'
-
 
 const data: Data = {
     clients: {},
@@ -35,7 +34,7 @@ async function start() {
         handleUser(ctx, data.users)
     })
     router.post('/:location*', (ctx: Koa.ParameterizedContext) => {
-        handleLocation(ctx, data)
+        validateLocationRequest(ctx, data)
     })
 
     app.use(router.routes()).use(router.allowedMethods())

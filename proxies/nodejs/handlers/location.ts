@@ -10,11 +10,10 @@ type LocationRequestBody = {
 
 export const handleLocation = async (
     ctx: Koa.ParameterizedContext,
-    data: Data
+    data: Data,
+    body: LocationRequestBody,
+    entity: any
 ) => {
-    const entity = getEntityFromLocation(ctx.request.url, data)
-    const body = ctx.request.body as LocationRequestBody
-    validateRequest(ctx, data, body, entity)
 
     try {
         const command = body.command
@@ -51,6 +50,7 @@ export const handleLocation = async (
             logs: [], // TODO add logs here
         }
         console.log('dataObject: ', data)
+        console.log('logger: ', entity.logger.info)
 
     } catch (error) {
         console.error(error)
@@ -121,21 +121,26 @@ const invokeCommand = async (entity, command, params, isAsync) => {
 
 }
 
-const validateRequest = (ctx: Koa.ParameterizedContext, data: Data, body: LocationRequestBody, entity: any) => {
-    if (entity === undefined) {
-        ctx.status = 400
-        ctx.body = {
-            errorCode: 400,
-            errorMessage: 'Invalid request: missing entity',
+export const validateLocationRequest =
+    (ctx: Koa.ParameterizedContext, data: Data) => {
+        const entity = getEntityFromLocation(ctx.request.url, data)
+        const body = ctx.request.body as LocationRequestBody
+
+        if (entity === undefined) {
+            ctx.status = 400
+            ctx.body = {
+                errorCode: 400,
+                errorMessage: 'Invalid request: missing entity',
+            }
+            return ctx
         }
-        return ctx
-    }
-    if (body.command === undefined) {
-        ctx.status = 400
-        ctx.body = {
-            errorCode: 400,
-            errorMessage: 'Invalid request: missing command',
+        if (body.command === undefined) {
+            ctx.status = 400
+            ctx.body = {
+                errorCode: 400,
+                errorMessage: 'Invalid request: missing command',
+            }
+            return ctx
         }
-        return ctx
+        handleLocation(ctx, data, body, entity)
     }
-}
