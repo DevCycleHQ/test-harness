@@ -30,7 +30,10 @@ export const handleLocation = async (
             const callbackURL: URL = params[params.length - 1]
             const onUpdateCallback = (data) => {
                 axios
-                    .post(callbackURL.href, { data: data }) //send back the updated data
+                    .post(callbackURL.href, {
+                        entityType: getEntityFromType(data.constructor.name),
+                        data: data
+                    })
                     .then((resp) => console.log('onUpdatecallback resp ', resp))
                     .catch((e) => console.error(e))
             }
@@ -73,8 +76,6 @@ export const handleLocation = async (
             }
         }
         console.log('dataObject: ', data)
-        console.log('logger: ', entity.logger.info)
-
     } catch (error) {
         console.error(error)
         if (body.isAsync) {
