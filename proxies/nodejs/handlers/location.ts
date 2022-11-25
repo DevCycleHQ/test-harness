@@ -95,10 +95,17 @@ const getEntityFromLocation = (location: string, data: Data) => {
         }
         return entity
     } else if (urlParts.length === 4) {
-        const command = urlParts[urlParts.length - 2]
+        const command = urlParts[urlParts.length - 3]
         const entityType = urlParts[urlParts.length - 2]
         const id = urlParts[urlParts.length - 1]
-        return data[command][entityType][id]
+        console.log('command: ', command)
+        if (command === 'command') {
+            console.log('data: ', data)
+            console.log('commandResults: ', data.commandResults)
+            console.log('entityType: ', data.commandResults[entityType])
+            console.log('id: ', data.commandResults[entityType][id])
+            return data.commandResults[entityType][id]
+        }
     }
     return undefined
 }
@@ -124,6 +131,9 @@ const invokeCommand = async (
         const result = await entity[command](...params)
         return result
     }
+    console.log('entity: ', entity)
+    console.log('command: ', command)
+    console.log('fn: ', entity[command])
     return entity[command](...params)
 
 }
