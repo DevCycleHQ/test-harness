@@ -1,20 +1,15 @@
-import { DVCClient, DVCUser } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import Router from 'koa-router'
 import bodyParser from 'koa-bodyparser'
 import { handleUser } from './handlers/user'
 import { handleClient } from './handlers/client'
-
-type Data = {
-  clients: { [key: string]: DVCClient }
-  users: { [key: string]: DVCUser }
-  commandResults: { [key: string]: any }
-}
+import { validateLocationRequest } from './handlers/location'
+import { Data } from './entityTypes'
 
 const data: Data = {
     clients: {},
     users: {},
-    commandResults: {}
+    commandResults: {},
 }
 
 async function start() {
@@ -37,6 +32,9 @@ async function start() {
     })
     router.post('/user', (ctx: Koa.ParameterizedContext) => {
         handleUser(ctx, data.users)
+    })
+    router.post('/:location*', (ctx: Koa.ParameterizedContext) => {
+        validateLocationRequest(ctx, data)
     })
 
     app.use(router.routes()).use(router.allowedMethods())
