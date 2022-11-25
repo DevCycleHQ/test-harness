@@ -1,3 +1,4 @@
+import { DVCClient, DVCUser, DVCVariable } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import { getEntityFromType, Data } from '../entityTypes'
 
@@ -8,16 +9,18 @@ type LocationRequestBody = {
     isAsync: boolean
 }
 
+type parsedParams = (string | boolean | number | object)[];
+
 export const handleLocation = async (
     ctx: Koa.ParameterizedContext,
     data: Data,
     body: LocationRequestBody,
-    entity: any
+    entity: DVCClient | DVCUser | DVCVariable | any
 ) => {
 
     try {
         const command = body.command
-        const params: string | boolean | number | object = parseParams(
+        const params: parsedParams = parseParams(
             JSON.parse(body.params),
             data
         )
@@ -71,7 +74,7 @@ export const handleLocation = async (
     }
 }
 
-const getEntityFromLocation = (location, data) => {
+const getEntityFromLocation = (location: string, data: Data) => {
     const urlParts = location.split('/')
 
     /**
@@ -100,8 +103,8 @@ const getEntityFromLocation = (location, data) => {
     return undefined
 }
 
-const parseParams = (params, data): (string | boolean | number | any)[] => {
-    const parsedParams: (string | boolean | number | object)[] = []
+const parseParams = (params: object | any, data: Data): parsedParams => {
+    const parsedParams: parsedParams = []
     params.forEach((element) => {
         if (element.value !== undefined) {
             parsedParams.push(element.value)
@@ -112,7 +115,11 @@ const parseParams = (params, data): (string | boolean | number | any)[] => {
     return parsedParams
 }
 
-const invokeCommand = async (entity, command, params, isAsync) => {
+const invokeCommand = async (
+    entity: DVCClient | DVCUser | DVCVariable | any,
+    command: string,
+    params: parsedParams,
+    isAsync: boolean) => {
     if (isAsync) {
         const result = await entity[command](...params)
         return result
