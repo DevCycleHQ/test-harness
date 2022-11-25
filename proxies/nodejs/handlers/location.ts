@@ -33,19 +33,19 @@ export const handleLocation = async (
 
         const entityType = getEntityFromType(resultData.constructor.name)
 
-        const commandId = data.commandResults[entityType.model] !== undefined ?
-            Object.keys(data.commandResults[entityType.model]).length :
+        const commandId = data.commandResults[entityType.toLowerCase()] !== undefined ?
+            Object.keys(data.commandResults[entityType.toLowerCase()]).length :
             0
 
-        if (data.commandResults[entityType.model] === undefined) {
-            data.commandResults[entityType.model] = {}
+        if (data.commandResults[entityType.toLowerCase()] === undefined) {
+            data.commandResults[entityType.toLowerCase()] = {}
         }
-        data.commandResults[entityType.model][commandId] = resultData
+        data.commandResults[entityType.toLowerCase()][commandId] = resultData
 
         ctx.status = 200
-        ctx.set('Location', `command/${entityType.model}/${commandId}`)
+        ctx.set('Location', `command/${entityType.toLowerCase()}/${commandId}`)
         ctx.body = {
-            entityType: entityType.type,
+            entityType: entityType,
             data: resultData,
             logs: [], // TODO add logs here
         }

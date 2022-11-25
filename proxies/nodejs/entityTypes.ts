@@ -7,26 +7,21 @@ export enum EntityTypes {
     object = 'Object',
 }
 
-type Entity = {
-    type: EntityTypes,
-    model: string
-}
-
 export type Data = {
     clients: { [key: string]: DVCClient }
     users: { [key: string]: DVCUser }
     commandResults: { [key: string]: any }
 }
 
-export const getEntityFromType = (value: string): Entity => {
+export const getEntityFromType = (value: string): string => {
     switch (value) {
         case 'DVCUser':
-            return { type: EntityTypes.user, model: 'user' }
+            return EntityTypes.user
         case 'DVCVariable':
-            return { type: EntityTypes.variable, model: 'variable' }
+            return EntityTypes.variable
         case 'DVCFeature':
-            return { type: EntityTypes.feature, model: 'feature' }
+            return EntityTypes.feature
         default:
-            return { type: EntityTypes.object, model: 'object' }
+            return EntityTypes.object
     }
 }
