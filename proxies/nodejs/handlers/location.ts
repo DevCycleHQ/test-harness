@@ -25,9 +25,10 @@ export const handleLocation = async (
             JSON.parse(body.params),
             data
         )
+        const lastParam = params[params.length - 1]
 
-        if (params[params.length - 1] instanceof URL) {
-            const callbackURL: URL = params[params.length - 1]
+        if (lastParam instanceof URL) {
+            const callbackURL: URL = lastParam
             const onUpdateCallback = (data) => {
                 axios
                     .post(callbackURL.href, {
@@ -154,9 +155,6 @@ const invokeCommand = async (
         const result = await entity[command](...params)
         return result
     }
-    console.log('entity: ', entity)
-    console.log('command: ', command)
-    console.log('fn: ', entity[command])
     return entity[command](...params)
 
 }
