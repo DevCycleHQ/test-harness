@@ -35,11 +35,10 @@ export const handleLocation = async (
                         entityType: getEntityFromType(data.constructor.name),
                         data: data
                     })
-                    .then((resp) => console.log('onUpdatecallback resp ', resp))
+                    .then((resp: any) => console.log('onUpdatecallback data ', resp.data))
                     .catch((e) => console.error(e))
             }
             invokeCommand(entity, command, params, body.isAsync).then((data) => {
-                console.log('data', data)
                 onUpdateCallback(data)
             })
             ctx.status = 200
@@ -49,7 +48,6 @@ export const handleLocation = async (
                 logs: [], // TODO add logs here
             }
         } else {
-            // TODO: handle async commands
             const resultData = await invokeCommand(
                 entity,
                 command,
