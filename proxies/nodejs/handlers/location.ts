@@ -40,7 +40,7 @@ export const handleLocation = async (
             }
             invokeCommand(entity, command, params, body.isAsync).then((data) => {
                 onUpdateCallback(data)
-            })
+            }).catch((e) => console.error(e))
             ctx.status = 200
             ctx.body = {
                 entityType: 'pending', // TODO: add pending entity type
@@ -154,7 +154,6 @@ const invokeCommand = async (
         return result
     }
     return entity[command](...params)
-
 }
 
 export const validateLocationRequest =
