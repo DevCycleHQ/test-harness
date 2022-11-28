@@ -10,7 +10,7 @@ type LocationRequestBody = {
     isAsync: boolean
 }
 
-type parsedParams = (string | boolean | number | object | URL)[];
+type ParsedParams = (string | boolean | number | object | URL)[];
 
 export const handleLocation = async (
     ctx: Koa.ParameterizedContext,
@@ -20,7 +20,7 @@ export const handleLocation = async (
 ) => {
     try {
         const command = body.command
-        const params: parsedParams = parseParams(
+        const params: ParsedParams = parseParams(
             JSON.parse(body.params),
             data
         )
@@ -130,8 +130,8 @@ const getEntityFromLocation = (location: string, data: Data) => {
     return undefined
 }
 
-const parseParams = (params: object | any, data: Data): parsedParams => {
-    const parsedParams: parsedParams = []
+const parseParams = (params: object | any, data: Data): ParsedParams => {
+    const parsedParams: ParsedParams = []
     params.forEach((element) => {
         if (element.value !== undefined) {
             parsedParams.push(element.value)
@@ -147,7 +147,7 @@ const parseParams = (params: object | any, data: Data): parsedParams => {
 const invokeCommand = async (
     entity: DVCClient | DVCUser | DVCVariable | any,
     command: string,
-    params: parsedParams,
+    params: ParsedParams,
     isAsync: boolean) => {
     if (isAsync) {
         const result = await entity[command](...params)
