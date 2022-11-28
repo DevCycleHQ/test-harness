@@ -18,7 +18,6 @@ export const handleLocation = async (
     body: LocationRequestBody,
     entity: DVCClient | DVCUser | DVCVariable | any
 ) => {
-
     try {
         const command = body.command
         const params: parsedParams = parseParams(
@@ -29,17 +28,18 @@ export const handleLocation = async (
 
         if (lastParam instanceof URL) {
             const callbackURL: URL = lastParam
-            const onUpdateCallback = (data) => {
+            const onUpdateCallback = (command, responseData) => {
+
                 axios
                     .post(callbackURL.href, {
-                        entityType: getEntityFromType(data.constructor.name),
-                        data: data
+                        entityType: getEntityFromType(responseData.constructor.name),
+                        message: `${command} was invoked on ${ctx.request.url}`,
                     })
                     .then((resp: any) => console.log('onUpdatecallback data ', resp.data))
                     .catch((e) => console.error(e))
             }
-            invokeCommand(entity, command, params, body.isAsync).then((data) => {
-                onUpdateCallback(data)
+            invokeCommand(entity, command, params, body.isAsync).then((responseData) => {
+                onUpdateCallback(command, responseData)
             }).catch((e) => console.error(e))
             ctx.status = 200
             ctx.body = {
