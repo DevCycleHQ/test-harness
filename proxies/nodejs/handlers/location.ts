@@ -12,11 +12,13 @@ type LocationRequestBody = {
 
 type ParsedParams = (string | boolean | number | object | URL)[];
 
+const SUPPORTED_COMMANDS = ['onClientInitialized']
+
 export const handleLocation = async (
     ctx: Koa.ParameterizedContext,
     data: Data,
     body: LocationRequestBody,
-    entity: DVCClient | DVCUser | DVCVariable | any
+    entity: DVCClient | DVCUser | DVCVariable
 ) => {
     try {
         const command = body.command
@@ -28,24 +30,26 @@ export const handleLocation = async (
 
         if (lastParam instanceof URL) {
             const callbackURL: URL = lastParam
-            const onUpdateCallback = (command, responseData) => {
-
+            if (!SUPPORTED_COMMANDS.includes(command)) {
+                ctx.status = 404
+                ctx.body = {
+                    errorCode: 404,
+                    exception: 'Invalid request: unsupported command',
+                }
+                return ctx
+            }
+            const onCallback = (command) => {
                 axios
                     .post(callbackURL.href, {
-                        entityType: getEntityFromType(responseData.constructor.name),
                         message: `${command} was invoked on ${ctx.request.url}`,
                     })
-                    .then((resp: any) => console.log('onUpdatecallback data ', resp.data))
+                    .then((resp: any) => console.log('onCallback data ', resp.data)) // just to test the callback
                     .catch((e) => console.error(e))
             }
-            invokeCommand(entity, command, params, body.isAsync).then((responseData) => {
-                onUpdateCallback(command, responseData)
-            }).catch((e) => console.error(e))
+            entity[command](() => onCallback(command)).catch((e) => console.error(e))
             ctx.status = 200
             ctx.body = {
-                entityType: 'pending', // TODO: add pending entity type
-                data: 'pending',
-                logs: [], // TODO add logs here
+                message: `${command} attached to ${ctx.request.url}`,
             }
         } else {
             const resultData = await invokeCommand(
@@ -89,7 +93,6 @@ export const handleLocation = async (
                 errorCode: error.code,
                 exception: error.message,
             }
-
         }
     }
 }
@@ -120,6 +123,7 @@ const getEntityFromLocation = (location: string, data: Data) => {
         const id = urlParts[urlParts.length - 1]
         console.log('command: ', command)
         if (command === 'command') {
+            // debug logs
             console.log('data: ', data)
             console.log('commandResults: ', data.commandResults)
             console.log('entityType: ', data.commandResults[entityType])
@@ -162,17 +166,17 @@ export const validateLocationRequest =
         const body = ctx.request.body as LocationRequestBody
 
         if (entity === undefined) {
-            ctx.status = 400
+            ctx.status = 404
             ctx.body = {
-                errorCode: 400,
+                errorCode: 404,
                 errorMessage: 'Invalid request: missing entity',
             }
             return ctx
         }
         if (body.command === undefined) {
-            ctx.status = 400
+            ctx.status = 404
             ctx.body = {
-                errorCode: 400,
+                errorCode: 404,
                 errorMessage: 'Invalid request: missing command',
             }
             return ctx
