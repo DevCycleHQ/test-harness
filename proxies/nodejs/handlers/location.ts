@@ -39,6 +39,7 @@ export const handleLocation = async (
             }
             const onCallback = (command) => {
                 console.log('Calling command: ', command)
+                console.log('Calling URL: ', callbackURL.href)
                 fetch(callbackURL.href, {
                     method: 'POST',
                     headers: {
@@ -48,7 +49,7 @@ export const handleLocation = async (
                         message: `${command} was invoked on ${ctx.request.url}`
                     })
                 })
-                    .then((resp: any) => console.log('onCallback data ', resp.data)) // just to test the callback
+                    .then((resp: any) => console.log('onCallback data ', resp)) // just to test the callback
                     .catch((e) => console.error('bruh', e))
             }
             entity[command](() => onCallback(command)).catch((e) => console.error(e))

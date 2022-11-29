@@ -12,9 +12,9 @@ export const initialize = () => {
     const router = new Router()
 
     router.all('/(.*)', async (ctx) => {
-        console.error('bruh', ctx)
+        console.log('bruh', ctx.request.body)
         const { headers, request } = ctx
-        const response = await axios[request.method.toLowerCase()](`https://nock.com${ctx.request.path}`, 
+        const response = await axios[request.method.toLowerCase()](`https://nock.com${ctx.request.path}`,
             request.body, {
                 headers
             })
