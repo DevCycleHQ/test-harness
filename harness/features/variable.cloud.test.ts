@@ -16,13 +16,7 @@ describe('Variable Tests - Cloud', () => {
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
-            // const res = await fetch(`${url}/spec`)
-            // const response = await res.json()
-
-            // expect(response.name).toBeDefined()
-            // expect(response.capabilities).toBeDefined()
-
-            await createClient(url, clientId, 'server-939ecf39-866f-4682-8bfe-3639773b0fce')
+            await createClient(url, clientId, 'dvc_server_test_token')
         })
 
         describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
@@ -45,7 +39,7 @@ describe('Variable Tests - Cloud', () => {
                 expect(variable.data.value).toBe('default_value')
             })
 
-            it.only('will throw error if variable called with invalid user after initialized',  async () => {
+            it('will throw error if variable called with invalid user after initialized',  async () => {
                 const response = await createUser(url, { name: 'invalid user' })
                 const invalidUser = await response.json()
 
@@ -61,29 +55,35 @@ describe('Variable Tests - Cloud', () => {
                     .matchHeader('Content-Type', 'application/json').reply(200, {})
                 const callbackURL = `http://host.docker.internal:${global.__MOCK_SERVER_PORT__}/client/${clientId}`
                 const cbResponse = await callOnClientInitialized(clientId, url, callbackURL)
-                const res = await cbResponse.json()
-                console.log('cbresponse', res)
+                await cbResponse.json()
 
                 await new Promise((resolve) => {
                     setTimeout(() => {
-                        resolve('done waiting')
-                    }, 5000);
+                        resolve({})
+                    }, 1000)
                 })
 
-                // const variableResponse = await callVariable(clientId, url, userId, 'var_key', 'default_value')
-                // expect(variableResponse).toBeDefined()
-                // console.error(await variableResponse.text())
-                expect(scope.isDone()).toBeTruthy()
+                const variableResponse = await callVariable(clientId, url, userId, 'var_key', 'default_value')
+                const error = await variableResponse.json()
+                expect(error.exception).toBe('Must have a user_id set on the user')
             })
 
-            it('should return defaulted variable if called before client is initialized',  async () => {
-                const newClientId = uuidv4()
-                const newClient = await createClient(url, newClientId, 'SDK_KEY')
-                const user = await createUser(url, { user_id: 'user1' })
-                // TODO: wait for callback url for onClientInitialized
-                const variableResponse = await callVariable(newClientId, url, 'user1', 'var_key', 'default_value')
-                // expect(variableResponse.entityType).toBe('Variable')
-                // expect(variableResponse.data.value).toBe('default_value')
+            it.only('should return defaulted variable if called before client is initialized',  async () => {
+                const response = await createUser(url, { user_id: 'valid_user' })
+                const invalidUser = await response.json()
+
+                expect(invalidUser.entityType).toBe('User')
+                expect(invalidUser.data.user_id).toBe('valid_user')
+
+                const userId = response.headers.get('location')
+                expect(userId).toBe('user/0')
+
+                const variableResponse = await callVariable(clientId, url, userId, 'var_key', 'default_value')
+                const variable = await variableResponse.json()
+                expect(variable.entityType).toBe('Variable')
+                expect(variable.data.isDefaulted).toBeTruthy()
+                expect(variable.data.key).toBe('var_key')
+                expect(variable.data.value).toBe('default_value')
             })
 
             it('should call variables API without edgeDB option',  async () => {
@@ -150,7 +150,7 @@ describe('Variable Tests - Cloud', () => {
         })
     })
 
-    const callVariable = async (clientId: string, url: string, userId: string, key: string, value: any) => {
+    const callVariable = async (clientId: string, url: string, userLocation: string, key: string, value: any) => {
         return await fetch(`${url}/client/${clientId}`, {
             method: 'POST',
             headers: {
@@ -159,7 +159,7 @@ describe('Variable Tests - Cloud', () => {
             body: JSON.stringify({
                 command: 'variable',
                 params: [
-                    { location: `/commands/users/${userId}` },
+                    { location: `${userLocation}` },
                     { value: key },
                     { value: value }
                 ]
