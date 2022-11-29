@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../mockServer'
 import nock from 'nock'
 
-jest.setTimeout(10000)
+jest.setTimeout(1000000)
 
 const scope = getServerScope()
 
@@ -21,7 +21,7 @@ describe('Variable Tests - Cloud', () => {
 
             // expect(response.name).toBeDefined()
             // expect(response.capabilities).toBeDefined()
-            
+
             await createClient(url, clientId, 'server-939ecf39-866f-4682-8bfe-3639773b0fce')
         })
 
@@ -29,7 +29,7 @@ describe('Variable Tests - Cloud', () => {
             it('will return default value if variable called with invalid user before initialized',  async () => {
                 const response = await createUser(url, { name: 'invalid user' })
                 const invalidUser = await response.json()
-                
+
                 expect(invalidUser.entityType).toBe('User')
                 expect(invalidUser.data.user_id).toBeUndefined()
                 expect(invalidUser.data.name).toBe('invalid user')
@@ -48,7 +48,7 @@ describe('Variable Tests - Cloud', () => {
             it.only('will throw error if variable called with invalid user after initialized',  async () => {
                 const response = await createUser(url, { name: 'invalid user' })
                 const invalidUser = await response.json()
-                
+
                 expect(invalidUser.entityType).toBe('User')
                 expect(invalidUser.data.user_id).toBeUndefined()
                 expect(invalidUser.data.name).toBe('invalid user')
@@ -58,20 +58,21 @@ describe('Variable Tests - Cloud', () => {
 
                 scope
                     .post(`/client/${clientId}`)
-                    .matchHeader('Content-Type', 'application/json').reply(200, {
-                        
-                    })
+                    .matchHeader('Content-Type', 'application/json').reply(200, {})
                 const callbackURL = `http://host.docker.internal:${global.__MOCK_SERVER_PORT__}/client/${clientId}`
                 const cbResponse = await callOnClientInitialized(clientId, url, callbackURL)
-                console.error('cbresponse', await cbResponse.json())
-                
-                // setTimeout(() => {
-                //     expect(scope.isDone()).toBeTruthy()
-                // }, 5000);
+                const res = await cbResponse.json()
+                console.log('cbresponse', res)
 
-                const variableResponse = await callVariable(clientId, url, userId, 'var_key', 'default_value')
+                await new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve('done waiting')
+                    }, 5000);
+                })
+
+                // const variableResponse = await callVariable(clientId, url, userId, 'var_key', 'default_value')
                 // expect(variableResponse).toBeDefined()
-                console.error(await variableResponse.text())
+                // console.error(await variableResponse.text())
                 expect(scope.isDone()).toBeTruthy()
             })
 
@@ -104,7 +105,7 @@ describe('Variable Tests - Cloud', () => {
                 // expect(variableResponse.entityType).toBe('Variable')
                 // expect(variableResponse.data.value).toBe('default_value')
             })
-            
+
             it('should return defaulted variable if called before client is initialized - \
                 mock server returns undefined',  async () => {
                 const newClientId = uuidv4()
