@@ -11,9 +11,6 @@ export class TestHarnessEnvironment extends TestcontainersEnvironment {
     public async setup() {
         this.server = await initialize()
         this.global.__MOCK_SERVER_PORT__ = this.server.address().port
-        console.error(`Starting test harness at host: ${this.server.address()},
-        port: ${this.server.address().port}
-        `)
         await super.setup()
     }
 

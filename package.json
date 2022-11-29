@@ -1,7 +1,8 @@
 {
   "name": "@devcycle/test-harness",
   "scripts": {
-    "test": "jest"
+    "test": "jest --verbose",
+    "test:ci": "yarn test --setupFiles=./ci-config.js"
   },
   "version": "1.0.0",
   "description": "A universal testing system for DevCycle SDKs",

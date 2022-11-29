@@ -38,8 +38,6 @@ export const handleLocation = async (
                 return ctx
             }
             const onCallback = (command) => {
-                console.log('Calling command: ', command)
-                console.log('Calling URL: ', callbackURL.href)
                 fetch(callbackURL.href, {
                     method: 'POST',
                     headers: {
@@ -48,9 +46,7 @@ export const handleLocation = async (
                     body: JSON.stringify({
                         message: `${command} was invoked on ${ctx.request.url}`
                     })
-                })
-                    .then((resp: any) => console.log('onCallback data ', resp)) // just to test the callback
-                    .catch((e) => console.error('bruh', e))
+                }).catch((e) => console.error(e))
             }
             entity[command](() => onCallback(command)).catch((e) => console.error(e))
             ctx.status = 200
@@ -97,6 +93,7 @@ export const handleLocation = async (
             ctx.body = {
                 errorCode: error.code,
                 exception: error.message,
+                stack: error.stack
             }
         }
     }
@@ -107,7 +104,7 @@ const getEntityFromLocation = (location: string, data: DataStore) => {
 
     /**
      * location string is in the form of:
-     *  - URL = /entitiyType/id
+     *  - URL = /entityType/id
      *  - body params = entityType/id
      * and therefore split on `/` will return an array of length 3 for URL and 2 for body params
      */
@@ -142,12 +139,12 @@ const getEntityFromLocation = (location: string, data: DataStore) => {
 const parseParams = (params: object | any, data: DataStore): ParsedParams => {
     const parsedParams: ParsedParams = []
     params.forEach((element) => {
-        if (element.value !== undefined) {
-            parsedParams.push(element.value)
-        } else if (element.location !== undefined) {
+        if (element.location) {
             parsedParams.push(getEntityFromLocation(element.location, data))
-        } else if (element.callbackURL !== undefined) {
+        } else if (element.callbackURL) {
             parsedParams.push(new URL(element.callbackURL))
+        } else {
+            parsedParams.push(element.value)
         }
     })
     return parsedParams
