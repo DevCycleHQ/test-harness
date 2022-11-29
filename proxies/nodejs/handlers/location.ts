@@ -38,17 +38,23 @@ export const handleLocation = async (
                 return ctx
             }
             const onCallback = (command) => {
-                axios
-                    .post(callbackURL.href, {
-                        message: `${command} was invoked on ${ctx.request.url}`,
+                console.log('Calling command: ', command)
+                fetch(callbackURL.href, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `${command} was invoked on ${ctx.request.url}`
                     })
+                })
                     .then((resp: any) => console.log('onCallback data ', resp.data)) // just to test the callback
-                    .catch((e) => console.error(e))
+                    .catch((e) => console.error('bruh', e))
             }
             entity[command](() => onCallback(command)).catch((e) => console.error(e))
             ctx.status = 200
             ctx.body = {
-                message: `${command} attached to ${ctx.request.url}`,
+                message: `${command} attached to ${ctx.request.url} with url ${callbackURL.href}`,
             }
         } else {
             const resultData = await invokeCommand(
@@ -77,7 +83,6 @@ export const handleLocation = async (
                 logs: [], // TODO add logs here
             }
         }
-        console.log('dataObject: ', dataStore)
     } catch (error) {
         console.error(error)
         if (isAsync) {
