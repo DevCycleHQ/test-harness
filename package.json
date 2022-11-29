@@ -1,7 +1,7 @@
 {
   "name": "@devcycle/test-harness",
   "scripts": {
-    "test": "jest"
+    "test": "jest --verbose"
   },
   "version": "1.0.0",
   "description": "A universal testing system for DevCycle SDKs",
