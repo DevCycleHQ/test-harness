@@ -1,12 +1,14 @@
 import { DVCClient, DVCUser, DVCVariable } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
-import { getEntityFromType, Data } from '../entityTypes'
+import { getEntityFromType, DataStore } from '../entityTypes'
 import axios from 'axios'
+import { dataStore } from '../app'
 
 //HTTP request comes in as string
 type LocationRequestBody = {
     command: string
-    params: string //[{value: string | number | boolean} | {location: string} | {callbackUrl: string}] 
+    params: string //[{value: string | number | boolean} | {location: string} | {callbackUrl: string}]
+    entity: DVCClient | DVCUser | DVCVariable
     isAsync: boolean
 }
 
@@ -15,18 +17,15 @@ type ParsedParams = (string | boolean | number | object | URL)[];
 const SUPPORTED_COMMANDS = ['onClientInitialized']
 
 export const handleLocation = async (
-    ctx: Koa.ParameterizedContext,
-    data: Data,
-    body: LocationRequestBody,
-    entity: DVCClient | DVCUser | DVCVariable
+    ctx: Koa.ParameterizedContext
 ) => {
+    const { entity, command, params, isAsync } = ctx.request.body as LocationRequestBody
     try {
-        const command = body.command
-        const params: ParsedParams = parseParams(
-            JSON.parse(body.params),
-            data
+        const parsedParams: ParsedParams = parseParams(
+            JSON.parse(params),
+            dataStore
         )
-        const lastParam = params[params.length - 1]
+        const lastParam = parsedParams[parsedParams.length - 1]
 
         if (lastParam instanceof URL) {
             const callbackURL: URL = lastParam
@@ -55,20 +54,20 @@ export const handleLocation = async (
             const resultData = await invokeCommand(
                 entity,
                 command,
-                params,
-                body.isAsync
+                parsedParams,
+                isAsync
             )
 
             const entityType = getEntityFromType(resultData.constructor.name)
 
-            const commandId = data.commandResults[entityType.toLowerCase()] !== undefined ?
-                Object.keys(data.commandResults[entityType.toLowerCase()]).length :
+            const commandId = dataStore.commandResults[entityType.toLowerCase()] !== undefined ?
+                Object.keys(dataStore.commandResults[entityType.toLowerCase()]).length :
                 0
 
-            if (data.commandResults[entityType.toLowerCase()] === undefined) {
-                data.commandResults[entityType.toLowerCase()] = {}
+            if (dataStore.commandResults[entityType.toLowerCase()] === undefined) {
+                dataStore.commandResults[entityType.toLowerCase()] = {}
             }
-            data.commandResults[entityType.toLowerCase()][commandId] = resultData
+            dataStore.commandResults[entityType.toLowerCase()][commandId] = resultData
 
             ctx.status = 200
             ctx.set('Location', `command/${entityType.toLowerCase()}/${commandId}`)
@@ -78,10 +77,10 @@ export const handleLocation = async (
                 logs: [], // TODO add logs here
             }
         }
-        console.log('dataObject: ', data)
+        console.log('dataObject: ', dataStore)
     } catch (error) {
         console.error(error)
-        if (body.isAsync) {
+        if (isAsync) {
             ctx.status = 200
             ctx.body = {
                 asyncError: error.message,
@@ -97,7 +96,7 @@ export const handleLocation = async (
     }
 }
 
-const getEntityFromLocation = (location: string, data: Data) => {
+const getEntityFromLocation = (location: string, data: DataStore) => {
     const urlParts = location.split('/')
 
     /**
@@ -134,7 +133,7 @@ const getEntityFromLocation = (location: string, data: Data) => {
     return undefined
 }
 
-const parseParams = (params: object | any, data: Data): ParsedParams => {
+const parseParams = (params: object | any, data: DataStore): ParsedParams => {
     const parsedParams: ParsedParams = []
     params.forEach((element) => {
         if (element.value !== undefined) {
@@ -154,32 +153,31 @@ const invokeCommand = async (
     params: ParsedParams,
     isAsync: boolean) => {
     if (isAsync) {
-        const result = await entity[command](...params)
-        return result
+        return await entity[command](...params)
     }
     return entity[command](...params)
 }
 
-export const validateLocationRequest =
-    (ctx: Koa.ParameterizedContext, data: Data) => {
-        const entity = getEntityFromLocation(ctx.request.url, data)
-        const body = ctx.request.body as LocationRequestBody
+export const validateLocationReqMiddleware = async (ctx: Koa.ParameterizedContext, next) => {
+    const entity = getEntityFromLocation(ctx.request.url, dataStore)
+    const body = ctx.request.body as LocationRequestBody
 
-        if (entity === undefined) {
-            ctx.status = 404
-            ctx.body = {
-                errorCode: 404,
-                errorMessage: 'Invalid request: missing entity',
-            }
-            return ctx
+    if (entity === undefined) {
+        ctx.status = 404
+        ctx.body = {
+            errorCode: 404,
+            errorMessage: 'Invalid request: missing entity',
         }
-        if (body.command === undefined) {
-            ctx.status = 404
-            ctx.body = {
-                errorCode: 404,
-                errorMessage: 'Invalid request: missing command',
-            }
-            return ctx
-        }
-        handleLocation(ctx, data, body, entity)
+        return ctx
     }
+    if (body.command === undefined) {
+        ctx.status = 404
+        ctx.body = {
+            errorCode: 404,
+            errorMessage: 'Invalid request: missing command',
+        }
+        return ctx
+    }
+    body.entity = entity
+    await next()
+}

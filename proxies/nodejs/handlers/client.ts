@@ -1,13 +1,13 @@
 import Koa from 'koa'
 import { DVCClient, initialize } from '@devcycle/nodejs-server-sdk'
-
+import { dataStore } from '../app'
 type ClientRequestBody = {
     clientId: string
     sdkKey: string
     options: { [key: string]: string }
 }
 
-export const handleClient = async (ctx: Koa.ParameterizedContext, clients: { [key: string]: DVCClient }) => {
+export const handleClient = async (ctx: Koa.ParameterizedContext) => {
     const body = <ClientRequestBody>ctx.request.body
     if (body.clientId === undefined) {
         ctx.status = 400
@@ -17,8 +17,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext, clients: { [ke
         return ctx
     }
     try {
-        const client = initialize(body.sdkKey, body.options)
-        clients[body.clientId] = client
+        dataStore.clients[body.clientId] = initialize(body.sdkKey, body.options)
         ctx.status = 201
         ctx.set('Location', `client/${body.clientId}`)
     } catch (error) {
