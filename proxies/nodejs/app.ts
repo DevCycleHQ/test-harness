@@ -3,10 +3,10 @@ import Router from 'koa-router'
 import bodyParser from 'koa-bodyparser'
 import { handleUser } from './handlers/user'
 import { handleClient } from './handlers/client'
-import { validateLocationRequest } from './handlers/location'
-import { Data } from './entityTypes'
+import { handleLocation, validateLocationReqMiddleware } from './handlers/location'
+import { DataStore } from './entityTypes'
 
-const data: Data = {
+export const dataStore: DataStore = {
     clients: {},
     users: {},
     commandResults: {},
@@ -27,15 +27,9 @@ async function start() {
         }
     })
 
-    router.post('/client', (ctx: Koa.ParameterizedContext) => {
-        handleClient(ctx, data.clients)
-    })
-    router.post('/user', (ctx: Koa.ParameterizedContext) => {
-        handleUser(ctx, data.users)
-    })
-    router.post('/:location*', (ctx: Koa.ParameterizedContext) => {
-        validateLocationRequest(ctx, data)
-    })
+    router.post('/client', handleClient)
+    router.post('/user', handleUser)
+    router.post('/:location*', validateLocationReqMiddleware, handleLocation)
 
     app.use(router.routes()).use(router.allowedMethods())
 

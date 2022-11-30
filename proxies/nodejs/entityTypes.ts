@@ -7,7 +7,7 @@ export enum EntityTypes {
     object = 'Object',
 }
 
-export type Data = {
+export type DataStore = {
     clients: { [key: string]: DVCClient }
     users: { [key: string]: DVCUser }
     commandResults: { [key: string]: any }
