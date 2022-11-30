@@ -48,4 +48,36 @@ export const createUser = async (url: string, user: object) => {
     })
 }
 
+export const callVariable = async (clientId: string, url: string, location: string, key: string, value: any) => {
+    return await fetch(`${url}/client/${clientId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            command: 'variable',
+            params: [
+                { location: location },
+                { value: key },
+                { value: value }
+            ],
+        })
+    })
+}
+
+export const callOnClientInitialized = async (clientId: string, url: string, callbackURL: string) => {
+    return await fetch(`${url}/client/${clientId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            command: 'onClientInitialized',
+            params: [
+                { callbackURL }
+            ]
+        })
+    })
+}
+
 export const describeIf = (condition: boolean) => condition ? describe : describe.skip

@@ -1,4 +1,12 @@
-import { getConnectionStringForProxy, forEachSDK, describeIf, createClient, createUser } from '../helpers'
+import { 
+    getConnectionStringForProxy, 
+    forEachSDK, 
+    describeIf, 
+    createClient, 
+    createUser, 
+    callVariable, 
+    callOnClientInitialized 
+} from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../mockServer'
@@ -149,36 +157,4 @@ describe('Variable Tests - Cloud', () => {
             })
         })
     })
-
-    const callVariable = async (clientId: string, url: string, userLocation: string, key: string, value: any) => {
-        return await fetch(`${url}/client/${clientId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                command: 'variable',
-                params: [
-                    { location: `${userLocation}` },
-                    { value: key },
-                    { value: value }
-                ]
-            })
-        })
-    }
-
-    const callOnClientInitialized = async (clientId: string, url: string, callbackURL: string) => {
-        return await fetch(`${url}/client/${clientId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                command: 'onClientInitialized',
-                params: [
-                    { callbackURL }
-                ]
-            })
-        })
-    }
 })
