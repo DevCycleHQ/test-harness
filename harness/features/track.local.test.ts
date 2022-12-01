@@ -19,32 +19,32 @@ describe('Track Tests - Local', () => {
             url = getConnectionStringForProxy(name)
             await createClient(url, clientId, 'dvc_server_test_token', {
                 baseURLOverride: `${mockServerUrl}/client/${clientId}`,
-                configPollingIntervalMS: 1000
+                eventFlushIntervalMS: 1000
             })
         })
 
         describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
-            // it('should complain if event type not set', async () => {
-            //     const response = await createUser(url, { user_id: 'user1' })
-            //     await response.json()
-            //     const userId = response.headers.get('location')
+            it('should complain if event type not set', async () => {
+                const response = await createUser(url, { user_id: 'user1' })
+                await response.json()
+                const userId = response.headers.get('location')
 
-            //     const trackResponse = await callTrack(clientId, url, userId, {})
+                const trackResponse = await callTrack(clientId, url, userId, {})
 
-            //     scope
-            //         .post((uri) => uri.includes('/v1/'))
-            //         .matchHeader('Content-Type', 'application/json')
-            //         .reply(200, {})
+                scope
+                    .post((uri) => uri.includes('/v1/'))
+                    .matchHeader('Content-Type', 'application/json')
+                    .reply(200, {})
 
-            //     await wait(2000)
-            //     const res = await trackResponse.json()
-            //     console.log('res', res)
-            //     console.log('scope', scope.activeMocks())
-            //     // expect(res.exception).toBe('Invalid Event')
-            //     console.log('scope', scope.activeMocks())
-            //     expect(scope.isDone()).toBeTruthy()
+                await wait(2000)
+                const res = await trackResponse.json()
+                console.log('res', res)
+                console.log('scope', scope.activeMocks())
+                // expect(res.exception).toBe('Invalid Event')
+                console.log('scope', scope.activeMocks())
+                expect(scope.isDone()).toBeTruthy()
 
-            // })
+            })
 
             it('should call events API to track event', async () => {
                 const response = await createUser(url, { user_id: 'user1' })

@@ -25,6 +25,8 @@ export function initialize() {
     router.all('/(.*)', async (ctx) => {
         const { headers, request } = ctx
         try {
+            console.log('bruh received at mock server', request.url)
+            console.log('bruh', request.body)
             const response = await axios[request.method.toLowerCase()](`https://nock.com${ctx.request.url}`,
                 request.body, {
                 headers
