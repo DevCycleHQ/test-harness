@@ -24,45 +24,44 @@ describe('Track Tests - Local', () => {
         })
 
         describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
-            it('should complain if event type not set', async () => {
-                const response = await createUser(url, { user_id: 'user1' })
-                await response.json()
-                const userId = response.headers.get('location')
-
-                const trackResponse = await callTrack(clientId, url, userId, {})
-
-                scope
-                    .post((uri) => uri.includes('/v1/'))
-                    .matchHeader('Content-Type', 'application/json')
-                    .reply(200, {})
-
-                await wait(2000)
-                const res = await trackResponse.json()
-                console.log('res', res)
-                console.log('scope', scope.activeMocks())
-                // expect(res.exception).toBe('Invalid Event')
-                console.log('scope', scope.activeMocks())
-                expect(scope.isDone()).toBeTruthy()
-
-            })
-
-            // it('should call events API to track event', async () => {
+            // it('should complain if event type not set', async () => {
             //     const response = await createUser(url, { user_id: 'user1' })
             //     await response.json()
             //     const userId = response.headers.get('location')
 
-            //     const trackResponse = await callTrack(clientId, url, userId, { type: 'variableEvaluated', target: 1 })
+            //     const trackResponse = await callTrack(clientId, url, userId, {})
 
             //     scope
-            //         .post((uri) => uri.includes('/v1/track'))
+            //         .post((uri) => uri.includes('/v1/'))
             //         .matchHeader('Content-Type', 'application/json')
             //         .reply(200, {})
 
-            //     await wait(1000)
-            //     await trackResponse.json()
+            //     await wait(2000)
+            //     const res = await trackResponse.json()
+            //     console.log('res', res)
+            //     console.log('scope', scope.activeMocks())
+            //     // expect(res.exception).toBe('Invalid Event')
             //     console.log('scope', scope.activeMocks())
             //     expect(scope.isDone()).toBeTruthy()
+
             // })
+
+            it('should call events API to track event', async () => {
+                const response = await createUser(url, { user_id: 'user1' })
+                await response.json()
+                const userId = response.headers.get('location')
+
+                const trackResponse = await callTrack(clientId, url, userId, { type: 'variableEvaluated', target: 456 })
+
+                scope
+                    .post((uri) => uri.includes('/v1/events'))
+                    .reply(200, {})
+
+                await wait(12000)
+                await trackResponse.json()
+                console.log('scope', scope.activeMocks())
+                expect(scope.isDone()).toBeTruthy()
+            })
 
             // it('should retry events API on failed request', async () => {
             //     const response = await createUser(url, { user_id: 'user1' })
