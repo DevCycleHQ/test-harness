@@ -12,7 +12,7 @@ type LocationRequestBody = {
     isAsync: boolean
 }
 
-type ParsedParams = (string | boolean | number | object | URL)[];
+type ParsedParams = (string | boolean | number | object | URL)[]
 
 const SUPPORTED_COMMANDS = ['onClientInitialized']
 
@@ -22,7 +22,7 @@ export const handleLocation = async (
     const { entity, command, params, isAsync } = ctx.request.body as LocationRequestBody
     try {
         const parsedParams: ParsedParams = parseParams(
-            JSON.parse(params),
+            params,
             dataStore
         )
         const lastParam = parsedParams[parsedParams.length - 1]
@@ -38,17 +38,20 @@ export const handleLocation = async (
                 return ctx
             }
             const onCallback = (command) => {
-                axios
-                    .post(callbackURL.href, {
-                        message: `${command} was invoked on ${ctx.request.url}`,
+                fetch(callbackURL.href, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `${command} was invoked on ${ctx.request.url}`
                     })
-                    .then((resp: any) => console.log('onCallback data ', resp.data)) // just to test the callback
-                    .catch((e) => console.error(e))
+                }).catch((e) => console.error(e))
             }
             entity[command](() => onCallback(command)).catch((e) => console.error(e))
             ctx.status = 200
             ctx.body = {
-                message: `${command} attached to ${ctx.request.url}`,
+                message: `${command} attached to ${ctx.request.url} with url ${callbackURL.href}`,
             }
         } else {
             const resultData = await invokeCommand(
@@ -77,7 +80,6 @@ export const handleLocation = async (
                 logs: [], // TODO add logs here
             }
         }
-        console.log('dataObject: ', dataStore)
     } catch (error) {
         console.error(error)
         if (isAsync) {
@@ -91,6 +93,7 @@ export const handleLocation = async (
             ctx.body = {
                 errorCode: error.code,
                 exception: error.message,
+                stack: error.stack
             }
         }
     }
@@ -101,7 +104,7 @@ const getEntityFromLocation = (location: string, data: DataStore) => {
 
     /**
      * location string is in the form of:
-     *  - URL = /entitiyType/id
+     *  - URL = /entityType/id
      *  - body params = entityType/id
      * and therefore split on `/` will return an array of length 3 for URL and 2 for body params
      */
@@ -136,12 +139,12 @@ const getEntityFromLocation = (location: string, data: DataStore) => {
 const parseParams = (params: object | any, data: DataStore): ParsedParams => {
     const parsedParams: ParsedParams = []
     params.forEach((element) => {
-        if (element.value !== undefined) {
-            parsedParams.push(element.value)
-        } else if (element.location !== undefined) {
+        if (element.location) {
             parsedParams.push(getEntityFromLocation(element.location, data))
-        } else if (element.callbackURL !== undefined) {
+        } else if (element.callbackURL) {
             parsedParams.push(new URL(element.callbackURL))
+        } else {
+            parsedParams.push(element.value)
         }
     })
     return parsedParams
