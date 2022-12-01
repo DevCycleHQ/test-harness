@@ -68,7 +68,7 @@ export const handleLocation = async (
                 )
             }
 
-            const entityType = getEntityFromType(result.constructor.name)
+            const entityType = result ? getEntityFromType(result.constructor.name) : 'Void'
 
             const commandId = dataStore.commandResults[command] !== undefined ?
                 Object.keys(dataStore.commandResults[command]).length :
