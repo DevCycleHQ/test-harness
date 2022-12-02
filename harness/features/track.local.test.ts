@@ -264,30 +264,97 @@ describe('Track Tests - Local', () => {
                 })
             })
 
+            it('should retry with exponential backoff events API call to track 2 events', async () => {
+                const timestamps = []
+                // const eventType = 'buttonClicked'
+                const eventType = 'buttonClicked'
+                const variableId = 'string-var'
+                const value = 2
 
-            // it('should retry events API on failed request', async () => {
-            //     const response = await createUser(url, { user_id: 'user1' })
-            //     await response.json()
-            //     const userId = response.headers.get('location')
+                // const eventType2 = 'textChanged'
+                const eventType2 = 'textChanged'
+                const variableId2 = 'json-var'
+                const value2 = 3
 
-            //     const trackResponse = await callTrack(clientId, url, userId, { type: 'variableEvaluated', target: 123 })
+                const response = await createUser(url, { user_id: validUserId })
+                await response.json()
+                const userId = response.headers.get('location')
 
-            //     scope
-            //         .post((uri) => uri.includes('/v1/track'))
-            //         .matchHeader('Content-Type', 'application/json')
-            //         .reply(400, {})
+                await callTrack(clientId, url, userId,
+                    { type: eventType, target: variableId, value: value })
+                await callTrack(clientId, url, userId,
+                    { type: eventType2, target: variableId2, value: value2 })
 
-            //     scope
-            //         .post((uri) => uri.includes('/v1/track'))
-            //         .matchHeader('Content-Type', 'application/json')
-            //         .reply(200, {})ß
+                let startDate = Date.now()
+                scope
+                    .post((uri) => uri.includes(`/client/${clientId}/v1/events/batch`))
+                    .matchHeader('Content-Type', 'application/json')
+                    .times(10)
+                    .reply((uri, body) => {
+                        timestamps.push(Date.now() - startDate)
+                        startDate = Date.now()
+                        return [400]
+                    })
 
-            //     await wait(1000)
-            //     await trackResponse.json()
+                await wait(20000)
 
-            //     expect(scope.isDone()).toBeTruthy()
-            // })
+                let total = 0
 
+                for (let i = 0; i < timestamps.length; i++) {
+                    const time = timestamps[i]
+                    console.log('time', time)
+                    total += time
+
+                }
+                const avg = total / timestamps.length
+                console.log('avg', avg)
+
+                scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                    mockEvents(body)
+                    console.log('time finally' + (Date.now() - startDate))
+                    startDate = Date.now()
+                    return [201]
+                })
+
+                await wait(20000)
+
+                await new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve({})
+                    }, 1000)
+                })
+
+                expect(mockEvents).toHaveBeenCalledTimes(1)
+
+                const batch: [] = mockEvents.mock.calls[0][0].batch
+                expect(batch).toBeDefined()
+
+                batch.forEach((obj: any) => {
+                    expect(obj.user.platform).toBe('NodeJS')
+                    expect(obj.user.sdkType).toBe('server')
+                    expect(obj.user.sdkVersion).toBe('1.4.22')
+                    expect(obj.user.user_id).toBe(validUserId)
+
+                    expect(obj.events.length).toBe(2)
+
+                    console.log('obj', obj)
+
+                    //check first event
+                    expect(obj.events[0].type).toBe('customEvent')
+                    expect(obj.events[0].customType).toBe(eventType)
+                    expect(obj.events[0].target).toBe(variableId)
+                    expect(obj.events[0].user_id).toBe(validUserId)
+                    expect(obj.events[0].value).toBe(value)
+
+                    //check second event
+                    expect(obj.events[1].type).toBe('customEvent')
+                    expect(obj.events[1].customType).toBe(eventType2)
+                    expect(obj.events[1].target).toBe(variableId2)
+                    expect(obj.events[1].user_id).toBe(validUserId)
+                    expect(obj.events[1].value).toBe(value2)
+
+                })
+            })
         })
     })
 
@@ -314,9 +381,6 @@ describe('Track Tests - Local', () => {
                 resolve({})
             }, ms)
         })
-    }
-
-    const expectEventSent = async (userId: string, variableId: string, eventType: string) => {
     }
 
 })
