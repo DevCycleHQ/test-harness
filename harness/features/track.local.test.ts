@@ -282,11 +282,23 @@ describe('Track Tests - Local', () => {
                         timestamps.push(Date.now() - startDate)
                         startDate = Date.now()
                         count++
-                        return [400]
+                        return [519]
                     })
 
                 await wait(20000)
 
+
+                let finalTime = 0
+                scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                    mockEvents(body)
+                    console.log('time finally' + (Date.now() - startDate))
+                    finalTime = Date.now() - startDate
+                    return [201]
+                })
+
+                await wait(20000)
+
+                // I do not think this test is reliable
                 let total = 0
                 console.log(timestamps)
 
@@ -299,15 +311,6 @@ describe('Track Tests - Local', () => {
                 const avg = total / timestamps.length
                 console.log('avg', avg)
 
-                let finalTime = 0
-                scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
-                    mockEvents(body)
-                    console.log('time finally' + (Date.now() - startDate))
-                    finalTime = Date.now() - startDate
-                    return [201]
-                })
-
-                await wait(20000)
 
                 await new Promise((resolve) => {
                     setTimeout(() => {
