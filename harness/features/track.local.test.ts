@@ -2,6 +2,7 @@ import { getConnectionStringForProxy, forEachSDK, describeIf, createClient, crea
 import { Capabilities, SDKCapabilities } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../mockServer'
+import { config } from '../mockData/index'
 import nock from 'nock'
 
 jest.setTimeout(1000000)
@@ -9,6 +10,8 @@ jest.setTimeout(1000000)
 const scope = getServerScope()
 
 describe('Track Tests - Local', () => {
+    const mockEvents = jest.fn()
+    const validUserId = 'user1'
     forEachSDK((name) => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
@@ -19,49 +22,248 @@ describe('Track Tests - Local', () => {
             url = getConnectionStringForProxy(name)
             await createClient(url, clientId, 'dvc_server_test_token', {
                 baseURLOverride: `${mockServerUrl}/client/${clientId}`,
-                eventFlushIntervalMS: 1000
+                eventFlushIntervalMS: 1000,
             })
+
+            scope
+                .get(`/client/${clientId}/config/v1/server/dvc_server_test_token.json`)
+                .reply(200, config)
+
+            scope.post(`/client/${clientId}`).reply((uri, body) => {
+                if (typeof body === 'object'
+                    && body.message.includes('onClientInitialized was invoked'))
+                    return [200]
+            })
+
+            // scope.persist().post(`/client/${clientId}/v1/events/batch`).reply(function (uri, body: any) {
+            //     mockEvents(body)
+            //     return [201]
+            // })
+        })
+
+        afterEach(() => {
+            jest.clearAllMocks()
+            nock.cleanAll()
+        })
+
+        beforeEach(() => {
+            console.log('scope', scope.activeMocks())
+
         })
 
         describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
-            it('should complain if event type not set', async () => {
-                const response = await createUser(url, { user_id: 'user1' })
+            it('should not send an event if the event type not set', async () => {
+
+                const response = await createUser(url, { user_id: validUserId })
                 await response.json()
                 const userId = response.headers.get('location')
 
                 const trackResponse = await callTrack(clientId, url, userId, {})
 
-                scope
-                    .post((uri) => uri.includes('/v1/'))
-                    .matchHeader('Content-Type', 'application/json')
-                    .reply(200, {})
+                scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                    mockEvents(body)
+                    return [201]
+                })
 
                 await wait(2000)
+
+                await new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve({})
+                    }, 1000)
+                })
+                expect(mockEvents).toHaveBeenCalledTimes(0)
+
                 const res = await trackResponse.json()
                 console.log('res', res)
-                console.log('scope', scope.activeMocks())
+                // console.log('scope', scope.activeMocks())
+
                 // expect(res.exception).toBe('Invalid Event')
-                console.log('scope', scope.activeMocks())
-                expect(scope.isDone()).toBeTruthy()
+                // console.log('scope', scope.activeMocks())
+                // expect(scope.isDone()).toBeTruthy()
 
             })
 
             it('should call events API to track event', async () => {
-                const response = await createUser(url, { user_id: 'user1' })
+                const eventType = 'pageNavigated'
+                const variableId = 'string-var'
+                const value = 1
+
+                const response = await createUser(url, { user_id: validUserId })
                 await response.json()
                 const userId = response.headers.get('location')
 
-                const trackResponse = await callTrack(clientId, url, userId, { type: 'variableEvaluated', target: 456 })
+                const trackResponse = await callTrack(clientId, url, userId,
+                    { type: eventType, target: 'string-var', value: value })
+
+
+                scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                    mockEvents(body)
+                    return [201]
+                })
+
+                await wait(2500)
+                await trackResponse.json()
+
+                console.log('mockEvents.mock.calls for 1', mockEvents.mock.calls)
+                expect(mockEvents).toHaveBeenCalledTimes(1)
+                const batch: [] = mockEvents.mock.calls[0][0].batch
+                expect(batch).toBeDefined()
+                batch.forEach((obj: any) => {
+                    console.log('obj', obj)
+                    expect(obj.user.platform).toBe('NodeJS')
+                    expect(obj.user.sdkType).toBe('server')
+                    expect(obj.user.sdkVersion).toBe('1.4.22')
+                    expect(obj.user.user_id).toBe(validUserId)
+
+                    expect(obj.events.length).toBe(1)
+
+                    expect(obj.events[0].type).toBe('customEvent')
+                    expect(obj.events[0].customType).toBe(eventType)
+                    expect(obj.events[0].target).toBe(variableId)
+                    expect(obj.events[0].value).toBe(value)
+                    expect(obj.events[0].user_id).toBe(validUserId)
+                })
+            })
+
+            it('should call events API to track 2 events', async () => {
+                // const eventType = 'buttonClicked'
+                const eventType = 'buttonClicked'
+                const variableId = 'string-var'
+                const value = 2
+
+                // const eventType2 = 'textChanged'
+                const eventType2 = 'textChanged'
+                const variableId2 = 'json-var'
+                const value2 = 3
+
+                const response = await createUser(url, { user_id: validUserId })
+                await response.json()
+                const userId = response.headers.get('location')
+
+                await callTrack(clientId, url, userId,
+                    { type: eventType, target: variableId, value: value })
+                await callTrack(clientId, url, userId,
+                    { type: eventType2, target: variableId2, value: value2 })
+
+                scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                    mockEvents(body)
+                    return [201]
+                })
+
+                await wait(2500)
+
+                await new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve({})
+                    }, 1000)
+                })
+
+
+                expect(mockEvents).toHaveBeenCalledTimes(1)
+
+                const batch: [] = mockEvents.mock.calls[0][0].batch
+                expect(batch).toBeDefined()
+
+                batch.forEach((obj: any) => {
+                    expect(obj.user.platform).toBe('NodeJS')
+                    expect(obj.user.sdkType).toBe('server')
+                    expect(obj.user.sdkVersion).toBe('1.4.22')
+                    expect(obj.user.user_id).toBe(validUserId)
+
+                    expect(obj.events.length).toBe(2)
+
+                    console.log('obj', obj)
+
+                    //check first event
+                    expect(obj.events[0].type).toBe('customEvent')
+                    expect(obj.events[0].customType).toBe(eventType)
+                    expect(obj.events[0].target).toBe(variableId)
+                    expect(obj.events[0].user_id).toBe(validUserId)
+                    expect(obj.events[0].value).toBe(value)
+
+                    //check second event
+                    expect(obj.events[1].type).toBe('customEvent')
+                    expect(obj.events[1].customType).toBe(eventType2)
+                    expect(obj.events[1].target).toBe(variableId2)
+                    expect(obj.events[1].user_id).toBe(validUserId)
+                    expect(obj.events[1].value).toBe(value2)
+
+                })
+            })
+
+            it('should retry events API call to track 2 events', async () => {
+                // const eventType = 'buttonClicked'
+                const eventType = 'buttonClicked'
+                const variableId = 'string-var'
+                const value = 2
+
+                // const eventType2 = 'textChanged'
+                const eventType2 = 'textChanged'
+                const variableId2 = 'json-var'
+                const value2 = 3
+
+                const response = await createUser(url, { user_id: validUserId })
+                await response.json()
+                const userId = response.headers.get('location')
+
+                await callTrack(clientId, url, userId,
+                    { type: eventType, target: variableId, value: value })
+                await callTrack(clientId, url, userId,
+                    { type: eventType2, target: variableId2, value: value2 })
 
                 scope
-                    .post((uri) => uri.includes('/v1/events'))
-                    .reply(200, {})
+                    .post((uri) => uri.includes(`/client/${clientId}/v1/events/batch`))
+                    .matchHeader('Content-Type', 'application/json')
+                    .reply(400, {})
 
-                await wait(12000)
-                await trackResponse.json()
-                console.log('scope', scope.activeMocks())
-                expect(scope.isDone()).toBeTruthy()
+                await wait(2500)
+
+                scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                    mockEvents(body)
+                    return [201]
+                })
+
+                await wait(2500)
+
+                await new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve({})
+                    }, 1000)
+                })
+
+                expect(mockEvents).toHaveBeenCalledTimes(1)
+
+                const batch: [] = mockEvents.mock.calls[0][0].batch
+                expect(batch).toBeDefined()
+
+                batch.forEach((obj: any) => {
+                    expect(obj.user.platform).toBe('NodeJS')
+                    expect(obj.user.sdkType).toBe('server')
+                    expect(obj.user.sdkVersion).toBe('1.4.22')
+                    expect(obj.user.user_id).toBe(validUserId)
+
+                    expect(obj.events.length).toBe(2)
+
+                    console.log('obj', obj)
+
+                    //check first event
+                    expect(obj.events[0].type).toBe('customEvent')
+                    expect(obj.events[0].customType).toBe(eventType)
+                    expect(obj.events[0].target).toBe(variableId)
+                    expect(obj.events[0].user_id).toBe(validUserId)
+                    expect(obj.events[0].value).toBe(value)
+
+                    //check second event
+                    expect(obj.events[1].type).toBe('customEvent')
+                    expect(obj.events[1].customType).toBe(eventType2)
+                    expect(obj.events[1].target).toBe(variableId2)
+                    expect(obj.events[1].user_id).toBe(validUserId)
+                    expect(obj.events[1].value).toBe(value2)
+
+                })
             })
+
 
             // it('should retry events API on failed request', async () => {
             //     const response = await createUser(url, { user_id: 'user1' })
@@ -97,6 +299,7 @@ describe('Track Tests - Local', () => {
             },
             body: JSON.stringify({
                 command: 'track',
+                isAsyc: true,
                 params: [
                     { location: `${userLocation}` },
                     { value: event }
@@ -112,4 +315,8 @@ describe('Track Tests - Local', () => {
             }, ms)
         })
     }
+
+    const expectEventSent = async (userId: string, variableId: string, eventType: string) => {
+    }
+
 })

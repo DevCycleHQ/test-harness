@@ -40,7 +40,8 @@ describe('Track Tests - Cloud', () => {
                 await response.json()
                 const userId = response.headers.get('location')
 
-                const trackResponse = await callTrack(clientId, url, userId, { type: 'variableEvaluated', target: 1 })
+                const trackResponse = await callTrack(clientId, url, userId,
+                    { type: 'blablabla', target: 'string-var' })
 
                 scope
                     .post((uri) => uri.includes('/v1/track'))
@@ -58,7 +59,8 @@ describe('Track Tests - Cloud', () => {
                 await response.json()
                 const userId = response.headers.get('location')
 
-                const trackResponse = await callTrack(clientId, url, userId, { type: 'variableEvaluated', target: 123 })
+                const trackResponse = await callTrack(clientId, url, userId,
+                    { type: 'buttonClicked', target: 'json-var' })
 
                 scope
                     .post((uri) => uri.includes('/v1/track'))
@@ -68,7 +70,7 @@ describe('Track Tests - Cloud', () => {
                 scope
                     .post((uri) => uri.includes('/v1/track'))
                     .matchHeader('Content-Type', 'application/json')
-                    .reply(200, {})
+                    .reply(201, {})
 
                 await wait(1000)
                 await trackResponse.json()
