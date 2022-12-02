@@ -45,7 +45,7 @@ describe('Track Tests - Cloud', () => {
                 scope
                     .post((uri) => uri.includes('/v1/track'))
                     .matchHeader('Content-Type', 'application/json')
-                    .reply(200, {})
+                    .reply(201, {})
 
                 await wait(1000)
                 await trackResponse.json()
