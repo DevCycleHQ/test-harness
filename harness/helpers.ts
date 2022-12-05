@@ -34,23 +34,27 @@ export const variablesForTypes = {
     string: {
         key: 'var_key',
         value: 'value1',
+        type: 'String',
         defaultValue: 'default_value',
         isDefaulted: false
     },
     number: {
         key: 'var_key',
+        type: 'Number',
         value: 1,
         defaultValue: 0,
         isDefaulted: false
     },
     boolean: {
         key: 'var_key',
+        type: 'Boolean',
         value: true,
         defaultValue: false,
         isDefaulted: false
     },
     JSON: {
         key: 'var_key',
+        type: 'JSON',
         value: { 'key': 'value1' },
         defaultValue: {},
         isDefaulted: false
@@ -84,10 +88,10 @@ export const createUser = async (url: string, user: object) => {
 }
 
 export const callVariable = async (
-    clientId: string, 
-    url: string, 
-    userLocation: string, 
-    key?: string, 
+    clientId: string,
+    url: string,
+    userLocation: string,
+    key?: string,
     defaultValue?: any
 ) => {
     return await fetch(`${url}/client/${clientId}`, {
