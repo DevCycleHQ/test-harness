@@ -16,17 +16,18 @@ describe('Track Tests - Local', () => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
         const clientId: string = uuidv4()
-        const mockServerUrl = `http://host.docker.internal:${global.__MOCK_SERVER_PORT__}`
+        const mockServerUrl
+            = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
-            await createClient(url, clientId, 'dvc_server_test_token', {
+            await createClient(url, clientId, 'dvc_server_test_token_parth2', {
                 baseURLOverride: `${mockServerUrl}/client/${clientId}`,
                 eventFlushIntervalMS: 1000,
             })
 
             scope
-                .get(`/client/${clientId}/config/v1/server/dvc_server_test_token.json`)
+                .get(`/client/${clientId}/config/v1/server/dvc_server_test_token_parth2.json`)
                 .reply(200, config)
 
             scope.post(`/client/${clientId}`).reply((uri, body) => {

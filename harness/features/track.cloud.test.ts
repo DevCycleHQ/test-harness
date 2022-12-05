@@ -20,7 +20,7 @@ describe('Track Tests - Cloud', () => {
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
-            await createClient(url, clientId, 'dvc_server_test_token', {
+            await createClient(url, clientId, 'dvc_server_test_token_parth1', {
                 enableCloudBucketing: true,
                 baseURLOverride: `${mockServerUrl}/client/${clientId}`
             })
