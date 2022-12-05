@@ -6,7 +6,8 @@ import {
     createUser,
     callVariable,
     forEachVariableType,
-    variablesForTypes
+    variablesForTypes,
+    mockServerUrl
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { v4 as uuidv4 } from 'uuid'
@@ -22,8 +23,6 @@ describe('Variable Tests - Cloud', () => {
         const capabilities: string[] = SDKCapabilities[name]
         const clientId: string = uuidv4()
         const sdkKey: string = `dvc_server_${clientId}`
-        const mockServerUrl
-            = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
@@ -264,4 +263,3 @@ describe('Variable Tests - Cloud', () => {
         })
     })
 })
-

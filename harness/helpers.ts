@@ -13,6 +13,9 @@ export const getConnectionStringForProxy = (proxy: string) => {
     return `http://${host}:${port}`
 }
 
+export const mockServerUrl = `http://${process.env.DOCKER_HOST_IP
+                            ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
+
 export const forEachSDK = (tests) => {
     // get the list of SDK's and their capabilities
     let SDKs
@@ -149,6 +152,19 @@ export const callOnClientInitialized = async (clientId: string, url: string, cal
             command: 'onClientInitialized',
             params: [
                 { callbackURL }
+            ]
+        })
+    })
+}
+
+export const callAllVariables = async (clientID: string, url: string, userLocation: string) => {
+    return await fetch(`${url}/client/${clientID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            command: 'allVariables',
+            params: [
+                { location: userLocation }
             ]
         })
     })
