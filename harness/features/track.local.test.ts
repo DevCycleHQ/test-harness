@@ -12,6 +12,7 @@ const scope = getServerScope()
 describe('Track Tests - Local', () => {
     const mockEvents = jest.fn()
     const validUserId = 'user1'
+    const latestNodeJsSdkVersion = '1.4.23'
     forEachSDK((name) => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
@@ -104,7 +105,7 @@ describe('Track Tests - Local', () => {
                 batch.forEach((obj: any) => {
                     expect(obj.user.platform).toBe('NodeJS')
                     expect(obj.user.sdkType).toBe('server')
-                    expect(obj.user.sdkVersion).toBe('1.4.22')
+                    expect(obj.user.sdkVersion).toBe(latestNodeJsSdkVersion)
                     expect(obj.user.user_id).toBe(validUserId)
 
                     expect(obj.events.length).toBe(1)
@@ -159,7 +160,7 @@ describe('Track Tests - Local', () => {
                 batch.forEach((obj: any) => {
                     expect(obj.user.platform).toBe('NodeJS')
                     expect(obj.user.sdkType).toBe('server')
-                    expect(obj.user.sdkVersion).toBe('1.4.22')
+                    expect(obj.user.sdkVersion).toBe(latestNodeJsSdkVersion)
                     expect(obj.user.user_id).toBe(validUserId)
 
                     expect(obj.events.length).toBe(2)
@@ -229,7 +230,7 @@ describe('Track Tests - Local', () => {
                 batch.forEach((obj: any) => {
                     expect(obj.user.platform).toBe('NodeJS')
                     expect(obj.user.sdkType).toBe('server')
-                    expect(obj.user.sdkVersion).toBe('1.4.22')
+                    expect(obj.user.sdkVersion).toBe(latestNodeJsSdkVersion)
                     expect(obj.user.user_id).toBe(validUserId)
 
                     expect(obj.events.length).toBe(2)
@@ -326,7 +327,7 @@ describe('Track Tests - Local', () => {
                 batch.forEach((obj: any) => {
                     expect(obj.user.platform).toBe('NodeJS')
                     expect(obj.user.sdkType).toBe('server')
-                    expect(obj.user.sdkVersion).toBe('1.4.22')
+                    expect(obj.user.sdkVersion).toBe(latestNodeJsSdkVersion)
                     expect(obj.user.user_id).toBe(validUserId)
 
                     expect(obj.events.length).toBe(2)
