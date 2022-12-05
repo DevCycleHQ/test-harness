@@ -1,11 +1,11 @@
-import { 
-    getConnectionStringForProxy, 
-    forEachSDK, 
-    describeIf, 
-    createClient, 
+import {
+    getConnectionStringForProxy,
+    forEachSDK,
+    describeIf,
+    createClient,
     createUser,
     wait,
-    callVariable, 
+    callVariable,
     forEachVariableType,
     variablesForTypes
 } from '../helpers'
@@ -23,13 +23,13 @@ describe('Variable Tests - Cloud', () => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
         const clientId: string = uuidv4()
-        const mockServerUrl 
+        const mockServerUrl
             = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
-            await createClient(url, clientId, 'dvc_server_test_token', { 
-                baseURLOverride: `${mockServerUrl}/client/${clientId}`, 
+            await createClient(url, clientId, 'dvc_server_test_token', {
+                baseURLOverride: `${mockServerUrl}/client/${clientId}`,
                 enableCloudBucketing: true
             })
         })
@@ -101,7 +101,7 @@ describe('Variable Tests - Cloud', () => {
                     })
                 const variableResponse = await callVariable(clientId, url, userId, 'var_key', 'default_value')
                 await variableResponse.json()
-                
+
                 expect(scope.isDone()).toBeTruthy()
             })
 
@@ -111,7 +111,7 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
 
                 const newClientId = uuidv4()
-                await createClient(url, newClientId, 'dvc_server_test_token', { 
+                await createClient(url, newClientId, 'dvc_server_test_token', {
                     baseURLOverride: `${mockServerUrl}/client/${newClientId}`,
                     enableCloudBucketing: true,
                     enableEdgeDB: true
@@ -132,7 +132,7 @@ describe('Variable Tests - Cloud', () => {
                     })
                 const variableResponse = await callVariable(newClientId, url, userId, 'var_key', 'default_value')
                 await variableResponse.json()
-                
+
                 expect(scope.isDone()).toBeTruthy()
             })
 
@@ -141,7 +141,7 @@ describe('Variable Tests - Cloud', () => {
                     const response = await createUser(url, { user_id: 'user1' })
                     await response.json()
                     const userId = response.headers.get('location')
-    
+
                     scope
                         .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
@@ -149,14 +149,14 @@ describe('Variable Tests - Cloud', () => {
                         .reply(200, undefined)
 
                     const variableResponse = await callVariable(
-                        clientId, 
-                        url, 
-                        userId, 
-                        'var_key', 
+                        clientId,
+                        url,
+                        userId,
+                        'var_key',
                         variablesForTypes[type].defaultValue
                     )
                     const variable = await variableResponse.json()
-                    
+
                     expect(scope.isDone()).toBeTruthy()
                     expect(variable.entityType).toBe('Variable')
                     expect(variable.data.isDefaulted).toBeTruthy()
@@ -169,22 +169,22 @@ describe('Variable Tests - Cloud', () => {
                     const response = await createUser(url, { user_id: 'user1' })
                     await response.json()
                     const userId = response.headers.get('location')
-    
+
                     scope
                         .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
                         .matchHeader('authorization', 'dvc_server_test_token')
                         .reply(200, variablesForTypes[type])
-                        
+
                     const variableResponse = await callVariable(
-                        clientId, 
-                        url, 
-                        userId, 
-                        'var_key', 
+                        clientId,
+                        url,
+                        userId,
+                        'var_key',
                         variablesForTypes[type].defaultValue
                     )
                     const variable = await variableResponse.json()
-                    
+
                     expect(scope.isDone()).toBeTruthy()
                     expect(variable.entityType).toBe('Variable')
                     expect(variable.data.isDefaulted).toBeFalsy()
@@ -198,7 +198,7 @@ describe('Variable Tests - Cloud', () => {
                 //     const response = await createUser(url, { user_id: 'user1' })
                 //     await response.json()
                 //     const userId = response.headers.get('location')
-    
+
                 //     scope
                 //         .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                 //         .matchHeader('Content-Type', 'application/json')
@@ -209,11 +209,11 @@ describe('Variable Tests - Cloud', () => {
                 //             defaultValue: 2,
                 //             isDefaulted: false
                 //         })
-                        
+
                 //     const variableResponse = await callVariable(clientId, url, userId, 'var_key', 'string')
                 //     const variable = await variableResponse.json()
                 //     await wait(1000)
-                    
+
                 //     expect(scope.isDone()).toBeTruthy()
                 //     expect(variable.entityType).toBe('Variable')
                 //     expect(variable.data.isDefaulted).toBeTruthy()
@@ -226,22 +226,22 @@ describe('Variable Tests - Cloud', () => {
                     const response = await createUser(url, { user_id: 'user1' })
                     await response.json()
                     const userId = response.headers.get('location')
-    
+
                     scope
                         .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
                         .matchHeader('authorization', 'dvc_server_test_token')
                         .reply(500)
-                        
+
                     const variableResponse = await callVariable(
-                        clientId, 
-                        url, 
-                        userId, 
-                        'var_key', 
+                        clientId,
+                        url,
+                        userId,
+                        'var_key',
                         variablesForTypes[type].defaultValue
                     )
                     const variable = await variableResponse.json()
-                    
+
                     expect(scope.isDone()).toBeTruthy()
                     expect(variable.entityType).toBe('Variable')
                     expect(variable.data.isDefaulted).toBeTruthy()

@@ -13,12 +13,23 @@ export const initialize = () => {
 
     router.all('/(.*)', async (ctx) => {
         const { headers, request } = ctx
-        const response = await axios[request.method.toLowerCase()](`https://nock.com${ctx.request.url}`,
-            request.body, {
-                headers
-            })
-        ctx.body = response.data
-        ctx.status = response.status
+        try {
+            const response = await axios[request.method.toLowerCase()](`https://nock.com${ctx.request.url}`,
+                request.body, {
+                    headers
+                })
+            ctx.body = response.data
+            ctx.status = response.status
+        } catch (error) {
+            if (error.response) {
+                ctx.body = error.response.data
+                ctx.status = error.response.status
+            } else if (error.request) {
+                console.log(error.request);
+            } else {
+                console.log('Error', error.message);
+            }
+        }
     })
 
     app
