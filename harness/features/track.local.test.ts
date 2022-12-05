@@ -43,7 +43,11 @@ describe('Track Tests - Local', () => {
 
         afterEach(() => {
             jest.clearAllMocks()
-            nock.cleanAll()
+        })
+
+        // only for debugging
+        beforeEach(() => {
+            console.log('beforeEach', scope.activeMocks())
         })
 
         describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
@@ -202,9 +206,9 @@ describe('Track Tests - Local', () => {
                     { type: eventType2, target: variableId2, value: value2 })
 
                 scope
-                    .post((uri) => uri.includes(`/client/${clientId}/v1/events/batch`))
+                    .post(`/client/${clientId}/v1/events/batch`)
                     .matchHeader('Content-Type', 'application/json')
-                    .reply(400, {})
+                    .reply(519, {})
 
                 await wait(2500)
 
@@ -286,7 +290,6 @@ describe('Track Tests - Local', () => {
                     })
 
                 await wait(20000)
-
 
                 let finalTime = 0
                 scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {

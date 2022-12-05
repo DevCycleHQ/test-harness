@@ -54,7 +54,7 @@ describe('Track Tests - Cloud', () => {
                     { type: eventType, target: variableId, value })
 
                 scope
-                    .post((uri) => uri.includes('/v1/track'))
+                    .post(`/client/${clientId}/v1/track`)
                     .matchHeader('Content-Type', 'application/json')
                     .reply((uri, body) => {
                         mockEvents(body)
@@ -94,12 +94,12 @@ describe('Track Tests - Cloud', () => {
                     { type: eventType, target: variableId, value })
 
                 scope
-                    .post((uri) => uri.includes('/v1/track'))
+                    .post(`/client/${clientId}/v1/track`)
                     .matchHeader('Content-Type', 'application/json')
-                    .reply(400, {})
+                    .reply(519, {})
 
                 scope
-                    .post((uri) => uri.includes('/v1/track'))
+                    .post(`/client/${clientId}/v1/track`)
                     .matchHeader('Content-Type', 'application/json')
                     .reply((uri, body) => {
                         mockEvents(body)
