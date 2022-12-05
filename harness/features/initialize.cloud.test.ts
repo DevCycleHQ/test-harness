@@ -32,7 +32,7 @@ describe('Client Initialize Tests - Cloud', () => {
 
         describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
 
-            it.only('should throw an exceptinon and return no location if invalid SDK token is sent', async () => {
+            it('should throw an exceptinon and return no location if invalid SDK token is sent', async () => {
                 const clientId: string = uuidv4()
                 const response = await createClient(url, clientId, 'invalidKey', clientOptions)
                 const body = await response.json()
@@ -41,7 +41,7 @@ describe('Client Initialize Tests - Cloud', () => {
                 expect(createdClientId).toBeNull()
             })
 
-            it.only('should throw an exceptinon and return no location if no SDK token is sent', async () => {
+            it('should throw an exceptinon and return no location if no SDK token is sent', async () => {
                 const clientId: string = uuidv4()
                 const response = await createClient(url, clientId, null, clientOptions)
                 const body = await response.json()
@@ -50,7 +50,7 @@ describe('Client Initialize Tests - Cloud', () => {
                 expect(createdClientId).toBeNull()
             })
 
-            it.only('should return client object location if SDK token is correct', async () => {
+            it('should return client object location if SDK token is correct', async () => {
                 const clientId: string = uuidv4()
                 const response = await createClient(url, clientId, sdkKey,
                     { ...clientOptions, baseURLOverride: `${mockServerUrl}/client/${clientId}` })
