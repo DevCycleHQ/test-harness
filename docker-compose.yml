@@ -6,6 +6,7 @@ services:
       context: ./proxies/nodejs
       args:
         - NODEJS_SDK_VERSION=${NODEJS_SDK_VERSION}
+        - GITHUB_SHA=${GITHUB_SHA}
     container_name: nodejs
     ports:
       - "3000"

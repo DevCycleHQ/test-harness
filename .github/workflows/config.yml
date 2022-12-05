@@ -19,6 +19,12 @@ jobs:
     env:
       DOCKER_HOST_IP: '172.17.0.1'
     steps:
+      - name: Write variables to .env file
+        run: |
+          if [ -f ".env" ]
+          then 
+              echo "GITHUB_SHA=${{ github.event.inputs.sha }}" > ".env"
+          fi
       - uses: actions/setup-node@v3
         with:
           node-version: 18
