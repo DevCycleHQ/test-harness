@@ -15,7 +15,7 @@ describe('Client Initialize Tests - Cloud', () => {
         const mockServerUrl
             = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 
-        const sdkKey = 'dvc_server_test_token'
+        const sdkKey = 'dvc_server_test_token_suthar'
 
         const clientOptions = {
             enableCloudBucketing: true,
