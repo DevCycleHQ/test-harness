@@ -49,15 +49,6 @@ describe('Track Tests - Local', () => {
 
         })
 
-        afterEach(() => {
-            jest.clearAllMocks()
-        })
-
-        // only for debugging
-        beforeEach(() => {
-            console.log('beforeEach', scope.activeMocks())
-        })
-
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
             describe('Expect no events sent', () => {
                 it('should not send an event if the event type not set', async () => {
@@ -73,14 +64,10 @@ describe('Track Tests - Local', () => {
                         req.body = eventBody
                     })
 
-                    // scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
-                    //     eventBody = body
-                    //     return [201]
-                    // })
-
                     await wait(2000) // wait for event flush
 
                     const res = await trackResponse.json()
+                    console.log('res', res)
                     expect(res.entityType).toBe('Void') // this should be  res.exception = `Invalid Event`
                     expect(eventBody).toEqual({})
                     // expect(scope.isDone()).toBe(true)

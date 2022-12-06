@@ -118,7 +118,6 @@ describe('Track Tests - Cloud', () => {
         eventType: string,
         value?: number,
     ) => {
-        console.log(body)
         expect(body).toEqual({
             user: expect.objectContaining({
                 platform: 'NodeJS',
