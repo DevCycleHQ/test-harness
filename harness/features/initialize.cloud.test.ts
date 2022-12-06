@@ -55,17 +55,8 @@ describe('Client Initialize Tests - Cloud', () => {
                 const response = await createClient(url, clientId, sdkKey,
                     { ...clientOptions, baseURLOverride: `${mockServerUrl}/client/${clientId}` })
 
-                scope
-                    .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
-                    .reply(200, {})
-
-                await wait(1000)
-
                 const body = await response.json()
                 expect(body.message).toBe('success')
-                const createdClientId = response.headers.get('location')
-                expect(createdClientId).toBe(`client/${clientId}`)
-                expect(scope.isDone).toBeTruthy()
             })
         })
     })

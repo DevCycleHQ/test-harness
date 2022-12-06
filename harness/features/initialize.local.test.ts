@@ -10,11 +10,12 @@ import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../mockServer'
 import { Capabilities, SDKCapabilities } from '../types'
 import nock from 'nock'
+import { config } from '../mockData'
 
 jest.setTimeout(10000)
 
 describe('Initialize Tests - Local', () => {
-    const mockServerUrl 
+    const mockServerUrl
         = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
     const scope = getServerScope()
 
@@ -74,8 +75,8 @@ describe('Initialize Tests - Local', () => {
                     .post(callbackSubdirectory, { message: `onClientInitialized was invoked on /client/${clientId}` })
                     .matchHeader('Content-Type', 'application/json')
                     .reply(204)
-                
-                await createClient(url, clientId, sdkKey)
+
+                await createClient(url, clientId, sdkKey, { baseURLOverride: `${mockServerUrl}/client/${clientId}` })
                 await callOnClientInitialized(clientId, url, `${mockServerUrl}${callbackSubdirectory}`)
                 await wait(500)
 
