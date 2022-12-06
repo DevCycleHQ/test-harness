@@ -101,12 +101,12 @@ export const handleLocation = async (
 
 const getEntityFromLocation = (location: string, data: DataStore) => {
     const urlParts = location.replace(/^\//, '').split('/')
-    const [locationType] = urlParts
+    const [locationType, ...locationPath] = urlParts
 
     console.log('command: ', locationType)
 
     if (locationType === 'command') {
-        const [entityType, commandId] = urlParts.slice(1)
+        const [entityType, commandId] = locationPath
         // debug logs
         console.log('data: ', data)
         console.log('commandResults: ', data.commandResults)
@@ -115,10 +115,10 @@ const getEntityFromLocation = (location: string, data: DataStore) => {
 
         return data.commandResults[entityType][commandId]
     } else if (locationType === 'client') {
-        const [clientId] = urlParts.slice(1)
+        const [clientId] = locationPath
         return data.clients[clientId]
     } else if (locationType === 'user') {
-        const [userId] = urlParts.slice(1)
+        const [userId] = locationPath
         return data.users[userId]
     }
 
