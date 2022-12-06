@@ -12,8 +12,9 @@ let unmatchedRequests = []
 
 export const assertNoUnmatchedRequests = async () => {
     if (unmatchedRequests.length > 0) {
+        const currentUnmatchedRequests = unmatchedRequests
         unmatchedRequests = []
-        throw new Error('Unmatched requests: ' + unmatchedRequests)
+        throw new Error('Unmatched requests: ' + currentUnmatchedRequests)
     }
 }
 

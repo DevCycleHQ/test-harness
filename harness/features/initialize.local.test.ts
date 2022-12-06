@@ -67,6 +67,10 @@ describe('Initialize Tests - Local', () => {
 
             it('calls initialize promise/callback when config is successfully retrieved', async () => {
                 const clientId = uuidv4()
+                scope
+                    .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
+                    .reply(200, {})
+
                 const callbackSubdirectory = `/client/${clientId}/onClientInitialized`
                 scope
                     .post(callbackSubdirectory, { message: `onClientInitialized was invoked on /client/${clientId}` })
