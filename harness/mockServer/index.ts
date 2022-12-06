@@ -4,10 +4,24 @@ import nock from 'nock'
 import axios from 'axios'
 import bodyParser from 'koa-bodyparser'
 
-const scope = nock('https://nock.com')
+let scope = nock('https://nock.com')
 export const getServerScope = () => scope
 
-export const initialize = () => {
+export const resetServerScope = () => {
+    nock.cleanAll()
+    scope = nock('https://nock.com')
+}
+
+let unmatchedRequests = []
+
+export const assertNoUnmatchedRequests = async () => {
+    if (unmatchedRequests.length > 0) {
+        unmatchedRequests = []
+        throw new Error('Unmatched requests: ' + unmatchedRequests)
+    }
+}
+
+export function initialize() {
     const app = new Koa()
     const router = new Router()
 
@@ -24,10 +38,9 @@ export const initialize = () => {
             if (error.response) {
                 ctx.body = error.response.data
                 ctx.status = error.response.status
-            } else if (error.request) {
-                console.log(error.request);
             } else {
                 console.log('Error', error.message);
+                unmatchedRequests.push(error)
             }
         }
     })

@@ -9,8 +9,6 @@ import {
 import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../mockServer'
 import { Capabilities, SDKCapabilities } from '../types'
-import nock from 'nock'
-import { config } from '../mockData'
 
 jest.setTimeout(10000)
 
@@ -65,7 +63,6 @@ describe('Initialize Tests - Local', () => {
                 await wait(500)
 
                 expect(message).toEqual('success')
-                expect(scope.isDone()).toBeTruthy()
             })
 
             it('calls initialize promise/callback when config is successfully retrieved', async () => {
@@ -76,11 +73,10 @@ describe('Initialize Tests - Local', () => {
                     .matchHeader('Content-Type', 'application/json')
                     .reply(204)
 
-                await createClient(url, clientId, sdkKey, { baseURLOverride: `${mockServerUrl}/client/${clientId}` })
+                await createClient(url, clientId, sdkKey)
                 await callOnClientInitialized(clientId, url, `${mockServerUrl}${callbackSubdirectory}`)
                 await wait(500)
 
-                expect(scope.isDone()).toBeTruthy()
             })
 
             it('calls initialize promise/callback when config fails to be retrieved', async () => {
@@ -99,7 +95,6 @@ describe('Initialize Tests - Local', () => {
                 await callOnClientInitialized(clientId, url, `${mockServerUrl}${callbackSubdirectory}`)
                 await wait(500)
 
-                expect(scope.isDone()).toBeTruthy()
             })
 
             it('fetches config again after 3 seconds when config polling inteval is overriden', async () => {
@@ -131,7 +126,7 @@ describe('Initialize Tests - Local', () => {
 
                 await wait(3000)
 
-                expect(scope.isDone()).toBeTruthy()
+
             }, 5000)
         })
     })
