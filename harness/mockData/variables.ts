@@ -1,26 +1,28 @@
-export const variables = {
+import { BucketedUserConfig, VariableType } from '@devcycle/types'
+
+export const variables: BucketedUserConfig['variables'] = {
     "bool-var": {
         "_id": "638681f059f1b81cc9e6c7fa",
         "key": "bool-var",
-        "type": "Boolean",
+        "type": VariableType.boolean,
         "value": true
     },
     "string-var": {
         "_id": "638681f059f1b81cc9e6c7fb",
         "key": "string-var",
-        "type": "String",
+        "type": VariableType.string,
         "value": "string"
     },
     "number-var": {
         "_id": "638681f059f1b81cc9e6c7fc",
         "key": "number-var",
-        "type": "Number",
+        "type": VariableType.number,
         "value": 1
     },
     "json-var": {
         "_id": "638681f059f1b81cc9e6c7fd",
         "key": "json-var",
-        "type": "JSON",
+        "type": VariableType.object,
         "value": {
             "facts": true
         }
@@ -28,7 +30,7 @@ export const variables = {
     "schedule-feature": {
         "_id": "6386813a59f1b81cc9e6c68f",
         "key": "schedule-feature",
-        "type": "Boolean",
+        "type": VariableType.boolean,
         "value": true
     }
 }
