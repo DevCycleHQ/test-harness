@@ -61,7 +61,7 @@ describe('Track Tests - Cloud', () => {
                 await callTrack(clientId, url, userId,
                     { type: eventType, target: variableId, value })
 
-                await waitForEvent(550)
+                await waitForEvent()
 
                 expectEventBody(eventBody, variableId, eventType, value)
             })
@@ -95,7 +95,7 @@ describe('Track Tests - Cloud', () => {
 
                 await trackResponse.json()
 
-                await waitForEvent(550)
+                await waitForEvent()
 
                 expectEventBody(eventBody, variableId, eventType, value)
             })
@@ -103,11 +103,11 @@ describe('Track Tests - Cloud', () => {
         })
     })
 
-    const waitForEvent = async (ms) => {
+    const waitForEvent = async () => {
         await new Promise((resolve) => {
             setTimeout(() => {
                 resolve({})
-            }, ms)
+            }, 550)
         })
         expect(scope.isDone()).toBeTruthy()
     }
