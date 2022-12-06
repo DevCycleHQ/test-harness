@@ -19,7 +19,6 @@ jest.setTimeout(1000000)
 const scope = getServerScope()
 
 describe('Track Tests - Local', () => {
-    const mockEvents = jest.fn()
     const validUserId = 'user1'
     forEachSDK((name) => {
         let url: string
@@ -60,7 +59,7 @@ describe('Track Tests - Local', () => {
         })
 
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
-            describe('Should not send event', () => {
+            describe('Expect no events sent', () => {
                 it('should not send an event if the event type not set', async () => {
                     let eventBody = {}
 
@@ -88,8 +87,7 @@ describe('Track Tests - Local', () => {
                 })
             })
 
-            describe('Should send event', () => {
-
+            describe('Expect events sent', () => {
                 it('should call events API to track event', async () => {
                     let eventBody = {}
                     const eventType = 'pageNavigated'
@@ -171,7 +169,6 @@ describe('Track Tests - Local', () => {
                                 user: expect.objectContaining({
                                     platform: 'NodeJS',
                                     sdkType: 'server',
-                                    // sdkVersion: latestNodeJsSdkVersion,
                                     user_id: validUserId,
                                 }),
                                 events: [
@@ -236,7 +233,6 @@ describe('Track Tests - Local', () => {
                                 user: expect.objectContaining({
                                     platform: 'NodeJS',
                                     sdkType: 'server',
-                                    // sdkVersion: latestNodeJsSdkVersion,
                                     user_id: validUserId,
                                 }),
                                 events: [
@@ -279,14 +275,9 @@ describe('Track Tests - Local', () => {
                     await response.json()
                     const userId = response.headers.get('location')
 
-                    await callTrack(clientId, url, userId,
-                        { type: eventType, target: variableId, value: value })
-                    await callTrack(clientId, url, userId,
-                        { type: eventType2, target: variableId2, value: value2 })
-
                     let startDate = Date.now()
                     scope
-                        .post((uri) => uri.includes(`/client/${clientId}/v1/events/batch`))
+                        .post(`/client/${clientId}/v1/events/batch`)
                         .matchHeader('Content-Type', 'application/json')
                         .times(10)
                         .reply((uri, body) => {
@@ -296,8 +287,6 @@ describe('Track Tests - Local', () => {
                             return [519]
                         })
 
-                    await wait(20000)
-
                     let finalTime = 0
                     scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
                         eventBody = body
@@ -306,7 +295,14 @@ describe('Track Tests - Local', () => {
                         return [201]
                     })
 
-                    await wait(20000)
+                    await callTrack(clientId, url, userId,
+                        { type: eventType, target: variableId, value: value })
+                    await callTrack(clientId, url, userId,
+                        { type: eventType2, target: variableId2, value: value2 })
+
+                    console.log('scope active mocks', scope.activeMocks())
+
+                    await wait(1000 * 15) //wait for the flush to happen
 
                     // I do not think this test is reliable
                     let total = 0
@@ -321,39 +317,34 @@ describe('Track Tests - Local', () => {
                     const avg = total / timestamps.length
                     console.log('avg', avg)
 
-                    await new Promise((resolve) => {
-                        setTimeout(() => {
-                            resolve({})
-                        }, 1000)
-                    })
+                    await waitForEvent()
 
-                    expect(mockEvents).toHaveBeenCalledTimes(1)
-                    expect(finalTime).toBeGreaterThanOrEqual(avg)
-                    const batch: [] = mockEvents.mock.calls[0][0].batch
-                    expect(batch).toBeDefined()
-
-                    batch.forEach((obj: any) => {
-                        expect(obj.user.platform).toBe('NodeJS')
-                        expect(obj.user.sdkType).toBe('server')
-                        // expect(obj.user.sdkVersion).toBe(latestNodeJsSdkVersion)
-                        expect(obj.user.user_id).toBe(validUserId)
-
-                        expect(obj.events.length).toBe(2)
-
-                        //check first event
-                        expect(obj.events[0].type).toBe('customEvent')
-                        expect(obj.events[0].customType).toBe(eventType)
-                        expect(obj.events[0].target).toBe(variableId)
-                        expect(obj.events[0].user_id).toBe(validUserId)
-                        expect(obj.events[0].value).toBe(value)
-
-                        //check second event
-                        expect(obj.events[1].type).toBe('customEvent')
-                        expect(obj.events[1].customType).toBe(eventType2)
-                        expect(obj.events[1].target).toBe(variableId2)
-                        expect(obj.events[1].user_id).toBe(validUserId)
-                        expect(obj.events[1].value).toBe(value2)
-
+                    expect(eventBody).toEqual({
+                        batch: [
+                            {
+                                user: expect.objectContaining({
+                                    platform: 'NodeJS',
+                                    sdkType: 'server',
+                                    user_id: validUserId,
+                                }),
+                                events: [
+                                    expect.objectContaining({
+                                        type: 'customEvent',
+                                        customType: eventType,
+                                        target: variableId,
+                                        value: value,
+                                        user_id: validUserId,
+                                    }),
+                                    expect.objectContaining({
+                                        type: 'customEvent',
+                                        customType: eventType2,
+                                        target: variableId2,
+                                        value: value2,
+                                        user_id: validUserId,
+                                    })
+                                ]
+                            },
+                        ],
                     })
                 })
             })

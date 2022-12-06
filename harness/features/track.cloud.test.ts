@@ -9,7 +9,6 @@ jest.setTimeout(1000000)
 const scope = getServerScope()
 
 describe('Track Tests - Cloud', () => {
-    const mockEvents = jest.fn()
     const validUserId = 'user1'
     forEachSDK((name) => {
         let url: string
