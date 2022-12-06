@@ -1,5 +1,5 @@
 import { Sdks } from './types'
-import { getServerScope, resetServerScope } from './mockServer'
+import { getServerScope } from './mockServer'
 import nock from 'nock'
 
 export const getConnectionStringForProxy = (proxy: string) => {
@@ -28,9 +28,6 @@ export const forEachSDK = (tests) => {
         afterEach(async () => {
             if (!scope.isDone()) {
                 const pendingMocks = scope.pendingMocks()
-                // ensure that no interceptors are left registered (will be used in other test cases)
-                resetServerScope()
-                // then throw an error
                 throw new Error('Unsatisfied nock scopes: ' + pendingMocks)
             }
             await global.assertNoUnmatchedRequests()

@@ -4,13 +4,8 @@ import nock from 'nock'
 import axios from 'axios'
 import bodyParser from 'koa-bodyparser'
 
-let scope = nock('https://nock.com')
+const scope = nock('https://nock.com')
 export const getServerScope = () => scope
-
-export const resetServerScope = () => {
-    nock.cleanAll()
-    scope = nock('https://nock.com')
-}
 
 let unmatchedRequests = []
 
