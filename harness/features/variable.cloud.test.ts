@@ -19,7 +19,7 @@ const scope = getServerScope()
 describe('Variable Tests - Cloud', () => {
     forEachSDK((name) => {
         let url: string
-        const capabilities: string[] = SDKCapabilities[name]
+        const capabilities: string[] = SDKCapabilities[name] || []
         const clientId: string = uuidv4()
         const sdkKey: string = `dvc_server_${clientId}`
         const mockServerUrl

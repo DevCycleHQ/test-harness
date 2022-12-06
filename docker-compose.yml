@@ -7,6 +7,7 @@ services:
       args:
         - NODEJS_SDK_VERSION=${NODEJS_SDK_VERSION}
         - GITHUB_SHA=${GITHUB_SHA}
+        - SDKS_TO_TEST=${SDKS_TO_TEST}
     container_name: nodejs
     ports:
       - "3000"

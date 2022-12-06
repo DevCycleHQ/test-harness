@@ -23,7 +23,8 @@ jobs:
         run: |
           if [ -f ".env" ]
           then 
-              echo "GITHUB_SHA=${{ github.event.inputs.sha }}" > ".env"
+              echo "GITHUB_SHA='${{ github.event.inputs.sha }}'" > ".env"
+              echo "SDKS_TO_TEST='${{ github.event.inputs.sdk }}'" > ".env"
           fi
       - uses: actions/setup-node@v3
         with:

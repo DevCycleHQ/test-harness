@@ -17,10 +17,14 @@ export const forEachSDK = (tests) => {
     // get the list of SDK's and their capabilities
     let SDKs
     try {
-        SDKs = JSON.parse(process.env.SDKS_TO_TEST)
+        SDKs = JSON.parse(process.env.SDKS_TO_TEST).map((sdk) => Sdks[sdk])
     } catch (e) {
-        console.log('No specified SDKs to test, running all tests')
-        SDKs = Object.values(Sdks)
+        if (process.env.SDKS_TO_TEST) {
+            SDKs = [process.env.SDKS_TO_TEST]
+        } else {
+            console.log('No specified SDKs to test, running all tests')
+            SDKs = Object.values(Sdks)
+        }
     }
     const scope = getServerScope()
 
