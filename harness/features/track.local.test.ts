@@ -70,7 +70,6 @@ describe('Track Tests - Local', () => {
                     console.log('res', res)
                     expect(res.exception).toBe('Missing parameter: type') // this should be  res.exception = `Invalid Event`
                     expect(eventBody).toEqual({})
-                    // expect(scope.isDone()).toBe(true)
                 })
             })
 
