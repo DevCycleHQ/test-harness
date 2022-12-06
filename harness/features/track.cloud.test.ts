@@ -1,5 +1,5 @@
-import { getConnectionStringForProxy, forEachSDK, describeIf, createClient, createUser } from '../helpers'
-import { Capabilities, SDKCapabilities, latestNodeJsSdkVersion } from '../types'
+import { getConnectionStringForProxy, forEachSDK, describeIf, createClient, createUser, callTrack } from '../helpers'
+import { Capabilities, SDKCapabilities } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../mockServer'
 import nock from 'nock'
@@ -32,7 +32,7 @@ describe('Track Tests - Cloud', () => {
 
         describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
             it('should complain if event type not set', async () => {
-                const response = await createUser(url, { user_id: 'user1' })
+                const response = await createUser(url, { user_id: validUserId })
                 await response.json()
                 const userId = response.headers.get('location')
 
@@ -42,6 +42,7 @@ describe('Track Tests - Cloud', () => {
             })
 
             it('should call events API to track event', async () => {
+                let eventBody = {}
                 const eventType = 'pageNavigated'
                 const variableId = 'string-var'
                 const value = 1
@@ -50,37 +51,24 @@ describe('Track Tests - Cloud', () => {
                 await response.json()
                 const userId = response.headers.get('location')
 
-                const trackResponse = await callTrack(clientId, url, userId,
-                    { type: eventType, target: variableId, value })
-
                 scope
                     .post(`/client/${clientId}/v1/track`)
                     .matchHeader('Content-Type', 'application/json')
                     .reply((uri, body) => {
-                        mockEvents(body)
+                        eventBody = body
                         return [201, { success: true }]
                     })
 
-                await wait(1000)
-                await trackResponse.json()
+                await callTrack(clientId, url, userId,
+                    { type: eventType, target: variableId, value })
 
-                expect(mockEvents).toHaveBeenCalledTimes(1)
-                const track = mockEvents.mock.calls[0][0]
-                expect(track).toBeDefined()
+                await waitForEvent(550)
 
-                expect(track.user.platform).toBe('NodeJS')
-                expect(track.user.sdkType).toBe('server')
-                // expect(track.user.sdkVersion).toBe(latestNodeJsSdkVersion)
-                expect(track.user.user_id).toBe(validUserId)
-
-                expect(track.events.length).toBe(1)
-
-                expect(track.events[0].type).toBe(eventType)
-                expect(track.events[0].target).toBe(variableId)
-                expect(track.events[0].value).toBe(value)
+                expectEventBody(eventBody, variableId, eventType, value)
             })
 
             it('should retry events API on failed request', async () => {
+                let eventBody = {}
 
                 const eventType = 'buttonClicked'
                 const variableId = 'json-var'
@@ -89,9 +77,6 @@ describe('Track Tests - Cloud', () => {
                 const response = await createUser(url, { user_id: validUserId })
                 await response.json()
                 const userId = response.headers.get('location')
-
-                const trackResponse = await callTrack(clientId, url, userId,
-                    { type: eventType, target: variableId, value })
 
                 scope
                     .post(`/client/${clientId}/v1/track`)
@@ -102,55 +87,52 @@ describe('Track Tests - Cloud', () => {
                     .post(`/client/${clientId}/v1/track`)
                     .matchHeader('Content-Type', 'application/json')
                     .reply((uri, body) => {
-                        mockEvents(body)
+                        eventBody = body
                         return [201, { success: true }]
                     })
 
-                await wait(1000)
+                const trackResponse = await callTrack(clientId, url, userId,
+                    { type: eventType, target: variableId, value })
+
                 await trackResponse.json()
 
-                expect(mockEvents).toHaveBeenCalledTimes(1)
-                const track = mockEvents.mock.calls[0][0]
-                expect(track).toBeDefined()
+                await waitForEvent(550)
 
-                expect(track.user.platform).toBe('NodeJS')
-                expect(track.user.sdkType).toBe('server')
-                // expect(track.user.sdkVersion).toBe(latestNodeJsSdkVersion)
-                expect(track.user.user_id).toBe(validUserId)
-
-                expect(track.events.length).toBe(1)
-
-                expect(track.events[0].type).toBe(eventType)
-                expect(track.events[0].target).toBe(variableId)
-                expect(track.events[0].value).toBe(value)
-
-                expect(scope.isDone()).toBeTruthy()
+                expectEventBody(eventBody, variableId, eventType, value)
             })
 
         })
     })
 
-    const callTrack = async (clientId: string, url: string, userLocation: string, event: any) => {
-        return await fetch(`${url}/client/${clientId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                command: 'track',
-                params: [
-                    { location: `${userLocation}` },
-                    { value: event }
-                ],
-            })
-        })
-    }
-
-    const wait = (ms: number) => {
-        return new Promise((resolve) => {
+    const waitForEvent = async (ms) => {
+        await new Promise((resolve) => {
             setTimeout(() => {
                 resolve({})
             }, ms)
+        })
+        expect(scope.isDone()).toBeTruthy()
+    }
+
+    const expectEventBody = (
+        body: Record<string, unknown>,
+        variableId: string,
+        eventType: string,
+        value?: number,
+    ) => {
+        console.log(body)
+        expect(body).toEqual({
+            user: expect.objectContaining({
+                platform: 'NodeJS',
+                sdkType: 'server',
+                user_id: validUserId,
+            }),
+            events: [
+                expect.objectContaining({
+                    type: eventType,
+                    target: variableId,
+                    value: value !== undefined ? value : 1,
+                })
+            ]
         })
     }
 })

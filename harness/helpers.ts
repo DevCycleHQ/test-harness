@@ -212,6 +212,22 @@ const callAllVariables = async (clientID: string, url: string, userLocation: str
     })
 }
 
+export const callTrack = async (clientId: string, url: string, userLocation: string, event: unknown) => {
+    return await fetch(`${url}/client/${clientId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            command: 'track',
+            params: [
+                { location: `${userLocation}` },
+                { value: event }
+            ],
+        })
+    })
+}
+
 export class TestClient {
     clientId: string
     sdkName: string

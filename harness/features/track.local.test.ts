@@ -1,7 +1,16 @@
-import { getConnectionStringForProxy, forEachSDK, describeIf, createClient, createUser, wait } from '../helpers'
+import {
+    getConnectionStringForProxy,
+    forEachSDK,
+    describeIf,
+    createClient,
+    createUser,
+    wait,
+    callOnClientInitialized,
+    callTrack
+} from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { v4 as uuidv4 } from 'uuid'
-import { getServerScope } from '../mockServer'
+import { getServerScope, initialize } from '../mockServer'
 import { config } from '../mockData/index'
 import nock from 'nock'
 
@@ -21,22 +30,24 @@ describe('Track Tests - Local', () => {
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
-            await createClient(url, clientId, 'dvc_server_test_token_parth2', {
-                baseURLOverride: `${mockServerUrl}/client/${clientId}`,
-                eventFlushIntervalMS: 1000, logLevel: 'debug'
-            })
 
             scope
                 .get(`/client/${clientId}/config/v1/server/dvc_server_test_token_parth2.json`)
                 .reply(200, config)
 
             scope.post(`/client/${clientId}`).reply((uri, body) => {
+                console.log('client initialize body', body)
                 if (typeof body === 'object'
                     && body.message.includes('onClientInitialized was invoked'))
                     return [200]
             })
 
-            // await wait(1000)
+            await createClient(url, clientId, 'dvc_server_test_token_parth2', {
+                baseURLOverride: `${mockServerUrl}/client/${clientId}`,
+                eventFlushIntervalMS: 1000, logLevel: 'debug', configPollingIntervalMS: 1000 * 60
+            })
+            await callOnClientInitialized(clientId, url, `${mockServerUrl}/client/${clientId}`)
+
         })
 
         afterEach(() => {
@@ -48,9 +59,10 @@ describe('Track Tests - Local', () => {
             console.log('beforeEach', scope.activeMocks())
         })
 
-        describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
-            describe('Failing tests', () => {
+        describeIf(capabilities.includes(Capabilities.local))(name, () => {
+            describe('Should not send event', () => {
                 it('should not send an event if the event type not set', async () => {
+                    let eventBody = {}
 
                     const response = await createUser(url, { user_id: validUserId })
                     await response.json()
@@ -58,27 +70,28 @@ describe('Track Tests - Local', () => {
 
                     const trackResponse = await callTrack(clientId, url, userId, {})
 
-                    scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
-                        mockEvents(body)
-                        return [201]
+                    nock.emitter.on('no match', (req) => {
+                        req.body = eventBody
                     })
 
-                    await wait(2000)
+                    // scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                    //     eventBody = body
+                    //     return [201]
+                    // })
 
-                    expect(mockEvents).toHaveBeenCalledTimes(0)
+                    await wait(2000) // wait for event flush
 
                     const res = await trackResponse.json()
-                    console.log('res first', res)
                     expect(res.entityType).toBe('Void') // this should be  res.exception = `Invalid Event`
-                    // console.log('scope', scope.activeMocks())
-                    // expect(scope.isDone()).toBeTruthy()
-
+                    expect(eventBody).toEqual({})
+                    // expect(scope.isDone()).toBe(true)
                 })
             })
 
-            describe('Passing tests', () => {
+            describe('Should send event', () => {
 
                 it('should call events API to track event', async () => {
+                    let eventBody = {}
                     const eventType = 'pageNavigated'
                     const variableId = 'string-var'
                     const value = 1
@@ -87,38 +100,42 @@ describe('Track Tests - Local', () => {
                     await response.json()
                     const userId = response.headers.get('location')
 
-                    const trackResponse = await callTrack(clientId, url, userId,
-                        { type: eventType, target: 'string-var', value: value })
-
-
                     scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
-                        mockEvents(body)
+                        eventBody = body
                         return [201]
                     })
 
-                    await wait(2500)
+                    const trackResponse = await callTrack(clientId, url, userId,
+                        { type: eventType, target: 'string-var', value: value })
+
                     await trackResponse.json()
+                    await waitForEvent()
 
-                    expect(mockEvents).toHaveBeenCalledTimes(1)
-                    const batch: [] = mockEvents.mock.calls[0][0].batch
-                    expect(batch).toBeDefined()
-                    batch.forEach((obj: any) => {
-                        expect(obj.user.platform).toBe('NodeJS')
-                        expect(obj.user.sdkType).toBe('server')
-                        // expect(obj.user.sdkVersion).toBe(latestNodeJsSdkVersion)
-                        expect(obj.user.user_id).toBe(validUserId)
-
-                        expect(obj.events.length).toBe(1)
-
-                        expect(obj.events[0].type).toBe('customEvent')
-                        expect(obj.events[0].customType).toBe(eventType)
-                        expect(obj.events[0].target).toBe(variableId)
-                        expect(obj.events[0].value).toBe(value)
-                        expect(obj.events[0].user_id).toBe(validUserId)
+                    expect(eventBody).toEqual({
+                        batch: [
+                            {
+                                user: expect.objectContaining({
+                                    platform: 'NodeJS',
+                                    sdkType: 'server',
+                                    // sdkVersion: latestNodeJsSdkVersion,
+                                    user_id: validUserId,
+                                }),
+                                events: [
+                                    expect.objectContaining({
+                                        type: 'customEvent',
+                                        customType: eventType,
+                                        target: variableId,
+                                        value: value,
+                                        user_id: validUserId,
+                                    })
+                                ]
+                            },
+                        ],
                     })
                 })
 
                 it('should call events API to track 2 events', async () => {
+                    let eventBody = {}
                     // const eventType = 'buttonClicked'
                     const eventType = 'buttonClicked'
                     const variableId = 'string-var'
@@ -133,56 +150,53 @@ describe('Track Tests - Local', () => {
                     await response.json()
                     const userId = response.headers.get('location')
 
+
+                    scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                        eventBody = body
+                        return [201]
+                    })
+
+                    console.log('active mocks', scope.activeMocks())
+
                     await callTrack(clientId, url, userId,
                         { type: eventType, target: variableId, value: value })
                     await callTrack(clientId, url, userId,
                         { type: eventType2, target: variableId2, value: value2 })
 
-                    scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
-                        mockEvents(body)
-                        return [201]
-                    })
+                    await waitForEvent()
 
-                    await wait(2500)
-
-                    await new Promise((resolve) => {
-                        setTimeout(() => {
-                            resolve({})
-                        }, 1000)
-                    })
-
-
-                    expect(mockEvents).toHaveBeenCalledTimes(1)
-
-                    const batch: [] = mockEvents.mock.calls[0][0].batch
-                    expect(batch).toBeDefined()
-
-                    batch.forEach((obj: any) => {
-                        expect(obj.user.platform).toBe('NodeJS')
-                        expect(obj.user.sdkType).toBe('server')
-                        // expect(obj.user.sdkVersion).toBe(latestNodeJsSdkVersion)
-                        expect(obj.user.user_id).toBe(validUserId)
-
-                        expect(obj.events.length).toBe(2)
-
-                        //check first event
-                        expect(obj.events[0].type).toBe('customEvent')
-                        expect(obj.events[0].customType).toBe(eventType)
-                        expect(obj.events[0].target).toBe(variableId)
-                        expect(obj.events[0].user_id).toBe(validUserId)
-                        expect(obj.events[0].value).toBe(value)
-
-                        //check second event
-                        expect(obj.events[1].type).toBe('customEvent')
-                        expect(obj.events[1].customType).toBe(eventType2)
-                        expect(obj.events[1].target).toBe(variableId2)
-                        expect(obj.events[1].user_id).toBe(validUserId)
-                        expect(obj.events[1].value).toBe(value2)
-
+                    expect(eventBody).toEqual({
+                        batch: [
+                            {
+                                user: expect.objectContaining({
+                                    platform: 'NodeJS',
+                                    sdkType: 'server',
+                                    // sdkVersion: latestNodeJsSdkVersion,
+                                    user_id: validUserId,
+                                }),
+                                events: [
+                                    expect.objectContaining({
+                                        type: 'customEvent',
+                                        customType: eventType,
+                                        target: variableId,
+                                        value: value,
+                                        user_id: validUserId,
+                                    }),
+                                    expect.objectContaining({
+                                        type: 'customEvent',
+                                        customType: eventType2,
+                                        target: variableId2,
+                                        value: value2,
+                                        user_id: validUserId,
+                                    })
+                                ]
+                            },
+                        ],
                     })
                 })
 
                 it('should retry events API call to track 2 events', async () => {
+                    let eventBody = {}
                     // const eventType = 'buttonClicked'
                     const eventType = 'buttonClicked'
                     const variableId = 'string-var'
@@ -196,63 +210,59 @@ describe('Track Tests - Local', () => {
                     const response = await createUser(url, { user_id: validUserId })
                     await response.json()
                     const userId = response.headers.get('location')
-
-                    await callTrack(clientId, url, userId,
-                        { type: eventType, target: variableId, value: value })
-                    await callTrack(clientId, url, userId,
-                        { type: eventType2, target: variableId2, value: value2 })
 
                     scope
                         .post(`/client/${clientId}/v1/events/batch`)
                         .matchHeader('Content-Type', 'application/json')
                         .reply(519, {})
 
-                    await wait(2500)
-
                     scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
-                        mockEvents(body)
+                        eventBody = body
                         return [201]
                     })
 
-                    await wait(2500)
+                    console.log('active mocks', scope.activeMocks())
 
-                    await new Promise((resolve) => {
-                        setTimeout(() => {
-                            resolve({})
-                        }, 1000)
-                    })
+                    await callTrack(clientId, url, userId,
+                        { type: eventType, target: variableId, value: value })
+                    await callTrack(clientId, url, userId,
+                        { type: eventType2, target: variableId2, value: value2 })
 
-                    expect(mockEvents).toHaveBeenCalledTimes(1)
+                    await waitForEvent()
 
-                    const batch: [] = mockEvents.mock.calls[0][0].batch
-                    expect(batch).toBeDefined()
-
-                    batch.forEach((obj: any) => {
-                        expect(obj.user.platform).toBe('NodeJS')
-                        expect(obj.user.sdkType).toBe('server')
-                        // expect(obj.user.sdkVersion).toBe(latestNodeJsSdkVersion)
-                        expect(obj.user.user_id).toBe(validUserId)
-
-                        expect(obj.events.length).toBe(2)
-
-                        //check first event
-                        expect(obj.events[0].type).toBe('customEvent')
-                        expect(obj.events[0].customType).toBe(eventType)
-                        expect(obj.events[0].target).toBe(variableId)
-                        expect(obj.events[0].user_id).toBe(validUserId)
-                        expect(obj.events[0].value).toBe(value)
-
-                        //check second event
-                        expect(obj.events[1].type).toBe('customEvent')
-                        expect(obj.events[1].customType).toBe(eventType2)
-                        expect(obj.events[1].target).toBe(variableId2)
-                        expect(obj.events[1].user_id).toBe(validUserId)
-                        expect(obj.events[1].value).toBe(value2)
-
+                    expect(eventBody).toEqual({
+                        batch: [
+                            {
+                                user: expect.objectContaining({
+                                    platform: 'NodeJS',
+                                    sdkType: 'server',
+                                    // sdkVersion: latestNodeJsSdkVersion,
+                                    user_id: validUserId,
+                                }),
+                                events: [
+                                    expect.objectContaining({
+                                        type: 'customEvent',
+                                        customType: eventType,
+                                        target: variableId,
+                                        value: value,
+                                        user_id: validUserId,
+                                    }),
+                                    expect.objectContaining({
+                                        type: 'customEvent',
+                                        customType: eventType2,
+                                        target: variableId2,
+                                        value: value2,
+                                        user_id: validUserId,
+                                    })
+                                ]
+                            },
+                        ],
                     })
                 })
 
+                //skipping this test because it takes too long to run and need to change the code to make it run faster
                 it.skip('should retry with exponential backoff events API call to track 2 events', async () => {
+                    let eventBody = {}
                     const timestamps = []
                     let count = 0
                     // const eventType = 'buttonClicked'
@@ -290,7 +300,7 @@ describe('Track Tests - Local', () => {
 
                     let finalTime = 0
                     scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
-                        mockEvents(body)
+                        eventBody = body
                         console.log('time finally' + (Date.now() - startDate))
                         finalTime = Date.now() - startDate
                         return [201]
@@ -350,20 +360,13 @@ describe('Track Tests - Local', () => {
         })
     })
 
-    const callTrack = async (clientId: string, url: string, userLocation: string, event: any) => {
-        return await fetch(`${url}/client/${clientId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                command: 'track',
-                isAsyc: true,
-                params: [
-                    { location: `${userLocation}` },
-                    { value: event }
-                ],
-            })
+    const waitForEvent = async () => {
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({})
+            }, 3000)
         })
+        expect(scope.isDone()).toBeTruthy()
     }
+
 })
