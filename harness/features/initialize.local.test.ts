@@ -73,10 +73,9 @@ describe('Initialize Tests - Local', () => {
                     .matchHeader('Content-Type', 'application/json')
                     .reply(204)
 
-                await createClient(url, clientId, sdkKey)
+                await createClient(url, clientId, sdkKey, { baseURLOverride: `${mockServerUrl}/client/${clientId}` })
                 await callOnClientInitialized(clientId, url, `${mockServerUrl}${callbackSubdirectory}`)
                 await wait(500)
-
             })
 
             it('calls initialize promise/callback when config fails to be retrieved', async () => {
