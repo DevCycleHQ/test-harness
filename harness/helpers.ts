@@ -1,6 +1,6 @@
 import { Sdks } from './types'
-import { getServerScope } from './mockServer'
 import nock from 'nock'
+import { getServerScope } from './nock'
 
 export const getConnectionStringForProxy = (proxy: string) => {
     const host = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_IP__`]

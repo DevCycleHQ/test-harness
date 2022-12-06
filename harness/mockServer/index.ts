@@ -1,11 +1,12 @@
 import Koa from 'koa'
 import Router from '@koa/router'
-import nock from 'nock'
 import axios from 'axios'
 import bodyParser from 'koa-bodyparser'
 
-const scope = nock('https://nock.com')
-export const getServerScope = () => scope
+// NOTE: This file is excecuted by the jest environment, which does not share a memory space / module cache with the
+// jest test files. This means that any things you want to be able to access from test context
+// (like the unmatchedRequests) will need to be bound to the global scope inside the jest-environment and accessed
+// through that
 
 let unmatchedRequests = []
 

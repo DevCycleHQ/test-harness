@@ -10,7 +10,7 @@ import {
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { v4 as uuidv4 } from 'uuid'
-import { getServerScope } from '../mockServer'
+import { getServerScope } from '../nock'
 
 jest.setTimeout(10000)
 
