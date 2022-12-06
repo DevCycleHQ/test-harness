@@ -100,39 +100,28 @@ export const handleLocation = async (
 }
 
 const getEntityFromLocation = (location: string, data: DataStore) => {
-    const urlParts = location.split('/')
+    const urlParts = location.replace(/^\//, '').split('/')
+    const [locationType, ...locationPath] = urlParts
 
-    /**
-     * location string is in the form of:
-     *  - URL = /entityType/id
-     *  - body params = entityType/id
-     * and therefore split on `/` will return an array of length 3 for URL and 2 for body params
-     */
-    if (urlParts.length === 3 || urlParts.length === 2) {
-        const entityType = urlParts[urlParts.length - 2]
-        const id = urlParts[urlParts.length - 1]
-        let entity
-        if (entityType === 'user') {
-            entity = data.users[id]
-        }
-        if (entityType === 'client') {
-            entity = data.clients[id]
-        }
-        return entity
-    } else if (urlParts.length === 4) {
-        const command = urlParts[urlParts.length - 3]
-        const entityType = urlParts[urlParts.length - 2]
-        const id = urlParts[urlParts.length - 1]
-        console.log('command: ', command)
-        if (command === 'command') {
-            // debug logs
-            console.log('data: ', data)
-            console.log('commandResults: ', data.commandResults)
-            console.log('entityType: ', data.commandResults[entityType])
-            console.log('id: ', data.commandResults[entityType][id])
-            return data.commandResults[entityType][id]
-        }
+    console.log('command: ', locationType)
+
+    if (locationType === 'command') {
+        const [entityType, commandId] = locationPath
+        // debug logs
+        console.log('data: ', data)
+        console.log('commandResults: ', data.commandResults)
+        console.log('entityType: ', data.commandResults[entityType])
+        console.log('id: ', data.commandResults[entityType][commandId])
+
+        return data.commandResults[entityType][commandId]
+    } else if (locationType === 'client') {
+        const [clientId] = locationPath
+        return data.clients[clientId]
+    } else if (locationType === 'user') {
+        const [userId] = locationPath
+        return data.users[userId]
     }
+
     return undefined
 }
 
