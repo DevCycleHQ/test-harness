@@ -63,7 +63,6 @@ describe('Initialize Tests - Local', () => {
 
                 await testClient.createClient()
                 await testClient.callOnClientInitialized()
-                await wait(500)
             })
 
             it('calls initialize promise/callback when config fails to be retrieved', async () => {
@@ -75,7 +74,6 @@ describe('Initialize Tests - Local', () => {
 
                 await testClient.createClient()
                 await testClient.callOnClientInitialized()
-                await wait(500)
 
             })
 

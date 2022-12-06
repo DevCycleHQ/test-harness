@@ -2,15 +2,13 @@ import {
     getConnectionStringForProxy, 
     forEachSDK, 
     describeIf, 
-    createClient, 
     createUser, 
-    callVariable, 
-    callOnClientInitialized,
-    forEachVariableType
+    forEachVariableType,
+    waitForRequest,
+    TestClient
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
-import { v4 as uuidv4 } from 'uuid'
-import { getServerScope } from '../mockServer'
+import { getServerScope } from '../nock'
 import { config } from '../mockData/index'
 
 jest.setTimeout(10000)
@@ -21,35 +19,25 @@ const expectedVariablesByType = {
     // these should match the config in mockData
     string: {
         key: 'string-var',
-        id: '638681f059f1b81cc9e6c7fb',
         defaultValue: 'default_value',
         variationOn: 'string',
-        variationOff: 'string-off'
     },
     number: {
         key: 'number-var',
-        id: '638681f059f1b81cc9e6c7fc', 
         defaultValue: 0,
         variationOn: 1,
-        variationOff: 2
     },
     boolean: {
         key: 'bool-var',
-        id: '638681f059f1b81cc9e6c7fa',
         defaultValue: false,
         variationOn: true,
-        variationOff: false
     },
     JSON: {
         key: 'json-var',
-        id: '638681f059f1b81cc9e6c7fd',
         defaultValue: {},
         variationOn: {
             'facts': true
         },
-        variationOff: {
-            'facts': false
-        }
     }
 }
 
@@ -57,22 +45,12 @@ describe('Variable Tests - Local', () => {
     forEachSDK((name) => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
-        const clientId: string = uuidv4()
-        const mockServerUrl 
-            = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
-
-        const baseURL = `${mockServerUrl}/client/${clientId}`
         const variationOnUser = { location: '', user_id: 'user1' }
         const noVariationUser = { location: '', user_id: 'user3' }
         const invalidUser = { location: '', user_id: '' }
         
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)  
-            // create client          
-            await createClient(url, clientId, 'dvc_server_test_token', {
-                baseURLOverride: baseURL,
-                eventFlushIntervalMS: 500
-            })
 
             // create users
             variationOnUser.location = (
@@ -86,53 +64,33 @@ describe('Variable Tests - Local', () => {
             invalidUser.location = (
                 await createUser(url, { name: 'invalid' })
             ).headers.get('location')
+
         })
 
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
-            describe('uninitialized client', () => {
-                it('should return default value if client is uninitialized',  async () => {
-                    const variableResponse = await callVariable(
-                        clientId, url, variationOnUser.location, 'string-var', 'string default'
-                    )
-                    const variable = await variableResponse.json()
-                    expectDefaultValue(variable, 'string default')
-                })
-
-                it('should return default value if user is invalid',  async () => {    
-                    const variableResponse =
-                        await callVariable( clientId, url, invalidUser.location, 'string-var', 'string default')
-                    const variable = await variableResponse.json()
-                    expectDefaultValue(variable, 'string default')
-                })
-            })
+            const testClient = new TestClient(name)
+            let eventsUrl: string
 
             describe('initialized client', () => {
                 beforeAll(async () => {
+                    // create client          
+                    await testClient.createClient({
+                        configPollingIntervalMS: 100000,
+                        eventFlushIntervalMS: 500,
+                    })
                     // mock endpoints
                     scope
-                        .get(`/client/${clientId}/config/v1/server/dvc_server_test_token.json`)
+                        .get(`/${testClient.clientLocation}/config/v1/server/${testClient.sdkKey}.json`)
                         .reply(200, config)
+                    
+                    await testClient.callOnClientInitialized()
 
-                    let resolveIsInitialized: (value: unknown) => void
-
-                    const isInitialized = new Promise(function(resolve){
-                        resolveIsInitialized = resolve
-                    })
-            
-                    scope.post(`/client/${clientId}`).reply(function(uri, body) {
-                        if (typeof body === 'object' 
-                         && body.message.includes('onClientInitialized was invoked')) resolveIsInitialized(true)
-                        return [200]
-                    })
-
-                    // wait until initialized
-                    await callOnClientInitialized(clientId, url, baseURL)
-                    await isInitialized
+                    eventsUrl = `/${testClient.clientLocation}/v1/events/batch`
                 })
 
                 it('should throw exception if user is invalid',  async () => {    
                     const variableResponse =
-                        await callVariable( clientId, url, invalidUser.location, 'string-var', 'string default')
+                        await testClient.callVariable(invalidUser.location, false, 'string-var', 'string default')
                     const variable = await variableResponse.json()
 
                     expect(variable.exception).toBe('Must have a user_id set on the user')
@@ -143,156 +101,189 @@ describe('Variable Tests - Local', () => {
 
                     it('should return variable if mock server returns object matching default type',  async () => {
                         let eventBody = {}
-                        scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                        const interceptor = scope.post(eventsUrl)
+                        interceptor.reply((uri, body) => {
                             eventBody = body
                             return [200]
                         })
                     
-                        const variableResponse = await callVariable(
-                            clientId, 
-                            url, 
+                        const variableResponse = await testClient.callVariable(
                             variationOnUser.location, 
+                            false,
                             key, 
                             defaultValue
                         )
                         const variable = await variableResponse.json()
-                        expect(variable.entityType).toBe('Variable')
-                        expect(JSON.stringify(variable.data.value)).toBe(JSON.stringify(variationOn))
-                        expect(variable.data.isDefaulted).toBe(false)
-                        expect(JSON.stringify(variable.data.defaultValue)).toBe(JSON.stringify(defaultValue))
+                        expect(variable).toEqual(expect.objectContaining({
+                            entityType: 'Variable',
+                            data: expect.objectContaining({
+                                isDefaulted: false, 
+                                defaultValue: defaultValue, 
+                                value: variationOn
+                            })
+                        }))
 
-                        await waitForEvent()
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableEvaluated')
                     })
 
                     it('should return default value if default type doesn\'t match variable type',  async () => {
                         let eventBody = {}
-                        scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                        const interceptor = scope.post(eventsUrl)
+                        interceptor.reply((uri, body) => {
                             eventBody = body
                             return [200]
                         })
 
                         const wrongTypeDefault = type === 'number' ? '1' : 1
                         const variableResponse =
-                            await callVariable(
-                                clientId, 
-                                url, 
-                                variationOnUser.location, 
+                            await testClient.callVariable(
+                                variationOnUser.location,
+                                false,
                                 key, 
                                 wrongTypeDefault
                             )
                         const variable = await variableResponse.json()
     
-                        expectDefaultValue(variable, wrongTypeDefault)    
-                        await waitForEvent()
+                        expectDefaultValue(key, variable, wrongTypeDefault)    
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableEvaluated')               
                     })
 
                     it('should return default value if user is not bucketed into variable',  async () => {
                         let eventBody = {}
-                        scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                        const interceptor = scope.post(eventsUrl)
+                        interceptor.reply((uri, body) => {
                             eventBody = body
                             return [200]
                         })
-                        const variableResponse = await callVariable(
-                            clientId, 
-                            url, 
+                        const variableResponse = await testClient.callVariable(
                             noVariationUser.location, 
+                            false,
                             key, 
                             defaultValue
                         )
                         const variable = await variableResponse.json()
     
-                        expectDefaultValue(variable, defaultValue)                    
-                        await waitForEvent()
+                        expectDefaultValue(key, variable, defaultValue)                    
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableDefaulted')
                     })
     
                     it('should return default value if variable doesn\' exist',  async () => {
                         let eventBody = {}
-                        scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                        const interceptor = scope.post(eventsUrl)
+                        interceptor.reply((uri, body) => {
                             eventBody = body
                             return [200]
                         })
 
-                        const variableResponse = await callVariable(
-                            clientId, 
-                            url, 
+                        const variableResponse = await testClient.callVariable(
                             variationOnUser.location, 
+                            false,
                             'nonexistent', 
                             defaultValue
                         )
                         const variable = await variableResponse.json()
     
-                        expectDefaultValue(variable, defaultValue)
-                        await waitForEvent()
+                        expectDefaultValue('nonexistent', variable, defaultValue)
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, 'nonexistent', 'aggVariableDefaulted')
                     })
 
                     it('should aggregate aggVariableDefaulted events',  async () => {
                         let eventBody = {}
-                        scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                        const interceptor = scope.post(eventsUrl)
+                        interceptor.reply((uri, body) => {
                             eventBody = body
                             return [200]
                         })
 
-                        await callVariable(
-                            clientId, 
-                            url, 
+                        await testClient.callVariable(
                             variationOnUser.location, 
+                            false,
                             'nonexistent', 
                             defaultValue
                         )
-                        await callVariable(
-                            clientId, 
-                            url, 
+                        await testClient.callVariable(
                             variationOnUser.location, 
+                            false,
                             'nonexistent', 
                             defaultValue
                         )
     
-                        await waitForEvent()
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, 'nonexistent', 'aggVariableDefaulted', 2)
                     })
 
                     it('should aggregate aggVariableEvaluated events',  async () => {
                         let eventBody = {}
-                        scope.post(`/client/${clientId}/v1/events/batch`).reply((uri, body) => {
+                        const interceptor = scope.post(eventsUrl)
+                        interceptor.reply((uri, body) => {
                             eventBody = body
                             return [200]
                         })
 
-                        await callVariable(
-                            clientId, 
-                            url, 
+                        await testClient.callVariable(
                             variationOnUser.location, 
+                            false,
                             key, 
                             defaultValue
                         )
-                        await callVariable(
-                            clientId, 
-                            url, 
+                        await testClient.callVariable(
                             variationOnUser.location, 
+                            false,
                             key, 
                             defaultValue
                         )
     
-                        await waitForEvent()
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableEvaluated', 2)
                     })
                 })
             })
         })
-    })
 
-    const waitForEvent = async () => {
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                resolve({})
-            }, 550)
+        describe('uninitialized client', () => {
+            const testClient = new TestClient(name)
+
+            beforeAll(async () => {
+                await testClient.createClient()
+                const configRequestUrl = `/${testClient.clientLocation}/config/v1/server/${testClient.sdkKey}.json`
+                const interceptor = scope
+                    .get(configRequestUrl)
+                
+                interceptor.reply(404)
+
+                await waitForRequest(
+                    scope,
+                    interceptor,
+                    3000,
+                    'Config request timed out'
+                )
+            })
+
+            forEachVariableType((type) => {
+                const { key, defaultValue } = expectedVariablesByType[type]
+
+                it('should return default value if client is uninitialized',  async () => {
+                    const variableResponse = await testClient.callVariable(
+                        variationOnUser.location, false, key, defaultValue
+                    )
+                    const variable = await variableResponse.json()
+                    expectDefaultValue(key, variable, defaultValue)                 
+                })
+
+                it.failing('should throw exception if user is invalid',  async () => {    
+                    const variableResponse =
+                        await testClient.callVariable(invalidUser.location, false, key, defaultValue)
+                    const variable = await variableResponse.json()
+
+                    expect(variable.exception).toBe('Must have a user_id set on the user')
+                })
+            })
         })
-        expect(scope.isDone()).toBeTruthy()      
-    }
+    })
 
     const expectEventBody = (
         body: Record<string, unknown>, 
@@ -328,10 +319,16 @@ describe('Variable Tests - Local', () => {
         }
     }
     
-    const expectDefaultValue = (variable: VariableResponse, defaultValue: ValueTypes) => {
-        expect(variable.entityType).toBe('Variable')
-        expect(JSON.stringify(variable.data.value)).toBe(JSON.stringify(defaultValue))
-        expect(variable.data.isDefaulted).toBe(true)
-        expect(JSON.stringify(variable.data.defaultValue)).toBe(JSON.stringify(defaultValue))
+    const expectDefaultValue = (key: string, variable: VariableResponse, defaultValue: ValueTypes) => {
+        expect(variable).toEqual({
+            entityType: 'Variable',
+            data: {
+                isDefaulted: true, 
+                defaultValue: defaultValue, 
+                value: defaultValue,
+                key: key
+            },
+            logs: []
+        })
     }
 })
