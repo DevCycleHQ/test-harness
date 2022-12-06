@@ -1,4 +1,15 @@
-export const config = {
+import {
+    AudienceOperator,
+    ConfigBody,
+    DataKeyType,
+    FeatureType,
+    FilterComparator,
+    FilterType,
+    UserSubType,
+    VariableType
+} from '@devcycle/types'
+
+export const config: ConfigBody = {
     "project": {
         "_id": "638680c459f1b81cc9e6c557",
         "key": "test-harness-data",
@@ -9,7 +20,10 @@ export const config = {
             },
             "optIn": {
                 "enabled": false,
-                "colors": {}
+                "colors": {
+                    "primary": "#000000",
+                    "secondary": "#000000"
+                }
             }
         }
     },
@@ -20,7 +34,7 @@ export const config = {
     "features": [{
         "_id": "638680d6fcb67b96878d90e6",
         "key": "test-harness",
-        "type": "release",
+        "type": FeatureType.release,
         "variations": [{
             "key": "variation-on",
             "name": "Variation On",
@@ -67,15 +81,15 @@ export const config = {
                     "_id": "638680d659f1b81cc9e6c5a9",
                     "filters": {
                         "filters": [{
-                            "type": "user",
-                            "subType": "customData",
-                            "comparator": "=",
+                            "type": FilterType.user,
+                            "subType": UserSubType.customData,
+                            "comparator": FilterComparator['='],
                             "dataKey": "should-bucket",
-                            "dataKeyType": "Boolean",
+                            "dataKeyType": DataKeyType.boolean,
                             "values": [true],
                             "filters": []
                         }],
-                        "operator": "and"
+                        "operator": AudienceOperator.or
                     }
                 },
                 "distribution": [{
@@ -89,7 +103,7 @@ export const config = {
     }, {
         "_id": "6386813a59f1b81cc9e6c68d",
         "key": "schedule-feature",
-        "type": "release",
+        "type": FeatureType.release,
         "variations": [{
             "key": "variation-on",
             "name": "Variation On",
@@ -114,11 +128,11 @@ export const config = {
                     "_id": "6386813a59f1b81cc9e6c6b1",
                     "filters": {
                         "filters": [{
-                            "type": "all",
+                            "type": FilterType.all,
                             "values": [],
                             "filters": []
                         }],
-                        "operator": "and"
+                        "operator": AudienceOperator.and
                     }
                 },
                 "distribution": [{
@@ -133,27 +147,27 @@ export const config = {
     "variables": [{
         "_id": "638681f059f1b81cc9e6c7fa",
         "key": "bool-var",
-        "type": "Boolean"
+        "type": VariableType.boolean
     }, {
         "_id": "638681f059f1b81cc9e6c7fd",
         "key": "json-var",
-        "type": "JSON"
+        "type": VariableType.object
     }, {
         "_id": "638681f059f1b81cc9e6c7fc",
         "key": "number-var",
-        "type": "Number"
+        "type": VariableType.number
     }, {
         "_id": "6386813a59f1b81cc9e6c68f",
         "key": "schedule-feature",
-        "type": "Boolean"
+        "type": VariableType.boolean
     }, {
         "_id": "638681f059f1b81cc9e6c7fb",
         "key": "string-var",
-        "type": "String"
+        "type": VariableType.string
     }, {
         "_id": "638680d6fcb67b96878d90e8",
         "key": "test-harness",
-        "type": "Boolean"
+        "type": VariableType.boolean
     }],
     "variableHashes": {
         "bool-var": 4169114058,

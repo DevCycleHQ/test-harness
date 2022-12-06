@@ -11,6 +11,7 @@
   "author": "DevCycle <engineering@devcycle.com>",
   "license": "MIT",
   "devDependencies": {
+    "@devcycle/types": "^1.0.52",
     "@koa/router": "^12.0.0",
     "@trendyol/jest-testcontainers": "^2.1.1",
     "@types/jest": "^29.2.3",
