@@ -14,7 +14,7 @@ import { getServerScope } from '../nock'
 import { config } from '../mockData/index'
 import nock from 'nock'
 
-jest.setTimeout(1000000)
+jest.setTimeout(15000)
 
 const scope = getServerScope()
 

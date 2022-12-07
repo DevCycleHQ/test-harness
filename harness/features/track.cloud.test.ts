@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../nock'
 import nock from 'nock'
 
-jest.setTimeout(1000000)
+jest.setTimeout(10000)
 
 const scope = getServerScope()
 
