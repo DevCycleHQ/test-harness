@@ -19,8 +19,8 @@ export const forEachSDK = (tests) => {
     try {
         SDKs = JSON.parse(process.env.SDKS_TO_TEST).map((sdk) => Sdks[sdk])
     } catch (e) {
-        if (process.env.SDKS_TO_TEST) {
-            SDKs = [process.env.SDKS_TO_TEST]
+        if (process.env.SDKS_TO_TEST && Sdks[process.env.SDKS_TO_TEST]) {
+            SDKs = [Sdks[process.env.SDKS_TO_TEST]]
         } else {
             console.log('No specified SDKs to test, running all tests')
             SDKs = Object.values(Sdks)

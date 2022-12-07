@@ -1,1 +1,0 @@
-process.env.DOCKER_HOST_IP='172.17.0.1'
