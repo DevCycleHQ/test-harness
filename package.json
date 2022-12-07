@@ -2,7 +2,7 @@
   "name": "@devcycle/test-harness",
   "scripts": {
     "test": "jest --verbose",
-    "test:ci": "yarn test --setupFiles=./ci-config.js"
+    "test:ci": "yarn test --setupFiles=./ci-config.ts"
   },
   "version": "1.0.0",
   "description": "A universal testing system for DevCycle SDKs",
@@ -29,6 +29,7 @@
     "typescript": "^4.9.3"
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
     "uuid": "^9.0.0"
   },
   "lint-staged": {
