@@ -1,5 +1,5 @@
 import { TestcontainersEnvironment } from '@trendyol/jest-testcontainers'
-import { initialize } from './harness/mockServer'
+import { assertNoUnmatchedRequests, initialize } from './harness/mockServer'
 
 export class TestHarnessEnvironment extends TestcontainersEnvironment {
     server: any
@@ -11,6 +11,7 @@ export class TestHarnessEnvironment extends TestcontainersEnvironment {
     public async setup() {
         this.server = await initialize()
         this.global.__MOCK_SERVER_PORT__ = this.server.address().port
+        this.global.assertNoUnmatchedRequests = assertNoUnmatchedRequests
         await super.setup()
     }
 
@@ -20,7 +21,6 @@ export class TestHarnessEnvironment extends TestcontainersEnvironment {
                 this.server.close(resolve)
             })
         }
-
         await super.teardown()
     }
 }

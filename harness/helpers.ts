@@ -1,4 +1,6 @@
 import { Sdks } from './types'
+import nock from 'nock'
+import { getServerScope } from './nock'
 
 export const getConnectionStringForProxy = (proxy: string) => {
     const host = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_IP__`]
@@ -20,7 +22,22 @@ export const forEachSDK = (tests) => {
         console.log('No specified SDKs to test, running all tests')
         SDKs = Object.values(Sdks)
     }
-    describe.each(SDKs)('%s SDK tests', tests)
+    const scope = getServerScope()
+
+    describe.each(SDKs)('%s SDK tests', (name) => {
+        afterEach(async () => {
+            if (!scope.isDone()) {
+                const pendingMocks = scope.pendingMocks()
+                throw new Error('Unsatisfied nock scopes: ' + pendingMocks)
+            }
+            await global.assertNoUnmatchedRequests()
+        })
+        afterAll(() => {
+            // recommended by nock to avoid Jest memory issues
+            nock.restore()
+        })
+        tests(name)
+    })
 }
 
 export const describeIf = (condition: boolean) => condition ? describe : describe.skip

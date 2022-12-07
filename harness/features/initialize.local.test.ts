@@ -7,10 +7,8 @@ import {
     wait
 } from '../helpers'
 import { v4 as uuidv4 } from 'uuid'
-import { getServerScope } from '../mockServer'
 import { Capabilities, SDKCapabilities } from '../types'
-import nock from 'nock'
-import { config } from '../mockData'
+import { getServerScope } from '../nock'
 
 jest.setTimeout(10000)
 
@@ -65,11 +63,14 @@ describe('Initialize Tests - Local', () => {
                 await wait(500)
 
                 expect(message).toEqual('success')
-                expect(scope.isDone()).toBeTruthy()
             })
 
             it('calls initialize promise/callback when config is successfully retrieved', async () => {
                 const clientId = uuidv4()
+                scope
+                    .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
+                    .reply(200, {})
+
                 const callbackSubdirectory = `/client/${clientId}/onClientInitialized`
                 scope
                     .post(callbackSubdirectory, { message: `onClientInitialized was invoked on /client/${clientId}` })
@@ -79,8 +80,6 @@ describe('Initialize Tests - Local', () => {
                 await createClient(url, clientId, sdkKey, { baseURLOverride: `${mockServerUrl}/client/${clientId}` })
                 await callOnClientInitialized(clientId, url, `${mockServerUrl}${callbackSubdirectory}`)
                 await wait(500)
-
-                expect(scope.isDone()).toBeTruthy()
             })
 
             it('calls initialize promise/callback when config fails to be retrieved', async () => {
@@ -99,7 +98,6 @@ describe('Initialize Tests - Local', () => {
                 await callOnClientInitialized(clientId, url, `${mockServerUrl}${callbackSubdirectory}`)
                 await wait(500)
 
-                expect(scope.isDone()).toBeTruthy()
             })
 
             it('fetches config again after 3 seconds when config polling inteval is overriden', async () => {
@@ -131,7 +129,7 @@ describe('Initialize Tests - Local', () => {
 
                 await wait(3000)
 
-                expect(scope.isDone()).toBeTruthy()
+
             }, 5000)
         })
     })
