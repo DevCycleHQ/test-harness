@@ -15,8 +15,6 @@ describe('Client Initialize Tests - Cloud', () => {
         const mockServerUrl
             = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 
-        const sdkKey = 'dvc_server_test_token_suthar'
-
         const clientOptions = {
             enableCloudBucketing: true,
         }
@@ -52,6 +50,7 @@ describe('Client Initialize Tests - Cloud', () => {
 
             it('should return client object location if SDK token is correct', async () => {
                 const clientId: string = uuidv4()
+                const sdkKey = `dvc_server_${clientId}`
                 const response = await createClient(url, clientId, sdkKey,
                     { ...clientOptions, baseURLOverride: `${mockServerUrl}/client/${clientId}` })
 
