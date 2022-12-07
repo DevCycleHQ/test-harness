@@ -19,6 +19,12 @@ jobs:
     env:
       DOCKER_HOST_IP: '172.17.0.1'
     steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Write variables to .env file
         run: |
           if [ -f ".env" ]
@@ -26,12 +32,6 @@ jobs:
               echo "GITHUB_SHA='${{ github.event.inputs.sha }}'" > ".env"
               echo "SDKS_TO_TEST='${{ github.event.inputs.sdk }}'" > ".env"
           fi
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Install Dependencies
         run: yarn
       - name: Run All Tests
