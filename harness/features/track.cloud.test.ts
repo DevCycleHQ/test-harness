@@ -18,8 +18,10 @@ describe('Track Tests - Cloud', () => {
             = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 
         beforeAll(async () => {
+            const sdkKey = `dvc_server_${clientId}`
+
             url = getConnectionStringForProxy(name)
-            await createClient(url, clientId, 'dvc_server_test_token_parth1', {
+            await createClient(url, clientId, sdkKey, {
                 enableCloudBucketing: true,
                 baseURLOverride: `${mockServerUrl}/client/${clientId}`
             })

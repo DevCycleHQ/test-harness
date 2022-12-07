@@ -30,8 +30,10 @@ describe('Track Tests - Local', () => {
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
 
+            const sdkKey = `dvc_server_${clientId}`
+
             scope
-                .get(`/client/${clientId}/config/v1/server/dvc_server_test_token_parth2.json`)
+                .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
                 .reply(200, config)
 
             scope.post(`/client/${clientId}`).reply((uri, body) => {
@@ -41,7 +43,7 @@ describe('Track Tests - Local', () => {
                     return [200]
             })
 
-            await createClient(url, clientId, 'dvc_server_test_token_parth2', {
+            await createClient(url, clientId, sdkKey, {
                 baseURLOverride: `${mockServerUrl}/client/${clientId}`,
                 eventFlushIntervalMS: 1000, logLevel: 'debug', configPollingIntervalMS: 1000 * 60
             })
@@ -67,8 +69,8 @@ describe('Track Tests - Local', () => {
                     await wait(2000) // wait for event flush
 
                     const res = await trackResponse.json()
-                    // expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
-                    expect(res.entityType).toBe('Void') // workaround to get tests to pass locally
+                    expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
+                    // expect(res.entityType).toBe('Void') // workaround to get tests to pass locally
                     expect(eventBody).toEqual({})
                 })
             })
