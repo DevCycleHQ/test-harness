@@ -7,4 +7,5 @@ export const Capabilities = {
 
 export const SDKCapabilities = {
     NodeJS: [Capabilities.edgeDB, Capabilities.local, Capabilities.cloud]
+    Python: [Capabilities.cloud, Capabilities.edgeDB]
 }
