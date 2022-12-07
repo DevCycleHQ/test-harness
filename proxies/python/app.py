@@ -21,3 +21,11 @@ def test_client():
     dvc_client = DVCClient()
     user = UserData(user_id="test")
     return "" + str(dvc_client.variable(user, "my-variable", False).value)
+
+@app.route("/spec")
+def spec():
+    return {
+        "name": "Python",
+        "version": "", # TODO add branch name or SDK version here
+        "capabilities": ["EdgeDB", "CloudBucketing"]
+    }
