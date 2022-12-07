@@ -27,12 +27,11 @@ jobs:
           fetch-depth: 0
       - name: Write variables to .env file
         run: |
-          if [ -f ".env" ]
+          if [ ! -f ".env" ]
           then 
-              echo "GITHUB_SHA='${{ github.event.inputs.sha }}'" > ".env"
-              echo "SDKS_TO_TEST='${{ github.event.inputs.sdk }}'" > ".env"
+              echo "GITHUB_SHA='${{ github.event.inputs.sha }}'" >> ".env"
+              echo "SDKS_TO_TEST='${{ github.event.inputs.sdk }}'" >> ".env"
           fi
-          cat .env
       - name: Install Dependencies
         run: yarn
       - name: Run All Tests
