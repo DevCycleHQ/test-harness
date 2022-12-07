@@ -19,7 +19,6 @@ describe('Initialize Tests - Local', () => {
 
     forEachSDK((name: string) => {
         const capabilities: string[] = SDKCapabilities[name]
-        const sdkKey = 'server_SDK_KEY'
         let url: string
 
         beforeAll(async () => {
@@ -49,6 +48,7 @@ describe('Initialize Tests - Local', () => {
 
             it('initializes correctly on valid data', async () => {
                 const clientId = uuidv4()
+                const sdkKey = `dvc_server_${clientId}`
                 scope
                     .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
                     .reply(200, {})
@@ -67,6 +67,7 @@ describe('Initialize Tests - Local', () => {
 
             it('calls initialize promise/callback when config is successfully retrieved', async () => {
                 const clientId = uuidv4()
+                const sdkKey = `dvc_server_${clientId}`
                 scope
                     .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
                     .reply(200, {})
@@ -84,6 +85,7 @@ describe('Initialize Tests - Local', () => {
 
             it('calls initialize promise/callback when config fails to be retrieved', async () => {
                 const clientId = uuidv4()
+                const sdkKey = `dvc_server_${clientId}`
                 scope
                     .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
                     .reply(404)
@@ -102,6 +104,7 @@ describe('Initialize Tests - Local', () => {
 
             it('fetches config again after 3 seconds when config polling inteval is overriden', async () => {
                 const clientId = uuidv4()
+                const sdkKey = `dvc_server_${clientId}`
                 scope
                     .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
                     .times(2)

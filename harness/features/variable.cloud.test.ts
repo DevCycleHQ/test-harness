@@ -21,12 +21,13 @@ describe('Variable Tests - Cloud', () => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
         const clientId: string = uuidv4()
+        const sdkKey: string = `dvc_server_${clientId}`
         const mockServerUrl
             = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
-            await createClient(url, clientId, 'dvc_server_test_token', {
+            await createClient(url, clientId, sdkKey, {
                 baseURLOverride: `${mockServerUrl}/client/${clientId}`,
                 enableCloudBucketing: true
             })
@@ -87,7 +88,7 @@ describe('Variable Tests - Cloud', () => {
                 scope
                     .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                     .matchHeader('Content-Type', 'application/json')
-                    .matchHeader('authorization', 'dvc_server_test_token')
+                    .matchHeader('authorization', sdkKey)
                     .query((queryObj) => {
                         return !queryObj.enableEdgeDB
                     })
@@ -107,7 +108,7 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
 
                 const newClientId = uuidv4()
-                await createClient(url, newClientId, 'dvc_server_test_token', {
+                await createClient(url, newClientId, sdkKey, {
                     baseURLOverride: `${mockServerUrl}/client/${newClientId}`,
                     enableCloudBucketing: true,
                     enableEdgeDB: true
@@ -116,7 +117,7 @@ describe('Variable Tests - Cloud', () => {
                 scope
                     .post(`/client/${newClientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                     .matchHeader('Content-Type', 'application/json')
-                    .matchHeader('authorization', 'dvc_server_test_token')
+                    .matchHeader('authorization', sdkKey)
                     .query((queryObj) => {
                         return !!queryObj.enableEdgeDB
                     })
@@ -131,6 +132,37 @@ describe('Variable Tests - Cloud', () => {
 
             })
 
+            it('should return default if mock server\
+            returns variable mismatching default value type',  async () => {
+                const response = await createUser(url, { user_id: 'user1' })
+                await response.json()
+                const userId = response.headers.get('location')
+
+                scope
+                    .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
+                    .matchHeader('Content-Type', 'application/json')
+                    .matchHeader('authorization', sdkKey)
+                    .reply(200, {
+                        key: 'var_key',
+                        value: 5,
+                        type: 'Number',
+                        isDefaulted: false
+                    })
+
+                const variableResponse = await callVariable(clientId, url, userId, 'var_key', variablesForTypes['string'].defaultValue)
+                const variable = await variableResponse.json()
+
+                expect(variable).toEqual(expect.objectContaining({
+                    entityType: 'Variable',
+                    data: {
+                        key: 'var_key',
+                        value: variablesForTypes['string'].defaultValue,
+                        defaultValue: variablesForTypes['string'].defaultValue,
+                        isDefaulted: true
+                    }
+                }))
+            })
+
             forEachVariableType((type) => {
                 it(`should return default ${type} variable if mock server returns undefined`,  async () => {
                     const response = await createUser(url, { user_id: 'user1' })
@@ -140,7 +172,7 @@ describe('Variable Tests - Cloud', () => {
                     scope
                         .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
-                        .matchHeader('authorization', 'dvc_server_test_token')
+                        .matchHeader('authorization', sdkKey)
                         .reply(200, undefined)
 
                     const variableResponse = await callVariable(
@@ -172,7 +204,7 @@ describe('Variable Tests - Cloud', () => {
                     scope
                         .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
-                        .matchHeader('authorization', 'dvc_server_test_token')
+                        .matchHeader('authorization', sdkKey)
                         .reply(200, variablesForTypes[type])
 
                     const variableResponse = await callVariable(
@@ -195,34 +227,6 @@ describe('Variable Tests - Cloud', () => {
                     }))
                 })
 
-                // TODO: Fix nodejs to return default if default types don't match
-                // it.only('should return default if mock server\
-                // returns variable mismatching default value type',  async () => {
-                //     const response = await createUser(url, { user_id: 'user1' })
-                //     await response.json()
-                //     const userId = response.headers.get('location')
-
-                //     scope
-                //         .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
-                //         .matchHeader('Content-Type', 'application/json')
-                //         .matchHeader('authorization', 'dvc_server_test_token')
-                //         .reply(200, {
-                //             key: 'var_key',
-                //             value: 5,
-                //             defaultValue: 2,
-                //             isDefaulted: false
-                //         })
-
-                //     const variableResponse = await callVariable(clientId, url, userId, 'var_key', 'string')
-                //     const variable = await variableResponse.json()
-                //     await wait(1000)
-
-                //     expect(variable.entityType).toBe('Variable')
-                //     expect(variable.data.isDefaulted).toBeTruthy()
-                //     expect(variable.data.key).toBe('var_key')
-                //     expect(variable.data.value).toBe(2)
-                // })
-
                 it(`should return defaulted ${type} variable if mock server returns an internal error, \
                 after retrying 5 times`,  async () => {
                     const response = await createUser(url, { user_id: 'user1' })
@@ -232,7 +236,7 @@ describe('Variable Tests - Cloud', () => {
                     scope
                         .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
-                        .matchHeader('authorization', 'dvc_server_test_token')
+                        .matchHeader('authorization', sdkKey)
                         // SDK retries the request 5 times + 1 initial request
                         .times(6)
                         .reply(500)
