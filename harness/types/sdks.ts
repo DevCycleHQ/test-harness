@@ -1,4 +1,4 @@
 export const Sdks = {
-    nodejs: "NodeJS"
+    nodejs: "NodeJS",
     python: "Python"
 }

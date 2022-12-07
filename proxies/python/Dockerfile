@@ -12,4 +12,4 @@ RUN ./install.sh
 
 COPY . /app
 
-ENTRYPOINT python -m flask --app app run --host=0.0.0.0
+ENTRYPOINT python -m flask --app app run --host=0.0.0.0 -p 3000
