@@ -1,7 +1,7 @@
 import { getConnectionStringForProxy, forEachSDK, describeIf, createClient, createUser, callTrack } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { v4 as uuidv4 } from 'uuid'
-import { getServerScope } from '../mockServer'
+import { getServerScope } from '../nock'
 import nock from 'nock'
 
 jest.setTimeout(1000000)

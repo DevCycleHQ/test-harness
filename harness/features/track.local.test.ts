@@ -10,7 +10,7 @@ import {
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { v4 as uuidv4 } from 'uuid'
-import { getServerScope, initialize } from '../mockServer'
+import { getServerScope } from '../nock'
 import { config } from '../mockData/index'
 import nock from 'nock'
 
@@ -68,7 +68,7 @@ describe('Track Tests - Local', () => {
 
                     const res = await trackResponse.json()
                     console.log('res', res)
-                    expect(res.exception).toBe('Missing parameter: type') // this should be  res.exception = `Invalid Event`
+                    expect(res.exception).toBe('Missing parameter: type') // works for GH actions
                     expect(eventBody).toEqual({})
                 })
             })
@@ -140,8 +140,6 @@ describe('Track Tests - Local', () => {
                         return [201]
                     })
 
-                    console.log('active mocks', scope.activeMocks())
-
                     await callTrack(clientId, url, userId,
                         { type: eventType, target: variableId, value: value })
                     await callTrack(clientId, url, userId,
@@ -203,8 +201,6 @@ describe('Track Tests - Local', () => {
                         eventBody = body
                         return [201]
                     })
-
-                    console.log('active mocks', scope.activeMocks())
 
                     await callTrack(clientId, url, userId,
                         { type: eventType, target: variableId, value: value })
@@ -285,8 +281,6 @@ describe('Track Tests - Local', () => {
                         { type: eventType, target: variableId, value: value })
                     await callTrack(clientId, url, userId,
                         { type: eventType2, target: variableId2, value: value2 })
-
-                    console.log('scope active mocks', scope.activeMocks())
 
                     await wait(1000 * 15) //wait for the flush to happen
 
