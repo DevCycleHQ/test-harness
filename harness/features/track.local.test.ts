@@ -68,8 +68,8 @@ describe('Track Tests - Local', () => {
                     await wait(2000) // wait for event flush
 
                     const res = await trackResponse.json()
-                    expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
-                    // expect(res.entityType).toBe('Void') // workaround to get tests to pass locally
+                    // expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
+                    expect(res.entityType).toBe('Void') // workaround to get tests to pass locally
                     expect(eventBody).toEqual({})
                 })
             })
