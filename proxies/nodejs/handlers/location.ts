@@ -14,7 +14,7 @@ type LocationRequestBody = {
 
 type ParsedParams = (string | boolean | number | object | URL)[]
 
-const SUPPORTED_COMMANDS = ['onClientInitialized']
+const CALLBACK_COMMANDS = ['onClientInitialized']
 
 export const handleLocation = async (
     ctx: Koa.ParameterizedContext
@@ -29,7 +29,7 @@ export const handleLocation = async (
 
         if (lastParam instanceof URL) {
             const callbackURL: URL = lastParam
-            if (!SUPPORTED_COMMANDS.includes(command)) {
+            if (!CALLBACK_COMMANDS.includes(command)) {
                 ctx.status = 404
                 ctx.body = {
                     errorCode: 404,
@@ -63,17 +63,17 @@ export const handleLocation = async (
 
             const entityType = getEntityFromType(resultData.constructor.name)
 
-            const commandId = dataStore.commandResults[entityType.toLowerCase()] !== undefined ?
-                Object.keys(dataStore.commandResults[entityType.toLowerCase()]).length :
+            const commandId = dataStore.commandResults[command] !== undefined ?
+                Object.keys(dataStore.commandResults[command]).length :
                 0
 
-            if (dataStore.commandResults[entityType.toLowerCase()] === undefined) {
-                dataStore.commandResults[entityType.toLowerCase()] = {}
+            if (dataStore.commandResults[command] === undefined) {
+                dataStore.commandResults[command] = {}
             }
-            dataStore.commandResults[entityType.toLowerCase()][commandId] = resultData
+            dataStore.commandResults[command][commandId] = resultData
 
             ctx.status = 200
-            ctx.set('Location', `command/${entityType.toLowerCase()}/${commandId}`)
+            ctx.set('Location', `command/${command}/${commandId}`)
             ctx.body = {
                 entityType: entityType,
                 data: resultData,
