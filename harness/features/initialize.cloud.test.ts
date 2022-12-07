@@ -1,19 +1,13 @@
-import { getConnectionStringForProxy, forEachSDK, describeIf, createClient, createUser, wait } from '../helpers'
+import { getConnectionStringForProxy, forEachSDK, describeIf, createClient, mockServerUrl } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { v4 as uuidv4 } from 'uuid'
-import nock from 'nock'
-import { getServerScope } from '../nock'
 
 jest.setTimeout(10000)
-
-const scope = getServerScope()
 
 describe('Client Initialize Tests - Cloud', () => {
     forEachSDK((name) => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
-        const mockServerUrl
-            = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 
         const clientOptions = {
             enableCloudBucketing: true,

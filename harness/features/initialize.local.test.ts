@@ -4,7 +4,8 @@ import {
     createClient,
     callOnClientInitialized,
     describeIf,
-    wait
+    wait,
+    mockServerUrl
 } from '../helpers'
 import { v4 as uuidv4 } from 'uuid'
 import { Capabilities, SDKCapabilities } from '../types'
@@ -13,8 +14,6 @@ import { getServerScope } from '../nock'
 jest.setTimeout(10000)
 
 describe('Initialize Tests - Local', () => {
-    const mockServerUrl
-        = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
     const scope = getServerScope()
 
     forEachSDK((name: string) => {
@@ -131,8 +130,6 @@ describe('Initialize Tests - Local', () => {
                 expect(scope.pendingMocks().length).toEqual(1)
 
                 await wait(3000)
-
-
             }, 5000)
         })
     })
