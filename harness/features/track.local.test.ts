@@ -37,7 +37,6 @@ describe('Track Tests - Local', () => {
                 .reply(200, config)
 
             scope.post(`/client/${clientId}`).reply((uri, body) => {
-                console.log('client initialize body', body)
                 if (typeof body === 'object'
                     && body.message.includes('onClientInitialized was invoked'))
                     return [200]
