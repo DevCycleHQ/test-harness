@@ -1,6 +1,11 @@
 import { Sdks } from './types'
 import nock from 'nock'
 import { getServerScope } from './nock'
+import { v4 as uuidv4 } from 'uuid'
+import path from 'path'
+
+export const getMockServerUrl = () =>
+    `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 
 export const getConnectionStringForProxy = (proxy: string) => {
     const host = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_IP__`]
@@ -20,7 +25,7 @@ export const forEachSDK = (tests) => {
     // get the list of SDK's and their capabilities
     let SDKs
     try {
-        SDKs = JSON.parse(process.env.SDKS_TO_TEST).map((sdk) => Sdks[sdk])
+        SDKs = JSON.parse(process.env.SDKS_TO_TEST ?? '').map((sdk) => Sdks[sdk])
     } catch (e) {
         if (process.env.SDKS_TO_TEST && Sdks[process.env.SDKS_TO_TEST]) {
             SDKs = [Sdks[process.env.SDKS_TO_TEST]]
@@ -85,7 +90,7 @@ export const variablesForTypes = {
     }
 }
 
-export const createClient = async (url: string, clientId?: string, sdkKey?: string, options?: object) => {
+export const createClient = async (url: string, clientId?: string, sdkKey?: string | null, options?: object) => {
     return await fetch(`${url}/client`, {
         method: 'POST',
         headers: {
@@ -118,7 +123,16 @@ export const callVariable = async (
     key?: string,
     defaultValue?: any
 ) => {
-    return await fetch(`${url}/client/${clientId}`, {
+    return await callVariableWithUrl(`${url}/client/${clientId}`, userLocation, key, defaultValue)
+}
+
+export const callVariableWithUrl = async (
+    url: string,
+    userLocation: string,
+    key?: string,
+    defaultValue?: any
+) => {
+    return await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -168,4 +182,69 @@ export const callAllVariables = async (clientID: string, url: string, userLocati
             ]
         })
     })
+}
+
+export class TestClient {
+    clientId: string
+    sdkName: string
+    sdkKey: string | null
+    clientLocation?: string | null
+
+    constructor(sdkName: string) {
+        this.clientId = uuidv4()
+        this.sdkName = sdkName
+        this.sdkKey = `dvc_server_${this.clientId}`
+    }
+
+    private getClientUrl() {
+        return path.join(getConnectionStringForProxy(this.sdkName), this.clientLocation ?? '')
+    }
+
+    async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null) {
+        if (sdkKey !== undefined) {
+            this.sdkKey = sdkKey
+        }
+        const response = await createClient(
+            getConnectionStringForProxy(this.sdkName),
+            this.clientId,
+            this.sdkKey,
+            { baseURLOverride: `${getMockServerUrl()}/client/${this.clientId}`, ...options }
+        )
+
+        this.clientLocation = response.headers.get('location')
+        return response
+    }
+
+    async callVariable(
+        userLocation: string,
+        key?: string,
+        defaultValue?: any
+    ) {
+        try {
+            return await callVariableWithUrl(
+                this.getClientUrl(),
+                userLocation,
+                key,
+                defaultValue
+            )
+        } catch (e) {
+            console.log(e)
+            throw e
+        }
+
+    }
+
+    async callOnClientInitialized() {
+        await fetch(this.getClientUrl(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                command: 'onClientInitialized',
+                isAsync: true,
+                params: []
+            })
+        })
+    }
 }

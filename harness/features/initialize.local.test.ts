@@ -1,13 +1,10 @@
 import {
     getConnectionStringForProxy,
     forEachSDK,
-    createClient,
-    callOnClientInitialized,
     describeIf,
     wait,
-    mockServerUrl
+    TestClient
 } from '../helpers'
-import { v4 as uuidv4 } from 'uuid'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
 
@@ -26,8 +23,8 @@ describe('Initialize Tests - Local', () => {
 
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
             it('should error when SDK key is missing', async () => {
-                const clientId = uuidv4()
-                const response = await createClient(url, clientId)
+                const testClient = new TestClient(name)
+                const response = await testClient.createClient({}, null)
                 const { exception } = await response.json()
 
                 expect(exception).toEqual(
@@ -36,8 +33,8 @@ describe('Initialize Tests - Local', () => {
             })
 
             it('should error when SDK key is invalid', async () => {
-                const clientId = uuidv4()
-                const response = await createClient(url, clientId, 'invalid key')
+                const testClient = new TestClient(name)
+                const response = await testClient.createClient({}, 'invalid key')
                 const { exception } = await response.json()
 
                 expect(exception).toEqual(
@@ -46,18 +43,12 @@ describe('Initialize Tests - Local', () => {
             })
 
             it('initializes correctly on valid data', async () => {
-                const clientId = uuidv4()
-                const sdkKey = `dvc_server_${clientId}`
+                const testClient = new TestClient(name)
                 scope
-                    .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(200, {})
 
-                const response = await createClient(
-                    url,
-                    clientId,
-                    sdkKey,
-                    { baseURLOverride: `${mockServerUrl}/client/${clientId}` }
-                )
+                const response = await testClient.createClient()
                 const { message } = await response.json()
                 await wait(500)
 
@@ -65,66 +56,42 @@ describe('Initialize Tests - Local', () => {
             })
 
             it('calls initialize promise/callback when config is successfully retrieved', async () => {
-                const clientId = uuidv4()
-                const sdkKey = `dvc_server_${clientId}`
+                const testClient = new TestClient(name)
                 scope
-                    .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(200, {})
 
-                const callbackSubdirectory = `/client/${clientId}/onClientInitialized`
-                scope
-                    .post(callbackSubdirectory, { message: `onClientInitialized was invoked on /client/${clientId}` })
-                    .matchHeader('Content-Type', 'application/json')
-                    .reply(204)
-
-                await createClient(url, clientId, sdkKey, { baseURLOverride: `${mockServerUrl}/client/${clientId}` })
-                await callOnClientInitialized(clientId, url, `${mockServerUrl}${callbackSubdirectory}`)
+                await testClient.createClient()
+                await testClient.callOnClientInitialized()
                 await wait(500)
             })
 
             it('calls initialize promise/callback when config fails to be retrieved', async () => {
-                const clientId = uuidv4()
-                const sdkKey = `dvc_server_${clientId}`
+                const testClient = new TestClient(name)
+
                 scope
-                    .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(404)
 
-                const callbackSubdirectory = `/client/${clientId}/onClientInitialized`
-                scope
-                    .post(callbackSubdirectory, { message: `onClientInitialized was invoked on /client/${clientId}` })
-                    .matchHeader('Content-Type', 'application/json')
-                    .reply(204)
-
-                await createClient(url, clientId, sdkKey, { baseURLOverride: `${mockServerUrl}/client/${clientId}` })
-                await callOnClientInitialized(clientId, url, `${mockServerUrl}${callbackSubdirectory}`)
+                await testClient.createClient()
+                await testClient.callOnClientInitialized()
                 await wait(500)
 
             })
 
             it('fetches config again after 3 seconds when config polling inteval is overriden', async () => {
-                const clientId = uuidv4()
-                const sdkKey = `dvc_server_${clientId}`
+                const testClient = new TestClient(name)
                 scope
-                    .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .times(2)
                     .reply(200, {})
 
-                const callbackSubdirectory = `/client/${clientId}/onClientInitialized`
-                scope
-                    .post(callbackSubdirectory, { message: `onClientInitialized was invoked on /client/${clientId}` })
-                    .matchHeader('Content-Type', 'application/json')
-                    .reply(204)
-
-                await createClient(
-                    url,
-                    clientId,
-                    sdkKey,
+                await testClient.createClient(
                     {
-                        baseURLOverride: `${mockServerUrl}/client/${clientId}`,
                         configPollingIntervalMS: 3000
                     }
                 )
-                await callOnClientInitialized(clientId, url, `${mockServerUrl}${callbackSubdirectory}`)
+                await testClient.callOnClientInitialized()
                 await wait(500)
 
                 expect(scope.pendingMocks().length).toEqual(1)
