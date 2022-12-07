@@ -48,7 +48,7 @@ def client():
 
     dvc_client = DVCClient(configuration, options)
 
-    dataStore[client_id] = dvc_client
+    dataStore['clients'][client_id] = dvc_client
 
     success = {
         "message": "success"
