@@ -1,13 +1,11 @@
 from flask import Flask, request
 from devcycle_python_sdk import Configuration, DVCOptions, DVCClient, UserData, Event
-from operator import itemgetter
-from re import sub
+from .handlers.command import handle_command
+from .helpers.camelcase import camel_case_dict
+import sys
+import traceback
 
 app = Flask(__name__)
-
-def camel_case(s):
-  s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
-  return ''.join([s[0].lower(), s[1:]])
 
 dataStore = {
     'clients': {},
@@ -71,7 +69,7 @@ def user():
 
     user_dict = user.to_dict()
 
-    camelcase_user = {camel_case(key): val for key, val in user_dict.items()}
+    camelcase_user = camel_case_dict(user_dict)
 
     camelcase_user['user_id'] = camelcase_user['userId']
     del camelcase_user['userId']
@@ -80,4 +78,19 @@ def user():
         "entityType": "User",
         "data": camelcase_user
     }, 201, { "Location": "user/" + user_storage_id }
+
+@app.post('/<path:location>')
+def command(location):
+    print("LOCATION")
+    body = request.get_json()
+
+    try:
+        return handle_command(location, body, dataStore)
+    except Exception as e:
+        ex_type, ex_value, _ = sys.exc_info()
+
+        return {
+            "exception": str(e),
+            "stack": traceback.format_exc()
+        }
 
