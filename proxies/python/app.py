@@ -1,8 +1,13 @@
 from flask import Flask, request
 from devcycle_python_sdk import Configuration, DVCOptions, DVCClient, UserData, Event
 from operator import itemgetter
+from re import sub
 
 app = Flask(__name__)
+
+def camel_case(s):
+  s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
+  return ''.join([s[0].lower(), s[1:]])
 
 dataStore = {
     'clients': {},
@@ -56,4 +61,23 @@ def client():
 
     return success, 201, {"Location": 'client/' + client_id}
 
+
+@app.post("/user")
+def user():
+    body = request.get_json()
+    user = UserData(**body)
+    user_storage_id = str(len(dataStore['users'].values()))
+    dataStore['users'][user_storage_id] = user
+
+    user_dict = user.to_dict()
+
+    camelcase_user = {camel_case(key): val for key, val in user_dict.items()}
+
+    camelcase_user['user_id'] = camelcase_user['userId']
+    del camelcase_user['userId']
+
+    return {
+        "entityType": "User",
+        "data": camelcase_user
+    }, 201, { "Location": "user/" + user_storage_id }
 
