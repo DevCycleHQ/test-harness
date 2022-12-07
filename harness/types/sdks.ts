@@ -1,3 +1,5 @@
 export const Sdks = {
-    nodejs: "NodeJS"
+    nodejs: "NodeJS",
+    // TODO add once python is ready
+//     python: "Python"
 }

@@ -11,3 +11,11 @@ services:
     container_name: nodejs
     ports:
       - "3000"
+  python:
+    build:
+      context: ./proxies/python
+      args:
+        - PYTHON_SDK_VERSION=${PYTHON_SDK_VERSION}
+    container_name: python
+    ports:
+      - "3000"
