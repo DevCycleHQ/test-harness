@@ -7,6 +7,7 @@ ENTITY_TYPES = {
 
 
 def get_entity_from_type(entity_type):
+    print("ENTITY TYPE", entity_type)
     match entity_type:
         case "UserData":
             return ENTITY_TYPES["user"]

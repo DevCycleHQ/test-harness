@@ -3,6 +3,8 @@ from devcycle_python_sdk import Configuration, DVCClient, DVCOptions
 def handle_client(body, data_store):
     client_id, sdk_key, options = [body.get(k, None) for k in ('clientId', 'sdkKey', 'options')]
 
+    options = options if options else {}
+
     if (client_id == None):
         error = {
             "errorMessage": "Invalid request: missing clientId"
@@ -13,7 +15,17 @@ def handle_client(body, data_store):
     configuration = Configuration()
     configuration.api_key['Authorization'] = sdk_key
 
-    options = DVCOptions(**(options or {}))
+    # TODO remove this when SDK properly supports passing in this property
+    base_url = options.get('baseURLOverride', None)
+    if base_url:
+        configuration.host = options['baseURLOverride']
+        del options['baseURLOverride']
+
+    # TODO remove this when the option is supported by the SDK
+    if hasattr(options, 'enableCloudBucketing'):
+        del options['enableCloudBucketing']
+
+    options = DVCOptions(**options)
 
     dvc_client = DVCClient(configuration, options)
 

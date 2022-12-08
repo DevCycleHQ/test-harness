@@ -53,7 +53,7 @@ def handle_command(path, body, data_store):
 
     result = invoke_command(stored_entity, command, parsed_params)
 
-    entity_type = get_entity_from_type(result.__class__)
+    entity_type = get_entity_from_type(result.__class__.__name__)
 
     if not data_store['commandResults'].get(command, None):
         data_store["commandResults"][command] = {}
