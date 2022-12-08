@@ -85,7 +85,7 @@ export const handleLocation = async (
             ctx.body = {
                 entityType: entityType,
                 data: result,
-                logs: [], // TODO add logs here
+                logs: [], // TODO add logs 
             }
         }
     } catch (error) {
