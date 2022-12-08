@@ -22,7 +22,7 @@ def handle_client(body, data_store):
         del options['baseURLOverride']
 
     # TODO remove this when the option is supported by the SDK
-    if hasattr(options, 'enableCloudBucketing'):
+    if 'enableCloudBucketing' in options:
         del options['enableCloudBucketing']
 
     options = DVCOptions(**options)
