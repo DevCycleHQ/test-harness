@@ -1,6 +1,6 @@
-from devcycle_python_sdk import Configuration, DVCClient
+from devcycle_python_sdk import Configuration, DVCClient, DVCOptions
 
-def handle_config(body, data_store):
+def handle_client(body, data_store):
     client_id, sdk_key, options = [body.get(k, None) for k in ('clientId', 'sdkKey', 'options')]
 
     if (client_id == None):
@@ -12,6 +12,8 @@ def handle_config(body, data_store):
 
     configuration = Configuration()
     configuration.api_key['Authorization'] = sdk_key
+
+    options = DVCOptions(**options)
 
     dvc_client = DVCClient(configuration, options)
 

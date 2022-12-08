@@ -1,6 +1,6 @@
 from flask import Flask, request
 from .handlers.command import handle_command
-from .handlers.config import handle_config
+from .handlers.client import handle_client
 from .handlers.user import handle_user
 import sys
 import traceback
@@ -29,7 +29,7 @@ def spec():
 def client():
     body = request.get_json()
     try:
-        return handle_config(body, dataStore)
+        return handle_client(body, dataStore)
     except Exception as e:
         ex_type, ex_value, _ = sys.exc_info()
 
