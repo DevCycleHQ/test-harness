@@ -2,7 +2,6 @@ import { Sdks } from './types'
 import nock from 'nock'
 import { getServerScope } from './nock'
 import { v4 as uuidv4 } from 'uuid'
-import path from 'path'
 
 export const getMockServerUrl = () =>
     `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
@@ -197,7 +196,7 @@ export class TestClient {
     }
 
     private getClientUrl() {
-        return path.join(getConnectionStringForProxy(this.sdkName), this.clientLocation ?? '')
+        return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
 
     async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null) {
