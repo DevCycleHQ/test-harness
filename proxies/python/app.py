@@ -65,7 +65,8 @@ def command(location):
 
         if is_async:
             return {
-                "asyncError": str(e)
+                "asyncError": str(e),
+                "stack": traceback.format_exc()
             }
         else:
             return {
