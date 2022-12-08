@@ -5,7 +5,7 @@ def handle_config(body, data_store):
 
     if (client_id == None):
         error = {
-            "error": "Invalid request: missing clientId"
+            "errorMessage": "Invalid request: missing clientId"
         }
 
         return error, 400
