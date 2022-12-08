@@ -65,7 +65,8 @@ export const handleLocation = async (
                 result = invokeCommand(
                     entity,
                     command,
-                    parsedParams)
+                    parsedParams
+                )
             }
 
             const entityType = getEntityFromType(result.constructor.name)

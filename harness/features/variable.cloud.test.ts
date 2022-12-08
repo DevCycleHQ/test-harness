@@ -40,7 +40,7 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
                 expect(userId.includes('user/')).toBeTruthy()
 
-                const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value', true)
+                const variableResponse = await testClient.callVariable(userId, true, 'var_key', 'default_value')
                 const error = await variableResponse.json()
                 expect(error.asyncError).toBe('Must have a user_id set on the user')
             })
@@ -55,7 +55,7 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
                 expect(userId.includes('user/')).toBeTruthy()
 
-                const variableResponse = await testClient.callVariable(userId, undefined, 'default_value', true)
+                const variableResponse = await testClient.callVariable(userId, true, undefined, 'default_value')
                 const error = await variableResponse.json()
                 expect(error.asyncError).toBe('Missing parameter: key')
             })
@@ -70,7 +70,7 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
                 expect(userId.includes('user/')).toBeTruthy()
 
-                const variableResponse = await testClient.callVariable(userId, 'var_key', undefined, true)
+                const variableResponse = await testClient.callVariable(userId, true, 'var_key', undefined)
                 const error = await variableResponse.json()
                 expect(error.asyncError).toBe('Missing parameter: defaultValue')
             })
@@ -93,7 +93,7 @@ describe('Variable Tests - Cloud', () => {
                         defaultValue: 'default_value',
                         isDefaulted: false
                     })
-                const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value', true)
+                const variableResponse = await testClient.callVariable(userId, true, 'var_key', 'default_value')
                 await variableResponse.json()
             })
 
@@ -122,7 +122,7 @@ describe('Variable Tests - Cloud', () => {
                         defaultValue: 'default_value',
                         isDefaulted: false
                     })
-                const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value', true)
+                const variableResponse = await testClient.callVariable(userId, true, 'var_key', 'default_value')
                 await variableResponse.json()
 
             })
@@ -144,7 +144,12 @@ describe('Variable Tests - Cloud', () => {
                         isDefaulted: false
                     })
 
-                const variableResponse = await testClient.callVariable(userId, 'var_key', variablesForTypes['string'].defaultValue, true)
+                const variableResponse = await testClient.callVariable(
+                    userId,
+                    true,
+                    'var_key',
+                    variablesForTypes['string'].defaultValue
+                )
                 const variable = await variableResponse.json()
 
                 expect(variable).toEqual(expect.objectContaining({
@@ -172,9 +177,9 @@ describe('Variable Tests - Cloud', () => {
 
                     const variableResponse = await testClient.callVariable(
                         userId,
+                        true,
                         'var_key',
-                        variablesForTypes[type].defaultValue,
-                        true
+                        variablesForTypes[type].defaultValue
                     )
                     const variable = await variableResponse.json()
 
@@ -203,9 +208,9 @@ describe('Variable Tests - Cloud', () => {
 
                     const variableResponse = await testClient.callVariable(
                         userId,
+                        true,
                         'var_key',
-                        variablesForTypes[type].defaultValue,
-                        true
+                        variablesForTypes[type].defaultValue
                     )
                     const variable = await variableResponse.json()
 
@@ -236,9 +241,9 @@ describe('Variable Tests - Cloud', () => {
 
                     const variableResponse = await testClient.callVariable(
                         userId,
+                        true,
                         'var_key',
-                        variablesForTypes[type].defaultValue,
-                        true
+                        variablesForTypes[type].defaultValue
                     )
                     const variable = await variableResponse.json()
 

@@ -104,15 +104,20 @@ export const createClient = async (url: string, clientId?: string, sdkKey?: stri
 }
 
 export const createUser = async (url: string, user: object) => {
-    return await fetch(`${url}/user`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            ...user
+    try {
+        return await fetch(`${url}/user`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ...user
+            })
         })
-    })
+    } catch (e) {
+        console.log(e)
+        throw e
+    }
 }
 
 export const callVariable = async (
@@ -123,15 +128,15 @@ export const callVariable = async (
     defaultValue?: any,
     isAsync?: boolean
 ) => {
-    return await callVariableWithUrl(`${url}/client/${clientId}`, userLocation, key, defaultValue, isAsync)
+    return await callVariableWithUrl(`${url}/client/${clientId}`, userLocation, isAsync, key, defaultValue,)
 }
 
 export const callVariableWithUrl = async (
     url: string,
     userLocation: string,
+    isAsync: boolean,
     key?: string,
     defaultValue?: any,
-    isAsync?: boolean
 ) => {
     return await fetch(url, {
         method: 'POST',
@@ -140,7 +145,7 @@ export const callVariableWithUrl = async (
         },
         body: JSON.stringify({
             command: 'variable',
-            isAsync: isAsync ?? false,
+            isAsync: isAsync,
             params: [
                 { location: `${userLocation}` },
                 { value: key },
@@ -173,13 +178,32 @@ export const callOnClientInitialized = async (clientId: string, url: string, cal
     })
 }
 
-export const callAllVariables = async (clientID: string, url: string, userLocation: string, isAsync?: boolean) => {
+export const callAllVariablesCloud = async (clientID: string, url: string, userLocation: string) => {
+    try {
+        return await callAllVariables(clientID, url, userLocation, true)
+    } catch (e) {
+        console.log(e)
+        throw e
+    }
+
+}
+
+export const callAllVariablesLocal = async (clientID: string, url: string, userLocation: string) => {
+    try {
+        return await callAllVariables(clientID, url, userLocation, false)
+    } catch (e) {
+        console.log(e)
+        throw e
+    }
+}
+
+const callAllVariables = async (clientID: string, url: string, userLocation: string, isAsync: boolean) => {
     return await fetch(`${url}/client/${clientID}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             command: 'allVariables',
-            isAsync: isAsync ?? false,
+            isAsync: isAsync,
             params: [
                 { location: userLocation }
             ]
@@ -220,17 +244,17 @@ export class TestClient {
 
     async callVariable(
         userLocation: string,
+        isAsync: boolean,
         key?: string,
         defaultValue?: any,
-        isAsync?: boolean
     ) {
         try {
             return await callVariableWithUrl(
                 this.getClientUrl(),
                 userLocation,
+                isAsync,
                 key,
                 defaultValue,
-                isAsync
             )
         } catch (e) {
             console.log(e)
