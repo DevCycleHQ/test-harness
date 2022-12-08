@@ -1,7 +1,7 @@
-if [ -n "$GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
+if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
     git clone https://github.com/DevCycleHQ/js-sdks.git
     cd js-sdks
-    git checkout $GITHUB_SHA
+    git checkout $SDK_GITHUB_SHA
     yarn
     NX_DAEMON=false yarn nx build nodejs --verbose
     cd ..
