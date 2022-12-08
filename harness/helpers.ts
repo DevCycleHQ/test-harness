@@ -197,7 +197,7 @@ export class TestClient {
     }
 
     private getClientUrl() {
-        return path.join(getConnectionStringForProxy(this.sdkName), this.clientLocation ?? '')
+        return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
 
     async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null) {
