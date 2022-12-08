@@ -160,16 +160,14 @@ export const validateLocationReqMiddleware = async (ctx: Koa.ParameterizedContex
     if (entity === undefined) {
         ctx.status = 404
         ctx.body = {
-            errorCode: 404,
-            errorMessage: 'Invalid request: missing entity',
+            message: 'Invalid request: missing entity',
         }
         return ctx
     }
     if (body.command === undefined) {
         ctx.status = 404
         ctx.body = {
-            errorCode: 404,
-            errorMessage: 'Invalid request: missing command',
+            message: 'Invalid request: missing command',
         }
         return ctx
     }
