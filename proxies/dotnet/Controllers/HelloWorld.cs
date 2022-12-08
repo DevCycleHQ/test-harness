@@ -14,7 +14,7 @@ public class HelloWorldController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet(Name = "hello")]
+    [HttpGet]
     public string Get()
     {
         return "Hello!";
