@@ -54,14 +54,21 @@ export const handleLocation = async (
                 message: `${command} attached to ${ctx.request.url} with url ${callbackURL.href}`,
             }
         } else {
-            const resultData = await invokeCommand(
-                entity,
-                command,
-                parsedParams,
-                isAsync
-            )
+            let result
+            if (isAsync) {
+                result = await invokeCommand(
+                    entity,
+                    command,
+                    parsedParams
+                )
+            } else {
+                result = invokeCommand(
+                    entity,
+                    command,
+                    parsedParams)
+            }
 
-            const entityType = getEntityFromType(resultData.constructor.name)
+            const entityType = getEntityFromType(result.constructor.name)
 
             const commandId = dataStore.commandResults[command] !== undefined ?
                 Object.keys(dataStore.commandResults[command]).length :
@@ -70,13 +77,13 @@ export const handleLocation = async (
             if (dataStore.commandResults[command] === undefined) {
                 dataStore.commandResults[command] = {}
             }
-            dataStore.commandResults[command][commandId] = resultData
+            dataStore.commandResults[command][commandId] = result
 
             ctx.status = 200
             ctx.set('Location', `command/${command}/${commandId}`)
             ctx.body = {
                 entityType: entityType,
-                data: resultData,
+                data: result,
                 logs: [], // TODO add logs here
             }
         }
@@ -86,12 +93,11 @@ export const handleLocation = async (
             ctx.status = 200
             ctx.body = {
                 asyncError: error.message,
-                errorCode: error.code,
+                stack: error.stack
             }
         } else {
             ctx.status = 200
             ctx.body = {
-                errorCode: error.code,
                 exception: error.message,
                 stack: error.stack
             }
@@ -143,10 +149,7 @@ const invokeCommand = async (
     entity: DVCClient | DVCUser | DVCVariable | any,
     command: string,
     params: ParsedParams,
-    isAsync: boolean) => {
-    if (isAsync) {
-        return await entity[command](...params)
-    }
+) => {
     return entity[command](...params)
 }
 
