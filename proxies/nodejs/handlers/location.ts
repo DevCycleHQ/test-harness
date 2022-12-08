@@ -1,7 +1,6 @@
 import { DVCClient, DVCUser, DVCVariable } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import { getEntityFromType, DataStore } from '../entityTypes'
-import axios from 'axios'
 import { dataStore } from '../app'
 
 //HTTP request comes in as string

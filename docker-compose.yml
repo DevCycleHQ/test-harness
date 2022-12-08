@@ -19,3 +19,12 @@ services:
     container_name: python
     ports:
       - "3000"
+  dotnet:
+    build:
+      context: ./proxies/dotnet
+      args:
+        - DOTNET_CLOUD_SDK_VERSION=${DOTNET_CLOUD_SDK_VERSION}
+        - DOTNET_LOCAL_SDK_VERSION=${DOTNET_LOCAL_SDK_VERSION}
+    container_name: dotnet
+    ports:
+      - "3000"
