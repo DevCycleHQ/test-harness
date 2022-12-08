@@ -2,15 +2,12 @@ import {
     getConnectionStringForProxy,
     forEachSDK,
     describeIf,
-    createClient,
     createUser,
-    callVariable,
     forEachVariableType,
     variablesForTypes,
-    mockServerUrl
+    TestClient
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
-import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../nock'
 
 jest.setTimeout(10000)
@@ -19,15 +16,14 @@ const scope = getServerScope()
 
 describe('Variable Tests - Cloud', () => {
     forEachSDK((name) => {
-        let url: string
         const capabilities: string[] = SDKCapabilities[name]
-        const clientId: string = uuidv4()
-        const sdkKey: string = `dvc_server_${clientId}`
+
+        let testClient = new TestClient(name)
+
+        let url = getConnectionStringForProxy(name)
 
         beforeAll(async () => {
-            url = getConnectionStringForProxy(name)
-            await createClient(url, clientId, sdkKey, {
-                baseURLOverride: `${mockServerUrl}/client/${clientId}`,
+            await testClient.createClient({
                 enableCloudBucketing: true
             })
         })
@@ -44,7 +40,7 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
                 expect(userId.includes('user/')).toBeTruthy()
 
-                const variableResponse = await callVariable(clientId, url, userId, 'var_key', 'default_value')
+                const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value')
                 const error = await variableResponse.json()
                 expect(error.exception).toBe('Must have a user_id set on the user')
             })
@@ -59,7 +55,7 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
                 expect(userId.includes('user/')).toBeTruthy()
 
-                const variableResponse = await callVariable(clientId, url, userId, undefined, 'default_value')
+                const variableResponse = await testClient.callVariable(userId, undefined, 'default_value')
                 const error = await variableResponse.json()
                 expect(error.exception).toBe('Missing parameter: key')
             })
@@ -74,7 +70,7 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
                 expect(userId.includes('user/')).toBeTruthy()
 
-                const variableResponse = await callVariable(clientId, url, userId, 'var_key')
+                const variableResponse = await testClient.callVariable(userId, 'var_key')
                 const error = await variableResponse.json()
                 expect(error.exception).toBe('Missing parameter: defaultValue')
             })
@@ -85,9 +81,9 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
 
                 scope
-                    .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
+                    .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                     .matchHeader('Content-Type', 'application/json')
-                    .matchHeader('authorization', sdkKey)
+                    .matchHeader('authorization', testClient.sdkKey)
                     .query((queryObj) => {
                         return !queryObj.enableEdgeDB
                     })
@@ -97,7 +93,7 @@ describe('Variable Tests - Cloud', () => {
                         defaultValue: 'default_value',
                         isDefaulted: false
                     })
-                const variableResponse = await callVariable(clientId, url, userId, 'var_key', 'default_value')
+                const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value')
                 await variableResponse.json()
             })
 
@@ -106,17 +102,17 @@ describe('Variable Tests - Cloud', () => {
                 await response.json()
                 const userId = response.headers.get('location')
 
-                const newClientId = uuidv4()
-                await createClient(url, newClientId, sdkKey, {
-                    baseURLOverride: `${mockServerUrl}/client/${newClientId}`,
+                const testClient = new TestClient(name)
+
+                await testClient.createClient({
                     enableCloudBucketing: true,
                     enableEdgeDB: true
                 })
 
                 scope
-                    .post(`/client/${newClientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
+                    .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                     .matchHeader('Content-Type', 'application/json')
-                    .matchHeader('authorization', sdkKey)
+                    .matchHeader('authorization', testClient.sdkKey)
                     .query((queryObj) => {
                         return !!queryObj.enableEdgeDB
                     })
@@ -126,7 +122,7 @@ describe('Variable Tests - Cloud', () => {
                         defaultValue: 'default_value',
                         isDefaulted: false
                     })
-                const variableResponse = await callVariable(newClientId, url, userId, 'var_key', 'default_value')
+                const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value')
                 await variableResponse.json()
 
             })
@@ -138,9 +134,9 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
 
                 scope
-                    .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
+                    .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                     .matchHeader('Content-Type', 'application/json')
-                    .matchHeader('authorization', sdkKey)
+                    .matchHeader('authorization', testClient.sdkKey)
                     .reply(200, {
                         key: 'var_key',
                         value: 5,
@@ -148,7 +144,7 @@ describe('Variable Tests - Cloud', () => {
                         isDefaulted: false
                     })
 
-                const variableResponse = await callVariable(clientId, url, userId, 'var_key', variablesForTypes['string'].defaultValue)
+                const variableResponse = await testClient.callVariable(userId, 'var_key', variablesForTypes['string'].defaultValue)
                 const variable = await variableResponse.json()
 
                 expect(variable).toEqual(expect.objectContaining({
@@ -169,14 +165,12 @@ describe('Variable Tests - Cloud', () => {
                     const userId = response.headers.get('location')
 
                     scope
-                        .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
+                        .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
-                        .matchHeader('authorization', sdkKey)
+                        .matchHeader('authorization', testClient.sdkKey)
                         .reply(200, undefined)
 
-                    const variableResponse = await callVariable(
-                        clientId,
-                        url,
+                    const variableResponse = await testClient.callVariable(
                         userId,
                         'var_key',
                         variablesForTypes[type].defaultValue
@@ -201,14 +195,12 @@ describe('Variable Tests - Cloud', () => {
                     const userId = response.headers.get('location')
 
                     scope
-                        .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
+                        .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
-                        .matchHeader('authorization', sdkKey)
+                        .matchHeader('authorization', testClient.sdkKey)
                         .reply(200, variablesForTypes[type])
 
-                    const variableResponse = await callVariable(
-                        clientId,
-                        url,
+                    const variableResponse = await testClient.callVariable(
                         userId,
                         'var_key',
                         variablesForTypes[type].defaultValue
@@ -233,16 +225,14 @@ describe('Variable Tests - Cloud', () => {
                     const userId = response.headers.get('location')
 
                     scope
-                        .post(`/client/${clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
+                        .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
-                        .matchHeader('authorization', sdkKey)
+                        .matchHeader('authorization', testClient.sdkKey)
                         // SDK retries the request 5 times + 1 initial request
                         .times(6)
                         .reply(500)
 
-                    const variableResponse = await callVariable(
-                        clientId,
-                        url,
+                    const variableResponse = await testClient.callVariable(
                         userId,
                         'var_key',
                         variablesForTypes[type].defaultValue

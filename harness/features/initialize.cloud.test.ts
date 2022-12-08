@@ -1,6 +1,10 @@
-import { getConnectionStringForProxy, forEachSDK, describeIf, createClient, mockServerUrl } from '../helpers'
+import {
+    getConnectionStringForProxy,
+    forEachSDK,
+    describeIf,
+    TestClient
+} from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
-import { v4 as uuidv4 } from 'uuid'
 
 jest.setTimeout(10000)
 
@@ -24,18 +28,18 @@ describe('Client Initialize Tests - Cloud', () => {
 
         describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
 
-            it('should throw an exceptinon and return no location if invalid SDK token is sent', async () => {
-                const clientId: string = uuidv4()
-                const response = await createClient(url, clientId, 'invalidKey', clientOptions)
+            it('should throw an exception and return no location if invalid SDK token is sent', async () => {
+                const client = new TestClient(name)
+                const response = await client.createClient(clientOptions, 'invalidKey')
                 const body = await response.json()
                 expect(body.exception).toBe('Invalid environment key provided. Please call initialize with a valid server environment key')
                 const createdClientId = response.headers.get('location')
                 expect(createdClientId).toBeNull()
             })
 
-            it('should throw an exceptinon and return no location if no SDK token is sent', async () => {
-                const clientId: string = uuidv4()
-                const response = await createClient(url, clientId, null, clientOptions)
+            it('should throw an exception and return no location if no SDK token is sent', async () => {
+                const client = new TestClient(name)
+                const response = await client.createClient(clientOptions, null)
                 const body = await response.json()
                 expect(body.exception).toBe('Missing environment key! Call initialize with a valid environment key')
                 const createdClientId = response.headers.get('location')
@@ -43,10 +47,8 @@ describe('Client Initialize Tests - Cloud', () => {
             })
 
             it('should return client object location if SDK token is correct', async () => {
-                const clientId: string = uuidv4()
-                const sdkKey = `dvc_server_${clientId}`
-                const response = await createClient(url, clientId, sdkKey,
-                    { ...clientOptions, baseURLOverride: `${mockServerUrl}/client/${clientId}` })
+                const client = new TestClient(name)
+                const response = await client.createClient({ ...clientOptions})
 
                 const body = await response.json()
                 expect(body.message).toBe('success')
