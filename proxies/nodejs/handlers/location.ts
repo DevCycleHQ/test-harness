@@ -60,7 +60,7 @@ export const handleLocation = async (
                     entity,
                     command,
                     parsedParams
-                )
+                ).catch((e) => console.error(e))
             } else {
                 result = invokeCommand(
                     entity,
@@ -146,7 +146,7 @@ const parseParams = (params: object | any, data: DataStore): ParsedParams => {
     return parsedParams
 }
 
-const invokeCommand = async (
+const invokeCommand = (
     entity: DVCClient | DVCUser | DVCVariable | any,
     command: string,
     params: ParsedParams,
