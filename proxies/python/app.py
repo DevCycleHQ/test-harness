@@ -56,13 +56,20 @@ def user():
 def command(location):
     body = request.get_json()
 
+    is_async = body.get('isAsync', False)
+
     try:
         return handle_command(location, body, dataStore)
     except Exception as e:
         ex_type, ex_value, _ = sys.exc_info()
 
-        return {
-            "exception": str(e),
-            "stack": traceback.format_exc()
-        }
+        if is_async:
+            return {
+                "asyncError": str(e)
+            }
+        else:
+            return {
+                "exception": str(e),
+                "stack": traceback.format_exc()
+            }
 
