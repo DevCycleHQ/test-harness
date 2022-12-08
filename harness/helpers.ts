@@ -298,6 +298,24 @@ export class LocalTestClient extends BaseTestClient {
         return callAllVariables(this.getClientUrl(), userLocation, false)
     }
 
+    async callAllVariables(userLocation: string) {
+        try {
+            return await fetch(this.getClientUrl(), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    command: 'allVariables',
+                    params: [
+                        { location: userLocation }
+                    ]
+                })
+            })
+        } catch (e) {
+            console.log(e)
+            throw e
+        }
+    }
+
     async callOnClientInitialized() {
         const response = await fetch(this.getClientUrl(), {
             method: 'POST',
@@ -315,6 +333,20 @@ export class LocalTestClient extends BaseTestClient {
 
         expect(result.asyncError).toBeUndefined()
         expect(response.ok).toBeTruthy()
+    }
+
+    async close() {
+        await fetch(this.getClientUrl(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                command: 'close',
+                isAsync: true,
+                params: []
+            })
+        })
     }
 
     async callAllFeatures(

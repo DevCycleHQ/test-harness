@@ -31,6 +31,7 @@ describe('Initialize Tests - Local', () => {
                 expect(exception).toEqual(
                     'Missing environment key! Call initialize with a valid environment key'
                 )
+                await testClient.close()
             })
 
             it('should error when SDK key is invalid', async () => {
@@ -41,6 +42,7 @@ describe('Initialize Tests - Local', () => {
                 expect(exception).toEqual(
                     'Invalid environment key provided. Please call initialize with a valid server environment key'
                 )
+                await testClient.close()
             })
 
             it('initializes correctly on valid data', async () => {
@@ -54,6 +56,7 @@ describe('Initialize Tests - Local', () => {
                 await testClient.callOnClientInitialized()
 
                 expect(message).toEqual('success')
+                await testClient.close()
             })
 
             it('calls initialize promise/callback when config is successfully retrieved', async () => {
@@ -64,6 +67,7 @@ describe('Initialize Tests - Local', () => {
 
                 await testClient.createClient()
                 await testClient.callOnClientInitialized()
+                await testClient.close()
             })
 
             it('calls initialize promise/callback when config fails to be retrieved', async () => {
@@ -75,7 +79,7 @@ describe('Initialize Tests - Local', () => {
 
                 await testClient.createClient()
                 await testClient.callOnClientInitialized()
-
+                await testClient.close()
             })
 
             it('fetches config again after 3 seconds when config polling inteval is overriden', async () => {
@@ -95,6 +99,7 @@ describe('Initialize Tests - Local', () => {
                 expect(scope.pendingMocks().length).toEqual(1)
 
                 await wait(3100)
+                await testClient.close()
             }, 5000)
         })
     })
