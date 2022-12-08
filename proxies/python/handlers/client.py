@@ -13,7 +13,7 @@ def handle_client(body, data_store):
     configuration = Configuration()
     configuration.api_key['Authorization'] = sdk_key
 
-    options = DVCOptions(**options)
+    options = DVCOptions(**(options or {}))
 
     dvc_client = DVCClient(configuration, options)
 
