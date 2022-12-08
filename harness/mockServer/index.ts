@@ -27,8 +27,8 @@ export function initialize() {
         try {
             const response = await axios[request.method.toLowerCase()](`https://nock.com${ctx.request.url}`,
                 request.body, {
-                    headers
-                })
+                headers
+            })
             ctx.body = response.data
             ctx.status = response.status
         } catch (error) {
@@ -36,7 +36,7 @@ export function initialize() {
                 ctx.body = error.response.data
                 ctx.status = error.response.status
             } else {
-                console.log('Error', error.message);
+                console.log('Error', error.message)
                 unmatchedRequests.push(error)
             }
         }

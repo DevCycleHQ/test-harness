@@ -42,7 +42,6 @@ describe('Variable Tests - Cloud', () => {
 
                 const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value', true)
                 const error = await variableResponse.json()
-                console.log('error', error)
                 expect(error.asyncError).toBe('Must have a user_id set on the user')
             })
 
@@ -58,7 +57,6 @@ describe('Variable Tests - Cloud', () => {
 
                 const variableResponse = await testClient.callVariable(userId, undefined, 'default_value', true)
                 const error = await variableResponse.json()
-                console.log('error', error)
                 expect(error.asyncError).toBe('Missing parameter: key')
             })
 
@@ -74,7 +72,6 @@ describe('Variable Tests - Cloud', () => {
 
                 const variableResponse = await testClient.callVariable(userId, 'var_key', undefined, true)
                 const error = await variableResponse.json()
-                console.log('error', error)
                 expect(error.asyncError).toBe('Missing parameter: defaultValue')
             })
 
