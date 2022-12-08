@@ -3,6 +3,17 @@ import nock from 'nock'
 import { getServerScope } from './nock'
 import { v4 as uuidv4 } from 'uuid'
 
+const oldFetch = fetch
+
+global.fetch = async (...args) => {
+    try {
+        return await oldFetch(...args)
+    } catch (e) {
+        console.error(e)
+        throw e
+    }
+}
+
 export const getMockServerUrl = () =>
     `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 
@@ -104,20 +115,15 @@ export const createClient = async (url: string, clientId?: string, sdkKey?: stri
 }
 
 export const createUser = async (url: string, user: object) => {
-    try {
-        return await fetch(`${url}/user`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                ...user
-            })
+    return await fetch(`${url}/user`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            ...user
         })
-    } catch (e) {
-        console.log(e)
-        throw e
-    }
+    })
 }
 
 export const callVariable = async (
