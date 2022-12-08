@@ -54,14 +54,22 @@ export const handleLocation = async (
                 message: `${command} attached to ${ctx.request.url} with url ${callbackURL.href}`,
             }
         } else {
-            const resultData = await invokeCommand(
-                entity,
-                command,
-                parsedParams,
-                isAsync
-            )
+            let result
+            if (isAsync) {
+                result = await invokeCommand(
+                    entity,
+                    command,
+                    parsedParams
+                ).catch((e) => console.error(e))
+            } else {
+                result = invokeCommand(
+                    entity,
+                    command,
+                    parsedParams
+                )
+            }
 
-            const entityType = getEntityFromType(resultData.constructor.name)
+            const entityType = getEntityFromType(result.constructor.name)
 
             const commandId = dataStore.commandResults[command] !== undefined ?
                 Object.keys(dataStore.commandResults[command]).length :
@@ -70,14 +78,14 @@ export const handleLocation = async (
             if (dataStore.commandResults[command] === undefined) {
                 dataStore.commandResults[command] = {}
             }
-            dataStore.commandResults[command][commandId] = resultData
+            dataStore.commandResults[command][commandId] = result
 
             ctx.status = 200
             ctx.set('Location', `command/${command}/${commandId}`)
             ctx.body = {
                 entityType: entityType,
-                data: resultData,
-                logs: [], // TODO add logs here
+                data: result,
+                logs: [], // TODO add logs 
             }
         }
     } catch (error) {
@@ -86,12 +94,11 @@ export const handleLocation = async (
             ctx.status = 200
             ctx.body = {
                 asyncError: error.message,
-                errorCode: error.code,
+                stack: error.stack
             }
         } else {
             ctx.status = 200
             ctx.body = {
-                errorCode: error.code,
                 exception: error.message,
                 stack: error.stack
             }
@@ -139,14 +146,11 @@ const parseParams = (params: object | any, data: DataStore): ParsedParams => {
     return parsedParams
 }
 
-const invokeCommand = async (
+const invokeCommand = (
     entity: DVCClient | DVCUser | DVCVariable | any,
     command: string,
     params: ParsedParams,
-    isAsync: boolean) => {
-    if (isAsync) {
-        return await entity[command](...params)
-    }
+) => {
     return entity[command](...params)
 }
 
@@ -157,16 +161,14 @@ export const validateLocationReqMiddleware = async (ctx: Koa.ParameterizedContex
     if (entity === undefined) {
         ctx.status = 404
         ctx.body = {
-            errorCode: 404,
-            errorMessage: 'Invalid request: missing entity',
+            message: 'Invalid request: missing entity',
         }
         return ctx
     }
     if (body.command === undefined) {
         ctx.status = 404
         ctx.body = {
-            errorCode: 404,
-            errorMessage: 'Invalid request: missing command',
+            message: 'Invalid request: missing command',
         }
         return ctx
     }

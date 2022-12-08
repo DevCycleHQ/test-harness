@@ -3,7 +3,7 @@ import {
     forEachSDK,
     createClient,
     describeIf,
-    callAllVariables,
+    callAllVariablesCloud,
     createUser,
     mockServerUrl,
 } from '../helpers'
@@ -49,7 +49,7 @@ describe('allVariables Tests - Cloud', () => {
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
-                const response = await callAllVariables(clientId, url, userLocation)
+                const response = await callAllVariablesCloud(clientId, url, userLocation)
                 const { data: variablesMap } = await response.json()
 
                 expect(variablesMap).toMatchObject({})
@@ -61,10 +61,10 @@ describe('allVariables Tests - Cloud', () => {
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
-                const response = await callAllVariables(clientId, url, userLocation)
-                const { exception } = await response.json()
- 
-                expect(exception).toEqual('Must have a user_id set on the user')
+                const response = await callAllVariablesCloud(clientId, url, userLocation)
+                const { asyncError } = await response.json()
+
+                expect(asyncError).toEqual('Must have a user_id set on the user')
             })
 
             it('should return a variable map', async () => {
@@ -79,7 +79,7 @@ describe('allVariables Tests - Cloud', () => {
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
-                const response = await callAllVariables(clientId, url, userLocation)
+                const response = await callAllVariablesCloud(clientId, url, userLocation)
                 const { data: variablesMap, entityType } = await response.json()
 
                 expect(entityType).toEqual('Object')
@@ -101,7 +101,7 @@ describe('allVariables Tests - Cloud', () => {
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
-                await callAllVariables(clientId, url, userLocation)
+                await callAllVariablesCloud(clientId, url, userLocation)
             })
 
             it('should make a request to the variables endpoint with edgeDB param to true', async () => {
@@ -131,7 +131,7 @@ describe('allVariables Tests - Cloud', () => {
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
-                await callAllVariables(clientId, url, userLocation)
+                await callAllVariablesCloud(clientId, url, userLocation)
             })
         })
     })

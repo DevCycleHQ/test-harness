@@ -3,7 +3,7 @@ import {
     forEachSDK,
     createClient,
     describeIf,
-    callAllVariables,
+    callAllVariablesLocal,
     createUser,
     wait,
     mockServerUrl
@@ -62,7 +62,7 @@ describe('allVariables Tests - Local', () => {
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
-                const response = await callAllVariables(clientId, url, userLocation)
+                const response = await callAllVariablesLocal(clientId, url, userLocation)
                 const { data: variablesMap } = await response.json()
 
                 expect(variablesMap).toMatchObject({})
@@ -74,7 +74,7 @@ describe('allVariables Tests - Local', () => {
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
-                const response = await callAllVariables(clientId, url, userLocation)
+                const response = await callAllVariablesLocal(clientId, url, userLocation)
                 const { exception } = await response.json()
 
                 expect(exception).toEqual('Must have a user_id set on the user')
@@ -89,7 +89,7 @@ describe('allVariables Tests - Local', () => {
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
-                const response = await callAllVariables(clientId, url, userLocation)
+                const response = await callAllVariablesLocal(clientId, url, userLocation)
                 const { data: variablesMap, entityType } = await response.json()
 
                 expect(entityType).toEqual('Object')
