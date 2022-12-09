@@ -2,18 +2,14 @@ import {
     getConnectionStringForProxy,
     forEachSDK,
     describeIf,
-    createClient,
     createUser,
     wait,
-    callOnClientInitialized,
-    callTrack,
-    waitForRequest
+    waitForRequest,
+    LocalTestClient
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
-import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../nock'
-import { config } from '../mockData/index'
-import nock from 'nock'
+import { config } from '../mockData'
 
 jest.setTimeout(15000)
 
@@ -24,28 +20,26 @@ describe('Track Tests - Local', () => {
     forEachSDK((name) => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
-        const clientId: string = uuidv4()
-        const mockServerUrl
-            = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
         const eventFlushIntervalMS = 1000
 
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
 
+            const client = new LocalTestClient(name)
+
             beforeAll(async () => {
                 url = getConnectionStringForProxy(name)
 
-                const sdkKey = `dvc_server_${clientId}`
-
                 scope
-                    .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
+                    .get(`/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`)
                     .reply(200, config)
 
-                await createClient(url, clientId, sdkKey, {
-                    baseURLOverride: `${mockServerUrl}/client/${clientId}`,
-                    eventFlushIntervalMS: eventFlushIntervalMS, logLevel: 'debug', configPollingIntervalMS: 1000 * 60
+                await client.createClient({
+                    eventFlushIntervalMS: eventFlushIntervalMS,
+                    logLevel: 'debug',
+                    configPollingIntervalMS: 1000 * 60
                 })
-                await callOnClientInitialized(clientId, url)
 
+                await client.callOnClientInitialized()
             })
 
             describe('Expect no events sent', () => {
@@ -54,7 +48,7 @@ describe('Track Tests - Local', () => {
                     await response.json()
                     const userId = response.headers.get('location')
 
-                    const trackResponse = await callTrack(clientId, url, userId, {})
+                    const trackResponse = await client.callTrack(userId, {}, true)
 
                     const res = await trackResponse.json()
                     expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
@@ -76,13 +70,13 @@ describe('Track Tests - Local', () => {
                     await response.json()
                     const userId = response.headers.get('location')
 
-                    const interceptor = scope.post(`/client/${clientId}/v1/events/batch`)
+                    const interceptor = scope.post(`/client/${client.clientId}/v1/events/batch`)
                     interceptor.reply((uri, body) => {
                         eventBody = body
                         return [201]
                     })
 
-                    const trackResponse = await callTrack(clientId, url, userId,
+                    const trackResponse = await client.callTrack(userId,
                         { type: eventType, target: 'string-var', value: value })
 
                     await trackResponse.json()
@@ -127,15 +121,15 @@ describe('Track Tests - Local', () => {
                     const userId = response.headers.get('location')
 
 
-                    const interceptor = scope.post(`/client/${clientId}/v1/events/batch`)
+                    const interceptor = scope.post(`/client/${client.clientId}/v1/events/batch`)
                     interceptor.reply((uri, body) => {
                         eventBody = body
                         return [201]
                     })
 
-                    await callTrack(clientId, url, userId,
+                    await client.callTrack(userId,
                         { type: eventType, target: variableId, value: value })
-                    await callTrack(clientId, url, userId,
+                    await client.callTrack(userId,
                         { type: eventType2, target: variableId2, value: value2 })
 
                     await waitForRequest(scope, interceptor, eventFlushIntervalMS * 2, 'Event callback timed out')
@@ -189,7 +183,7 @@ describe('Track Tests - Local', () => {
 
                         let startDate = Date.now()
                         scope
-                            .post(`/client/${clientId}/v1/events/batch`)
+                            .post(`/client/${client.clientId}/v1/events/batch`)
                             .matchHeader('Content-Type', 'application/json')
                             .times(2)
                             .reply((uri, body) => {
@@ -198,21 +192,21 @@ describe('Track Tests - Local', () => {
                                 return [519]
                             })
 
-                        const interceptor = scope.post(`/client/${clientId}/v1/events/batch`)
+                        const interceptor = scope.post(`/client/${client.clientId}/v1/events/batch`)
                         interceptor.reply((uri, body) => {
                             eventBody = body
                             timestamps.push(Date.now() - startDate)
                             return [201]
                         })
 
-                        await callTrack(clientId, url, userId,
+                        await client.callTrack(userId,
                             { type: eventType, target: variableId, value: value })
-                        await callTrack(clientId, url, userId,
+                        await client.callTrack(userId,
                             { type: eventType2, target: variableId2, value: value2 })
 
                         await waitForRequest(scope, interceptor, eventFlushIntervalMS * 5, 'Event callback timed out')
                         //wait for a total of 2(failed) 1(passed) and 2 extra flushes (safety) to happen
-                        //this is to ensure that another flush does not happen 
+                        //this is to ensure that another flush does not happen
                         //as it would be caught globally and fail this test case
                         //the extra flush would be caught by the global assertNoUnmatchedRequests
 

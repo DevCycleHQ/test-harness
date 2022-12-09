@@ -1,6 +1,6 @@
 import { DVCClient, DVCUser, DVCVariable } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
-import { getEntityFromType, DataStore } from '../entityTypes'
+import { getEntityFromType, DataStore, EntityTypes } from '../entityTypes'
 import { dataStore } from '../app'
 
 //HTTP request comes in as string
@@ -83,8 +83,8 @@ export const handleLocation = async (
             ctx.set('Location', `command/${command}/${commandId}`)
             ctx.body = {
                 entityType: entityType,
-                data: result,
-                logs: [], // TODO add logs 
+                data: entityType === EntityTypes.client ? {} : result,
+                logs: [], // TODO add logs
             }
         }
     } catch (error) {

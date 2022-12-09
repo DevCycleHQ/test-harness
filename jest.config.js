@@ -4,5 +4,5 @@ module.exports = {
     transform: {
         '^.+\\.tsx?$': ['ts-jest', {}]
     },
-    testEnvironment: './jest-environment.ts',
+    testEnvironment: './jest-environment.ts'
 };
