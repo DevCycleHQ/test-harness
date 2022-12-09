@@ -6,10 +6,10 @@ import {
     LocalTestClient
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
-import { getServerScope } from '../nock'
 import { config } from '../mockData'
+import { getServerScope } from '../nock'
 
-jest.setTimeout(10000)
+jest.setTimeout(10000000)
 
 describe('Initialize Tests - Local', () => {
     const scope = getServerScope()

@@ -5,7 +5,8 @@ export enum EntityTypes {
     variable = 'Variable',
     feature = 'Feature',
     object = 'Object',
-    client = 'Client'
+    client = 'Client',
+    void = 'Void'
 }
 
 export type DataStore = {
