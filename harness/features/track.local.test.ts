@@ -103,7 +103,6 @@ describe('Track Tests - Local', () => {
                                 user: expect.objectContaining({
                                     platform: 'NodeJS',
                                     sdkType: 'server',
-                                    // sdkVersion: latestNodeJsSdkVersion,
                                     user_id: validUserId,
                                 }),
                                 events: [
