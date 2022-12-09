@@ -277,6 +277,26 @@ export class TestClient {
             })
         })
     }
+
+    async callAllFeatures(
+        userLocation: string,
+        isAsync: boolean
+    ) {
+        return await fetch(this.getClientUrl(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                command: 'allFeatures',
+                isAsync: isAsync,
+                params: [
+                    { location: `${userLocation}` },
+                ]
+            })
+        })
+    }
+    
 }
 
 export const waitForRequest = async (
