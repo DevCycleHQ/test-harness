@@ -38,7 +38,8 @@ describe('Track Tests - Local', () => {
                 .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
                 .reply(200, config)
 
-            scope.post(`/client/${clientId}`).reply((uri, body) => {
+            const initializedInterceptor = scope.post(`/client/${clientId}`)
+            initializedInterceptor.reply((uri, body) => {
                 if (typeof body === 'object'
                     && body.message.includes('onClientInitialized was invoked'))
                     return [200]
@@ -49,6 +50,7 @@ describe('Track Tests - Local', () => {
                 eventFlushIntervalMS: eventFlushIntervalMS, logLevel: 'debug', configPollingIntervalMS: 1000 * 60
             })
             await callOnClientInitialized(clientId, url, `${mockServerUrl}/client/${clientId}`)
+            await waitForRequest(scope, initializedInterceptor, eventFlushIntervalMS * 2, 'Client did not initialize')
 
         })
 
@@ -66,8 +68,7 @@ describe('Track Tests - Local', () => {
                     await wait(eventFlushIntervalMS * 3) // wait for 2 event flush for safety
 
                     const res = await trackResponse.json()
-                    // expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
-                    expect(res.entityType).toBe('Void') // workaround to get tests to pass locally
+                    expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
                     expect(eventBody).toBeUndefined()
                 })
             })
