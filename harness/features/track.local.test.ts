@@ -29,7 +29,6 @@ describe('Track Tests - Local', () => {
             = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
         const eventFlushIntervalMS = 1000
 
-
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
 
             beforeAll(async () => {
@@ -50,7 +49,7 @@ describe('Track Tests - Local', () => {
             })
 
             describe('Expect no events sent', () => {
-                it.only('should not send an event if the event type not set', async () => {
+                it('should not send an event if the event type not set', async () => {
                     let eventBody
 
                     const response = await createUser(url, { user_id: validUserId })
