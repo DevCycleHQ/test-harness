@@ -164,7 +164,9 @@ export const wait = (ms: number) => {
     })
 }
 
-export const callOnClientInitialized = async (clientId: string, url: string, callbackURL: string) => {
+export const callOnClientInitialized = async (
+    clientId: string, url: string
+) => {
     return await fetch(`${url}/client/${clientId}`, {
         method: 'POST',
         headers: {
@@ -172,9 +174,8 @@ export const callOnClientInitialized = async (clientId: string, url: string, cal
         },
         body: JSON.stringify({
             command: 'onClientInitialized',
-            params: [
-                { callbackURL }
-            ]
+            isAsync: true,
+            params: []
         })
     })
 }
@@ -208,6 +209,22 @@ const callAllVariables = async (clientID: string, url: string, userLocation: str
             params: [
                 { location: userLocation }
             ]
+        })
+    })
+}
+
+export const callTrack = async (clientId: string, url: string, userLocation: string, event: unknown) => {
+    return await fetch(`${url}/client/${clientId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            command: 'track',
+            params: [
+                { location: `${userLocation}` },
+                { value: event }
+            ],
         })
     })
 }
@@ -264,7 +281,7 @@ export class TestClient {
 
     }
 
-    async callOnClientInitialized() {    
+    async callOnClientInitialized() {
         await fetch(this.getClientUrl(), {
             method: 'POST',
             headers: {
@@ -296,15 +313,19 @@ export class TestClient {
             })
         })
     }
-    
+
 }
 
 export const waitForRequest = async (
-    scope: Scope, 
-    interceptor: Interceptor, 
-    timeout: number, 
+    scope: Scope,
+    interceptor: Interceptor,
+    timeout: number,
     timeoutMessage: string
 ) => {
+
+    if (scope.isDone()) {
+        return
+    }
 
     const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
@@ -314,14 +335,14 @@ export const waitForRequest = async (
 
     await Promise.race([
         new Promise((resolve) => {
-            const callback =  (req, inter) => {
+            const callback = (req, inter) => {
                 if (inter === interceptor) {
                     scope.off('request', callback)
                     resolve(true)
                 }
             }
             scope.on('request', callback)
-        }), 
+        }),
         timeoutPromise
     ])
 }

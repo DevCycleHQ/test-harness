@@ -68,7 +68,7 @@ export const handleLocation = async (
                 )
             }
 
-            const entityType = getEntityFromType(result.constructor.name)
+            const entityType = result ? getEntityFromType(result.constructor.name) : 'Void'
 
             const commandId = dataStore.commandResults[command] !== undefined ?
                 Object.keys(dataStore.commandResults[command]).length :
@@ -109,16 +109,8 @@ const getEntityFromLocation = (location: string, data: DataStore) => {
     const urlParts = location.replace(/^\//, '').split('/')
     const [locationType, ...locationPath] = urlParts
 
-    console.log('command: ', locationType)
-
     if (locationType === 'command') {
         const [entityType, commandId] = locationPath
-        // debug logs
-        console.log('data: ', data)
-        console.log('commandResults: ', data.commandResults)
-        console.log('entityType: ', data.commandResults[entityType])
-        console.log('id: ', data.commandResults[entityType][commandId])
-
         return data.commandResults[entityType][commandId]
     } else if (locationType === 'client') {
         const [clientId] = locationPath

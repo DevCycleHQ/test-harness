@@ -26,9 +26,10 @@ export function initialize() {
         const { headers, request } = ctx
         try {
             const response = await axios[request.method.toLowerCase()](`https://nock.com${ctx.request.url}`,
-                request.body, {
-                headers
-            })
+                request.body,
+                {
+                    headers
+                })
             ctx.body = response.data
             ctx.status = response.status
         } catch (error) {
