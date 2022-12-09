@@ -29,34 +29,28 @@ describe('Track Tests - Local', () => {
             = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
         const eventFlushIntervalMS = 1000
 
-        beforeAll(async () => {
-            url = getConnectionStringForProxy(name)
-
-            const sdkKey = `dvc_server_${clientId}`
-
-            scope
-                .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
-                .reply(200, config)
-
-            const initializedInterceptor = scope.post(`/client/${clientId}`)
-            initializedInterceptor.reply((uri, body) => {
-                if (typeof body === 'object'
-                    && body.message.includes('onClientInitialized was invoked'))
-                    return [200]
-            })
-
-            await createClient(url, clientId, sdkKey, {
-                baseURLOverride: `${mockServerUrl}/client/${clientId}`,
-                eventFlushIntervalMS: eventFlushIntervalMS, logLevel: 'debug', configPollingIntervalMS: 1000 * 60
-            })
-            await callOnClientInitialized(clientId, url, `${mockServerUrl}/client/${clientId}`)
-            await waitForRequest(scope, initializedInterceptor, eventFlushIntervalMS * 2, 'Client did not initialize')
-
-        })
 
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
+
+            beforeAll(async () => {
+                url = getConnectionStringForProxy(name)
+
+                const sdkKey = `dvc_server_${clientId}`
+
+                scope
+                    .get(`/client/${clientId}/config/v1/server/${sdkKey}.json`)
+                    .reply(200, config)
+
+                await createClient(url, clientId, sdkKey, {
+                    baseURLOverride: `${mockServerUrl}/client/${clientId}`,
+                    eventFlushIntervalMS: eventFlushIntervalMS, logLevel: 'debug', configPollingIntervalMS: 1000 * 60
+                })
+                await callOnClientInitialized(clientId, url)
+
+            })
+
             describe('Expect no events sent', () => {
-                it('should not send an event if the event type not set', async () => {
+                it.only('should not send an event if the event type not set', async () => {
                     let eventBody
 
                     const response = await createUser(url, { user_id: validUserId })
@@ -68,6 +62,7 @@ describe('Track Tests - Local', () => {
                     await wait(eventFlushIntervalMS * 3) // wait for 2 event flush for safety
 
                     const res = await trackResponse.json()
+                    console.log('res', res)
                     expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
                     expect(eventBody).toBeUndefined()
                 })

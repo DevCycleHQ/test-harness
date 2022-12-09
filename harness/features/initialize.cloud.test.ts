@@ -48,7 +48,7 @@ describe('Client Initialize Tests - Cloud', () => {
 
             it('should return client object location if SDK token is correct', async () => {
                 const client = new TestClient(name)
-                const response = await client.createClient({ ...clientOptions})
+                const response = await client.createClient({ ...clientOptions })
 
                 const body = await response.json()
                 expect(body.message).toBe('success')

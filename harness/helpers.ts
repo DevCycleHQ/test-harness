@@ -164,7 +164,9 @@ export const wait = (ms: number) => {
     })
 }
 
-export const callOnClientInitialized = async (clientId: string, url: string, callbackURL: string) => {
+export const callOnClientInitialized = async (
+    clientId: string, url: string
+) => {
     return await fetch(`${url}/client/${clientId}`, {
         method: 'POST',
         headers: {
@@ -172,9 +174,8 @@ export const callOnClientInitialized = async (clientId: string, url: string, cal
         },
         body: JSON.stringify({
             command: 'onClientInitialized',
-            params: [
-                { callbackURL }
-            ]
+            isAsync: true,
+            params: []
         })
     })
 }
@@ -280,7 +281,7 @@ export class TestClient {
 
     }
 
-    async callOnClientInitialized() {    
+    async callOnClientInitialized() {
         await fetch(this.getClientUrl(), {
             method: 'POST',
             headers: {
@@ -312,13 +313,13 @@ export class TestClient {
             })
         })
     }
-    
+
 }
 
 export const waitForRequest = async (
-    scope: Scope, 
-    interceptor: Interceptor, 
-    timeout: number, 
+    scope: Scope,
+    interceptor: Interceptor,
+    timeout: number,
     timeoutMessage: string
 ) => {
 
@@ -330,14 +331,14 @@ export const waitForRequest = async (
 
     await Promise.race([
         new Promise((resolve) => {
-            const callback =  (req, inter) => {
+            const callback = (req, inter) => {
                 if (inter === interceptor) {
                     scope.off('request', callback)
                     resolve(true)
                 }
             }
             scope.on('request', callback)
-        }), 
+        }),
         timeoutPromise
     ])
 }
