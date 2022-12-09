@@ -61,7 +61,6 @@ describe('Track Tests - Local', () => {
                     await wait(eventFlushIntervalMS * 3) // wait for 2 event flush for safety
 
                     const res = await trackResponse.json()
-                    console.log('res', res)
                     expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
                     expect(eventBody).toBeUndefined()
                 })

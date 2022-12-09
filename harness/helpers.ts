@@ -323,6 +323,10 @@ export const waitForRequest = async (
     timeoutMessage: string
 ) => {
 
+    if (scope.isDone()) {
+        return
+    }
+
     const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
             reject(new Error(timeoutMessage))
