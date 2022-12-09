@@ -26,6 +26,7 @@ describe('Track Tests - Local', () => {
         const clientId: string = uuidv4()
         const mockServerUrl
             = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
+        const eventFlushIntervalMS = 1000
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
@@ -44,7 +45,7 @@ describe('Track Tests - Local', () => {
 
             await createClient(url, clientId, sdkKey, {
                 baseURLOverride: `${mockServerUrl}/client/${clientId}`,
-                eventFlushIntervalMS: 1000, logLevel: 'debug', configPollingIntervalMS: 1000 * 60
+                eventFlushIntervalMS: eventFlushIntervalMS, logLevel: 'debug', configPollingIntervalMS: 1000 * 60
             })
             await callOnClientInitialized(clientId, url, `${mockServerUrl}/client/${clientId}`)
 
@@ -65,7 +66,7 @@ describe('Track Tests - Local', () => {
                         req.body = eventBody
                     })
 
-                    await wait(2000) // wait for event flush
+                    await wait(eventFlushIntervalMS * 3) // wait for 2 event flush for safety
 
                     const res = await trackResponse.json()
                     // expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
@@ -239,9 +240,12 @@ describe('Track Tests - Local', () => {
                     })
                 })
 
-                //skipping this test because it takes too long to run and need to change the code to make it run faster
-                it.skip('should retry with exponential backoff events API call to track 2 events', async () => {
+                // this test is hard to test for and so the test is changed to ensure that there are 2 flushes
+                // that happen in the roughly specified flush time and also that there are no extra flush that
+                // take place. which is why this test will take longer to run
+                it('should retry with exponential backoff events API call to track 2 events', async () => {
                     let eventBody = {}
+                    let extraCall
                     const timestamps = []
                     let count = 0
                     // const eventType = 'buttonClicked'
@@ -262,7 +266,7 @@ describe('Track Tests - Local', () => {
                     scope
                         .post(`/client/${clientId}/v1/events/batch`)
                         .matchHeader('Content-Type', 'application/json')
-                        .times(10)
+                        .times(2)
                         .reply((uri, body) => {
                             timestamps.push(Date.now() - startDate)
                             startDate = Date.now()
@@ -278,14 +282,18 @@ describe('Track Tests - Local', () => {
                         return [201]
                     })
 
+
                     await callTrack(clientId, url, userId,
                         { type: eventType, target: variableId, value: value })
                     await callTrack(clientId, url, userId,
                         { type: eventType2, target: variableId2, value: value2 })
 
-                    await wait(1000 * 15) //wait for the flush to happen
+                    await wait(eventFlushIntervalMS * 5)
+                    //wait for a total of 2(failed) 1(passed) and 2 extra flushes to happen
+                    //this is to ensure that another flush does not happen 
+                    //as it would be caught globally and fail this test case
+                    //the extra flush would be caught by the global assertNoUnmatchedRequests
 
-                    // I do not think this test is reliable
                     let total = 0
                     console.log(timestamps)
 
@@ -296,9 +304,12 @@ describe('Track Tests - Local', () => {
 
                     }
                     const avg = total / timestamps.length
-                    console.log('avg', avg)
 
                     await waitForEvent()
+
+                    // checking if the two reqests were made in 10% of the defined interva;
+                    expect(avg).toBeGreaterThanOrEqual(900)
+                    expect(avg).toBeLessThanOrEqual(1100)
 
                     expect(eventBody).toEqual({
                         batch: [
@@ -327,6 +338,7 @@ describe('Track Tests - Local', () => {
                             },
                         ],
                     })
+                    expect(extraCall).toBeUndefined()
                 })
             })
         })
