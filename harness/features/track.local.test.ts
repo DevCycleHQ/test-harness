@@ -50,19 +50,18 @@ describe('Track Tests - Local', () => {
 
             describe('Expect no events sent', () => {
                 it('should not send an event if the event type not set', async () => {
-                    let eventBody
-
                     const response = await createUser(url, { user_id: validUserId })
                     await response.json()
                     const userId = response.headers.get('location')
 
                     const trackResponse = await callTrack(clientId, url, userId, {})
 
-                    await wait(eventFlushIntervalMS * 3) // wait for 2 event flush for safety
-
                     const res = await trackResponse.json()
                     expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
-                    expect(eventBody).toBeUndefined()
+
+                    // wait for 2 event flush to ensure no flush happens, if it fails it will get caught by
+                    // the global assertNoUnmatchedRequests and fail this testcase
+                    await wait(eventFlushIntervalMS * 2)
                 })
             })
 
