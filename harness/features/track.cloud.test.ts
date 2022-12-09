@@ -1,4 +1,6 @@
-import { getConnectionStringForProxy, forEachSDK, describeIf, createClient, createUser, callTrack } from '../helpers'
+import {
+    getConnectionStringForProxy, forEachSDK, describeIf, createClient, createUser, callTrack, waitForRequest
+} from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../nock'
@@ -52,18 +54,19 @@ describe('Track Tests - Cloud', () => {
                 await response.json()
                 const userId = response.headers.get('location')
 
-                scope
+                const interceptor = scope
                     .post(`/client/${clientId}/v1/track`)
-                    .matchHeader('Content-Type', 'application/json')
-                    .reply((uri, body) => {
-                        eventBody = body
-                        return [201, { success: true }]
-                    })
+
+                interceptor.matchHeader('Content-Type', 'application/json')
+                interceptor.reply((uri, body) => {
+                    eventBody = body
+                    return [201, { success: true }]
+                })
 
                 await callTrack(clientId, url, userId,
                     { type: eventType, target: variableId, value })
 
-                await waitForEvent()
+                await waitForRequest(scope, interceptor, 550, 'Event callback timed out')
 
                 expectEventBody(eventBody, variableId, eventType, value)
             })
@@ -84,35 +87,26 @@ describe('Track Tests - Cloud', () => {
                     .matchHeader('Content-Type', 'application/json')
                     .reply(519, {})
 
-                scope
+                const interceptor = scope
                     .post(`/client/${clientId}/v1/track`)
-                    .matchHeader('Content-Type', 'application/json')
-                    .reply((uri, body) => {
-                        eventBody = body
-                        return [201, { success: true }]
-                    })
+                interceptor.matchHeader('Content-Type', 'application/json')
+                interceptor.reply((uri, body) => {
+                    eventBody = body
+                    return [201, { success: true }]
+                })
 
                 const trackResponse = await callTrack(clientId, url, userId,
                     { type: eventType, target: variableId, value })
 
                 await trackResponse.json()
 
-                await waitForEvent()
+                await waitForRequest(scope, interceptor, 550, 'Event callback timed out')
 
                 expectEventBody(eventBody, variableId, eventType, value)
             })
 
         })
     })
-
-    const waitForEvent = async () => {
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                resolve({})
-            }, 550)
-        })
-        expect(scope.isDone()).toBeTruthy()
-    }
 
     const expectEventBody = (
         body: Record<string, unknown>,
