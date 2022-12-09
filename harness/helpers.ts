@@ -1,3 +1,4 @@
+import { Interceptor, Scope } from 'nock'
 import { Sdks } from './types'
 import nock from 'nock'
 import { getServerScope } from './nock'
@@ -263,7 +264,7 @@ export class TestClient {
 
     }
 
-    async callOnClientInitialized() {
+    async callOnClientInitialized() {    
         await fetch(this.getClientUrl(), {
             method: 'POST',
             headers: {
@@ -276,4 +277,31 @@ export class TestClient {
             })
         })
     }
+}
+
+export const waitForRequest = async (
+    scope: Scope, 
+    interceptor: Interceptor, 
+    timeout: number, 
+    timeoutMessage: string
+) => {
+
+    const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+            reject(new Error(timeoutMessage))
+        }, timeout)
+    })
+
+    await Promise.race([
+        new Promise((resolve) => {
+            const callback =  (req, inter) => {
+                if (inter === interceptor) {
+                    scope.off('request', callback)
+                    resolve(true)
+                }
+            }
+            scope.on('request', callback)
+        }), 
+        timeoutPromise
+    ])
 }
