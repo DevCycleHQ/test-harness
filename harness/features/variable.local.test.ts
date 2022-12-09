@@ -87,7 +87,9 @@ describe('Variable Tests - Local', () => {
 
                     eventsUrl = `/${testClient.clientLocation}/v1/events/batch`
                 })
-
+                afterAll(async () => {
+                    await testClient.close()
+                })
                 it('should throw exception if user is invalid',  async () => {
                     const variableResponse =
                         await testClient.callVariable(invalidUser.location, 'string-var', 'string default')
@@ -255,6 +257,9 @@ describe('Variable Tests - Local', () => {
                 )
             })
 
+            afterAll(async () => {
+                await testClient.close()
+            })
             forEachVariableType((type) => {
                 const { key, defaultValue } = expectedVariablesByType[type]
 

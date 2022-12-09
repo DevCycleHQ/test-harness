@@ -59,6 +59,10 @@ describe('allFeatures Tests - Local', () => {
                     )
                 })
 
+                afterAll(async () => {
+                    await testClient.close()
+                })
+
                 it('should return empty object if client is uninitialized',  async () => {
                     const featuresResponse = await testClient.callAllFeatures(variationOnUser)
                     const features = await featuresResponse.json()
@@ -76,15 +80,18 @@ describe('allFeatures Tests - Local', () => {
                 const testClient = new LocalTestClient(name)
 
                 beforeAll(async () => {
-                    await testClient.createClient()
-
                     scope
-                        .get(`/${testClient.clientLocation}/config/v1/server/${testClient.sdkKey}.json`)
+                        .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                         .reply(200, config)
-
+                    await testClient.createClient()
                     await testClient.callOnClientInitialized()
                 })
 
+                afterAll(() => {
+                    testClient.close()
+                })
+                it('should return all features for user without custom data',  async () => {
+                    const featuresResponse = await testClient.callAllFeatures(noVariationUser, false)
                 it('should return all features for user without custom data',  async () => {
                     const featuresResponse = await testClient.callAllFeatures(noVariationUser)
                     const features = (await featuresResponse.json()).data

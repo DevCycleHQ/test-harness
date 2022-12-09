@@ -9,7 +9,7 @@ import { Capabilities, SDKCapabilities } from '../types'
 import { config } from '../mockData'
 import { getServerScope } from '../nock'
 
-jest.setTimeout(10000000)
+jest.setTimeout(10000)
 
 describe('Initialize Tests - Local', () => {
     const scope = getServerScope()

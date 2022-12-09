@@ -159,13 +159,13 @@ export const wait = (ms: number) => {
 const callAllVariables = async (url: string, userLocation: string, isAsync: boolean) => {
     return await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
-            command: 'allVariables',
-            isAsync: isAsync,
-            params: [
-                { location: userLocation }
-            ]
+            command: 'onClientInitialized',
+            isAsync: true,
+            params: []
         })
     })
 }
@@ -298,23 +298,6 @@ export class LocalTestClient extends BaseTestClient {
         return callAllVariables(this.getClientUrl(), userLocation, false)
     }
 
-    async callAllVariables(userLocation: string, isAsync: boolean) {
-        try {
-            return await fetch(this.getClientUrl(), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    command: 'allVariables',
-                    params: [
-                        { location: userLocation }
-                    ]
-                })
-            })
-        } catch (e) {
-            console.log(e)
-            throw e
-        }
-    }
 
     async callOnClientInitialized() {
         const response = await fetch(this.getClientUrl(), {

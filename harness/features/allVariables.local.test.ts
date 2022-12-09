@@ -35,8 +35,9 @@ describe('allVariables Tests - Local', () => {
             await client.callOnClientInitialized()
         })
 
-        afterAll(() => {
+        afterAll(async () => {
             nock.removeInterceptor(configInterceptor)
+            await client.close()
         })
 
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
@@ -62,6 +63,7 @@ describe('allVariables Tests - Local', () => {
                 const { data: variablesMap } = await response.json()
 
                 expect(variablesMap).toMatchObject({})
+                await client.close()
             })
 
             it('should throw an error if called with an invalid user', async () => {
