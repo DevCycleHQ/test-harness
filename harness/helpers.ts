@@ -298,7 +298,7 @@ export class LocalTestClient extends BaseTestClient {
         return callAllVariables(this.getClientUrl(), userLocation, false)
     }
 
-    async callAllVariables(userLocation: string) {
+    async callAllVariables(userLocation: string, isAsync: boolean) {
         try {
             return await fetch(this.getClientUrl(), {
                 method: 'POST',
