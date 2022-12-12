@@ -1,14 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using DevCycle.SDK.Server.Cloud.Api;
 using DevCycle.SDK.Server.Local.Api;
-using DevCycle.SDK.Server.Common.Model;
-using DevCycle.SDK.Server.Common;
+using DevCycle.SDK.Server.Common.Model.Local;
+using DevCycle.SDK.Server.Common.Model.Cloud;
+using System.Text.Json.Serialization;
 
 namespace dotnet.Controllers;
 
+public class AllOptions: DVCLocalOptions {
+    [JsonPropertyName("enableEdgeDB")]
+    public bool EnableEdgeDB { get; set; }
+}
+
 public class ClientRequestBody {
     public string clientId { get; set;}
-    public Dictionary<string, object> options { get; set;}
+    public AllOptions options { get; set;}
+
     public string? sdkKey { get; set;}
 
     public bool? cloudBucketing { get; set; }
@@ -30,18 +37,21 @@ public class ClientController : ControllerBase
     public object Post(ClientRequestBody clientBody)
     {
         if (clientBody.cloudBucketing ?? false) {
-            DVCCloudClientBuilder builder = new DVCCloudClientBuilder();
-            builder.SetEnvironmentKey(clientBody.sdkKey);
-            builder.SetOptions(clientBody.options as IDVCOptions);
-            DataStore.CloudClients[clientBody.clientId] = (DVCCloudClient) builder.Build();
+            DataStore.CloudClients[clientBody.clientId] = (DVCCloudClient) new DVCCloudClientBuilder()
+                .SetEnvironmentKey(clientBody.sdkKey)
+                .SetOptions(new DVCCloudOptions(enableEdgeDB: clientBody.options.EnableEdgeDB))
+                .SetLogger(new LoggerFactory())
+                .Build();
         } else {
-            DVCLocalClientBuilder builder = new DVCLocalClientBuilder();
-            builder.SetEnvironmentKey(clientBody.sdkKey);
-            builder.SetOptions(clientBody.options as IDVCOptions);
-            DataStore.LocalClients[clientBody.clientId] = (DVCLocalClient) builder.Build();
+            DataStore.LocalClients[clientBody.clientId] = (DVCLocalClient) new DVCLocalClientBuilder()
+                .SetEnvironmentKey(clientBody.sdkKey)
+                .SetOptions(clientBody.options)
+                .SetLogger(new LoggerFactory())
+                .Build();
         }
 
         Response.Headers.Add("Location", "client/" + clientBody.clientId);
+        Response.StatusCode = 201;
 
         return new { message = "success"};
     }

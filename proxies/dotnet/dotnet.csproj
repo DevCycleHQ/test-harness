@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DevCycle.SDK.Server.Cloud" Version="1.3.5" />
-    <PackageReference Include="DevCycle.SDK.Server.Local" Version="2.0.2" />
+    <PackageReference Include="DevCycle.SDK.Server.Cloud" Version="1.3.6" />
+    <PackageReference Include="DevCycle.SDK.Server.Local" Version="2.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
