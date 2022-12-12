@@ -12,7 +12,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
     if (body.clientId === undefined) {
         ctx.status = 400
         ctx.body = {
-            error: 'Invalid request: missing clientId'
+            message: 'Invalid request: missing clientId'
         }
         return ctx
     }
