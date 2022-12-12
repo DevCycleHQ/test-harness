@@ -73,7 +73,7 @@ def handle_command(path, body, data_store):
         "entityType": entity_type,
         "data": camel_case_dict(result_data),
         "logs": []
-    }, 200, {
+    }, 201, {
         "Location": "command/" + command + "/" + command_id
     }
 
