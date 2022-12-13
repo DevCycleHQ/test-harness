@@ -2,7 +2,7 @@ import {
     getConnectionStringForProxy,
     forEachSDK,
     describeIf,
-    TestClient
+    CloudTestClient
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 
@@ -12,10 +12,6 @@ describe('Client Initialize Tests - Cloud', () => {
     forEachSDK((name) => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
-
-        const clientOptions = {
-            enableCloudBucketing: true,
-        }
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
@@ -29,8 +25,8 @@ describe('Client Initialize Tests - Cloud', () => {
         describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
 
             it('should throw an exception and return no location if invalid SDK token is sent', async () => {
-                const client = new TestClient(name)
-                const response = await client.createClient(clientOptions, 'invalidKey')
+                const client = new CloudTestClient(name)
+                const response = await client.createClient({}, 'invalidKey')
                 const body = await response.json()
                 expect(body.exception).toBe('Invalid environment key provided. Please call initialize with a valid server environment key')
                 const createdClientId = response.headers.get('location')
@@ -38,8 +34,8 @@ describe('Client Initialize Tests - Cloud', () => {
             })
 
             it('should throw an exception and return no location if no SDK token is sent', async () => {
-                const client = new TestClient(name)
-                const response = await client.createClient(clientOptions, null)
+                const client = new CloudTestClient(name)
+                const response = await client.createClient({}, null)
                 const body = await response.json()
                 expect(body.exception).toBe('Missing environment key! Call initialize with a valid environment key')
                 const createdClientId = response.headers.get('location')
@@ -47,9 +43,8 @@ describe('Client Initialize Tests - Cloud', () => {
             })
 
             it('should return client object location if SDK token is correct', async () => {
-                const client = new TestClient(name)
-                const response = await client.createClient({ ...clientOptions })
-
+                const client = new CloudTestClient(name)
+                const response = await client.createClient({})
                 const body = await response.json()
                 expect(body.message).toBe('success')
             })

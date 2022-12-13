@@ -3,10 +3,11 @@ import {
     forEachSDK,
     describeIf,
     wait,
-    TestClient
+    LocalTestClient
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
+import { config } from '../mockData'
 
 jest.setTimeout(10000)
 
@@ -23,7 +24,7 @@ describe('Initialize Tests - Local', () => {
 
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
             it('should error when SDK key is missing', async () => {
-                const testClient = new TestClient(name)
+                const testClient = new LocalTestClient(name)
                 const response = await testClient.createClient({}, null)
                 const { exception } = await response.json()
 
@@ -33,7 +34,7 @@ describe('Initialize Tests - Local', () => {
             })
 
             it('should error when SDK key is invalid', async () => {
-                const testClient = new TestClient(name)
+                const testClient = new LocalTestClient(name)
                 const response = await testClient.createClient({}, 'invalid key')
                 const { exception } = await response.json()
 
@@ -43,30 +44,30 @@ describe('Initialize Tests - Local', () => {
             })
 
             it('initializes correctly on valid data', async () => {
-                const testClient = new TestClient(name)
+                const testClient = new LocalTestClient(name)
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                    .reply(200, {})
+                    .reply(200, config)
 
                 const response = await testClient.createClient()
                 const { message } = await response.json()
-                await wait(500)
+                await testClient.callOnClientInitialized()
 
                 expect(message).toEqual('success')
             })
 
             it('calls initialize promise/callback when config is successfully retrieved', async () => {
-                const testClient = new TestClient(name)
+                const testClient = new LocalTestClient(name)
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                    .reply(200, {})
+                    .reply(200, config)
 
                 await testClient.createClient()
                 await testClient.callOnClientInitialized()
             })
 
             it('calls initialize promise/callback when config fails to be retrieved', async () => {
-                const testClient = new TestClient(name)
+                const testClient = new LocalTestClient(name)
 
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
@@ -78,11 +79,11 @@ describe('Initialize Tests - Local', () => {
             })
 
             it('fetches config again after 3 seconds when config polling inteval is overriden', async () => {
-                const testClient = new TestClient(name)
+                const testClient = new LocalTestClient(name)
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .times(2)
-                    .reply(200, {})
+                    .reply(200, config)
 
                 await testClient.createClient(
                     {
@@ -90,11 +91,10 @@ describe('Initialize Tests - Local', () => {
                     }
                 )
                 await testClient.callOnClientInitialized()
-                await wait(500)
 
                 expect(scope.pendingMocks().length).toEqual(1)
 
-                await wait(3000)
+                await wait(3100)
             }, 5000)
         })
     })

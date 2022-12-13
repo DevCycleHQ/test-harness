@@ -1,9 +1,9 @@
-import { 
-    getConnectionStringForProxy, 
-    forEachSDK, 
-    describeIf, 
+import {
+    getConnectionStringForProxy,
+    forEachSDK,
+    describeIf,
     createUser,
-    TestClient,
+    CloudTestClient,
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -15,24 +15,24 @@ const scope = getServerScope()
 
 describe('allFeatures Tests - Cloud', () => {
     forEachSDK((name) => {
-        const testClient = new TestClient(name)
-        
+        const testClient = new CloudTestClient(name)
+
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
 
         let variationOnUser: string
         let invalidUser: string
-    
+
         beforeAll(async () => {
-            url = getConnectionStringForProxy(name)  
-            await testClient.createClient({ 
+            url = getConnectionStringForProxy(name)
+            await testClient.createClient({
                 enableCloudBucketing: true,
             })
-    
+
             variationOnUser = (
                 await createUser(url, { user_id: 'user1', customData: { 'should-bucket': true } })
             ).headers.get('location')
-    
+
             invalidUser = (
                 await createUser(url, { name: 'invalid' })
             ).headers.get('location')
@@ -48,8 +48,8 @@ describe('allFeatures Tests - Cloud', () => {
                         return !queryObj.enableEdgeDB
                     })
                     .reply(200, expectedFeaturesVariationOn)
-                const featuresResponse = await testClient.callAllFeatures(variationOnUser, true)
-                
+                const featuresResponse = await testClient.callAllFeatures(variationOnUser)
+
                 const features = await featuresResponse.json()
                 expect(features).toMatchObject({
                     entityType: 'Object',
@@ -59,8 +59,8 @@ describe('allFeatures Tests - Cloud', () => {
             })
 
             it('should return all features with edgeDB', async () => {
-                const edgeDBTestClient = new TestClient(name)
-                await edgeDBTestClient.createClient({ 
+                const edgeDBTestClient = new CloudTestClient(name)
+                await edgeDBTestClient.createClient({
                     enableEdgeDB: true,
                     enableCloudBucketing: true,
                 })
@@ -73,8 +73,8 @@ describe('allFeatures Tests - Cloud', () => {
                         return queryObj.enableEdgeDB === 'true'
                     })
                     .reply(200, expectedFeaturesVariationOn)
-                
-                const featuresResponse = await edgeDBTestClient.callAllFeatures(variationOnUser, true)
+
+                const featuresResponse = await edgeDBTestClient.callAllFeatures(variationOnUser)
                 const features = await featuresResponse.json()
                 expect(features).toMatchObject({
                     entityType: 'Object',
@@ -83,8 +83,8 @@ describe('allFeatures Tests - Cloud', () => {
                 })
             })
 
-            it('should throw exception if user is invalid',  async () => {    
-                const featuresResponse = await testClient.callAllFeatures(invalidUser, true)
+            it('should throw exception if user is invalid',  async () => {
+                const featuresResponse = await testClient.callAllFeatures(invalidUser)
                 const response = await featuresResponse.json()
                 expect(response.asyncError).toBe('Must have a user_id set on the user')
             })

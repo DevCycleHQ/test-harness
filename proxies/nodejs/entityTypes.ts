@@ -5,6 +5,7 @@ export enum EntityTypes {
     variable = 'Variable',
     feature = 'Feature',
     object = 'Object',
+    client = 'Client'
 }
 
 export type DataStore = {
@@ -21,6 +22,8 @@ export const getEntityFromType = (value: string): string => {
             return EntityTypes.variable
         case 'DVCFeature':
             return EntityTypes.feature
+        case 'DVCClient':
+            return EntityTypes.client
         default:
             return EntityTypes.object
     }

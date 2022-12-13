@@ -29,9 +29,6 @@ export const getConnectionStringForProxy = (proxy: string) => {
     return `http://${host}:${port}`
 }
 
-export const mockServerUrl = `http://${process.env.DOCKER_HOST_IP
-    ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
-
 export const forEachSDK = (tests) => {
     // get the list of SDK's and their capabilities
     let SDKs
@@ -101,7 +98,7 @@ export const variablesForTypes = {
     }
 }
 
-export const createClient = async (url: string, clientId?: string, sdkKey?: string | null, options?: object) => {
+const createClient = async (url: string, clientId?: string, sdkKey?: string | null, options?: object) => {
     return await fetch(`${url}/client`, {
         method: 'POST',
         headers: {
@@ -127,18 +124,7 @@ export const createUser = async (url: string, user: object) => {
     })
 }
 
-export const callVariable = async (
-    clientId: string,
-    url: string,
-    userLocation: string,
-    key?: string,
-    defaultValue?: any,
-    isAsync?: boolean
-) => {
-    return await callVariableWithUrl(`${url}/client/${clientId}`, userLocation, isAsync, key, defaultValue,)
-}
-
-export const callVariableWithUrl = async (
+const callVariable = async (
     url: string,
     userLocation: string,
     isAsync: boolean,
@@ -170,43 +156,8 @@ export const wait = (ms: number) => {
     })
 }
 
-export const callOnClientInitialized = async (
-    clientId: string, url: string
-) => {
-    return await fetch(`${url}/client/${clientId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            command: 'onClientInitialized',
-            isAsync: true,
-            params: []
-        })
-    })
-}
-
-export const callAllVariablesCloud = async (clientID: string, url: string, userLocation: string) => {
-    try {
-        return await callAllVariables(clientID, url, userLocation, true)
-    } catch (e) {
-        console.log(e)
-        throw e
-    }
-
-}
-
-export const callAllVariablesLocal = async (clientID: string, url: string, userLocation: string) => {
-    try {
-        return await callAllVariables(clientID, url, userLocation, false)
-    } catch (e) {
-        console.log(e)
-        throw e
-    }
-}
-
-const callAllVariables = async (clientID: string, url: string, userLocation: string, isAsync: boolean) => {
-    return await fetch(`${url}/client/${clientID}`, {
+const callAllVariables = async (url: string, userLocation: string, isAsync: boolean) => {
+    return await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -219,8 +170,8 @@ const callAllVariables = async (clientID: string, url: string, userLocation: str
     })
 }
 
-export const callTrack = async (clientId: string, url: string, userLocation: string, event: unknown) => {
-    return await fetch(`${url}/client/${clientId}`, {
+const callTrack = async (url: string, userLocation: string, event: unknown) => {
+    return await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -228,98 +179,27 @@ export const callTrack = async (clientId: string, url: string, userLocation: str
         body: JSON.stringify({
             command: 'track',
             params: [
-                { location: `${userLocation}` },
-                { value: event }
-            ],
+                {location: `${userLocation}`},
+                {value: event}
+            ]
         })
     })
 }
 
-export class TestClient {
-    clientId: string
-    sdkName: string
-    sdkKey: string | null
-    clientLocation?: string | null
-
-    constructor(sdkName: string) {
-        this.clientId = uuidv4()
-        this.sdkName = sdkName
-        this.sdkKey = `dvc_server_${this.clientId}`
-    }
-
-    private getClientUrl() {
-        return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
-    }
-
-    async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null) {
-        if (sdkKey !== undefined) {
-            this.sdkKey = sdkKey
-        }
-        const response = await createClient(
-            getConnectionStringForProxy(this.sdkName),
-            this.clientId,
-            this.sdkKey,
-            { baseURLOverride: `${getMockServerUrl()}/client/${this.clientId}`, ...options }
-        )
-
-        this.clientLocation = response.headers.get('location')
-        return response
-    }
-
-    async callVariable(
-        userLocation: string,
-        isAsync: boolean,
-        key?: string,
-        defaultValue?: any,
-    ) {
-        try {
-            return await callVariableWithUrl(
-                this.getClientUrl(),
-                userLocation,
-                isAsync,
-                key,
-                defaultValue,
-            )
-        } catch (e) {
-            console.log(e)
-            throw e
-        }
-
-    }
-
-    async callOnClientInitialized() {
-        await fetch(this.getClientUrl(), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                command: 'onClientInitialized',
-                isAsync: true,
-                params: []
-            })
+const callAllFeatures = async (url: string, userLocation: string, isAsync: boolean) => {
+    return await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            command: 'allFeatures',
+            isAsync,
+            params: [
+                { location: `${userLocation}` }
+            ],
         })
-    }
-
-    async callAllFeatures(
-        userLocation: string,
-        isAsync: boolean
-    ) {
-        return await fetch(this.getClientUrl(), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                command: 'allFeatures',
-                isAsync: isAsync,
-                params: [
-                    { location: `${userLocation}` },
-                ]
-            })
-        })
-    }
-
+    })
 }
 
 export const waitForRequest = async (
@@ -328,8 +208,7 @@ export const waitForRequest = async (
     timeout: number,
     timeoutMessage: string
 ) => {
-
-    if (scope.isDone()) {
+    if (scope.isDone()){
         return
     }
 
@@ -351,4 +230,143 @@ export const waitForRequest = async (
         }),
         timeoutPromise
     ])
+}
+
+class BaseTestClient {
+    clientId: string
+    sdkName: string
+    sdkKey: string | null
+    clientLocation?: string | null
+
+    constructor(sdkName: string) {
+        this.clientId = uuidv4()
+        this.sdkName = sdkName
+        this.sdkKey = `dvc_server_${this.clientId}`
+    }
+
+
+    protected getClientUrl() {
+        return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
+    }
+
+    async callTrack(userLocation: string, event: unknown, shouldFail: boolean = false) {
+        const result = await callTrack(this.getClientUrl(), userLocation, event)
+
+        if (!shouldFail) {
+            if (!result.ok) {
+                expect((await result.json()).exception).toBeUndefined()
+            }
+        }
+
+        return result
+    }
+}
+
+export class LocalTestClient extends BaseTestClient {
+    async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null) {
+        if (sdkKey !== undefined) {
+            this.sdkKey = sdkKey
+        }
+        const response = await createClient(
+            getConnectionStringForProxy(this.sdkName),
+            this.clientId,
+            this.sdkKey,
+            { baseURLOverride: `${getMockServerUrl()}/client/${this.clientId}`, ...options }
+        )
+
+        this.clientLocation = response.headers.get('location')
+        return response
+    }
+
+    async callVariable(
+        userLocation: string,
+        key?: string,
+        defaultValue?: any,
+    ) {
+        return await callVariable(
+            this.getClientUrl(),
+            userLocation,
+            false,
+            key,
+            defaultValue,
+        )
+    }
+
+    async callAllVariables(
+        userLocation: string,
+    ) {
+        return callAllVariables(this.getClientUrl(), userLocation, false)
+    }
+
+    async callOnClientInitialized() {
+        const response = await fetch(this.getClientUrl(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                command: 'onClientInitialized',
+                isAsync: true,
+                params: []
+            })
+        })
+
+        const result = await response.json()
+
+        expect(result.asyncError).toBeUndefined()
+        expect(response.ok).toBeTruthy()
+    }
+
+    async callAllFeatures(
+        userLocation: string,
+    ) {
+        return callAllFeatures(this.getClientUrl(), userLocation, false)
+    }
+}
+
+export class CloudTestClient extends BaseTestClient {
+    async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null) {
+        if (sdkKey !== undefined) {
+            this.sdkKey = sdkKey
+        }
+        const response = await createClient(
+            getConnectionStringForProxy(this.sdkName),
+            this.clientId,
+            this.sdkKey,
+            {
+                baseURLOverride: `${getMockServerUrl()}/client/${this.clientId}`,
+                enableCloudBucketing: true,
+                ...options
+            }
+        )
+
+        this.clientLocation = response.headers.get('location')
+        return response
+    }
+
+    async callVariable(
+        userLocation: string,
+        key?: string,
+        defaultValue?: any,
+    ) {
+        return await callVariable(
+            this.getClientUrl(),
+            userLocation,
+            true,
+            key,
+            defaultValue,
+        )
+    }
+
+    async callAllVariables(
+        userLocation: string,
+    ) {
+        return callAllVariables(this.getClientUrl(), userLocation, true)
+    }
+
+    async callAllFeatures(
+        userLocation: string,
+    ) {
+        return callAllFeatures(this.getClientUrl(), userLocation, true)
+    }
 }

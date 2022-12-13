@@ -1,9 +1,9 @@
-import { 
-    getConnectionStringForProxy, 
-    forEachSDK, 
-    describeIf, 
+import {
+    getConnectionStringForProxy,
+    forEachSDK,
+    describeIf,
     createUser,
-    TestClient,
+    LocalTestClient,
     waitForRequest
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
@@ -18,14 +18,14 @@ describe('allFeatures Tests - Local', () => {
     forEachSDK((name) => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
-        
+
         let variationOnUser: string
         let noVariationUser: string
         let invalidUser: string
 
         beforeAll(async () => {
-            url = getConnectionStringForProxy(name)  
-            
+            url = getConnectionStringForProxy(name)
+
             variationOnUser = (
                 await createUser(url, { user_id: 'user1', customData: { 'should-bucket': true } })
             ).headers.get('location')
@@ -41,16 +41,16 @@ describe('allFeatures Tests - Local', () => {
 
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
             describe('uninitialized client', () => {
-                const testClient = new TestClient(name)
+                const testClient = new LocalTestClient(name)
 
                 beforeAll(async () => {
                     await testClient.createClient()
                     const configRequestUrl = `/${testClient.clientLocation}/config/v1/server/${testClient.sdkKey}.json`
                     const interceptor = scope
                         .get(configRequestUrl)
-    
+
                     interceptor.reply(404)
-    
+
                     await waitForRequest(
                         scope,
                         interceptor,
@@ -60,20 +60,20 @@ describe('allFeatures Tests - Local', () => {
                 })
 
                 it('should return empty object if client is uninitialized',  async () => {
-                    const featuresResponse = await testClient.callAllFeatures(variationOnUser, false)
+                    const featuresResponse = await testClient.callAllFeatures(variationOnUser)
                     const features = await featuresResponse.json()
                     expect(features).toMatchObject({})
                 })
 
                 it.failing('should throw exception if user is invalid',  async () => { // TODO fix in node sdk
-                    const featuresResponse = await testClient.callAllFeatures(invalidUser, false)
+                    const featuresResponse = await testClient.callAllFeatures(invalidUser)
                     const response = await featuresResponse.json()
                     expect(response.exception).toBe('Must have a user_id set on the user')
                 })
             })
 
             describe('initialized client', () => {
-                const testClient = new TestClient(name)
+                const testClient = new LocalTestClient(name)
 
                 beforeAll(async () => {
                     await testClient.createClient()
@@ -85,23 +85,23 @@ describe('allFeatures Tests - Local', () => {
                     await testClient.callOnClientInitialized()
                 })
 
-                it('should return all features for user without custom data',  async () => {    
-                    const featuresResponse = await testClient.callAllFeatures(noVariationUser, false)
+                it('should return all features for user without custom data',  async () => {
+                    const featuresResponse = await testClient.callAllFeatures(noVariationUser)
                     const features = (await featuresResponse.json()).data
                     expect(features).toMatchObject({
                         'schedule-feature': { ...expectedFeaturesVariationOn['schedule-feature'] }
-                    })                
+                    })
                 })
 
-                it('should return all features for user with custom data',  async () => {    
-                    const featuresResponse = await testClient.callAllFeatures(variationOnUser, false)
+                it('should return all features for user with custom data',  async () => {
+                    const featuresResponse = await testClient.callAllFeatures(variationOnUser)
                     const features = (await featuresResponse.json()).data
                     expect(features).toMatchObject(expectedFeaturesVariationOn)
 
                 })
 
-                it('should throw exception if user is invalid',  async () => {    
-                    const featuresResponse = await testClient.callAllFeatures(invalidUser, false)
+                it('should throw exception if user is invalid',  async () => {
+                    const featuresResponse = await testClient.callAllFeatures(invalidUser)
                     const response = await featuresResponse.json()
                     expect(response.exception).toBe('Must have a user_id set on the user')
                 })

@@ -1,10 +1,13 @@
 import {
-    getConnectionStringForProxy, forEachSDK, describeIf, createClient, createUser, callTrack, waitForRequest
+    getConnectionStringForProxy,
+    forEachSDK,
+    describeIf,
+    createUser,
+    waitForRequest,
+    CloudTestClient
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
-import { v4 as uuidv4 } from 'uuid'
 import { getServerScope } from '../nock'
-import nock from 'nock'
 
 jest.setTimeout(10000)
 
@@ -15,18 +18,13 @@ describe('Track Tests - Cloud', () => {
     forEachSDK((name) => {
         let url: string
         const capabilities: string[] = SDKCapabilities[name]
-        const clientId: string = uuidv4()
-        const mockServerUrl
-            = `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
+
+        let client: CloudTestClient
 
         beforeAll(async () => {
-            const sdkKey = `dvc_server_${clientId}`
-
+            client = new CloudTestClient(name)
             url = getConnectionStringForProxy(name)
-            await createClient(url, clientId, sdkKey, {
-                enableCloudBucketing: true,
-                baseURLOverride: `${mockServerUrl}/client/${clientId}`
-            })
+            await client.createClient()
         })
 
         afterEach(() => {
@@ -39,7 +37,7 @@ describe('Track Tests - Cloud', () => {
                 await response.json()
                 const userId = response.headers.get('location')
 
-                const trackResponse = await callTrack(clientId, url, userId, { target: 1 })
+                const trackResponse = await client.callTrack(userId, { target: 1 }, true)
                 const res = await trackResponse.json()
                 expect(res.exception).toBe('Invalid Event')
             })
@@ -55,7 +53,7 @@ describe('Track Tests - Cloud', () => {
                 const userId = response.headers.get('location')
 
                 const interceptor = scope
-                    .post(`/client/${clientId}/v1/track`)
+                    .post(`/client/${client.clientId}/v1/track`)
 
                 interceptor.matchHeader('Content-Type', 'application/json')
                 interceptor.reply((uri, body) => {
@@ -63,7 +61,7 @@ describe('Track Tests - Cloud', () => {
                     return [201, { success: true }]
                 })
 
-                await callTrack(clientId, url, userId,
+                await client.callTrack(userId,
                     { type: eventType, target: variableId, value })
 
                 await waitForRequest(scope, interceptor, 550, 'Event callback timed out')
@@ -83,19 +81,19 @@ describe('Track Tests - Cloud', () => {
                 const userId = response.headers.get('location')
 
                 scope
-                    .post(`/client/${clientId}/v1/track`)
+                    .post(`/client/${client.clientId}/v1/track`)
                     .matchHeader('Content-Type', 'application/json')
                     .reply(519, {})
 
                 const interceptor = scope
-                    .post(`/client/${clientId}/v1/track`)
+                    .post(`/client/${client.clientId}/v1/track`)
                 interceptor.matchHeader('Content-Type', 'application/json')
                 interceptor.reply((uri, body) => {
                     eventBody = body
                     return [201, { success: true }]
                 })
 
-                const trackResponse = await callTrack(clientId, url, userId,
+                const trackResponse = await client.callTrack(userId,
                     { type: eventType, target: variableId, value })
 
                 await trackResponse.json()
