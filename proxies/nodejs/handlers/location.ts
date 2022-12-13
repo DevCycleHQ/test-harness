@@ -23,14 +23,13 @@ export const handleLocation = async (
             dataStore
         )
 
-
         let result
         if (isAsync) {
             result = await invokeCommand(
                 entity,
                 command,
                 parsedParams
-            ).catch((e) => console.error(e))
+            )
         } else {
             result = invokeCommand(
                 entity,
@@ -39,7 +38,7 @@ export const handleLocation = async (
             )
         }
 
-            const entityType = result ? getEntityFromType(result.constructor.name) : 'Void'
+        const entityType = result ? getEntityFromType(result.constructor.name) : EntityTypes.void
 
         const commandId = dataStore.commandResults[command] !== undefined ?
             Object.keys(dataStore.commandResults[command]).length :

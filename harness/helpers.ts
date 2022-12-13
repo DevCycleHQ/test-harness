@@ -163,9 +163,9 @@ const callAllVariables = async (url: string, userLocation: string, isAsync: bool
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            command: 'onClientInitialized',
-            isAsync: true,
-            params: []
+            command: 'allVariables',
+            isAsync,
+            params: [{ location: userLocation }]
         })
     })
 }
@@ -297,7 +297,6 @@ export class LocalTestClient extends BaseTestClient {
     ) {
         return callAllVariables(this.getClientUrl(), userLocation, false)
     }
-
 
     async callOnClientInitialized() {
         const response = await fetch(this.getClientUrl(), {

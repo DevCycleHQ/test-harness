@@ -8,7 +8,6 @@ import {
 import { getServerScope } from '../nock'
 import { Capabilities, SDKCapabilities } from '../types'
 import { variables } from '../mockData'
-import { TestClient } from '../helpers'
 
 jest.setTimeout(10000)
 

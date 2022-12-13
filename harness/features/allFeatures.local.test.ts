@@ -44,12 +44,12 @@ describe('allFeatures Tests - Local', () => {
                 const testClient = new LocalTestClient(name)
 
                 beforeAll(async () => {
-                    await testClient.createClient()
-                    const configRequestUrl = `/${testClient.clientLocation}/config/v1/server/${testClient.sdkKey}.json`
+                    const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
                     const interceptor = scope
                         .get(configRequestUrl)
 
                     interceptor.reply(404)
+                    await testClient.createClient()
 
                     await waitForRequest(
                         scope,
@@ -87,11 +87,10 @@ describe('allFeatures Tests - Local', () => {
                     await testClient.callOnClientInitialized()
                 })
 
-                afterAll(() => {
-                    testClient.close()
+                afterAll(async () => {
+                    await testClient.close()
                 })
-                it('should return all features for user without custom data',  async () => {
-                    const featuresResponse = await testClient.callAllFeatures(noVariationUser, false)
+
                 it('should return all features for user without custom data',  async () => {
                     const featuresResponse = await testClient.callAllFeatures(noVariationUser)
                     const features = (await featuresResponse.json()).data
