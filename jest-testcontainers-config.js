@@ -2,6 +2,6 @@ module.exports = {
     dockerCompose: {
         composeFilePath: ".",
         composeFile: "docker-compose.yml",
-        startupTimeout: 10000,
+        startupTimeout: 20000,
     }
 }
