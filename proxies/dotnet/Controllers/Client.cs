@@ -7,18 +7,28 @@ using System.Text.Json.Serialization;
 
 namespace dotnet.Controllers;
 
-public class AllOptions: DVCLocalOptions {
-    [JsonPropertyName("enableEdgeDB")]
-    public bool EnableEdgeDB { get; set; }
-}
+public class ClientOptions: DVCLocalOptions
+    {
+        [JsonPropertyName("configPollingIntervalMs")]
+        new public int ConfigPollingIntervalMs { get; set; }
+
+        [JsonPropertyName("eventFlushIntervalMS")]
+        new public int EventFlushIntervalMs { get; set; }
+
+        [JsonPropertyName("baseURLOverride")]
+        public string? BaseURLOverride { get; set; }
+
+        [JsonPropertyName("enableEdgeDB")]
+        public bool? EnableEdgeDB { get; set; }
+    }
 
 public class ClientRequestBody {
-    public string clientId { get; set;}
-    public AllOptions options { get; set;}
+    public string? clientId { get; set;}
+    public ClientOptions? options { get; set;}
 
     public string? sdkKey { get; set;}
 
-    public bool? cloudBucketing { get; set; }
+    public bool? enableCloudBucketing { get; set; }
 }
 
 [ApiController]
@@ -36,23 +46,45 @@ public class ClientController : ControllerBase
     [HttpPost]
     public object Post(ClientRequestBody clientBody)
     {
-        if (clientBody.cloudBucketing ?? false) {
-            DataStore.CloudClients[clientBody.clientId] = (DVCCloudClient) new DVCCloudClientBuilder()
-                .SetEnvironmentKey(clientBody.sdkKey)
-                .SetOptions(new DVCCloudOptions(enableEdgeDB: clientBody.options.EnableEdgeDB))
-                .SetLogger(new LoggerFactory())
-                .Build();
-        } else {
-            DataStore.LocalClients[clientBody.clientId] = (DVCLocalClient) new DVCLocalClientBuilder()
-                .SetEnvironmentKey(clientBody.sdkKey)
-                .SetOptions(clientBody.options)
-                .SetLogger(new LoggerFactory())
-                .Build();
+        if (clientBody.clientId == null) {
+            Response.StatusCode = 400;
+
+            return new { message = "Invalid request: missing clientId" };
         }
 
-        Response.Headers.Add("Location", "client/" + clientBody.clientId);
-        Response.StatusCode = 201;
+        try {
+            if (clientBody.enableCloudBucketing ?? false) {
+                DVCCloudOptions cloudOptions = new DVCCloudOptions();
 
-        return new { message = "success"};
+                if (clientBody.options != null) {
+                    cloudOptions = new DVCCloudOptions(enableEdgeDB: clientBody.options.EnableEdgeDB ?? false);
+                }
+
+                DataStore.CloudClients[clientBody.clientId] = new DVCCloudClientBuilder()
+                    .SetEnvironmentKey(clientBody.sdkKey)
+                    .SetOptions(cloudOptions)
+                    .SetLogger(new LoggerFactory())
+                    .Build();
+            } else {
+                if (clientBody.options != null && clientBody.options.BaseURLOverride != null) {
+                    clientBody.options.CdnUri = clientBody.options.BaseURLOverride;
+                    clientBody.options.EventsApiUri = clientBody.options.BaseURLOverride;
+                }
+            
+                DataStore.LocalClients[clientBody.clientId] = new DVCLocalClientBuilder()
+                    .SetEnvironmentKey(clientBody.sdkKey)
+                    .SetOptions(clientBody.options)        
+                    .SetLogger(new LoggerFactory())
+                    .Build();
+            }
+
+            Response.Headers.Add("Location", "client/" + clientBody.clientId);
+            Response.StatusCode = 201;
+
+            return new { message = "success"};
+        } catch (Exception e) {
+            Response.StatusCode = 200;
+            return new { exception = e.Message};
+        }
     }
 }

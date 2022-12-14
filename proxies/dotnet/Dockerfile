@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk
+FROM mcr.microsoft.com/dotnet/sdk:7.0
 
 ARG DOTNET_LOCAL_SDK_VERSION
 ENV DOTNET_LOCAL_SDK_VERSION $DOTNET_LOCAL_SDK_VERSION
@@ -8,7 +8,6 @@ ENV DOTNET_CLOUD_SDK_VERSION $DOTNET_CLOUD_SDK_VERSION
 
 COPY . /src
 WORKDIR /src
-RUN dotnet restore
 RUN dotnet build "dotnet.csproj"
 
 ENTRYPOINT ["dotnet", "run"]
