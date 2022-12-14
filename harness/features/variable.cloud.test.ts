@@ -55,7 +55,7 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
                 expect(userId.includes('user/')).toBeTruthy()
 
-                const variableResponse = await testClient.callVariable(userId, undefined, 'default_value')
+                const variableResponse = await testClient.callVariable(userId, null, 'default_value')
                 const error = await variableResponse.json()
                 expect(error.asyncError).toBe('Missing parameter: key')
             })
@@ -70,7 +70,7 @@ describe('Variable Tests - Cloud', () => {
                 const userId = response.headers.get('location')
                 expect(userId.includes('user/')).toBeTruthy()
 
-                const variableResponse = await testClient.callVariable(userId, 'var_key', undefined)
+                const variableResponse = await testClient.callVariable(userId, 'var_key', null)
                 const error = await variableResponse.json()
                 expect(error.asyncError).toBe('Missing parameter: defaultValue')
             })

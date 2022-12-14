@@ -22,6 +22,13 @@ export const handleLocation = async (
             params,
             dataStore
         )
+        if (parsedParams.includes(undefined)) {
+            ctx.status = 404
+            ctx.body = {
+                message: 'Invalid request: missing entity from param',
+            }
+            return ctx
+        }
 
         let result
         if (isAsync) {
