@@ -50,7 +50,7 @@ describe('allVariables Tests - Cloud', () => {
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
-                const response = await client.callAllVariables(userLocation)
+                const response = await client.callAllVariables(userLocation, true)
                 const { asyncError } = await response.json()
 
                 expect(asyncError).toEqual('Must have a user_id set on the user')

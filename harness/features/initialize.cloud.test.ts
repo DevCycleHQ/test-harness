@@ -26,7 +26,7 @@ describe('Client Initialize Tests - Cloud', () => {
 
             it('should throw an exception and return no location if invalid SDK token is sent', async () => {
                 const client = new CloudTestClient(name)
-                const response = await client.createClient({}, 'invalidKey')
+                const response = await client.createClient({}, 'invalidKey', true)
                 const body = await response.json()
                 expect(body.exception).toBe('Invalid environment key provided. Please call initialize with a valid server environment key')
                 const createdClientId = response.headers.get('location')
@@ -35,7 +35,7 @@ describe('Client Initialize Tests - Cloud', () => {
 
             it('should throw an exception and return no location if no SDK token is sent', async () => {
                 const client = new CloudTestClient(name)
-                const response = await client.createClient({}, null)
+                const response = await client.createClient({}, null, true)
                 const body = await response.json()
                 expect(body.exception).toBe('Missing environment key! Call initialize with a valid environment key')
                 const createdClientId = response.headers.get('location')
