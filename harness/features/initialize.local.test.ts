@@ -25,7 +25,7 @@ describe('Initialize Tests - Local', () => {
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
             it('should error when SDK key is missing', async () => {
                 const testClient = new LocalTestClient(name)
-                const response = await testClient.createClient({}, null)
+                const response = await testClient.createClient({}, null, true)
                 const { exception } = await response.json()
 
                 expect(exception).toEqual(
@@ -36,7 +36,7 @@ describe('Initialize Tests - Local', () => {
 
             it('should error when SDK key is invalid', async () => {
                 const testClient = new LocalTestClient(name)
-                const response = await testClient.createClient({}, 'invalid key')
+                const response = await testClient.createClient({}, 'invalid key', true)
                 const { exception } = await response.json()
 
                 expect(exception).toEqual(

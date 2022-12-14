@@ -84,7 +84,7 @@ describe('allFeatures Tests - Cloud', () => {
             })
 
             it('should throw exception if user is invalid',  async () => {
-                const featuresResponse = await testClient.callAllFeatures(invalidUser)
+                const featuresResponse = await testClient.callAllFeatures(invalidUser, true)
                 const response = await featuresResponse.json()
                 expect(response.asyncError).toBe('Must have a user_id set on the user')
             })

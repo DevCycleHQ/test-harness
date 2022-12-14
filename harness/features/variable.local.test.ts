@@ -92,7 +92,7 @@ describe('Variable Tests - Local', () => {
                 })
                 it('should throw exception if user is invalid',  async () => {
                     const variableResponse =
-                        await testClient.callVariable(invalidUser.location, 'string-var', 'string default')
+                        await testClient.callVariable(invalidUser.location, 'string-var', 'string default', true)
                     const variable = await variableResponse.json()
 
                     expect(variable.exception).toBe('Must have a user_id set on the user')

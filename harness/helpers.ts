@@ -249,21 +249,26 @@ class BaseTestClient {
         return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
 
+
+    protected async checkFailed(response: Response, shouldFail: boolean) {
+        if (!shouldFail) {
+            const result = await response.clone().json()
+            expect(result.exception).toBeUndefined()
+            expect(result.asyncError).toBeUndefined()
+        }
+    }
+
     async callTrack(userLocation: string, event: unknown, shouldFail: boolean = false) {
         const result = await callTrack(this.getClientUrl(), userLocation, event)
 
-        if (!shouldFail) {
-            if (!result.ok) {
-                expect((await result.json()).exception).toBeUndefined()
-            }
-        }
+        await this.checkFailed(result, shouldFail)
 
         return result
     }
 }
 
 export class LocalTestClient extends BaseTestClient {
-    async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null) {
+    async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null, shouldFail: boolean = false) {
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
         }
@@ -274,6 +279,8 @@ export class LocalTestClient extends BaseTestClient {
             { baseURLOverride: `${getMockServerUrl()}/client/${this.clientId}`, ...options }
         )
 
+        await this.checkFailed(response, shouldFail)
+
         this.clientLocation = response.headers.get('location')
         return response
     }
@@ -282,20 +289,28 @@ export class LocalTestClient extends BaseTestClient {
         userLocation: string,
         key?: string,
         defaultValue?: any,
+        shouldFail: boolean = false
     ) {
-        return await callVariable(
+        const result = await callVariable(
             this.getClientUrl(),
             userLocation,
             false,
             key,
             defaultValue,
         )
+
+        await this.checkFailed(result, shouldFail)
+        return result
     }
 
     async callAllVariables(
         userLocation: string,
+        shouldFail: boolean = false
     ) {
-        return callAllVariables(this.getClientUrl(), userLocation, false)
+        const result = await callAllVariables(this.getClientUrl(), userLocation, false)
+
+        await this.checkFailed(result, shouldFail)
+        return result
     }
 
     async callOnClientInitialized() {
@@ -311,14 +326,11 @@ export class LocalTestClient extends BaseTestClient {
             })
         })
 
-        const result = await response.json()
-
-        expect(result.asyncError).toBeUndefined()
-        expect(response.ok).toBeTruthy()
+        await this.checkFailed(response, false)
     }
 
     async close() {
-        await fetch(this.getClientUrl(), {
+        const result = await fetch(this.getClientUrl(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -329,17 +341,21 @@ export class LocalTestClient extends BaseTestClient {
                 params: []
             })
         })
+        await this.checkFailed(result, false)
     }
 
     async callAllFeatures(
         userLocation: string,
+        shouldFail: boolean = false
     ) {
-        return callAllFeatures(this.getClientUrl(), userLocation, false)
+        const result = await callAllFeatures(this.getClientUrl(), userLocation, false)
+        await this.checkFailed(result, shouldFail)
+        return result
     }
 }
 
 export class CloudTestClient extends BaseTestClient {
-    async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null) {
+    async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null, shouldFail: boolean = false) {
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
         }
@@ -354,6 +370,8 @@ export class CloudTestClient extends BaseTestClient {
             }
         )
 
+        await this.checkFailed(response, shouldFail)
+
         this.clientLocation = response.headers.get('location')
         return response
     }
@@ -362,25 +380,34 @@ export class CloudTestClient extends BaseTestClient {
         userLocation: string,
         key?: string,
         defaultValue?: any,
+        shouldFail: boolean = false
     ) {
-        return await callVariable(
+        const result = await callVariable(
             this.getClientUrl(),
             userLocation,
             true,
             key,
             defaultValue,
         )
+        await this.checkFailed(result, shouldFail)
+        return result
     }
 
     async callAllVariables(
         userLocation: string,
+        shouldFail: boolean = false
     ) {
-        return callAllVariables(this.getClientUrl(), userLocation, true)
+        const result = await callAllVariables(this.getClientUrl(), userLocation, true)
+        await this.checkFailed(result, shouldFail)
+        return result
     }
 
     async callAllFeatures(
         userLocation: string,
+        shouldFail: boolean = false
     ) {
-        return callAllFeatures(this.getClientUrl(), userLocation, true)
+        const result = await callAllFeatures(this.getClientUrl(), userLocation, true)
+        await this.checkFailed(result, shouldFail)
+        return result
     }
 }
