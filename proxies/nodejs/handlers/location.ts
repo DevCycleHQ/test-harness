@@ -79,7 +79,7 @@ export const handleLocation = async (
             }
             dataStore.commandResults[command][commandId] = result
 
-            ctx.status = 200
+            ctx.status = 201
             ctx.set('Location', `command/${command}/${commandId}`)
             ctx.body = {
                 entityType: entityType,
