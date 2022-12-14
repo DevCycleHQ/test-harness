@@ -42,6 +42,10 @@ describe('Track Tests - Local', () => {
                 await client.callOnClientInitialized()
             })
 
+            afterAll(async () => {
+                await client.close()
+            })
+
             describe('Expect no events sent', () => {
                 it('should not send an event if the event type not set', async () => {
                     const response = await createUser(url, { user_id: validUserId })

@@ -13,8 +13,6 @@ type LocationRequestBody = {
 
 type ParsedParams = (string | boolean | number | object | URL)[]
 
-const CALLBACK_COMMANDS = ['onClientInitialized']
-
 export const handleLocation = async (
     ctx: Koa.ParameterizedContext
 ) => {
@@ -24,69 +22,41 @@ export const handleLocation = async (
             params,
             dataStore
         )
-        const lastParam = parsedParams[parsedParams.length - 1]
 
-        if (lastParam instanceof URL) {
-            const callbackURL: URL = lastParam
-            if (!CALLBACK_COMMANDS.includes(command)) {
-                ctx.status = 404
-                ctx.body = {
-                    errorCode: 404,
-                    exception: 'Invalid request: unsupported command',
-                }
-                return ctx
-            }
-            const onCallback = (command) => {
-                fetch(callbackURL.href, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `${command} was invoked on ${ctx.request.url}`
-                    })
-                }).catch((e) => console.error(e))
-            }
-            entity[command](() => onCallback(command)).catch((e) => console.error(e))
-            ctx.status = 200
-            ctx.body = {
-                message: `${command} attached to ${ctx.request.url} with url ${callbackURL.href}`,
-            }
+        let result
+        if (isAsync) {
+            result = await invokeCommand(
+                entity,
+                command,
+                parsedParams
+            )
         } else {
-            let result
-            if (isAsync) {
-                result = await invokeCommand(
-                    entity,
-                    command,
-                    parsedParams
-                ).catch((e) => console.error(e))
-            } else {
-                result = invokeCommand(
-                    entity,
-                    command,
-                    parsedParams
-                )
-            }
-
-            const entityType = result ? getEntityFromType(result.constructor.name) : 'Void'
-
-            const commandId = dataStore.commandResults[command] !== undefined ?
-                Object.keys(dataStore.commandResults[command]).length :
-                0
-
-            if (dataStore.commandResults[command] === undefined) {
-                dataStore.commandResults[command] = {}
-            }
-            dataStore.commandResults[command][commandId] = result
-
-            ctx.status = 201
-            ctx.set('Location', `command/${command}/${commandId}`)
-            ctx.body = {
-                entityType: entityType,
-                data: entityType === EntityTypes.client ? {} : result,
-                logs: [], // TODO add logs
-            }
+            result = invokeCommand(
+                entity,
+                command,
+                parsedParams
+            )
         }
+
+        const entityType = result ? getEntityFromType(result.constructor.name) : EntityTypes.void
+
+        const commandId = dataStore.commandResults[command] !== undefined ?
+            Object.keys(dataStore.commandResults[command]).length :
+            0
+
+        if (dataStore.commandResults[command] === undefined) {
+            dataStore.commandResults[command] = {}
+        }
+        dataStore.commandResults[command][commandId] = result
+
+        ctx.status = 201
+        ctx.set('Location', `command/${command}/${commandId}`)
+        ctx.body = {
+            entityType: entityType,
+            data: entityType === EntityTypes.client ? {} : result,
+            logs: [], // TODO add logs
+        }
+
     } catch (error) {
         console.error(error)
         if (isAsync) {

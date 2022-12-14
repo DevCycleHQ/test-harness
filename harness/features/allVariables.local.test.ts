@@ -28,27 +28,26 @@ describe('allVariables Tests - Local', () => {
                 .get(`/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`)
             configInterceptor
                 .reply(200, config)
-                .persist()
 
             url = getConnectionStringForProxy(name)
             await client.createClient()
             await client.callOnClientInitialized()
         })
 
-        afterAll(() => {
-            nock.removeInterceptor(configInterceptor)
+        afterAll(async () => {
+            await client.close()
         })
 
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
             it('should return an empty object if client is not initialized', async () => {
-                const client = new LocalTestClient(name)
+                const delayClient = new LocalTestClient(name)
 
                 scope
-                    .get(`/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`)
+                    .get(`/client/${delayClient.clientId}/config/v1/server/${delayClient.sdkKey}.json`)
                     .delay(2000)
                     .reply(200, config)
 
-                await client.createClient()
+                await delayClient.createClient()
 
                 const user = {
                     user_id: 'test_user',
@@ -58,10 +57,11 @@ describe('allVariables Tests - Local', () => {
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
-                const response = await client.callAllVariables(userLocation)
+                const response = await delayClient.callAllVariables(userLocation)
                 const { data: variablesMap } = await response.json()
 
                 expect(variablesMap).toMatchObject({})
+                await delayClient.close()
             })
 
             it('should throw an error if called with an invalid user', async () => {

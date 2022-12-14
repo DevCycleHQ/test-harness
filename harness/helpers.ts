@@ -159,13 +159,13 @@ export const wait = (ms: number) => {
 const callAllVariables = async (url: string, userLocation: string, isAsync: boolean) => {
     return await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
             command: 'allVariables',
-            isAsync: isAsync,
-            params: [
-                { location: userLocation }
-            ]
+            isAsync,
+            params: [{ location: userLocation }]
         })
     })
 }
@@ -315,6 +315,20 @@ export class LocalTestClient extends BaseTestClient {
 
         expect(result.asyncError).toBeUndefined()
         expect(response.ok).toBeTruthy()
+    }
+
+    async close() {
+        await fetch(this.getClientUrl(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                command: 'close',
+                isAsync: true,
+                params: []
+            })
+        })
     }
 
     async callAllFeatures(
