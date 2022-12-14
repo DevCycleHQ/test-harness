@@ -60,10 +60,17 @@ public class ClientController : ControllerBase
                     cloudOptions = new DVCCloudOptions(enableEdgeDB: clientBody.options.EnableEdgeDB ?? false);
                 }
 
+                var restOptions = new DevCycle.SDK.Server.Common.API.DVCRestClientOptions();
+
+                if (clientBody.options?.BaseURLOverride != null) {
+                    restOptions.BaseUrl = new Uri(clientBody.options.BaseURLOverride);
+                }
+
                 DataStore.CloudClients[clientBody.clientId] = new DVCCloudClientBuilder()
                     .SetEnvironmentKey(clientBody.sdkKey)
                     .SetOptions(cloudOptions)
                     .SetLogger(new LoggerFactory())
+                    .SetRestClientOptions(restOptions)
                     .Build();
             } else {
                 if (clientBody.options != null && clientBody.options.BaseURLOverride != null) {
