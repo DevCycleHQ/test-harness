@@ -43,17 +43,17 @@ def handle_command(path, body, data_store):
 
     if not stored_entity:
         return {
-            "errorMessage": "Invalid request: missing entity"
+            "message": "Invalid request: missing entity"
         }, 404
 
     if None in parsed_params:
         return {
-            "errorMessage": "Invalid request: missing entity from param"
+            "message": "Invalid request: missing entity from param"
         }, 404
 
     if not command:
         return {
-            "errorMessage": "Invalid request: missing command"
+            "message": "Invalid request: missing command"
         }, 400
 
     result = invoke_command(stored_entity, command, parsed_params)

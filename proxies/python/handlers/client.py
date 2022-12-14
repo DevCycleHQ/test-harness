@@ -7,7 +7,7 @@ def handle_client(body, data_store):
 
     if (client_id == None):
         error = {
-            "errorMessage": "Invalid request: missing clientId"
+            "message": "Invalid request: missing clientId"
         }
 
         return error, 400
