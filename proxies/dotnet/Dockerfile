@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk
+FROM mcr.microsoft.com/dotnet/sdk:7.0
 
 ARG DOTNET_LOCAL_SDK_VERSION
 ENV DOTNET_LOCAL_SDK_VERSION $DOTNET_LOCAL_SDK_VERSION
