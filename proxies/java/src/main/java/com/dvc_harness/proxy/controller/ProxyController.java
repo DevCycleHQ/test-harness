@@ -28,6 +28,35 @@ public class ProxyController {
         return new Spec();
     }
 
+    @PostMapping("/user")
+    public User user(@RequestBody ClientRequestUser user, HttpServletResponse response) {
+        var sdkUser = new User(
+                user.UserId,
+                user.Email,
+                user.Name,
+                user.Language,
+                user.Country,
+                user.AppVersion,
+                user.AppBuild,
+                user.CustomData,
+                user.PrivateCustomData,
+                user.CreatedDate,
+                user.LastSeenDate,
+                user.Platform,
+                user.PlatformVersion,
+                user.DeviceModel,
+                user.SdkType,
+                user.SdkVersion
+            );
+        var userId = DataStore.Users.Count;
+        DataStore.Users[userId.ToString()] = sdkUser;
+
+        var result = new {entityType = "user", body = sdkUser};
+
+        Response.Headers.Add("Location", "user/" + userId);
+        Response.StatusCode = (int)HttpStatusCode.Created;
+        return result;
+    }
     @PostMapping("/client")
     public BaseResponse client(@RequestBody ClientRequestBody body, HttpServletResponse response) {
         try {
