@@ -245,6 +245,7 @@ export const waitForRequest = async (
 
 const checkFailed = async (response: Response, shouldFail: boolean) => {
     if (!shouldFail) {
+        console.log(await response.clone().text())
         const result = await response.clone().json()
         expect(result.exception).toBeUndefined()
         expect(result.asyncError).toBeUndefined()

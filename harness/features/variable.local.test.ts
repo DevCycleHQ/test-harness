@@ -9,7 +9,7 @@ import {
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
-import { config } from '../mockData/index'
+import { config } from '../mockData'
 
 jest.setTimeout(10000)
 
@@ -43,31 +43,32 @@ const expectedVariablesByType = {
 
 describe('Variable Tests - Local', () => {
     forEachSDK((name) => {
-        let url: string
         const capabilities: string[] = SDKCapabilities[name]
         const variationOnUser = { location: '', user_id: 'user1' }
         const noVariationUser = { location: '', user_id: 'user3' }
         const invalidUser = { location: '', user_id: '' }
 
-        beforeAll(async () => {
-            url = getConnectionStringForProxy(name)
-
-            // create users
-            variationOnUser.location = (
-                await createUser(url, { user_id: variationOnUser.user_id, customData: { 'should-bucket': true } })
-            ).headers.get('location')
-
-            noVariationUser.location = (
-                await createUser(url, { user_id: noVariationUser.user_id })
-            ).headers.get('location')
-
-            invalidUser.location = (
-                await createUser(url, { name: 'invalid' })
-            ).headers.get('location')
-
-        })
-
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
+            let url: string
+
+            beforeAll(async () => {
+                url = getConnectionStringForProxy(name)
+
+                // create users
+                variationOnUser.location = (
+                    await createUser(url, { user_id: variationOnUser.user_id, customData: { 'should-bucket': true } })
+                ).headers.get('location')
+
+                noVariationUser.location = (
+                    await createUser(url, { user_id: noVariationUser.user_id })
+                ).headers.get('location')
+
+                invalidUser.location = (
+                    await createUser(url, { name: 'invalid' })
+                ).headers.get('location')
+
+            })
+
             const testClient = new LocalTestClient(name)
             let eventsUrl: string
 
@@ -236,47 +237,47 @@ describe('Variable Tests - Local', () => {
                     })
                 })
             })
-        })
 
-        describe('uninitialized client', () => {
-            const testClient = new LocalTestClient(name)
+            describe('uninitialized client', () => {
+                const testClient = new LocalTestClient(name)
 
-            beforeAll(async () => {
-                await testClient.createClient()
-                const configRequestUrl = `/${testClient.clientLocation}/config/v1/server/${testClient.sdkKey}.json`
-                const interceptor = scope
-                    .get(configRequestUrl)
+                beforeAll(async () => {
+                    await testClient.createClient()
+                    const configRequestUrl = `/${testClient.clientLocation}/config/v1/server/${testClient.sdkKey}.json`
+                    const interceptor = scope
+                        .get(configRequestUrl)
 
-                interceptor.reply(404)
+                    interceptor.reply(404)
 
-                await waitForRequest(
-                    scope,
-                    interceptor,
-                    3000,
-                    'Config request timed out'
-                )
-            })
-
-            afterAll(async () => {
-                await testClient.close()
-            })
-            forEachVariableType((type) => {
-                const { key, defaultValue } = expectedVariablesByType[type]
-
-                it('should return default value if client is uninitialized',  async () => {
-                    const variableResponse = await testClient.callVariable(
-                        variationOnUser.location, key, defaultValue
+                    await waitForRequest(
+                        scope,
+                        interceptor,
+                        3000,
+                        'Config request timed out'
                     )
-                    const variable = await variableResponse.json()
-                    expectDefaultValue(key, variable, defaultValue)
                 })
 
-                it.failing('should throw exception if user is invalid',  async () => {
-                    const variableResponse =
-                        await testClient.callVariable(invalidUser.location, key, defaultValue)
-                    const variable = await variableResponse.json()
+                afterAll(async () => {
+                    await testClient.close()
+                })
+                forEachVariableType((type) => {
+                    const { key, defaultValue } = expectedVariablesByType[type]
 
-                    expect(variable.exception).toBe('Must have a user_id set on the user')
+                    it('should return default value if client is uninitialized',  async () => {
+                        const variableResponse = await testClient.callVariable(
+                            variationOnUser.location, key, defaultValue
+                        )
+                        const variable = await variableResponse.json()
+                        expectDefaultValue(key, variable, defaultValue)
+                    })
+
+                    it.failing('should throw exception if user is invalid',  async () => {
+                        const variableResponse =
+                            await testClient.callVariable(invalidUser.location, key, defaultValue)
+                        const variable = await variableResponse.json()
+
+                        expect(variable.exception).toBe('Must have a user_id set on the user')
+                    })
                 })
             })
         })

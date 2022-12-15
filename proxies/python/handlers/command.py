@@ -1,6 +1,8 @@
 from re import sub
 from ..helpers.entity_types import get_entity_from_type
-from ..helpers.camelcase import camel_case_dict
+from ..helpers.camelcase import camel_case_dict, snake_case
+from ..helpers.to_dict import to_dict
+
 
 def get_entity_from_location(location, data_store):
     url_parts = sub(r"^/", '', location).split('/')
@@ -36,6 +38,8 @@ def invoke_command(subject, command, params):
 
 
 def handle_command(path, body, data_store):
+    print("COMMAND", flush=True)
+
     entity, command, params, is_async = [body.get(k, None) for k in ('entity', 'command', 'params', 'isAsync')]
 
     stored_entity = get_entity_from_location(path, data_store)
@@ -56,9 +60,9 @@ def handle_command(path, body, data_store):
             "message": "Invalid request: missing command"
         }, 400
 
-    result = invoke_command(stored_entity, command, parsed_params)
+    command = snake_case(command)
 
-    entity_type = get_entity_from_type(result.__class__.__name__)
+    result = invoke_command(stored_entity, command, parsed_params)
 
     if not data_store['commandResults'].get(command, None):
         data_store["commandResults"][command] = {}
@@ -67,11 +71,17 @@ def handle_command(path, body, data_store):
 
     data_store['commandResults'][command][command_id] = result
 
-    result_data = result.to_dict() if hasattr(result, "to_dict") else result
+    result_data, entity_type = to_dict(result)
+
+    if not isinstance(result, dict) and isinstance(result_data, dict):
+        # if result was not already a plain dict, but the resulting data after dict conversion is a dict, convert
+        # keys to camelcase. This basically means if the result was something like a Variable, which converts to a dict,
+        # then camelcase its keys. But don't do this for calls that already return a dict (like all_features)
+        result_data = camel_case_dict(result_data)
 
     return {
         "entityType": entity_type,
-        "data": camel_case_dict(result_data),
+        "data": result_data,
         "logs": []
     }, 201, {
         "Location": "command/" + command + "/" + command_id
