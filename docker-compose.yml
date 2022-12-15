@@ -28,3 +28,11 @@ services:
     container_name: dotnet
     ports:
       - "3000"
+  java:
+    build:
+      context: ./proxies/java
+      args:
+        - JAVA_SDK_VERSION=${JAVA_SDK_VERSION}
+    container_name: java
+    ports:
+      - "3000"
