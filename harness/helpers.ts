@@ -119,8 +119,8 @@ const createClient = async (
     })
 }
 
-export const createUser = async (url: string, user: object) => {
-    return await fetch(`${url}/user`, {
+export const createUser = async (url: string, user: object, shouldFail = false) => {
+    const result = await fetch(`${url}/user`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -129,6 +129,10 @@ export const createUser = async (url: string, user: object) => {
             ...user
         })
     })
+
+    await checkFailed(result, shouldFail)
+
+    return result
 }
 
 const callVariable = async (
@@ -239,6 +243,14 @@ export const waitForRequest = async (
     ])
 }
 
+const checkFailed = async (response: Response, shouldFail: boolean) => {
+    if (!shouldFail) {
+        const result = await response.clone().json()
+        expect(result.exception).toBeUndefined()
+        expect(result.asyncError).toBeUndefined()
+    }
+}
+
 class BaseTestClient {
     clientId: string
     sdkName: string
@@ -255,19 +267,10 @@ class BaseTestClient {
         return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
 
-
-    protected async checkFailed(response: Response, shouldFail: boolean) {
-        if (!shouldFail) {
-            const result = await response.clone().json()
-            expect(result.exception).toBeUndefined()
-            expect(result.asyncError).toBeUndefined()
-        }
-    }
-
     async callTrack(userLocation: string, event: unknown, shouldFail: boolean = false) {
         const result = await callTrack(this.getClientUrl(), userLocation, event)
 
-        await this.checkFailed(result, shouldFail)
+        await checkFailed(result, shouldFail)
 
         return result
     }
@@ -286,7 +289,7 @@ export class LocalTestClient extends BaseTestClient {
             { baseURLOverride: `${getMockServerUrl()}/client/${this.clientId}`, ...options }
         )
 
-        await this.checkFailed(response, shouldFail)
+        await checkFailed(response, shouldFail)
 
         this.clientLocation = response.headers.get('location')
         return response
@@ -306,7 +309,7 @@ export class LocalTestClient extends BaseTestClient {
             defaultValue,
         )
 
-        await this.checkFailed(result, shouldFail)
+        await checkFailed(result, shouldFail)
         return result
     }
 
@@ -316,7 +319,7 @@ export class LocalTestClient extends BaseTestClient {
     ) {
         const result = await callAllVariables(this.getClientUrl(), userLocation, false)
 
-        await this.checkFailed(result, shouldFail)
+        await checkFailed(result, shouldFail)
         return result
     }
 
@@ -333,7 +336,7 @@ export class LocalTestClient extends BaseTestClient {
             })
         })
 
-        await this.checkFailed(response, false)
+        await checkFailed(response, false)
     }
 
     async close() {
@@ -348,7 +351,7 @@ export class LocalTestClient extends BaseTestClient {
                 params: []
             })
         })
-        await this.checkFailed(result, false)
+        await checkFailed(result, false)
     }
 
     async callAllFeatures(
@@ -356,7 +359,7 @@ export class LocalTestClient extends BaseTestClient {
         shouldFail: boolean = false
     ) {
         const result = await callAllFeatures(this.getClientUrl(), userLocation, false)
-        await this.checkFailed(result, shouldFail)
+        await checkFailed(result, shouldFail)
         return result
     }
 }
@@ -377,7 +380,7 @@ export class CloudTestClient extends BaseTestClient {
             }
         )
 
-        await this.checkFailed(response, shouldFail)
+        await checkFailed(response, shouldFail)
 
         this.clientLocation = response.headers.get('location')
         return response
@@ -396,7 +399,7 @@ export class CloudTestClient extends BaseTestClient {
             key,
             defaultValue,
         )
-        await this.checkFailed(result, shouldFail)
+        await checkFailed(result, shouldFail)
         return result
     }
 
@@ -405,7 +408,7 @@ export class CloudTestClient extends BaseTestClient {
         shouldFail: boolean = false
     ) {
         const result = await callAllVariables(this.getClientUrl(), userLocation, true)
-        await this.checkFailed(result, shouldFail)
+        await checkFailed(result, shouldFail)
         return result
     }
 
@@ -414,7 +417,7 @@ export class CloudTestClient extends BaseTestClient {
         shouldFail: boolean = false
     ) {
         const result = await callAllFeatures(this.getClientUrl(), userLocation, true)
-        await this.checkFailed(result, shouldFail)
+        await checkFailed(result, shouldFail)
         return result
     }
 }
