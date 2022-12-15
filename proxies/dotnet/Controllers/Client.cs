@@ -23,12 +23,12 @@ public class ClientOptions: DVCLocalOptions
     }
 
 public class ClientRequestBody {
-    public string? clientId { get; set;}
-    public ClientOptions? options { get; set;}
+    public string? ClientId { get; set;}
+    public ClientOptions? Options { get; set;}
 
-    public string? sdkKey { get; set;}
+    public string? SdkKey { get; set;}
 
-    public bool? enableCloudBucketing { get; set; }
+    public bool? EnableCloudBucketing { get; set; }
 }
 
 [ApiController]
@@ -44,48 +44,48 @@ public class ClientController : ControllerBase
     }
 
     [HttpPost]
-    public object Post(ClientRequestBody clientBody)
+    public object Post(ClientRequestBody ClientBody)
     {
-        if (clientBody.clientId == null) {
+        if (ClientBody.ClientId == null) {
             Response.StatusCode = 400;
 
             return new { message = "Invalid request: missing clientId" };
         }
 
         try {
-            if (clientBody.enableCloudBucketing ?? false) {
+            if (ClientBody.EnableCloudBucketing ?? false) {
                 DVCCloudOptions cloudOptions = new DVCCloudOptions();
 
-                if (clientBody.options != null) {
-                    cloudOptions = new DVCCloudOptions(enableEdgeDB: clientBody.options.EnableEdgeDB ?? false);
+                if (ClientBody.Options != null) {
+                    cloudOptions = new DVCCloudOptions(enableEdgeDB: ClientBody.Options.EnableEdgeDB ?? false);
                 }
 
-                var restOptions = new DevCycle.SDK.Server.Common.API.DVCRestClientOptions();
+                var RestOptions = new DevCycle.SDK.Server.Common.API.DVCRestClientOptions();
 
-                if (clientBody.options?.BaseURLOverride != null) {
-                    restOptions.BaseUrl = new Uri(clientBody.options.BaseURLOverride);
+                if (ClientBody.Options?.BaseURLOverride != null) {
+                    RestOptions.BaseUrl = new Uri(ClientBody.Options.BaseURLOverride);
                 }
 
-                DataStore.CloudClients[clientBody.clientId] = new DVCCloudClientBuilder()
-                    .SetEnvironmentKey(clientBody.sdkKey)
+                DataStore.CloudClients[ClientBody.ClientId] = new DVCCloudClientBuilder()
+                    .SetEnvironmentKey(ClientBody.SdkKey)
                     .SetOptions(cloudOptions)
                     .SetLogger(new LoggerFactory())
-                    .SetRestClientOptions(restOptions)
+                    .SetRestClientOptions(RestOptions)
                     .Build();
             } else {
-                if (clientBody.options != null && clientBody.options.BaseURLOverride != null) {
-                    clientBody.options.CdnUri = clientBody.options.BaseURLOverride;
-                    clientBody.options.EventsApiUri = clientBody.options.BaseURLOverride;
+                if (ClientBody.Options != null && ClientBody.Options.BaseURLOverride != null) {
+                    ClientBody.Options.CdnUri = ClientBody.Options.BaseURLOverride;
+                    ClientBody.Options.EventsApiUri = ClientBody.Options.BaseURLOverride;
                 }
             
-                DataStore.LocalClients[clientBody.clientId] = new DVCLocalClientBuilder()
-                    .SetEnvironmentKey(clientBody.sdkKey)
-                    .SetOptions(clientBody.options)        
+                DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
+                    .SetEnvironmentKey(ClientBody.SdkKey)
+                    .SetOptions(ClientBody.Options)        
                     .SetLogger(new LoggerFactory())
                     .Build();
             }
 
-            Response.Headers.Add("Location", "client/" + clientBody.clientId);
+            Response.Headers.Add("Location", "client/" + ClientBody.ClientId);
             Response.StatusCode = 201;
 
             return new { message = "success"};
