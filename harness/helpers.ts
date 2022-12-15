@@ -98,7 +98,13 @@ export const variablesForTypes = {
     }
 }
 
-const createClient = async (url: string, clientId?: string, sdkKey?: string | null, options?: object) => {
+const createClient = async (
+    url: string,
+    enableCloudBucketing: boolean,
+    clientId?: string,
+    sdkKey?: string | null,
+    options?: object
+) => {
     return await fetch(`${url}/client`, {
         method: 'POST',
         headers: {
@@ -107,6 +113,7 @@ const createClient = async (url: string, clientId?: string, sdkKey?: string | nu
         body: JSON.stringify({
             clientId,
             sdkKey,
+            enableCloudBucketing,
             options
         })
     })
@@ -179,8 +186,8 @@ const callTrack = async (url: string, userLocation: string, event: unknown) => {
         body: JSON.stringify({
             command: 'track',
             params: [
-                {location: `${userLocation}`},
-                {value: event}
+                { location: `${userLocation}` },
+                { value: event }
             ]
         })
     })
@@ -244,7 +251,6 @@ class BaseTestClient {
         this.sdkKey = `dvc_server_${this.clientId}`
     }
 
-
     protected getClientUrl() {
         return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
@@ -274,6 +280,7 @@ export class LocalTestClient extends BaseTestClient {
         }
         const response = await createClient(
             getConnectionStringForProxy(this.sdkName),
+            false,
             this.clientId,
             this.sdkKey,
             { baseURLOverride: `${getMockServerUrl()}/client/${this.clientId}`, ...options }
@@ -361,11 +368,11 @@ export class CloudTestClient extends BaseTestClient {
         }
         const response = await createClient(
             getConnectionStringForProxy(this.sdkName),
+            true,
             this.clientId,
             this.sdkKey,
             {
                 baseURLOverride: `${getMockServerUrl()}/client/${this.clientId}`,
-                enableCloudBucketing: true,
                 ...options
             }
         )

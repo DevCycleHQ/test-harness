@@ -1,5 +1,4 @@
 import {
-    getConnectionStringForProxy,
     forEachSDK,
     describeIf,
     wait,
@@ -16,11 +15,6 @@ describe('Initialize Tests - Local', () => {
 
     forEachSDK((name: string) => {
         const capabilities: string[] = SDKCapabilities[name]
-        let url: string
-
-        beforeAll(async () => {
-            url = getConnectionStringForProxy(name)
-        })
 
         describeIf(capabilities.includes(Capabilities.local))(name, () => {
             it('should error when SDK key is missing', async () => {

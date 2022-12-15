@@ -1,4 +1,4 @@
-import { DVCClient, DVCUser } from '@devcycle/nodejs-server-sdk'
+import { DVCClient, DVCCloudClient, DVCUser } from '@devcycle/nodejs-server-sdk'
 
 export enum EntityTypes {
     user = 'User',
@@ -10,7 +10,7 @@ export enum EntityTypes {
 }
 
 export type DataStore = {
-    clients: { [key: string]: DVCClient }
+    clients: { [key: string]: DVCClient | DVCCloudClient }
     users: { [key: string]: DVCUser }
     commandResults: { [key: string]: any }
 }
