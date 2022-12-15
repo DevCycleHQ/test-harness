@@ -1,15 +1,17 @@
 import Koa from 'koa'
-import { DVCClient, initialize } from '@devcycle/nodejs-server-sdk'
+import { DVCClient, DVCCloudClient, initialize } from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
+
 type ClientRequestBody = {
     clientId: string
     sdkKey: string
+    enableCloudBucketing: boolean
     options: { [key: string]: string }
 }
 
 export const handleClient = async (ctx: Koa.ParameterizedContext) => {
-    const body = <ClientRequestBody>ctx.request.body
-    if (body.clientId === undefined) {
+    const { clientId, sdkKey, enableCloudBucketing, options } = <ClientRequestBody>ctx.request.body
+    if (clientId === undefined) {
         ctx.status = 400
         ctx.body = {
             message: 'Invalid request: missing clientId'
@@ -17,9 +19,9 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         return ctx
     }
     try {
-        dataStore.clients[body.clientId] = initialize(body.sdkKey, body.options)
+        dataStore.clients[clientId] = initialize(sdkKey, { ...options,  enableCloudBucketing })
         ctx.status = 201
-        ctx.set('Location', `client/${body.clientId}`)
+        ctx.set('Location', `client/${clientId}`)
         ctx.body = {
             message: 'success'
         }
