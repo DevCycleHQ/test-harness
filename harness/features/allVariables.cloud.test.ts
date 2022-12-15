@@ -33,8 +33,7 @@ describe('allVariables Tests - Cloud', () => {
 
                 const user = {
                     user_id: 'test_user',
-                    email: 'user@gmail.com',
-                    age: '0',
+                    email: 'user@gmail.com'
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
@@ -64,7 +63,6 @@ describe('allVariables Tests - Cloud', () => {
                 const user = {
                     user_id: 'test_user',
                     email: 'user@gmail.com',
-                    age: '0',
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
@@ -86,7 +84,6 @@ describe('allVariables Tests - Cloud', () => {
                 const user = {
                     user_id: 'test_user',
                     email: 'user@gmail.com',
-                    age: '0',
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
@@ -109,7 +106,6 @@ describe('allVariables Tests - Cloud', () => {
                 const user = {
                     user_id: 'test_user',
                     email: 'user@gmail.com',
-                    age: '0',
                 }
                 const userResponse = await createUser(url, user)
                 const userLocation = userResponse.headers.get('Location')
