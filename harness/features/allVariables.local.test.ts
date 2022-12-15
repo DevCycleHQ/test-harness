@@ -52,7 +52,6 @@ describe('allVariables Tests - Local', () => {
                 const user = {
                     user_id: 'test_user',
                     email: 'user@gmail.com',
-                    age: '0',
                     customData: { 'should-bucket': true }
                 }
                 const userResponse = await createUser(url, user)
@@ -80,7 +79,6 @@ describe('allVariables Tests - Local', () => {
                 const user = {
                     user_id: 'test_user',
                     email: 'user@gmail.com',
-                    age: '0',
                     customData: { 'should-bucket': true }
                 }
                 const userResponse = await createUser(url, user)
