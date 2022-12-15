@@ -16,4 +16,9 @@ public class ProxyController {
         return "healthy";
     }
 
+    @GetMapping("/spec")
+    public Spec spec() {
+        return new Spec();
+    }
+
 }
