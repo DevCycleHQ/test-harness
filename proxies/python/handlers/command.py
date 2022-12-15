@@ -38,8 +38,6 @@ def invoke_command(subject, command, params):
 
 
 def handle_command(path, body, data_store):
-    print("COMMAND", flush=True)
-
     entity, command, params, is_async = [body.get(k, None) for k in ('entity', 'command', 'params', 'isAsync')]
 
     stored_entity = get_entity_from_location(path, data_store)

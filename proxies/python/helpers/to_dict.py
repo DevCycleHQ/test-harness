@@ -1,6 +1,10 @@
 from .entity_types import get_entity_from_type
 
 
+# handle converting results into dictionaries which can then be serialized
+# if array, recursively call on each entry
+# if object, try to turn into dict. If result is now dict (or already was), try turning each value into a dict
+# also return the entity type detected (Variable etc.)
 def to_dict(result):
     if isinstance(result, list):
         result_data = [to_dict(r)[0] for r in result]
