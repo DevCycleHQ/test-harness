@@ -18,7 +18,6 @@ jar {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation ("io.github.kawamuray.wasmtime:wasmtime-java:0.14.0")
 	implementation("com.devcycle:java-server-sdk:${System.getenv('JAVA_SDK_VERSION') ?: "+"}")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
