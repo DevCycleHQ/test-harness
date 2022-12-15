@@ -18,7 +18,6 @@ jar {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-	
 	implementation("com.devcycle:java-server-sdk:${System.getenv('JAVA_SDK_VERSION') ?: "+"}")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
