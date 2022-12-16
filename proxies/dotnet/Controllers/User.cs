@@ -1,9 +1,7 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Net;
 using DevCycle.SDK.Server.Common.Model;
-
-// using Newtonsoft.Json;
-using System.Text.Json;
 
 namespace dotnet.Controllers;
 
@@ -20,7 +18,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public object CreateUser(ClientRequestUser user)
+    public Object CreateUser([FromBody]ClientRequestUser user)
     {
         try {
             var sdkUser = new User(
@@ -43,7 +41,6 @@ public class UserController : ControllerBase
             );
             var userId = DataStore.Users.Count;
             DataStore.Users[userId.ToString()] = sdkUser;
-
             var result = new {entityType = "user", body = sdkUser};
 
             Response.Headers.Add("Location", "user/" + userId);
