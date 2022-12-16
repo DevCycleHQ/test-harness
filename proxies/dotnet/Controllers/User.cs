@@ -17,7 +17,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public Object CreateUser([FromBody]ClientRequestUser user)
+    public object CreateUser([FromBody]ClientRequestUser user)
     {
         try
         {
