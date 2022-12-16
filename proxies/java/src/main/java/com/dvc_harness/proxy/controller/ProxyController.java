@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
-import com.dvc_harness.proxy.models.ClientRequestBody;
-import com.dvc_harness.proxy.models.UserRequestBody;
-import com.dvc_harness.proxy.models.MessageResponse;
-
 import com.devcycle.sdk.server.local.api.DVCLocalClient;
 import com.devcycle.sdk.server.cloud.api.DVCCloudClient;
 import com.devcycle.sdk.server.common.model.User;
@@ -35,20 +31,33 @@ public class ProxyController {
     }
 
     @PostMapping("/user")
-    public UserData user(@RequestBody UserRequestBody body, HttpServletResponse response) {
-        User sdkUser = User.builder()
-            .userId(body.user_id)
-            .name(body.name)
-            .customData(body.customData)
-            .build();
+    public BaseResponse user(@RequestBody UserRequestBody body, HttpServletResponse response) {
+        try {
+            User sdkUser = User.builder()
+                .userId(body.user_id)
+                .name(body.name)
+                .language(body.language)
+                .country(body.country)
+                .appVersion(body.appVersion)
+                .appBuild(body.appBuild)
+                .customData(body.customData)
+                .privateCustomData(body.privateCustomData)
+                .createdDate(body.createdDate)
+                .lastSeenDate(body.lastSeenDate)
+                .build();
 
-        var userId = DataStore.Users.size();
-        DataStore.Users.put(userId, sdkUser);
+            var userId = Integer.toString(DataStore.Users.size());
+            DataStore.Users.put(userId, sdkUser);
 
-        var result = new UserData(sdkUser);
-
-        response.addHeader("Location", "user/" + userId);
-        return result;
+            var result = new UserData(sdkUser);
+            response.setStatus(201);
+            response.addHeader("Location", "user/" + userId);
+            return result;
+        } catch (Exception e) {
+            response.setStatus(200);
+            return new ExceptionResponse(e.getMessage());
+        }
+        
     }
 
     @PostMapping("/client")

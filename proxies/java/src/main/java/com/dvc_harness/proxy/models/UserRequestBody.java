@@ -9,7 +9,6 @@ public class UserRequestBody {
     public String appBuild;
     public Object customData;
     public Object privateCustomData;
-    public Integer createdDate;
-    public Integer lastSeenDate;
-    public String deviceModel;
+    public Long createdDate;
+    public Long lastSeenDate;
 }
