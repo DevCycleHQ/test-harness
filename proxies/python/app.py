@@ -7,6 +7,7 @@ import traceback
 
 app = Flask(__name__)
 
+
 dataStore = {
     'clients': {},
     'users': {},
