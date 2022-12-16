@@ -1,4 +1,4 @@
-package com.dvc_harness.proxy.controller;
+package com.dvc_harness.proxy.models;
 
 public class Spec {
     private final String name;
