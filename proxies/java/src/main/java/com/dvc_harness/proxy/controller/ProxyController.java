@@ -11,8 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+
+import com.dvc_harness.proxy.models.ClientRequestBody;
+import com.dvc_harness.proxy.models.UserRequestBody;
+import com.dvc_harness.proxy.models.MessageResponse;
+
 import com.devcycle.sdk.server.local.api.DVCLocalClient;
 import com.devcycle.sdk.server.cloud.api.DVCCloudClient;
+import com.devcycle.sdk.server.common.model.User;
 
 @Controller
 @RestController
@@ -29,34 +35,22 @@ public class ProxyController {
     }
 
     @PostMapping("/user")
-    public User user(@RequestBody ClientRequestUser user, HttpServletResponse response) {
-        var sdkUser = new User(
-                user.UserId,
-                user.Email,
-                user.Name,
-                user.Language,
-                user.Country,
-                user.AppVersion,
-                user.AppBuild,
-                user.CustomData,
-                user.PrivateCustomData,
-                user.CreatedDate,
-                user.LastSeenDate,
-                user.Platform,
-                user.PlatformVersion,
-                user.DeviceModel,
-                user.SdkType,
-                user.SdkVersion
-            );
-        var userId = DataStore.Users.Count;
-        DataStore.Users[userId.ToString()] = sdkUser;
+    public UserData user(@RequestBody UserRequestBody body, HttpServletResponse response) {
+        User sdkUser = User.builder()
+            .userId(body.user_id)
+            .name(body.name)
+            .customData(body.customData)
+            .build();
 
-        var result = new {entityType = "user", body = sdkUser};
+        var userId = DataStore.Users.size();
+        DataStore.Users.put(userId, sdkUser);
 
-        Response.Headers.Add("Location", "user/" + userId);
-        Response.StatusCode = (int)HttpStatusCode.Created;
+        var result = new UserData(sdkUser);
+
+        response.addHeader("Location", "user/" + userId);
         return result;
     }
+
     @PostMapping("/client")
     public BaseResponse client(@RequestBody ClientRequestBody body, HttpServletResponse response) {
         try {
