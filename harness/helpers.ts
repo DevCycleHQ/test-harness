@@ -1,7 +1,7 @@
 import { Interceptor, Scope } from 'nock'
 import { Sdks } from './types'
 import nock from 'nock'
-import { getServerScope } from './nock'
+import { getServerScope, resetServerScope } from './nock'
 import { v4 as uuidv4 } from 'uuid'
 
 const oldFetch = fetch
@@ -50,6 +50,7 @@ export const forEachSDK = (tests) => {
                 const pendingMocks = scope.pendingMocks()
                 throw new Error('Unsatisfied nock scopes: ' + pendingMocks)
             }
+            await resetServerScope()
             await global.assertNoUnmatchedRequests()
         })
         afterAll(() => {
