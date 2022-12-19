@@ -48,9 +48,10 @@ export const forEachSDK = (tests) => {
         afterEach(async () => {
             if (!scope.isDone()) {
                 const pendingMocks = scope.pendingMocks()
+                resetServerScope()
                 throw new Error('Unsatisfied nock scopes: ' + pendingMocks)
             }
-            await resetServerScope()
+            resetServerScope()
             await global.assertNoUnmatchedRequests()
         })
         afterAll(() => {
@@ -230,18 +231,21 @@ export const waitForRequest = async (
         }, timeout)
     })
 
+    let callback
+
     await Promise.race([
         new Promise((resolve) => {
-            const callback = (req, inter) => {
+            callback = (req, inter) => {
                 if (inter === interceptor) {
-                    scope.off('request', callback)
                     resolve(true)
                 }
             }
             scope.on('request', callback)
         }),
         timeoutPromise
-    ])
+    ]).finally(() => {
+        scope.off('request', callback)
+    })
 }
 
 const checkFailed = async (response: Response, shouldFail: boolean) => {
