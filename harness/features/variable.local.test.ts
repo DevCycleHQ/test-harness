@@ -1,11 +1,11 @@
 import {
-    getConnectionStringForProxy,
-    forEachSDK,
-    describeIf,
     createUser,
+    describeIf,
+    forEachSDK,
     forEachVariableType,
-    waitForRequest,
-    LocalTestClient
+    getConnectionStringForProxy,
+    LocalTestClient,
+    waitForRequest
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -151,7 +151,8 @@ describe('Variable Tests - Local', () => {
                             )
                         const variable = await variableResponse.json()
 
-                        expectDefaultValue(key, variable, wrongTypeDefault, variableType)
+                        expectDefaultValue(key, variable, wrongTypeDefault,
+                            wrongTypeDefault === '1' ? VariableType.string : VariableType.number)
                         await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableEvaluated')
                     })
