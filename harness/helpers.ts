@@ -51,6 +51,7 @@ export const forEachSDK = (tests) => {
                 resetServerScope()
                 throw new Error('Unsatisfied nock scopes: ' + pendingMocks)
             }
+
             resetServerScope()
             await global.assertNoUnmatchedRequests()
         })
