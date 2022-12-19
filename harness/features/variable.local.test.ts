@@ -10,6 +10,7 @@ import {
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
 import { config } from '../mockData'
+import { VariableType } from '@devcycle/types'
 
 jest.setTimeout(10000)
 
@@ -21,16 +22,19 @@ const expectedVariablesByType = {
         key: 'string-var',
         defaultValue: 'default_value',
         variationOn: 'string',
+        variableType: 'String',
     },
     number: {
         key: 'number-var',
         defaultValue: 0,
         variationOn: 1,
+        variableType: 'Number',
     },
     boolean: {
         key: 'bool-var',
         defaultValue: false,
         variationOn: true,
+        variableType: 'Boolean',
     },
     JSON: {
         key: 'json-var',
@@ -38,6 +42,7 @@ const expectedVariablesByType = {
         variationOn: {
             'facts': true
         },
+        variableType: 'JSON',
     }
 }
 
@@ -100,7 +105,7 @@ describe('Variable Tests - Local', () => {
                 })
 
                 forEachVariableType((type) => {
-                    const { key, defaultValue, variationOn } = expectedVariablesByType[type]
+                    const { key, defaultValue, variationOn, variableType } = expectedVariablesByType[type]
 
                     it('should return variable if mock server returns object matching default type',  async () => {
                         let eventBody = {}
@@ -146,7 +151,7 @@ describe('Variable Tests - Local', () => {
                             )
                         const variable = await variableResponse.json()
 
-                        expectDefaultValue(key, variable, wrongTypeDefault)
+                        expectDefaultValue(key, variable, wrongTypeDefault, variableType)
                         await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableEvaluated')
                     })
@@ -165,7 +170,7 @@ describe('Variable Tests - Local', () => {
                         )
                         const variable = await variableResponse.json()
 
-                        expectDefaultValue(key, variable, defaultValue)
+                        expectDefaultValue(key, variable, defaultValue, variableType)
                         await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableDefaulted')
                     })
@@ -185,7 +190,7 @@ describe('Variable Tests - Local', () => {
                         )
                         const variable = await variableResponse.json()
 
-                        expectDefaultValue('nonexistent', variable, defaultValue)
+                        expectDefaultValue('nonexistent', variable, defaultValue, variableType)
                         await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, 'nonexistent', 'aggVariableDefaulted')
                     })
@@ -260,15 +265,16 @@ describe('Variable Tests - Local', () => {
                 afterAll(async () => {
                     await testClient.close()
                 })
+
                 forEachVariableType((type) => {
-                    const { key, defaultValue } = expectedVariablesByType[type]
+                    const { key, defaultValue, variableType } = expectedVariablesByType[type]
 
                     it('should return default value if client is uninitialized',  async () => {
                         const variableResponse = await testClient.callVariable(
                             variationOnUser.location, key, defaultValue
                         )
                         const variable = await variableResponse.json()
-                        expectDefaultValue(key, variable, defaultValue)
+                        expectDefaultValue(key, variable, defaultValue, variableType)
                     })
 
                     it.failing('should throw exception if user is invalid',  async () => {
@@ -313,18 +319,20 @@ describe('Variable Tests - Local', () => {
         data: {
             value: ValueTypes,
             isDefaulted: boolean,
+            type: string,
             defaultValue: ValueTypes
         }
     }
 
-    const expectDefaultValue = (key: string, variable: VariableResponse, defaultValue: ValueTypes) => {
+    const expectDefaultValue = (key: string, variable: VariableResponse, defaultValue: ValueTypes, type: VariableType) => {
         expect(variable).toEqual({
             entityType: 'Variable',
             data: {
                 isDefaulted: true,
                 defaultValue: defaultValue,
                 value: defaultValue,
-                key: key
+                key: key,
+                type
             },
             logs: []
         })

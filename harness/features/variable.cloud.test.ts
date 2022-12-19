@@ -71,7 +71,7 @@ describe('Variable Tests - Cloud', () => {
                 expect(userId.includes('user/')).toBeTruthy()
 
                 const variableResponse = await testClient.callVariable(userId, 'var_key', null, true)
-                
+
                 const error = await variableResponse.json()
                 expect(error.asyncError).toBe('Missing parameter: defaultValue')
             })
@@ -92,6 +92,7 @@ describe('Variable Tests - Cloud', () => {
                         key: 'var_key',
                         value: 'value',
                         defaultValue: 'default_value',
+                        type: 'String',
                         isDefaulted: false
                     })
                 const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value')
@@ -121,6 +122,7 @@ describe('Variable Tests - Cloud', () => {
                         key: 'var_key',
                         value: 'value',
                         defaultValue: 'default_value',
+                        type: 'String',
                         isDefaulted: false
                     })
                 const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value')
@@ -158,6 +160,7 @@ describe('Variable Tests - Cloud', () => {
                         key: 'var_key',
                         value: variablesForTypes['string'].defaultValue,
                         defaultValue: variablesForTypes['string'].defaultValue,
+                        type: variablesForTypes['string'].type,
                         isDefaulted: true
                     }
                 }))
@@ -188,6 +191,7 @@ describe('Variable Tests - Cloud', () => {
                             key: 'var_key',
                             value: variablesForTypes[type].defaultValue,
                             defaultValue: variablesForTypes[type].defaultValue,
+                            type: variablesForTypes[type].type,
                             isDefaulted: true
                         }
                     }))
@@ -218,7 +222,8 @@ describe('Variable Tests - Cloud', () => {
                             key: 'var_key',
                             value: variablesForTypes[type].value,
                             defaultValue: variablesForTypes[type].defaultValue,
-                            isDefaulted: false
+                            isDefaulted: false,
+                            type: variablesForTypes[type].type
                         }
                     }))
                 })
@@ -250,7 +255,8 @@ describe('Variable Tests - Cloud', () => {
                             key: 'var_key',
                             value: variablesForTypes[type].defaultValue,
                             isDefaulted: true,
-                            defaultValue: variablesForTypes[type].defaultValue
+                            defaultValue: variablesForTypes[type].defaultValue,
+                            type: variablesForTypes[type].type
                         }
                     }))
                 })
