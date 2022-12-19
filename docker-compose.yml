@@ -25,6 +25,7 @@ services:
       args:
         - DOTNET_CLOUD_SDK_VERSION=${DOTNET_CLOUD_SDK_VERSION}
         - DOTNET_LOCAL_SDK_VERSION=${DOTNET_LOCAL_SDK_VERSION}
+        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
     container_name: dotnet
     ports:
       - "3000"
