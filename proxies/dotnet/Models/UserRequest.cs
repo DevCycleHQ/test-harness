@@ -6,7 +6,7 @@ using DevCycle.SDK.Server.Local.Api;
 using DevCycle.SDK.Server.Common.Model;
 using static DevCycle.SDK.Server.Common.Model.User;
 
-public class ClientRequestUser {
+public class UserRequest {
     [JsonPropertyName("user_id")]
     public string? UserId { get; set; }
 

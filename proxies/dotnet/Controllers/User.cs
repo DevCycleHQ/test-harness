@@ -2,9 +2,6 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using DevCycle.SDK.Server.Common.Model;
 
-// using Newtonsoft.Json;
-using System.Text.Json;
-
 namespace dotnet.Controllers;
 
 [ApiController]
@@ -20,7 +17,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public object CreateUser(ClientRequestUser user)
+    public object CreateUser(UserRequest user)
     {
         try {
             var sdkUser = new User(
