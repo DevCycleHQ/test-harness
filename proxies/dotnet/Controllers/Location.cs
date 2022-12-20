@@ -179,7 +179,7 @@ public class LocationController : ControllerBase
         if (type.Contains("Dictionary")) {
             type = "Object";
         } else {
-            type = type.Split(".").Last();
+            type = type.Split('`').First().Split(".").Last();
         }
 
         return EntityTypes.Contains(type) ? type : "Void";
