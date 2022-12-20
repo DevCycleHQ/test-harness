@@ -9,7 +9,7 @@ if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
     yarn add file:js-sdks/lib/shared/bucketing-assembly-script/
     yarn add file:js-sdks/lib/shared/types/
 elif [ -z "$NODEJS_SDK_VERSION" ]; then
-    yarn add @devcycle/nodejs-server-sdk
+    yarn add @devcycle/nodejs-server-sdk@latest
 else
     yarn add @devcycle/nodejs-server-sdk@$NODEJS_SDK_VERSION
 fi
