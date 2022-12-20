@@ -96,6 +96,7 @@ describe('Variable Tests - Local', () => {
                 afterAll(async () => {
                     await testClient.close()
                 })
+
                 it('should throw exception if user is invalid',  async () => {
                     const variableResponse =
                         await testClient.callVariable(invalidUser.location, 'string-var', 'string default', true)
@@ -121,6 +122,8 @@ describe('Variable Tests - Local', () => {
                             defaultValue
                         )
                         const variable = await variableResponse.json()
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
+
                         expect(variable).toEqual(expect.objectContaining({
                             entityType: 'Variable',
                             data: expect.objectContaining({
@@ -130,7 +133,6 @@ describe('Variable Tests - Local', () => {
                             })
                         }))
 
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableEvaluated')
                     })
 
@@ -150,10 +152,10 @@ describe('Variable Tests - Local', () => {
                                 wrongTypeDefault
                             )
                         const variable = await variableResponse.json()
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
 
                         expectDefaultValue(key, variable, wrongTypeDefault,
                             wrongTypeDefault === '1' ? VariableType.string : VariableType.number)
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableEvaluated')
                     })
 
@@ -170,9 +172,9 @@ describe('Variable Tests - Local', () => {
                             defaultValue
                         )
                         const variable = await variableResponse.json()
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
 
                         expectDefaultValue(key, variable, defaultValue, variableType)
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableDefaulted')
                     })
 
@@ -190,9 +192,9 @@ describe('Variable Tests - Local', () => {
                             defaultValue
                         )
                         const variable = await variableResponse.json()
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
 
                         expectDefaultValue('nonexistent', variable, defaultValue, variableType)
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, 'nonexistent', 'aggVariableDefaulted')
                     })
 
@@ -278,9 +280,9 @@ describe('Variable Tests - Local', () => {
                         expectDefaultValue(key, variable, defaultValue, variableType)
                     })
 
-                    it.failing('should throw exception if user is invalid',  async () => {
+                    it('should throw exception if user is invalid',  async () => {
                         const variableResponse =
-                            await testClient.callVariable(invalidUser.location, key, defaultValue)
+                            await testClient.callVariable(invalidUser.location, key, defaultValue, true)
                         const variable = await variableResponse.json()
 
                         expect(variable.exception).toBe('Must have a user_id set on the user')
