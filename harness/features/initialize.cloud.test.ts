@@ -2,7 +2,7 @@ import {
     getConnectionStringForProxy,
     forEachSDK,
     describeIf,
-    CloudTestClient
+    CloudTestClient, describeCapability
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 
@@ -11,8 +11,6 @@ jest.setTimeout(10000)
 describe('Client Initialize Tests - Cloud', () => {
     forEachSDK((name) => {
         let url: string
-        const capabilities: string[] = SDKCapabilities[name]
-
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
             const res = await fetch(`${url}/spec`)
@@ -22,8 +20,7 @@ describe('Client Initialize Tests - Cloud', () => {
             expect(response.capabilities).toBeDefined()
         })
 
-        describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
-
+        describeCapability(name, Capabilities.cloud)(name, () => {
             it('should throw an exception and return no location if invalid SDK token is sent', async () => {
                 const client = new CloudTestClient(name)
                 const response = await client.createClient({}, 'invalidKey', true)

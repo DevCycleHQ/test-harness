@@ -1,5 +1,5 @@
 import {
-    createUser,
+    createUser, describeCapability,
     describeIf,
     forEachSDK,
     forEachVariableType,
@@ -48,12 +48,10 @@ const expectedVariablesByType = {
 
 describe('Variable Tests - Local', () => {
     forEachSDK((name) => {
-        const capabilities: string[] = SDKCapabilities[name]
         const variationOnUser = { location: '', user_id: 'user1' }
         const noVariationUser = { location: '', user_id: 'user3' }
-        const invalidUser = { location: '', user_id: '' }
 
-        describeIf(capabilities.includes(Capabilities.local))(name, () => {
+        describeCapability(name, Capabilities.local)(name, () => {
             let url: string
 
             beforeAll(async () => {
@@ -67,11 +65,6 @@ describe('Variable Tests - Local', () => {
                 noVariationUser.location = (
                     await createUser(url, { user_id: noVariationUser.user_id })
                 ).headers.get('location')
-
-                invalidUser.location = (
-                    await createUser(url, { name: 'invalid' })
-                ).headers.get('location')
-
             })
 
             const testClient = new LocalTestClient(name)
@@ -95,14 +88,6 @@ describe('Variable Tests - Local', () => {
                 })
                 afterAll(async () => {
                     await testClient.close()
-                })
-
-                it('should throw exception if user is invalid',  async () => {
-                    const variableResponse =
-                        await testClient.callVariable(invalidUser.location, 'string-var', 'string default', true)
-                    const variable = await variableResponse.json()
-
-                    expect(variable.exception).toBe('Must have a user_id set on the user')
                 })
 
                 forEachVariableType((type) => {
@@ -278,14 +263,6 @@ describe('Variable Tests - Local', () => {
                         )
                         const variable = await variableResponse.json()
                         expectDefaultValue(key, variable, defaultValue, variableType)
-                    })
-
-                    it('should throw exception if user is invalid',  async () => {
-                        const variableResponse =
-                            await testClient.callVariable(invalidUser.location, key, defaultValue, true)
-                        const variable = await variableResponse.json()
-
-                        expect(variable.exception).toBe('Must have a user_id set on the user')
                     })
                 })
             })

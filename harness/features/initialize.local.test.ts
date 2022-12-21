@@ -2,7 +2,7 @@ import {
     forEachSDK,
     describeIf,
     wait,
-    LocalTestClient
+    LocalTestClient, describeCapability
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { config } from '../mockData'
@@ -14,9 +14,7 @@ describe('Initialize Tests - Local', () => {
     const scope = getServerScope()
 
     forEachSDK((name: string) => {
-        const capabilities: string[] = SDKCapabilities[name]
-
-        describeIf(capabilities.includes(Capabilities.local))(name, () => {
+        describeCapability(name, Capabilities.local)(name, () => {
             it('should error when SDK key is missing', async () => {
                 const testClient = new LocalTestClient(name)
                 const response = await testClient.createClient({}, null, true)

@@ -1,14 +1,12 @@
 import {
     getConnectionStringForProxy,
     forEachSDK,
-    describeIf,
     createUser,
-    wait,
-    LocalTestClient
+    LocalTestClient, describeCapability
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { config, variables } from '../mockData'
-import nock, { Interceptor } from 'nock'
+import { Interceptor } from 'nock'
 import { getServerScope } from '../nock'
 
 jest.setTimeout(10000)
@@ -18,7 +16,6 @@ describe('allVariables Tests - Local', () => {
     let configInterceptor: Interceptor
 
     forEachSDK((name: string) => {
-        const capabilities: string[] = SDKCapabilities[name]
         let url: string
 
         let client = new LocalTestClient(name)
@@ -38,7 +35,7 @@ describe('allVariables Tests - Local', () => {
             await client.close()
         })
 
-        describeIf(capabilities.includes(Capabilities.local))(name, () => {
+        describeCapability(name, Capabilities.local)(name, () => {
             it('should return an empty object if client is not initialized', async () => {
                 const delayClient = new LocalTestClient(name)
 
@@ -61,18 +58,6 @@ describe('allVariables Tests - Local', () => {
 
                 expect(variablesMap).toMatchObject({})
                 await delayClient.close()
-            })
-
-            it('should throw an error if called with an invalid user', async () => {
-                const user = {
-                    name: 'invalid user'
-                }
-                const userResponse = await createUser(url, user)
-                const userLocation = userResponse.headers.get('Location')
-                const response = await client.callAllVariables(userLocation, true)
-                const { exception } = await response.json()
-
-                expect(exception).toEqual('Must have a user_id set on the user')
             })
 
             it('should return a variable map for a bucketed user', async () => {

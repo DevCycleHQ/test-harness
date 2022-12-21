@@ -16,18 +16,18 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@devcycle/bucketing-assembly-script@^1.1.22":
-  version "1.1.22"
-  resolved "https://registry.yarnpkg.com/@devcycle/bucketing-assembly-script/-/bucketing-assembly-script-1.1.22.tgz#5d1dab63fbe2320911f6d64a6bd0e31e77839f18"
-  integrity sha512-FnQ2fIPRDb68rDK0pqvHT02OE96cnSbBAedgBrIsYVHampzvw0fCOuSiv3o97zk9FJg7cdfJzZJxMuqRzDBl3g==
+"@devcycle/bucketing-assembly-script@^1.1.23":
+  version "1.1.23"
+  resolved "https://registry.yarnpkg.com/@devcycle/bucketing-assembly-script/-/bucketing-assembly-script-1.1.23.tgz#046822201563db78ef86d6edcf97daaad42fe52f"
+  integrity sha512-5pZPyVyNd7SSM05zjkLXziK6usSJnDTTz9vS+PqXyx0V4Vj/dpcAlvGN9J//e4Q9JhmRzSc858dY757Q7tya4g==
 
-"@devcycle/nodejs-server-sdk@^1.4.26":
-  version "1.4.26"
-  resolved "https://registry.yarnpkg.com/@devcycle/nodejs-server-sdk/-/nodejs-server-sdk-1.4.26.tgz#eea15a3af589bdcdaeffc5e17b48b3b6868f31cf"
-  integrity sha512-GibqupdUiTAn8nMQosc6usiuCTgG1pYNYeV07K49Do0G2czRjl8gDWl3QjLExyWEFANQ6ht6xVs9cQ6sL/gpwg==
+"@devcycle/nodejs-server-sdk@^1.4.27":
+  version "1.4.29"
+  resolved "https://registry.yarnpkg.com/@devcycle/nodejs-server-sdk/-/nodejs-server-sdk-1.4.29.tgz#5229a3249f5d3fcc7bd03b5e96cc46a315f87728"
+  integrity sha512-h1LUk1f3z9fR03UxnNmdtt7qlLfUhOzLq/JK0fwHPXhn1x0vZHM+x/nirPlNKS9MR5yBrh+vFRtn2MHb2iqWUA==
   dependencies:
-    "@devcycle/bucketing-assembly-script" "^1.1.22"
-    "@devcycle/types" "1.0.52"
+    "@devcycle/bucketing-assembly-script" "^1.1.23"
+    "@devcycle/types" "1.0.53"
     "@nestjs/class-validator" "^0.13.4"
     as-uuid "^0.0.4"
     axios "^0.27.2"
@@ -40,10 +40,10 @@
     reflect-metadata "^0.1.13"
     uuid "^8.3.2"
 
-"@devcycle/types@1.0.52":
-  version "1.0.52"
-  resolved "https://registry.yarnpkg.com/@devcycle/types/-/types-1.0.52.tgz#a37183787617e54d4e61cd96bd0682ae3cbc39d5"
-  integrity sha512-eGzCYBi9eSBr+xSpoXYJUsOcNN+Lhhq6aWDqHXJ3ZjHVSRi0BjMld/4sP1Odf9Oe9OYj57OfteIQ6OPq0vJYuw==
+"@devcycle/types@1.0.53":
+  version "1.0.53"
+  resolved "https://registry.yarnpkg.com/@devcycle/types/-/types-1.0.53.tgz#48a36d85a23cba88453efc76e87cf8c1904ca0d0"
+  integrity sha512-F6kYU28vU6UymIdboE7McuvyYcyMBALmHr4bF3ya+HHZh9F4JZO9d4zpy08OHKavf53wdY9NTm28aBQolP3q/w==
   dependencies:
     "@nestjs/class-validator" "^0.13.4"
     "@types/validator" "13.7.6"
