@@ -7,7 +7,6 @@ namespace dotnet.Controllers;
 [Route("[controller]")]
 public class SpecController : ControllerBase
 {
-
     private readonly ILogger<SpecController> _logger;
 
     public SpecController(ILogger<SpecController> logger)
@@ -18,10 +17,11 @@ public class SpecController : ControllerBase
     [HttpGet]
     public string Get()
     {
-        return JsonConvert.SerializeObject(new {
+        return JsonConvert.SerializeObject(new
+        {
             name = "DotNet",
             version = "",
-            capabilities = new List<string>(){"EdgeDB", "LocalBucketing", "CloudBucketing"}
+            capabilities = new List<string>() { "EdgeDB", "LocalBucketing", "CloudBucketing" }
         });
     }
 }
