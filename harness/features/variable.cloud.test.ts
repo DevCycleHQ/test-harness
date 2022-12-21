@@ -5,7 +5,7 @@ import {
     createUser,
     forEachVariableType,
     variablesForTypes,
-    CloudTestClient
+    CloudTestClient, describeCapability
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -16,8 +16,6 @@ const scope = getServerScope()
 
 describe('Variable Tests - Cloud', () => {
     forEachSDK((name) => {
-        const capabilities: string[] = SDKCapabilities[name]
-
         let testClient = new CloudTestClient(name)
 
         let url = getConnectionStringForProxy(name)
@@ -28,23 +26,7 @@ describe('Variable Tests - Cloud', () => {
             })
         })
 
-        describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
-            it('will throw error variable called with invalid user', async () => {
-                const response = await createUser(url, { name: 'invalid user' })
-                const invalidUser = await response.json()
-
-                expect(invalidUser.entityType).toBe('User')
-                expect(invalidUser.data.user_id).toBeUndefined()
-                expect(invalidUser.data.name).toBe('invalid user')
-
-                const userId = response.headers.get('location')
-                expect(userId.includes('user/')).toBeTruthy()
-
-                const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value', true)
-                const error = await variableResponse.json()
-                expect(error.asyncError).toBe('Must have a user_id set on the user')
-            })
-
+        describeCapability(name, Capabilities.cloud)(name, () => {
             it('will throw error variable called with invalid key', async () => {
                 const response = await createUser(url, { user_id: 'user1' })
                 const invalidUser = await response.json()

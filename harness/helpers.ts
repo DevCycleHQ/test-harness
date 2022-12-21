@@ -1,5 +1,5 @@
 import { Interceptor, Scope } from 'nock'
-import { Sdks } from './types'
+import { SDKCapabilities, Sdks } from './types'
 import nock from 'nock'
 import { getServerScope, resetServerScope } from './nock'
 import { v4 as uuidv4 } from 'uuid'
@@ -51,6 +51,7 @@ export const forEachSDK = (tests) => {
                 resetServerScope()
                 throw new Error('Unsatisfied nock scopes: ' + pendingMocks)
             }
+
             resetServerScope()
             await global.assertNoUnmatchedRequests()
         })
@@ -63,6 +64,10 @@ export const forEachSDK = (tests) => {
 }
 
 export const describeIf = (condition: boolean) => condition ? describe : describe.skip
+
+export const describeCapability = (sdkName: string, capability: string) => {
+    return describeIf(SDKCapabilities[sdkName].includes(capability))
+}
 
 export const forEachVariableType = (tests) => {
     // get the list of SDK's and their capabilities
@@ -137,6 +142,20 @@ export const createUser = async (url: string, user: object, shouldFail = false) 
     return result
 }
 
+export const sendCommand = async (url: string, command: string, params: unknown[], isAsync: boolean) => {
+    return await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            command,
+            isAsync,
+            params
+        })
+    })
+}
+
 const callVariable = async (
     url: string,
     userLocation: string,
@@ -144,21 +163,11 @@ const callVariable = async (
     key?: string,
     defaultValue?: any,
 ) => {
-    return await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            command: 'variable',
-            isAsync: isAsync,
-            params: [
-                { location: `${userLocation}` },
-                { value: key },
-                { value: defaultValue }
-            ]
-        })
-    })
+    return await sendCommand(url, 'variable', [
+        { location: `${userLocation}` },
+        { value: key },
+        { value: defaultValue }
+    ], isAsync)
 }
 
 export const wait = (ms: number) => {
@@ -170,49 +179,15 @@ export const wait = (ms: number) => {
 }
 
 const callAllVariables = async (url: string, userLocation: string, isAsync: boolean) => {
-    return await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            command: 'allVariables',
-            isAsync,
-            params: [{ location: userLocation }]
-        })
-    })
+    return await sendCommand(url, 'allVariables', [{ location: userLocation }], isAsync)
 }
 
 const callTrack = async (url: string, userLocation: string, event: unknown) => {
-    return await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            command: 'track',
-            params: [
-                { location: `${userLocation}` },
-                { value: event }
-            ]
-        })
-    })
+    return await sendCommand(url, 'track', [{ location: userLocation }, { value: event }], false)
 }
 
 const callAllFeatures = async (url: string, userLocation: string, isAsync: boolean) => {
-    return await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            command: 'allFeatures',
-            isAsync,
-            params: [
-                { location: `${userLocation}` }
-            ],
-        })
-    })
+    return await sendCommand(url, 'allFeatures', [{ location: userLocation }], isAsync)
 }
 
 export const waitForRequest = async (
@@ -329,33 +304,13 @@ export class LocalTestClient extends BaseTestClient {
     }
 
     async callOnClientInitialized() {
-        const response = await fetch(this.getClientUrl(), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                command: 'onClientInitialized',
-                isAsync: true,
-                params: []
-            })
-        })
+        const response = await sendCommand(this.getClientUrl(), 'onClientInitialized', [], true)
 
         await checkFailed(response, false)
     }
 
     async close() {
-        const result = await fetch(this.getClientUrl(), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                command: 'close',
-                isAsync: true,
-                params: []
-            })
-        })
+        const result = await sendCommand(this.getClientUrl(), 'close', [], true)
         await checkFailed(result, false)
     }
 

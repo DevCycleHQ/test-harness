@@ -3,7 +3,7 @@ import {
     forEachSDK,
     describeIf,
     createUser,
-    CloudTestClient,
+    CloudTestClient, describeCapability,
 } from '../helpers'
 import { getServerScope } from '../nock'
 import { Capabilities, SDKCapabilities } from '../types'
@@ -15,7 +15,6 @@ describe('allVariables Tests - Cloud', () => {
     const scope = getServerScope()
 
     forEachSDK((name: string) => {
-        const capabilities: string[] = SDKCapabilities[name]
         let url: string
 
         let client = new CloudTestClient(name)
@@ -25,7 +24,7 @@ describe('allVariables Tests - Cloud', () => {
             await client.createClient()
         })
 
-        describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
+        describeCapability(name, Capabilities.cloud)(name, () => {
             it('should return an empty object if variables request fails', async () => {
                 scope
                     .post(`/client/${client.clientId}/v1/variables`)
@@ -41,18 +40,6 @@ describe('allVariables Tests - Cloud', () => {
                 const { data: variablesMap } = await response.json()
 
                 expect(variablesMap).toMatchObject({})
-            })
-
-            it('should throw an error if called with an invalid user', async () => {
-                const user = {
-                    name: 'invalid user'
-                }
-                const userResponse = await createUser(url, user)
-                const userLocation = userResponse.headers.get('Location')
-                const response = await client.callAllVariables(userLocation, true)
-                const { asyncError } = await response.json()
-
-                expect(asyncError).toEqual('Must have a user_id set on the user')
             })
 
             it('should return a variable map', async () => {

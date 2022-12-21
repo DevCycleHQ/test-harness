@@ -5,7 +5,7 @@ import {
     createUser,
     wait,
     waitForRequest,
-    LocalTestClient
+    LocalTestClient, describeCapability
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -19,10 +19,9 @@ describe('Track Tests - Local', () => {
     const validUserId = 'user1'
     forEachSDK((name) => {
         let url: string
-        const capabilities: string[] = SDKCapabilities[name]
         const eventFlushIntervalMS = 1000
 
-        describeIf(capabilities.includes(Capabilities.local))(name, () => {
+        describeCapability(name, Capabilities.local)(name, () => {
 
             const client = new LocalTestClient(name)
 

@@ -3,7 +3,7 @@ import {
     forEachSDK,
     describeIf,
     createUser,
-    CloudTestClient,
+    CloudTestClient, describeCapability,
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -18,10 +18,8 @@ describe('allFeatures Tests - Cloud', () => {
         const testClient = new CloudTestClient(name)
 
         let url: string
-        const capabilities: string[] = SDKCapabilities[name]
 
         let variationOnUser: string
-        let invalidUser: string
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
@@ -32,13 +30,9 @@ describe('allFeatures Tests - Cloud', () => {
             variationOnUser = (
                 await createUser(url, { user_id: 'user1', customData: { 'should-bucket': true } })
             ).headers.get('location')
-
-            invalidUser = (
-                await createUser(url, { name: 'invalid' })
-            ).headers.get('location')
         })
 
-        describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
+        describeCapability(name, Capabilities.cloud)(name, () => {
             it('should return all features without edgeDB', async () => {
                 scope
                     .post(`/${testClient.clientLocation}/v1/features`, (body) => body.user_id === 'user1')
@@ -81,12 +75,6 @@ describe('allFeatures Tests - Cloud', () => {
                     data: expectedFeaturesVariationOn,
                     logs: []
                 })
-            })
-
-            it('should throw exception if user is invalid',  async () => {
-                const featuresResponse = await testClient.callAllFeatures(invalidUser, true)
-                const response = await featuresResponse.json()
-                expect(response.asyncError).toBe('Must have a user_id set on the user')
             })
         })
     })

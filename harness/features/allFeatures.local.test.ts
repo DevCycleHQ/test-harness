@@ -4,7 +4,7 @@ import {
     describeIf,
     createUser,
     LocalTestClient,
-    waitForRequest
+    waitForRequest, describeCapability
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -17,11 +17,9 @@ const scope = getServerScope()
 describe('allFeatures Tests - Local', () => {
     forEachSDK((name) => {
         let url: string
-        const capabilities: string[] = SDKCapabilities[name]
 
         let variationOnUser: string
         let noVariationUser: string
-        let invalidUser: string
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
@@ -33,13 +31,9 @@ describe('allFeatures Tests - Local', () => {
             noVariationUser = (
                 await createUser(url, { user_id: 'user3' })
             ).headers.get('location')
-
-            invalidUser = (
-                await createUser(url, { name: 'invalid' })
-            ).headers.get('location')
         })
 
-        describeIf(capabilities.includes(Capabilities.local))(name, () => {
+        describeCapability(name, Capabilities.local)(name, () => {
             describe('uninitialized client', () => {
                 const testClient = new LocalTestClient(name)
 
@@ -67,12 +61,6 @@ describe('allFeatures Tests - Local', () => {
                     const featuresResponse = await testClient.callAllFeatures(variationOnUser)
                     const features = await featuresResponse.json()
                     expect(features).toMatchObject({})
-                })
-
-                it.failing('should throw exception if user is invalid',  async () => { // TODO fix in node sdk
-                    const featuresResponse = await testClient.callAllFeatures(invalidUser)
-                    const response = await featuresResponse.json()
-                    expect(response.exception).toBe('Must have a user_id set on the user')
                 })
             })
 
@@ -104,12 +92,6 @@ describe('allFeatures Tests - Local', () => {
                     const features = (await featuresResponse.json()).data
                     expect(features).toMatchObject(expectedFeaturesVariationOn)
 
-                })
-
-                it('should throw exception if user is invalid',  async () => {
-                    const featuresResponse = await testClient.callAllFeatures(invalidUser, true)
-                    const response = await featuresResponse.json()
-                    expect(response.exception).toBe('Must have a user_id set on the user')
                 })
             })
         })

@@ -4,7 +4,7 @@ import {
     describeIf,
     createUser,
     waitForRequest,
-    CloudTestClient
+    CloudTestClient, describeCapability
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -17,7 +17,6 @@ describe('Track Tests - Cloud', () => {
     const validUserId = 'user1'
     forEachSDK((name) => {
         let url: string
-        const capabilities: string[] = SDKCapabilities[name]
 
         let client: CloudTestClient
 
@@ -31,7 +30,7 @@ describe('Track Tests - Cloud', () => {
             jest.clearAllMocks()
         })
 
-        describeIf(capabilities.includes(Capabilities.cloud))(name, () => {
+        describeCapability(name, Capabilities.cloud)(name, () => {
             it('should complain if event type not set', async () => {
                 const response = await createUser(url, { user_id: validUserId })
                 await response.json()
