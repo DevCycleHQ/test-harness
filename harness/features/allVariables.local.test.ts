@@ -18,7 +18,7 @@ describe('allVariables Tests - Local', () => {
     forEachSDK((name: string) => {
         let url: string
 
-        let client = new LocalTestClient(name)
+        const client = new LocalTestClient(name)
 
         beforeAll(async () => {
             configInterceptor = scope
@@ -46,14 +46,11 @@ describe('allVariables Tests - Local', () => {
 
                 await delayClient.createClient()
 
-                const user = {
+                const response = await delayClient.callAllVariables({
                     user_id: 'test_user',
                     email: 'user@gmail.com',
                     customData: { 'should-bucket': true }
-                }
-                const userResponse = await createUser(url, user)
-                const userLocation = userResponse.headers.get('Location')
-                const response = await delayClient.callAllVariables(userLocation)
+                })
                 const { data: variablesMap } = await response.json()
 
                 expect(variablesMap).toMatchObject({})
@@ -61,14 +58,11 @@ describe('allVariables Tests - Local', () => {
             })
 
             it('should return a variable map for a bucketed user', async () => {
-                const user = {
+                const response = await client.callAllVariables({
                     user_id: 'test_user',
                     email: 'user@gmail.com',
                     customData: { 'should-bucket': true }
-                }
-                const userResponse = await createUser(url, user)
-                const userLocation = userResponse.headers.get('Location')
-                const response = await client.callAllVariables(userLocation)
+                })
                 const { data: variablesMap, entityType } = await response.json()
 
                 expect(entityType).toEqual('Object')

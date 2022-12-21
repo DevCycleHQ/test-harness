@@ -192,10 +192,11 @@ export const wait = (ms: number) => {
     })
 }
 
-const callAllVariables = async (url: string, userLocation: string, isAsync: boolean) => {
+const callAllVariables = async (url: string, user: unknown, isAsync: boolean) => {
     return await sendCommand(url, {
         command: 'allVariables', 
-        params: [{ location: userLocation }], 
+        user,
+        params: [{ type: 'user' }], 
         isAsync
     })
 }
@@ -327,10 +328,10 @@ export class LocalTestClient extends BaseTestClient {
     }
 
     async callAllVariables(
-        userLocation: string,
+        user: unknown,
         shouldFail = false
     ) {
-        const result = await callAllVariables(this.getClientUrl(), userLocation, false)
+        const result = await callAllVariables(this.getClientUrl(), user, false)
 
         await checkFailed(result, shouldFail)
         return result
@@ -404,10 +405,10 @@ export class CloudTestClient extends BaseTestClient {
     }
 
     async callAllVariables(
-        userLocation: string,
+        user: unknown,
         shouldFail = false
     ) {
-        const result = await callAllVariables(this.getClientUrl(), userLocation, true)
+        const result = await callAllVariables(this.getClientUrl(), user, true)
         await checkFailed(result, shouldFail)
         return result
     }
