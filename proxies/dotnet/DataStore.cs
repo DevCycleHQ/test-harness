@@ -2,7 +2,8 @@ using DevCycle.SDK.Server.Cloud.Api;
 using DevCycle.SDK.Server.Local.Api;
 using DevCycle.SDK.Server.Common.Model;
 
-class DataStore {
+class DataStore
+{
     public static Dictionary<string, DVCLocalClient> LocalClients;
     public static Dictionary<string, DVCCloudClient> CloudClients;
 

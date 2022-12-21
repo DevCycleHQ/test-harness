@@ -9,7 +9,6 @@ namespace dotnet.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-
     private readonly ILogger<UserController> _logger;
 
     public UserController(ILogger<UserController> logger)
@@ -20,9 +19,10 @@ public class UserController : ControllerBase
     [HttpPost]
     public Object CreateUser([FromBody]ClientRequestUser user)
     {
-        try {
+        try
+        {
             var sdkUser = new User(
-                user.UserId, 
+                user.UserId,
                 user.Email,
                 user.Name,
                 user.Language,
@@ -41,12 +41,15 @@ public class UserController : ControllerBase
             );
             var userId = DataStore.Users.Count;
             DataStore.Users[userId.ToString()] = sdkUser;
-            var result = new {entityType = "user", body = sdkUser};
+
+            var result = new { entityType = "user", body = sdkUser };
 
             Response.Headers.Add("Location", "user/" + userId);
             Response.StatusCode = (int)HttpStatusCode.Created;
             return result;
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return new { exception = e.Message };
         }
     }
