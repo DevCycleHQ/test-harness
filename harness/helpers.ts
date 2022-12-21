@@ -292,9 +292,9 @@ export class LocalTestClient extends BaseTestClient {
             this.clientId,
             this.sdkKey,
             {
-                eventsAPIBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
-                configCDNBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
-                bucketingAPIBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
+                eventsAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
+                configCDNURI: `${getMockServerUrl()}/client/${this.clientId}`,
+                bucketingAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
                 ...options
             }
         )
@@ -386,9 +386,9 @@ export class CloudTestClient extends BaseTestClient {
 
             this.sdkKey,
             {
-                eventsAPIBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
-                configCDNBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
-                bucketingAPIBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
+                eventsAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
+                configCDNURI: `${getMockServerUrl()}/client/${this.clientId}`,
+                bucketingAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
                 ...options
             }
         )

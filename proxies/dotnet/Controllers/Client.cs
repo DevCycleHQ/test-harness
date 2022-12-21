@@ -15,7 +15,7 @@ public class ClientOptions : DVCLocalOptions
     [JsonPropertyName("eventFlushIntervalMS")]
     public new int EventFlushIntervalMs { get; set; }
 
-    [JsonPropertyName("bucketingAPIBaseURL")]
+    [JsonPropertyName("bucketingAPIURI")]
     public string? BucketingAPIURLOverride { get; set; }
 
     [JsonPropertyName("configCDNURI")] 
