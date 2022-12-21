@@ -17,7 +17,7 @@ describe('allVariables Tests - Cloud', () => {
     forEachSDK((name: string) => {
         let url: string
 
-        let client = new CloudTestClient(name)
+        const client = new CloudTestClient(name)
 
         beforeAll(async () => {
             url = getConnectionStringForProxy(name)
@@ -30,13 +30,10 @@ describe('allVariables Tests - Cloud', () => {
                     .post(`/client/${client.clientId}/v1/variables`)
                     .reply(404)
 
-                const user = {
+                const response = await client.callAllVariables({
                     user_id: 'test_user',
                     email: 'user@gmail.com'
-                }
-                const userResponse = await createUser(url, user)
-                const userLocation = userResponse.headers.get('Location')
-                const response = await client.callAllVariables(userLocation)
+                })
                 const { data: variablesMap } = await response.json()
 
                 expect(variablesMap).toMatchObject({})
@@ -46,14 +43,10 @@ describe('allVariables Tests - Cloud', () => {
                 scope
                     .post(`/client/${client.clientId}/v1/variables`)
                     .reply(200, variables)
-
-                const user = {
+                const response = await client.callAllVariables({
                     user_id: 'test_user',
                     email: 'user@gmail.com',
-                }
-                const userResponse = await createUser(url, user)
-                const userLocation = userResponse.headers.get('Location')
-                const response = await client.callAllVariables(userLocation)
+                })
                 const { data: variablesMap, entityType } = await response.json()
 
                 expect(entityType).toEqual('Object')
@@ -68,13 +61,10 @@ describe('allVariables Tests - Cloud', () => {
                     })
                     .reply(200, variables)
 
-                const user = {
+                await client.callAllVariables({
                     user_id: 'test_user',
                     email: 'user@gmail.com',
-                }
-                const userResponse = await createUser(url, user)
-                const userLocation = userResponse.headers.get('Location')
-                await client.callAllVariables(userLocation)
+                })
             })
 
             it('should make a request to the variables endpoint with edgeDB param to true', async () => {
@@ -90,13 +80,10 @@ describe('allVariables Tests - Cloud', () => {
                     enableEdgeDB: true
                 })
 
-                const user = {
+                await client.callAllVariables({
                     user_id: 'test_user',
                     email: 'user@gmail.com',
-                }
-                const userResponse = await createUser(url, user)
-                const userLocation = userResponse.headers.get('Location')
-                await client.callAllVariables(userLocation)
+                })
             })
         })
     })

@@ -1,12 +1,9 @@
 import {
-    getConnectionStringForProxy,
     forEachSDK,
-    describeIf,
-    createUser,
     LocalTestClient,
     waitForRequest, describeCapability
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
 import { config, expectedFeaturesVariationOn } from '../mockData/config'
 
@@ -16,23 +13,6 @@ const scope = getServerScope()
 
 describe('allFeatures Tests - Local', () => {
     forEachSDK((name) => {
-        let url: string
-
-        let variationOnUser: string
-        let noVariationUser: string
-
-        beforeAll(async () => {
-            url = getConnectionStringForProxy(name)
-
-            variationOnUser = (
-                await createUser(url, { user_id: 'user1', customData: { 'should-bucket': true } })
-            ).headers.get('location')
-
-            noVariationUser = (
-                await createUser(url, { user_id: 'user3' })
-            ).headers.get('location')
-        })
-
         describeCapability(name, Capabilities.local)(name, () => {
             describe('uninitialized client', () => {
                 const testClient = new LocalTestClient(name)
@@ -58,7 +38,10 @@ describe('allFeatures Tests - Local', () => {
                 })
 
                 it('should return empty object if client is uninitialized',  async () => {
-                    const featuresResponse = await testClient.callAllFeatures(variationOnUser)
+                    const featuresResponse = await testClient.callAllFeatures({ 
+                        user_id: 'user1', 
+                        customData: { 'should-bucket': true }
+                    })
                     const features = await featuresResponse.json()
                     expect(features).toMatchObject({})
                 })
@@ -80,7 +63,7 @@ describe('allFeatures Tests - Local', () => {
                 })
 
                 it('should return all features for user without custom data',  async () => {
-                    const featuresResponse = await testClient.callAllFeatures(noVariationUser)
+                    const featuresResponse = await testClient.callAllFeatures({ user_id: 'user3' })
                     const features = (await featuresResponse.json()).data
                     expect(features).toMatchObject({
                         'schedule-feature': { ...expectedFeaturesVariationOn['schedule-feature'] }
@@ -88,7 +71,10 @@ describe('allFeatures Tests - Local', () => {
                 })
 
                 it('should return all features for user with custom data',  async () => {
-                    const featuresResponse = await testClient.callAllFeatures(variationOnUser)
+                    const featuresResponse = await testClient.callAllFeatures({ 
+                        user_id: 'user1', 
+                        customData: { 'should-bucket': true } 
+                    })
                     const features = (await featuresResponse.json()).data
                     expect(features).toMatchObject(expectedFeaturesVariationOn)
 

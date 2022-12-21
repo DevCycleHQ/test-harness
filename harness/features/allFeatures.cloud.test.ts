@@ -17,19 +17,10 @@ describe('allFeatures Tests - Cloud', () => {
     forEachSDK((name) => {
         const testClient = new CloudTestClient(name)
 
-        let url: string
-
-        let variationOnUser: string
-
         beforeAll(async () => {
-            url = getConnectionStringForProxy(name)
             await testClient.createClient({
                 enableCloudBucketing: true,
             })
-
-            variationOnUser = (
-                await createUser(url, { user_id: 'user1', customData: { 'should-bucket': true } })
-            ).headers.get('location')
         })
 
         describeCapability(name, Capabilities.cloud)(name, () => {
@@ -42,7 +33,10 @@ describe('allFeatures Tests - Cloud', () => {
                         return !queryObj.enableEdgeDB
                     })
                     .reply(200, expectedFeaturesVariationOn)
-                const featuresResponse = await testClient.callAllFeatures(variationOnUser)
+                const featuresResponse = await testClient.callAllFeatures({ 
+                    user_id: 'user1', 
+                    customData: { 'should-bucket': true } 
+                })
 
                 const features = await featuresResponse.json()
                 expect(features).toMatchObject({
@@ -68,7 +62,10 @@ describe('allFeatures Tests - Cloud', () => {
                     })
                     .reply(200, expectedFeaturesVariationOn)
 
-                const featuresResponse = await edgeDBTestClient.callAllFeatures(variationOnUser)
+                const featuresResponse = await edgeDBTestClient.callAllFeatures({ 
+                    user_id: 'user1', 
+                    customData: { 'should-bucket': true } 
+                })
                 const features = await featuresResponse.json()
                 expect(features).toMatchObject({
                     entityType: 'Object',

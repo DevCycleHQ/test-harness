@@ -2,7 +2,6 @@ import {
     getConnectionStringForProxy,
     forEachSDK,
     describeIf,
-    createUser,
     wait,
     waitForRequest,
     LocalTestClient, describeCapability
@@ -47,11 +46,7 @@ describe('Track Tests - Local', () => {
 
             describe('Expect no events sent', () => {
                 it('should not send an event if the event type not set', async () => {
-                    const response = await createUser(url, { user_id: validUserId })
-                    await response.json()
-                    const userId = response.headers.get('location')
-
-                    const trackResponse = await client.callTrack(userId, {}, true)
+                    const trackResponse = await client.callTrack({ user_id: validUserId }, {}, true)
 
                     const res = await trackResponse.json()
                     expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
@@ -69,17 +64,13 @@ describe('Track Tests - Local', () => {
                     const variableId = 'string-var'
                     const value = 1
 
-                    const response = await createUser(url, { user_id: validUserId })
-                    await response.json()
-                    const userId = response.headers.get('location')
-
                     const interceptor = scope.post(`/client/${client.clientId}/v1/events/batch`)
                     interceptor.reply((uri, body) => {
                         eventBody = body
                         return [201]
                     })
 
-                    const trackResponse = await client.callTrack(userId,
+                    const trackResponse = await client.callTrack({ user_id: validUserId },
                         { type: eventType, target: 'string-var', value: value })
 
                     await trackResponse.json()
@@ -119,20 +110,15 @@ describe('Track Tests - Local', () => {
                     const variableId2 = 'json-var'
                     const value2 = 3
 
-                    const response = await createUser(url, { user_id: validUserId })
-                    await response.json()
-                    const userId = response.headers.get('location')
-
-
                     const interceptor = scope.post(`/client/${client.clientId}/v1/events/batch`)
                     interceptor.reply((uri, body) => {
                         eventBody = body
                         return [201]
                     })
 
-                    await client.callTrack(userId,
+                    await client.callTrack({ user_id: validUserId },
                         { type: eventType, target: variableId, value: value })
-                    await client.callTrack(userId,
+                    await client.callTrack({ user_id: validUserId },
                         { type: eventType2, target: variableId2, value: value2 })
 
                     await waitForRequest(scope, interceptor, eventFlushIntervalMS * 2, 'Event callback timed out')
@@ -166,7 +152,7 @@ describe('Track Tests - Local', () => {
                     })
                 })
 
-                it('should retry events API call to track 2 events, and check interval of events is in specified window',
+                it('should retry events API call to track 2 events and check interval of events is in specified window',
                     async () => {
                         let eventBody = {}
                         const timestamps = []
@@ -179,10 +165,6 @@ describe('Track Tests - Local', () => {
                         const eventType2 = 'textChanged'
                         const variableId2 = 'json-var'
                         const value2 = 3
-
-                        const response = await createUser(url, { user_id: validUserId })
-                        await response.json()
-                        const userId = response.headers.get('location')
 
                         let startDate = Date.now()
                         scope
@@ -202,9 +184,9 @@ describe('Track Tests - Local', () => {
                             return [201]
                         })
 
-                        await client.callTrack(userId,
+                        await client.callTrack({ user_id: validUserId },
                             { type: eventType, target: variableId, value: value })
-                        await client.callTrack(userId,
+                        await client.callTrack({ user_id: validUserId },
                             { type: eventType2, target: variableId2, value: value2 })
 
                         await waitForRequest(scope, interceptor, eventFlushIntervalMS * 5, 'Event callback timed out')
