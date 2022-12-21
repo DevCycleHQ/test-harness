@@ -145,9 +145,9 @@ export const createUser = async (url: string, user: object, shouldFail = false) 
 type CommandBody = {
     command: string,
     isAsync?: boolean,
-    params: unknown[],
-    user?: unknown,
-    event?: unknown
+    params: ({ value: unknown } | { type: 'user' | 'event' })[],
+    user?: Record<string, unknown>,
+    event?: Record<string, unknown>
 }
 
 export const sendCommand = async (url: string, body: CommandBody) => {
@@ -168,15 +168,16 @@ export const sendCommand = async (url: string, body: CommandBody) => {
 
 const callVariable = async (
     url: string,
-    userLocation: string,
+    user: Record<string, unknown>,
     isAsync: boolean,
     key?: string,
     defaultValue?: any,
 ) => {
     return await sendCommand(url, {
         command: 'variable', 
+        user,
         params: [
-            { location: `${userLocation}` },
+            { type: 'user' },
             { value: key },
             { value: defaultValue }
         ], 
@@ -192,7 +193,7 @@ export const wait = (ms: number) => {
     })
 }
 
-const callAllVariables = async (url: string, user: unknown, isAsync: boolean) => {
+const callAllVariables = async (url: string, user: Record<string, unknown>, isAsync: boolean) => {
     return await sendCommand(url, {
         command: 'allVariables', 
         user,
@@ -201,19 +202,20 @@ const callAllVariables = async (url: string, user: unknown, isAsync: boolean) =>
     })
 }
 
-const callTrack = async (url: string, user: unknown, event: unknown) => {
+const callTrack = async (url: string, user: Record<string, unknown>, event: Record<string, unknown>) => {
     return await sendCommand(url, {
         command: 'track',
         user,
         event,
-        params: [{ type: 'user' }, { value: event }], 
+        params: [{ type: 'user' }, { type: 'event' }], 
         isAsync: false
     })
 }
 
-const callAllFeatures = async (url: string, user: unknown, isAsync: boolean) => {
+const callAllFeatures = async (url: string, user: Record<string, unknown>, isAsync: boolean) => {
     return await sendCommand(url, {
         command: 'allFeatures', 
+        user,
         params: [{ type: 'user' }], 
         isAsync
     })
@@ -276,7 +278,7 @@ class BaseTestClient {
         return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
 
-    async callTrack(user: unknown, event: unknown, shouldFail = false) {
+    async callTrack(user: Record<string, unknown>, event: Record<string, unknown>, shouldFail = false) {
         const result = await callTrack(this.getClientUrl(), user, event)
 
         await checkFailed(result, shouldFail)
@@ -310,14 +312,14 @@ export class LocalTestClient extends BaseTestClient {
     }
 
     async callVariable(
-        userLocation: string,
+        user: Record<string, unknown>,
         key?: string,
         defaultValue?: any,
         shouldFail = false
     ) {
         const result = await callVariable(
             this.getClientUrl(),
-            userLocation,
+            user,
             false,
             key,
             defaultValue,
@@ -328,7 +330,7 @@ export class LocalTestClient extends BaseTestClient {
     }
 
     async callAllVariables(
-        user: unknown,
+        user: Record<string, unknown>,
         shouldFail = false
     ) {
         const result = await callAllVariables(this.getClientUrl(), user, false)
@@ -388,14 +390,14 @@ export class CloudTestClient extends BaseTestClient {
     }
 
     async callVariable(
-        userLocation: string,
+        user: Record<string, unknown>,
         key?: string,
         defaultValue?: any,
         shouldFail = false
     ) {
         const result = await callVariable(
             this.getClientUrl(),
-            userLocation,
+            user,
             true,
             key,
             defaultValue,
@@ -405,7 +407,7 @@ export class CloudTestClient extends BaseTestClient {
     }
 
     async callAllVariables(
-        user: unknown,
+        user: Record<string, unknown>,
         shouldFail = false
     ) {
         const result = await callAllVariables(this.getClientUrl(), user, true)

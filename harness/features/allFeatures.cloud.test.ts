@@ -16,7 +16,6 @@ const scope = getServerScope()
 describe('allFeatures Tests - Cloud', () => {
     forEachSDK((name) => {
         const testClient = new CloudTestClient(name)
-        const capabilities: string[] = SDKCapabilities[name]
 
         beforeAll(async () => {
             await testClient.createClient({

@@ -1,12 +1,9 @@
 import {
-    getConnectionStringForProxy,
     forEachSDK,
-    describeIf,
-    createUser,
     LocalTestClient,
     waitForRequest, describeCapability
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
 import { config, expectedFeaturesVariationOn } from '../mockData/config'
 
@@ -16,9 +13,7 @@ const scope = getServerScope()
 
 describe('allFeatures Tests - Local', () => {
     forEachSDK((name) => {
-        const capabilities: string[] = SDKCapabilities[name]
-
-        describeIf(capabilities.includes(Capabilities.local))(name, () => {
+        describeCapability(name, Capabilities.local)(name, () => {
             describe('uninitialized client', () => {
                 const testClient = new LocalTestClient(name)
 

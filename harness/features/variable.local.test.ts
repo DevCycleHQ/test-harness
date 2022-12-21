@@ -1,9 +1,8 @@
 import {
-    createUser, describeCapability,
-    describeIf,
+    describeCapability,
+    
     forEachSDK,
     forEachVariableType,
-    getConnectionStringForProxy,
     LocalTestClient,
     waitForRequest
 } from '../helpers'
@@ -48,25 +47,7 @@ const expectedVariablesByType = {
 
 describe('Variable Tests - Local', () => {
     forEachSDK((name) => {
-        const variationOnUser = { location: '', user_id: 'user1' }
-        const noVariationUser = { location: '', user_id: 'user3' }
-
         describeCapability(name, Capabilities.local)(name, () => {
-            let url: string
-
-            beforeAll(async () => {
-                url = getConnectionStringForProxy(name)
-
-                // create users
-                variationOnUser.location = (
-                    await createUser(url, { user_id: variationOnUser.user_id, customData: { 'should-bucket': true } })
-                ).headers.get('location')
-
-                noVariationUser.location = (
-                    await createUser(url, { user_id: noVariationUser.user_id })
-                ).headers.get('location')
-            })
-
             const testClient = new LocalTestClient(name)
             let eventsUrl: string
 
@@ -102,7 +83,7 @@ describe('Variable Tests - Local', () => {
                         })
 
                         const variableResponse = await testClient.callVariable(
-                            variationOnUser.location,
+                            { user_id: 'user1', customData: { 'should-bucket': true } },
                             key,
                             defaultValue
                         )
@@ -132,7 +113,7 @@ describe('Variable Tests - Local', () => {
                         const wrongTypeDefault = type === 'number' ? '1' : 1
                         const variableResponse =
                             await testClient.callVariable(
-                                variationOnUser.location,
+                                { user_id: 'user1', customData: { 'should-bucket': true } },
                                 key,
                                 wrongTypeDefault
                             )
@@ -152,7 +133,7 @@ describe('Variable Tests - Local', () => {
                             return [201]
                         })
                         const variableResponse = await testClient.callVariable(
-                            noVariationUser.location,
+                            { user_id: 'user3' },
                             key,
                             defaultValue
                         )
@@ -172,7 +153,7 @@ describe('Variable Tests - Local', () => {
                         })
 
                         const variableResponse = await testClient.callVariable(
-                            variationOnUser.location,
+                            { user_id: 'user1', customData: { 'should-bucket': true } },
                             'nonexistent',
                             defaultValue
                         )
@@ -192,12 +173,12 @@ describe('Variable Tests - Local', () => {
                         })
 
                         await testClient.callVariable(
-                            variationOnUser.location,
+                            { user_id: 'user1', customData: { 'should-bucket': true } },
                             'nonexistent',
                             defaultValue
                         )
                         await testClient.callVariable(
-                            variationOnUser.location,
+                            { user_id: 'user1', customData: { 'should-bucket': true } },
                             'nonexistent',
                             defaultValue
                         )
@@ -215,12 +196,12 @@ describe('Variable Tests - Local', () => {
                         })
 
                         await testClient.callVariable(
-                            variationOnUser.location,
+                            { user_id: 'user1', customData: { 'should-bucket': true } },
                             key,
                             defaultValue
                         )
                         await testClient.callVariable(
-                            variationOnUser.location,
+                            { user_id: 'user1', customData: { 'should-bucket': true } },
                             key,
                             defaultValue
                         )
@@ -259,7 +240,9 @@ describe('Variable Tests - Local', () => {
 
                     it('should return default value if client is uninitialized',  async () => {
                         const variableResponse = await testClient.callVariable(
-                            variationOnUser.location, key, defaultValue
+                            { user_id: 'user1', customData: { 'should-bucket': true } }, 
+                            key, 
+                            defaultValue
                         )
                         const variable = await variableResponse.json()
                         expectDefaultValue(key, variable, defaultValue, variableType)
@@ -304,7 +287,11 @@ describe('Variable Tests - Local', () => {
         }
     }
 
-    const expectDefaultValue = (key: string, variable: VariableResponse, defaultValue: ValueTypes, type: VariableType) => {
+    const expectDefaultValue = (
+        key: string, 
+        variable: VariableResponse, 
+        defaultValue: ValueTypes, 
+        type: VariableType) => {
         expect(variable).toEqual({
             entityType: 'Variable',
             data: {

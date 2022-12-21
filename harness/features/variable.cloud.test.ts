@@ -1,8 +1,6 @@
 import {
-    getConnectionStringForProxy,
     forEachSDK,
     describeIf,
-    createUser,
     forEachVariableType,
     variablesForTypes,
     CloudTestClient, describeCapability
@@ -16,9 +14,7 @@ const scope = getServerScope()
 
 describe('Variable Tests - Cloud', () => {
     forEachSDK((name) => {
-        let testClient = new CloudTestClient(name)
-
-        let url = getConnectionStringForProxy(name)
+        const testClient = new CloudTestClient(name)
 
         beforeAll(async () => {
             await testClient.createClient({
@@ -28,41 +24,29 @@ describe('Variable Tests - Cloud', () => {
 
         describeCapability(name, Capabilities.cloud)(name, () => {
             it('will throw error variable called with invalid key', async () => {
-                const response = await createUser(url, { user_id: 'user1' })
-                const invalidUser = await response.json()
-
-                expect(invalidUser.entityType).toBe('User')
-                expect(invalidUser.data.user_id).toBe('user1')
-
-                const userId = response.headers.get('location')
-                expect(userId.includes('user/')).toBeTruthy()
-
-                const variableResponse = await testClient.callVariable(userId, null, 'default_value', true)
+                const variableResponse = await testClient.callVariable(
+                    { user_id: 'user1' }, 
+                    null, 
+                    'default_value', 
+                    true
+                )
                 const error = await variableResponse.json()
                 expect(error.asyncError).toBe('Missing parameter: key')
             })
 
             it('will throw error variable called with invalid default value', async () => {
-                const response = await createUser(url, { user_id: 'user1' })
-                const invalidUser = await response.json()
-
-                expect(invalidUser.entityType).toBe('User')
-                expect(invalidUser.data.user_id).toBe('user1')
-
-                const userId = response.headers.get('location')
-                expect(userId.includes('user/')).toBeTruthy()
-
-                const variableResponse = await testClient.callVariable(userId, 'var_key', null, true)
+                const variableResponse = await testClient.callVariable(
+                    { user_id: 'user1' }, 
+                    'var_key', 
+                    null, 
+                    true
+                )
 
                 const error = await variableResponse.json()
                 expect(error.asyncError).toBe('Missing parameter: defaultValue')
             })
 
             it('should call variables API without edgeDB option', async () => {
-                const response = await createUser(url, { user_id: 'user1' })
-                await response.json()
-                const userId = response.headers.get('location')
-
                 scope
                     .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                     .matchHeader('Content-Type', 'application/json')
@@ -77,15 +61,15 @@ describe('Variable Tests - Cloud', () => {
                         type: 'String',
                         isDefaulted: false
                     })
-                const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value')
+                const variableResponse = await testClient.callVariable(
+                    { user_id: 'user1' }, 
+                    'var_key', 
+                    'default_value'
+                )
                 await variableResponse.json()
             })
 
             it('should call variables API with edgeDB option', async () => {
-                const response = await createUser(url, { user_id: 'user1' })
-                await response.json()
-                const userId = response.headers.get('location')
-
                 const testClient = new CloudTestClient(name)
 
                 await testClient.createClient({
@@ -107,17 +91,17 @@ describe('Variable Tests - Cloud', () => {
                         type: 'String',
                         isDefaulted: false
                     })
-                const variableResponse = await testClient.callVariable(userId, 'var_key', 'default_value')
+                const variableResponse = await testClient.callVariable(
+                    { user_id: 'user1' }, 
+                    'var_key', 
+                    'default_value'
+                )
                 await variableResponse.json()
 
             })
 
             it('should return default if mock server\
             returns variable mismatching default value type', async () => {
-                const response = await createUser(url, { user_id: 'user1' })
-                await response.json()
-                const userId = response.headers.get('location')
-
                 scope
                     .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                     .matchHeader('Content-Type', 'application/json')
@@ -130,7 +114,7 @@ describe('Variable Tests - Cloud', () => {
                     })
 
                 const variableResponse = await testClient.callVariable(
-                    userId,
+                    { user_id: 'user1' },
                     'var_key',
                     variablesForTypes['string'].defaultValue
                 )
@@ -150,10 +134,6 @@ describe('Variable Tests - Cloud', () => {
 
             forEachVariableType((type) => {
                 it(`should return default ${type} variable if mock server returns undefined`, async () => {
-                    const response = await createUser(url, { user_id: 'user1' })
-                    await response.json()
-                    const userId = response.headers.get('location')
-
                     scope
                         .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
@@ -161,7 +141,7 @@ describe('Variable Tests - Cloud', () => {
                         .reply(200, undefined)
 
                     const variableResponse = await testClient.callVariable(
-                        userId,
+                        { user_id: 'user1' },
                         'var_key',
                         variablesForTypes[type].defaultValue
                     )
@@ -181,10 +161,6 @@ describe('Variable Tests - Cloud', () => {
 
                 it(`should return ${type} variable if mock server returns \
                 proper variable matching default value type`, async () => {
-                    const response = await createUser(url, { user_id: 'user1' })
-                    await response.json()
-                    const userId = response.headers.get('location')
-
                     scope
                         .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
@@ -192,7 +168,7 @@ describe('Variable Tests - Cloud', () => {
                         .reply(200, variablesForTypes[type])
 
                     const variableResponse = await testClient.callVariable(
-                        userId,
+                        { user_id: 'user1' },
                         'var_key',
                         variablesForTypes[type].defaultValue
                     )
@@ -212,10 +188,6 @@ describe('Variable Tests - Cloud', () => {
 
                 it(`should return defaulted ${type} variable if mock server returns an internal error, \
                 after retrying 5 times`, async () => {
-                    const response = await createUser(url, { user_id: 'user1' })
-                    await response.json()
-                    const userId = response.headers.get('location')
-
                     scope
                         .post(`/client/${testClient.clientId}/v1/variables/var_key`, (body) => body.user_id === 'user1')
                         .matchHeader('Content-Type', 'application/json')
@@ -225,7 +197,7 @@ describe('Variable Tests - Cloud', () => {
                         .reply(500)
 
                     const variableResponse = await testClient.callVariable(
-                        userId,
+                        { user_id: 'user1' },
                         'var_key',
                         variablesForTypes[type].defaultValue
                     )
