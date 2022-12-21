@@ -18,10 +18,10 @@ public class ClientOptions : DVCLocalOptions
     [JsonPropertyName("bucketingAPIBaseURL")]
     public string? BucketingAPIURLOverride { get; set; }
 
-    [JsonPropertyName("configCDNBaseURL")] 
+    [JsonPropertyName("configCDNURI")] 
     public string? ConfigCDNURLOverride { get; set; }
     
-    [JsonPropertyName("eventsAPIBaseURL")] 
+    [JsonPropertyName("eventsAPIURI")] 
     public string? EventsAPIURLOverride { get; set; }
     
     [JsonPropertyName("enableEdgeDB")] 
