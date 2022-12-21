@@ -1,24 +1,39 @@
-import { DVCClient, DVCUser, DVCVariable } from '@devcycle/nodejs-server-sdk'
+import { DVCClient, DVCEvent, DVCUser, DVCVariable } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import { getEntityFromType, DataStore, EntityTypes } from '../entityTypes'
 import { dataStore } from '../app'
 
+type RequestWithEntity = Koa.Request & {
+    entity: DVCClient | DVCUser | DVCVariable
+}
+
+type Param = {
+    location?: string
+    callbackURL?: string
+    value?: unknown
+    type?: 'user' | 'event'
+}
+
 //HTTP request comes in as string
 type LocationRequestBody = {
     command: string
-    params: string //[{value: string | number | boolean} | {location: string} | {callbackUrl: string}]
-    entity: DVCClient | DVCUser | DVCVariable
+    params: Param[]
+    user?: DVCUser,
+    event?: DVCEvent,
     isAsync: boolean
 }
 
-type ParsedParams = (string | boolean | number | object | URL)[]
+type ParsedParams = any[]
 
 export const handleLocation = async (
     ctx: Koa.ParameterizedContext
 ) => {
-    const { entity, command, params, isAsync } = ctx.request.body as LocationRequestBody
+    const body = ctx.request.body as LocationRequestBody
+    const { command, params, isAsync } = body
+    const entity = (ctx.request as RequestWithEntity).entity
     try {
         const parsedParams: ParsedParams = parseParams(
+            body,
             params,
             dataStore
         )
@@ -100,13 +115,24 @@ const getEntityFromLocation = (location: string, data: DataStore) => {
     return undefined
 }
 
-const parseParams = (params: object | any, data: DataStore): ParsedParams => {
+const getEntityFromType = (type: 'user' | 'event', body: LocationRequestBody) => {
+   if (type === 'user') {
+        return body.user
+    } else if (type === 'event') {
+        return body.event
+    }
+    return undefined
+}
+
+const parseParams = (body: LocationRequestBody, params: Param[], data: DataStore): ParsedParams => {
     const parsedParams: ParsedParams = []
     params.forEach((element) => {
         if (element.location) {
             parsedParams.push(getEntityFromLocation(element.location, data))
         } else if (element.callbackURL) {
             parsedParams.push(new URL(element.callbackURL))
+        } else if (element.type) {
+            parsedParams.push(getEntityFromType(element.type, body))
         } else {
             parsedParams.push(element.value)
         }
@@ -140,6 +166,6 @@ export const validateLocationReqMiddleware = async (ctx: Koa.ParameterizedContex
         }
         return ctx
     }
-    body.entity = entity
+    (ctx.request as RequestWithEntity).entity = entity
     await next()
 }
