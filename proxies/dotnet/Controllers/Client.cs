@@ -7,26 +7,33 @@ using System.Text.Json.Serialization;
 
 namespace dotnet.Controllers;
 
-public class ClientOptions: DVCLocalOptions
-    {
-        [JsonPropertyName("configPollingIntervalMs")]
-        new public int ConfigPollingIntervalMs { get; set; }
+public class ClientOptions : DVCLocalOptions
+{
+    [JsonPropertyName("configPollingIntervalMs")]
+    public new int ConfigPollingIntervalMs { get; set; }
 
-        [JsonPropertyName("eventFlushIntervalMS")]
-        new public int EventFlushIntervalMs { get; set; }
+    [JsonPropertyName("eventFlushIntervalMS")]
+    public new int EventFlushIntervalMs { get; set; }
 
-        [JsonPropertyName("baseURLOverride")]
-        public string? BaseURLOverride { get; set; }
+    [JsonPropertyName("bucketingAPIBaseURL")]
+    public string? BucketingAPIURLOverride { get; set; }
 
-        [JsonPropertyName("enableEdgeDB")]
-        public bool? EnableEdgeDB { get; set; }
-    }
+    [JsonPropertyName("configCDNBaseURL")] 
+    public string? ConfigCDNURLOverride { get; set; }
+    
+    [JsonPropertyName("eventsAPIBaseURL")] 
+    public string? EventsAPIURLOverride { get; set; }
+    
+    [JsonPropertyName("enableEdgeDB")] 
+    public bool? EnableEdgeDB { get; set; }
+}
 
-public class ClientRequestBody {
-    public string? ClientId { get; set;}
-    public ClientOptions? Options { get; set;}
+public class ClientRequestBody
+{
+    public string? ClientId { get; set; }
+    public ClientOptions? Options { get; set; }
 
-    public string? SdkKey { get; set;}
+    public string? SdkKey { get; set; }
 
     public bool? EnableCloudBucketing { get; set; }
 }
@@ -35,7 +42,6 @@ public class ClientRequestBody {
 [Route("[controller]")]
 public class ClientController : ControllerBase
 {
-
     private readonly ILogger<ClientController> _logger;
 
     public ClientController(ILogger<ClientController> logger)
@@ -46,25 +52,26 @@ public class ClientController : ControllerBase
     [HttpPost]
     public object Post(ClientRequestBody ClientBody)
     {
-        if (ClientBody.ClientId == null) {
+        if (ClientBody.ClientId == null)
+        {
             Response.StatusCode = 400;
 
             return new { message = "Invalid request: missing clientId" };
         }
 
-        try {
-            if (ClientBody.EnableCloudBucketing ?? false) {
+        try
+        {
+            if (ClientBody.EnableCloudBucketing ?? false)
+            {
                 DVCCloudOptions cloudOptions = new DVCCloudOptions();
 
-                if (ClientBody.Options != null) {
+                if (ClientBody.Options != null)
                     cloudOptions = new DVCCloudOptions(enableEdgeDB: ClientBody.Options.EnableEdgeDB ?? false);
-                }
 
                 var RestOptions = new DevCycle.SDK.Server.Common.API.DVCRestClientOptions();
 
-                if (ClientBody.Options?.BaseURLOverride != null) {
-                    RestOptions.BaseUrl = new Uri(ClientBody.Options.BaseURLOverride);
-                }
+                if (ClientBody.Options?.BucketingAPIURLOverride != null)
+                    RestOptions.BaseUrl = new Uri(ClientBody.Options.BucketingAPIURLOverride);
 
                 DataStore.CloudClients[ClientBody.ClientId] = new DVCCloudClientBuilder()
                     .SetEnvironmentKey(ClientBody.SdkKey)
@@ -72,15 +79,22 @@ public class ClientController : ControllerBase
                     .SetLogger(new LoggerFactory())
                     .SetRestClientOptions(RestOptions)
                     .Build();
-            } else {
-                if (ClientBody.Options != null && ClientBody.Options.BaseURLOverride != null) {
-                    ClientBody.Options.CdnUri = ClientBody.Options.BaseURLOverride;
-                    ClientBody.Options.EventsApiUri = ClientBody.Options.BaseURLOverride;
+            }
+            else
+            {
+                if (ClientBody.Options?.ConfigCDNURLOverride != null)
+                {
+                    ClientBody.Options.CdnUri = ClientBody.Options.ConfigCDNURLOverride;
                 }
-            
+
+                if (ClientBody.Options?.EventsAPIURLOverride != null)
+                {
+                    ClientBody.Options.EventsApiUri = ClientBody.Options.EventsAPIURLOverride;
+                }
+
                 DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
                     .SetEnvironmentKey(ClientBody.SdkKey)
-                    .SetOptions(ClientBody.Options)        
+                    .SetOptions(ClientBody.Options)
                     .SetLogger(new LoggerFactory())
                     .Build();
             }
@@ -88,10 +102,12 @@ public class ClientController : ControllerBase
             Response.Headers.Add("Location", "client/" + ClientBody.ClientId);
             Response.StatusCode = 201;
 
-            return new { message = "success"};
-        } catch (Exception e) {
+            return new { message = "success" };
+        }
+        catch (Exception e)
+        {
             Response.StatusCode = 200;
-            return new { exception = e.Message};
+            return new { exception = e.Message };
         }
     }
 }
