@@ -146,8 +146,8 @@ type CommandBody = {
     command: string,
     isAsync?: boolean,
     params: unknown[],
-    user?: Record<string, unknown>,
-    event?: Record<string, unknown>
+    user?: unknown,
+    event?: unknown
 }
 
 export const sendCommand = async (url: string, body: CommandBody) => {
@@ -200,10 +200,12 @@ const callAllVariables = async (url: string, userLocation: string, isAsync: bool
     })
 }
 
-const callTrack = async (url: string, userLocation: string, event: unknown) => {
+const callTrack = async (url: string, user: unknown, event: unknown) => {
     return await sendCommand(url, {
-        command: 'track', 
-        params: [{ location: userLocation }, { value: event }], 
+        command: 'track',
+        user,
+        event,
+        params: [{ type: 'user' }, { value: event }], 
         isAsync: false
     })
 }
@@ -273,8 +275,8 @@ class BaseTestClient {
         return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
 
-    async callTrack(userLocation: string, event: unknown, shouldFail = false) {
-        const result = await callTrack(this.getClientUrl(), userLocation, event)
+    async callTrack(user: unknown, event: unknown, shouldFail = false) {
+        const result = await callTrack(this.getClientUrl(), user, event)
 
         await checkFailed(result, shouldFail)
 

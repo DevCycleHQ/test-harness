@@ -32,11 +32,7 @@ describe('Track Tests - Cloud', () => {
 
         describeCapability(name, Capabilities.cloud)(name, () => {
             it('should complain if event type not set', async () => {
-                const response = await createUser(url, { user_id: validUserId })
-                await response.json()
-                const userId = response.headers.get('location')
-
-                const trackResponse = await client.callTrack(userId, { target: 1 }, true)
+                const trackResponse = await client.callTrack({ user_id: validUserId }, { target: 1 }, true)
                 const res = await trackResponse.json()
                 expect(res.exception).toBe('Invalid Event')
             })
@@ -47,10 +43,6 @@ describe('Track Tests - Cloud', () => {
                 const variableId = 'string-var'
                 const value = 1
 
-                const response = await createUser(url, { user_id: validUserId })
-                await response.json()
-                const userId = response.headers.get('location')
-
                 const interceptor = scope
                     .post(`/client/${client.clientId}/v1/track`)
 
@@ -60,7 +52,7 @@ describe('Track Tests - Cloud', () => {
                     return [201, { success: true }]
                 })
 
-                await client.callTrack(userId,
+                await client.callTrack({ user_id: validUserId },
                     { type: eventType, target: variableId, value })
 
                 await waitForRequest(scope, interceptor, 550, 'Event callback timed out')
@@ -75,10 +67,6 @@ describe('Track Tests - Cloud', () => {
                 const variableId = 'json-var'
                 const value = 1
 
-                const response = await createUser(url, { user_id: validUserId })
-                await response.json()
-                const userId = response.headers.get('location')
-
                 scope
                     .post(`/client/${client.clientId}/v1/track`)
                     .matchHeader('Content-Type', 'application/json')
@@ -92,7 +80,7 @@ describe('Track Tests - Cloud', () => {
                     return [201, { success: true }]
                 })
 
-                const trackResponse = await client.callTrack(userId,
+                const trackResponse = await client.callTrack({ user_id: validUserId },
                     { type: eventType, target: variableId, value })
 
                 await trackResponse.json()
