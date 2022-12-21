@@ -42,7 +42,7 @@ public class UserController : ControllerBase
             var userId = DataStore.Users.Count;
             DataStore.Users[userId.ToString()] = sdkUser;
 
-            var result = new { entityType = "user", body = sdkUser };
+            var result = new { entityType = "User", data = sdkUser };
 
             Response.Headers.Add("Location", "user/" + userId);
             Response.StatusCode = (int)HttpStatusCode.Created;
