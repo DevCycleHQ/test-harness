@@ -1,9 +1,7 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Net;
 using DevCycle.SDK.Server.Common.Model;
-
-// using Newtonsoft.Json;
-using System.Text.Json;
 
 namespace dotnet.Controllers;
 
@@ -19,7 +17,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public object CreateUser(ClientRequestUser user)
+    public object CreateUser([FromBody]ClientRequestUser user)
     {
         try
         {
