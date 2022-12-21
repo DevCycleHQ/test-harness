@@ -291,7 +291,12 @@ export class LocalTestClient extends BaseTestClient {
             false,
             this.clientId,
             this.sdkKey,
-            { baseURLOverride: `${getMockServerUrl()}/client/${this.clientId}`, ...options }
+            {
+                eventsAPIBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
+                configCDNBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
+                bucketingAPIBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
+                ...options
+            }
         )
 
         await checkFailed(response, shouldFail)
@@ -378,9 +383,12 @@ export class CloudTestClient extends BaseTestClient {
             getConnectionStringForProxy(this.sdkName),
             true,
             this.clientId,
+
             this.sdkKey,
             {
-                baseURLOverride: `${getMockServerUrl()}/client/${this.clientId}`,
+                eventsAPIBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
+                configCDNBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
+                bucketingAPIBaseURL: `${getMockServerUrl()}/client/${this.clientId}`,
                 ...options
             }
         )
