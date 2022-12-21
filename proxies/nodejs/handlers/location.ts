@@ -115,7 +115,7 @@ const getEntityFromLocation = (location: string, data: DataStore) => {
     return undefined
 }
 
-const getEntityFromType = (type: 'user' | 'event', body: LocationRequestBody) => {
+const getEntityFromParamType = (type: 'user' | 'event', body: LocationRequestBody) => {
    if (type === 'user') {
         return body.user
     } else if (type === 'event') {
@@ -132,7 +132,7 @@ const parseParams = (body: LocationRequestBody, params: Param[], data: DataStore
         } else if (element.callbackURL) {
             parsedParams.push(new URL(element.callbackURL))
         } else if (element.type) {
-            parsedParams.push(getEntityFromType(element.type, body))
+            parsedParams.push(getEntityFromParamType(element.type, body))
         } else {
             parsedParams.push(element.value)
         }
