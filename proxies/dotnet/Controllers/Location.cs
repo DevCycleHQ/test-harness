@@ -75,7 +75,7 @@ public class LocationController : ControllerBase
             var result = await InvokeCommand(entity, body.Command, body.IsAsync, parsedParams);
 
             Response.StatusCode = 201;
-            if (result.CommandId != null) Response.Headers.Add("Location", $"command/{body.Command}/{result.CommandId}");
+            Response.Headers.Add("Location", $"command/{body.Command}/{result.CommandId}");
 
             return new {
                 entityType = result.EntityType,
@@ -155,7 +155,7 @@ public class LocationController : ControllerBase
             commandMethod = commandMethod?.MakeGenericMethod(defaultValueClass); // have to set the generic type for defaultValue before invoke
         }
 
-        object result = new {};
+        object result = null;
 
         if (isAsync) {
             dynamic? task = commandMethod?.Invoke(entity, parsedParams.ToArray());
@@ -184,6 +184,6 @@ public class LocationController : ControllerBase
             type = type.Split(".").Last();
         }
 
-        return EntityTypes.Contains(type) ? type : "Void";
+        return EntityTypes.Contains(type) ? type : "Object";
     }
 }

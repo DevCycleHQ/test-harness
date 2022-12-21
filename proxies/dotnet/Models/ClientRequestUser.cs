@@ -59,7 +59,7 @@ public class ClientRequestUser {
     public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class UserData {\n");
+            sb.Append("class ClientRequestUser {\n");
             sb.Append("  UserId: ").Append(UserId).Append("\n");
             sb.Append("  Email: ").Append(Email).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
