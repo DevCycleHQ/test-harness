@@ -179,10 +179,9 @@ public class LocationController : ControllerBase
 
         if (parsedCommand == "Close")
         {
-            Console.WriteLine("Close not implemented, skipping!");
             return new CommandResult
             {
-                EntityType = "Voic",
+                EntityType = "Void",
                 Data = new { }
             };
         }
