@@ -5,7 +5,7 @@ using DevCycle.SDK.Server.Local.Api;
 using DevCycle.SDK.Server.Common.Model;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using DevCycle.SDK.Server.Common.Model.Cloud;
+using DevCycle.SDK.Server.Common.Model.Local;
 using DevCycle.SDK.Server.Common.API;
 using System.Reflection;
 using System.ComponentModel;
@@ -138,11 +138,12 @@ public class LocationController : ControllerBase
                 );
                 result.Add(sdkEvent);
             } else if (param["value"] != null) {
-                if (param["value"].Type == JTokenType.Float) {
+                var type = param["value"].Type;
+                if (type == JTokenType.Float || type == JTokenType.Integer) {
                     result.Add(param["value"].Value<decimal>());
-                } else if (param["value"].Type == JTokenType.String) {
+                } else if (type == JTokenType.String) {
                     result.Add(param["value"].Value<string>() ?? "");
-                } else if (param["value"].Type == JTokenType.Object) {
+                } else if (type == JTokenType.Object) {
                     result.Add(param["value"]);
                 } else {
                     result.Add(param["value"].Value<bool>());
@@ -200,7 +201,7 @@ public class LocationController : ControllerBase
         } else {
             result = commandMethod?.Invoke(entity, parsedParams.ToArray()) ?? result;
         }
-
+        
         var resultId = DataStore.Commands.Count.ToString();
         if (result != null) DataStore.Commands.Add(resultId, result);
 
