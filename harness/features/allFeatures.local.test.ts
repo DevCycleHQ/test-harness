@@ -76,7 +76,6 @@ describe('allFeatures Tests - Local', () => {
                     })
                     const features = (await featuresResponse.json()).data
                     expect(features).toMatchObject(expectedFeaturesVariationOn)
-
                 })
             })
         })

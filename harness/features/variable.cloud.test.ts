@@ -3,7 +3,7 @@ import {
     describeIf,
     forEachVariableType,
     variablesForTypes,
-    CloudTestClient, describeCapability
+    CloudTestClient, describeCapability, expectErrorMessageToBe
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -31,7 +31,7 @@ describe('Variable Tests - Cloud', () => {
                     true
                 )
                 const error = await variableResponse.json()
-                expect(error.asyncError).toBe('Missing parameter: key')
+                expectErrorMessageToBe(error.asyncError, 'Missing parameter: key')
             })
 
             it('will throw error variable called with invalid default value', async () => {
@@ -43,7 +43,7 @@ describe('Variable Tests - Cloud', () => {
                 )
 
                 const error = await variableResponse.json()
-                expect(error.asyncError).toBe('Missing parameter: defaultValue')
+                expectErrorMessageToBe(error.asyncError, 'Missing parameter: defaultValue')
             })
 
             it('should call variables API without edgeDB option', async () => {

@@ -2,7 +2,7 @@ import {
     getConnectionStringForProxy,
     forEachSDK,
     describeIf,
-    CloudTestClient, describeCapability
+    CloudTestClient, describeCapability, expectErrorMessageToBe
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 
@@ -25,7 +25,10 @@ describe('Client Initialize Tests - Cloud', () => {
                 const client = new CloudTestClient(name)
                 const response = await client.createClient({}, 'invalidKey', true)
                 const body = await response.json()
-                expect(body.exception).toBe('Invalid environment key provided. Please call initialize with a valid server environment key')
+                expectErrorMessageToBe(
+                    body.exception,
+                    'Invalid environment key provided. Please call initialize with a valid server environment key'
+                )
                 const createdClientId = response.headers.get('location')
                 expect(createdClientId).toBeNull()
             })
@@ -34,7 +37,10 @@ describe('Client Initialize Tests - Cloud', () => {
                 const client = new CloudTestClient(name)
                 const response = await client.createClient({}, null, true)
                 const body = await response.json()
-                expect(body.exception).toBe('Missing environment key! Call initialize with a valid environment key')
+                expectErrorMessageToBe(
+                    body.exception,
+                    'Missing environment key! Call initialize with a valid environment key'
+                )
                 const createdClientId = response.headers.get('location')
                 expect(createdClientId).toBeNull()
             })

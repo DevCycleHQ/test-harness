@@ -4,7 +4,7 @@ import {
     describeIf,
     wait,
     waitForRequest,
-    LocalTestClient, describeCapability
+    LocalTestClient, describeCapability, expectErrorMessageToBe
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -47,7 +47,7 @@ describe('Track Tests - Local', () => {
                     const trackResponse = await client.callTrack({ user_id: validUserId }, {}, true)
 
                     const res = await trackResponse.json()
-                    expect(res.exception).toBe('Missing parameter: type')
+                    expectErrorMessageToBe(res.exception, 'Missing parameter: type')
 
                     // wait for 2 event flush to ensure no flush happens, if it fails it will get caught by
                     // the global assertNoUnmatchedRequests and fail this testcase

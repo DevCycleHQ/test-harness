@@ -2,7 +2,7 @@ import {
     forEachSDK,
     describeIf,
     wait,
-    LocalTestClient, describeCapability
+    LocalTestClient, describeCapability, expectErrorMessageToBe
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { config } from '../mockData'
@@ -20,7 +20,8 @@ describe('Initialize Tests - Local', () => {
                 const response = await testClient.createClient(true, {}, null, true)
                 const { exception } = await response.json()
 
-                expect(exception).toEqual(
+                expectErrorMessageToBe(
+                    exception,
                     'Missing environment key! Call initialize with a valid environment key'
                 )
                 await testClient.close()
@@ -31,7 +32,8 @@ describe('Initialize Tests - Local', () => {
                 const response = await testClient.createClient(true, {}, 'invalid key', true)
                 const { exception } = await response.json()
 
-                expect(exception).toEqual(
+                expectErrorMessageToBe(
+                    exception,
                     'Invalid environment key provided. Please call initialize with a valid server environment key'
                 )
                 await testClient.close()
