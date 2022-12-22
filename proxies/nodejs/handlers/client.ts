@@ -39,7 +39,6 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         ctx.set('Location', `client/${clientId}`)
 
         if (asyncError) {
-            ctx.status = 201
             ctx.body = {
                 asyncError: asyncError.message
             }
