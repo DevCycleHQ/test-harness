@@ -177,6 +177,15 @@ public class LocationController : ControllerBase
         var parsedCommand = char.ToUpper(command[0]) + command.Substring(1);
         parsedCommand = entity is DVCCloudClient ? parsedCommand + "Async" : parsedCommand;
 
+        if (parsedCommand == "Close")
+        {
+            return new CommandResult
+            {
+                EntityType = "Void",
+                Data = new { }
+            };
+        }
+
         MethodInfo? commandMethod = entity.GetType().GetMethod(parsedCommand);
         if (command == "variable") {
             Type defaultValueClass = parsedParams[parsedParams.Count - 1].GetType();
