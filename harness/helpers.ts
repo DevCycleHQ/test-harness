@@ -108,7 +108,8 @@ export const variablesForTypes = {
 const createClient = async (
     url: string,
     enableCloudBucketing: boolean,
-    clientId?: string,
+    waitForInitialization: boolean,
+    clientId: string,
     sdkKey?: string | null,
     options?: object
 ) => {
@@ -121,6 +122,7 @@ const createClient = async (
             clientId,
             sdkKey,
             enableCloudBucketing,
+            waitForInitialization,
             options
         })
     })
@@ -174,13 +176,13 @@ const callVariable = async (
     defaultValue?: any,
 ) => {
     return await sendCommand(url, {
-        command: 'variable', 
+        command: 'variable',
         user,
         params: [
             { type: 'user' },
             { value: key },
             { value: defaultValue }
-        ], 
+        ],
         isAsync
     })
 }
@@ -195,9 +197,9 @@ export const wait = (ms: number) => {
 
 const callAllVariables = async (url: string, user: Record<string, unknown>, isAsync: boolean) => {
     return await sendCommand(url, {
-        command: 'allVariables', 
+        command: 'allVariables',
         user,
-        params: [{ type: 'user' }], 
+        params: [{ type: 'user' }],
         isAsync
     })
 }
@@ -207,16 +209,16 @@ const callTrack = async (url: string, user: Record<string, unknown>, event: Reco
         command: 'track',
         user,
         event,
-        params: [{ type: 'user' }, { type: 'event' }], 
+        params: [{ type: 'user' }, { type: 'event' }],
         isAsync: false
     })
 }
 
 const callAllFeatures = async (url: string, user: Record<string, unknown>, isAsync: boolean) => {
     return await sendCommand(url, {
-        command: 'allFeatures', 
+        command: 'allFeatures',
         user,
-        params: [{ type: 'user' }], 
+        params: [{ type: 'user' }],
         isAsync
     })
 }
@@ -288,13 +290,14 @@ class BaseTestClient {
 }
 
 export class LocalTestClient extends BaseTestClient {
-    async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null, shouldFail = false) {
+    async createClient(waitForInitialization: boolean, options: Record<string, unknown> = {}, sdkKey?: string | null, shouldFail = false) {
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
         }
         const response = await createClient(
             getConnectionStringForProxy(this.sdkName),
             false,
+            waitForInitialization,
             this.clientId,
             this.sdkKey,
             {
@@ -339,14 +342,6 @@ export class LocalTestClient extends BaseTestClient {
         return result
     }
 
-    async callOnClientInitialized() {
-        const response = await sendCommand(this.getClientUrl(), {
-            command: 'onClientInitialized', params: [], isAsync: true
-        })
-
-        await checkFailed(response, false)
-    }
-
     async close() {
         const result = await sendCommand(this.getClientUrl(), {
             command: 'close', params: [], isAsync: true
@@ -372,8 +367,8 @@ export class CloudTestClient extends BaseTestClient {
         const response = await createClient(
             getConnectionStringForProxy(this.sdkName),
             true,
+            false,
             this.clientId,
-
             this.sdkKey,
             {
                 eventsAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,

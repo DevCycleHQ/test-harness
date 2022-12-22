@@ -1,6 +1,6 @@
 import {
     describeCapability,
-    
+
     forEachSDK,
     forEachVariableType,
     LocalTestClient,
@@ -53,17 +53,16 @@ describe('Variable Tests - Local', () => {
 
             describe('initialized client', () => {
                 beforeAll(async () => {
+                    // mock endpoints
+                    scope
+                        .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                        .reply(200, config)
+
                     // create client
-                    await testClient.createClient({
+                    await testClient.createClient(true,{
                         configPollingIntervalMS: 100000,
                         eventFlushIntervalMS: 500,
                     })
-                    // mock endpoints
-                    scope
-                        .get(`/${testClient.clientLocation}/config/v1/server/${testClient.sdkKey}.json`)
-                        .reply(200, config)
-
-                    await testClient.callOnClientInitialized()
 
                     eventsUrl = `/${testClient.clientLocation}/v1/events/batch`
                 })
@@ -216,7 +215,7 @@ describe('Variable Tests - Local', () => {
                 const testClient = new LocalTestClient(name)
 
                 beforeAll(async () => {
-                    await testClient.createClient()
+                    await testClient.createClient(false)
                     const configRequestUrl = `/${testClient.clientLocation}/config/v1/server/${testClient.sdkKey}.json`
                     const interceptor = scope
                         .get(configRequestUrl)
@@ -240,8 +239,8 @@ describe('Variable Tests - Local', () => {
 
                     it('should return default value if client is uninitialized',  async () => {
                         const variableResponse = await testClient.callVariable(
-                            { user_id: 'user1', customData: { 'should-bucket': true } }, 
-                            key, 
+                            { user_id: 'user1', customData: { 'should-bucket': true } },
+                            key,
                             defaultValue
                         )
                         const variable = await variableResponse.json()
@@ -288,9 +287,9 @@ describe('Variable Tests - Local', () => {
     }
 
     const expectDefaultValue = (
-        key: string, 
-        variable: VariableResponse, 
-        defaultValue: ValueTypes, 
+        key: string,
+        variable: VariableResponse,
+        defaultValue: ValueTypes,
         type: VariableType) => {
         expect(variable).toEqual({
             entityType: 'Variable',

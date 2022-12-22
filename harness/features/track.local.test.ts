@@ -31,13 +31,11 @@ describe('Track Tests - Local', () => {
                     .get(`/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`)
                     .reply(200, config)
 
-                await client.createClient({
+                await client.createClient(true, {
                     eventFlushIntervalMS: eventFlushIntervalMS,
                     logLevel: 'debug',
                     configPollingIntervalMS: 1000 * 60
                 })
-
-                await client.callOnClientInitialized()
             })
 
             afterAll(async () => {
@@ -49,7 +47,7 @@ describe('Track Tests - Local', () => {
                     const trackResponse = await client.callTrack({ user_id: validUserId }, {}, true)
 
                     const res = await trackResponse.json()
-                    expect(res.exception).toBe('Missing parameter: type') // works for GH actions sometimes
+                    expect(res.exception).toBe('Missing parameter: type')
 
                     // wait for 2 event flush to ensure no flush happens, if it fails it will get caught by
                     // the global assertNoUnmatchedRequests and fail this testcase

@@ -17,7 +17,7 @@ describe('Initialize Tests - Local', () => {
         describeCapability(name, Capabilities.local)(name, () => {
             it('should error when SDK key is missing', async () => {
                 const testClient = new LocalTestClient(name)
-                const response = await testClient.createClient({}, null, true)
+                const response = await testClient.createClient(true, {}, null, true)
                 const { exception } = await response.json()
 
                 expect(exception).toEqual(
@@ -28,7 +28,7 @@ describe('Initialize Tests - Local', () => {
 
             it('should error when SDK key is invalid', async () => {
                 const testClient = new LocalTestClient(name)
-                const response = await testClient.createClient({}, 'invalid key', true)
+                const response = await testClient.createClient(true, {}, 'invalid key', true)
                 const { exception } = await response.json()
 
                 expect(exception).toEqual(
@@ -43,9 +43,8 @@ describe('Initialize Tests - Local', () => {
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(200, config)
 
-                const response = await testClient.createClient()
+                const response = await testClient.createClient(true)
                 const { message } = await response.json()
-                await testClient.callOnClientInitialized()
 
                 expect(message).toEqual('success')
                 await testClient.close()
@@ -57,8 +56,7 @@ describe('Initialize Tests - Local', () => {
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(200, config)
 
-                await testClient.createClient()
-                await testClient.callOnClientInitialized()
+                await testClient.createClient(true)
                 await testClient.close()
             })
 
@@ -69,8 +67,7 @@ describe('Initialize Tests - Local', () => {
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(404)
 
-                await testClient.createClient()
-                await testClient.callOnClientInitialized()
+                await testClient.createClient(true)
                 await testClient.close()
             })
 
@@ -82,11 +79,11 @@ describe('Initialize Tests - Local', () => {
                     .reply(200, config)
 
                 await testClient.createClient(
+                    true,
                     {
                         configPollingIntervalMS: 3000
                     }
                 )
-                await testClient.callOnClientInitialized()
 
                 expect(scope.pendingMocks().length).toEqual(1)
 
