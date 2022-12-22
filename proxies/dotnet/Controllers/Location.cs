@@ -23,6 +23,10 @@ public class PostBody
 
     [Required]
     public List<JToken> Params { get; set; } = new List<JToken>{};
+
+    public ClientRequestUser? User { get; set; }
+
+    public ClientRequestEvent? Event { get; set; }
 }
 
 public class CommandResult
@@ -62,10 +66,10 @@ public class LocationController : ControllerBase
 
         object entity;
         List<object> parsedParams;
-
+        
         try {
            entity = GetEntity(location);
-           parsedParams = ParseParams(body.Params);
+           parsedParams = ParseParams(body.Params, body.User, body.Event);
         } catch (Exception e) {
             Response.StatusCode = 404;
             return new { message = e.Message };
@@ -100,13 +104,39 @@ public class LocationController : ControllerBase
         }
     }
 
-    private List<object> ParseParams(List<JToken> bodyParams) {
+    private List<object> ParseParams(List<JToken> bodyParams, ClientRequestUser user, ClientRequestEvent reqEvent) {
         var result = new List<object>{};
 
         foreach (var param in bodyParams) {
-            if (param["location"] != null) {
-                result.Add(GetEntity(param["location"].ToString()));
-                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(GetEntity(param["location"].ToString())));
+            if (param["type"]?.Value<string>() == "user") {
+                var sdkUser = new User(
+                    user.UserId,
+                    user.Email,
+                    user.Name,
+                    user.Language,
+                    user.Country,
+                    user.AppVersion,
+                    user.AppBuild,
+                    user.CustomData,
+                    user.PrivateCustomData,
+                    user.CreatedDate,
+                    user.LastSeenDate,
+                    user.Platform,
+                    user.PlatformVersion,
+                    user.DeviceModel,
+                    user.SdkType,
+                    user.SdkVersion
+                );
+                result.Add(sdkUser);
+            } else if (param["type"]?.Value<string>() == "event") {
+                var sdkEvent = new Event(
+                    reqEvent.Type,
+                    reqEvent.Target,
+                    reqEvent.Date,
+                    reqEvent.Value,
+                    reqEvent.MetaData
+                );
+                result.Add(sdkEvent);
             } else if (param["value"] != null) {
                 if (param["value"].Type == JTokenType.Float) {
                     result.Add(param["value"].Value<decimal>());
@@ -134,8 +164,6 @@ public class LocationController : ControllerBase
            } else if (DataStore.LocalClients.TryGetValue(id, out DVCLocalClient? localClient)) {
                 result = localClient;
            }
-        } else if (type == "user" && DataStore.Users.TryGetValue(id, out User? user)) {
-            result = user;
         } else if (type == "command" && DataStore.Commands.TryGetValue(id, out object? command)) {
             result = command;
         }
