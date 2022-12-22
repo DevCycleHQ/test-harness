@@ -23,7 +23,7 @@ describe('allFeatures Tests - Local', () => {
                         .get(configRequestUrl)
 
                     interceptor.reply(404)
-                    await testClient.createClient()
+                    await testClient.createClient(false)
 
                     await waitForRequest(
                         scope,
@@ -38,8 +38,8 @@ describe('allFeatures Tests - Local', () => {
                 })
 
                 it('should return empty object if client is uninitialized',  async () => {
-                    const featuresResponse = await testClient.callAllFeatures({ 
-                        user_id: 'user1', 
+                    const featuresResponse = await testClient.callAllFeatures({
+                        user_id: 'user1',
                         customData: { 'should-bucket': true }
                     })
                     const features = await featuresResponse.json()
@@ -54,8 +54,7 @@ describe('allFeatures Tests - Local', () => {
                     scope
                         .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                         .reply(200, config)
-                    await testClient.createClient()
-                    await testClient.callOnClientInitialized()
+                    await testClient.createClient(true)
                 })
 
                 afterAll(async () => {
@@ -71,9 +70,9 @@ describe('allFeatures Tests - Local', () => {
                 })
 
                 it('should return all features for user with custom data',  async () => {
-                    const featuresResponse = await testClient.callAllFeatures({ 
-                        user_id: 'user1', 
-                        customData: { 'should-bucket': true } 
+                    const featuresResponse = await testClient.callAllFeatures({
+                        user_id: 'user1',
+                        customData: { 'should-bucket': true }
                     })
                     const features = (await featuresResponse.json()).data
                     expect(features).toMatchObject(expectedFeaturesVariationOn)

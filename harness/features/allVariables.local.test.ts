@@ -27,8 +27,7 @@ describe('allVariables Tests - Local', () => {
                 .reply(200, config)
 
             url = getConnectionStringForProxy(name)
-            await client.createClient()
-            await client.callOnClientInitialized()
+            await client.createClient(true)
         })
 
         afterAll(async () => {
@@ -44,7 +43,7 @@ describe('allVariables Tests - Local', () => {
                     .delay(2000)
                     .reply(200, config)
 
-                await delayClient.createClient()
+                await delayClient.createClient(false)
 
                 const response = await delayClient.callAllVariables({
                     user_id: 'test_user',
