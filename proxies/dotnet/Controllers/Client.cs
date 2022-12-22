@@ -31,11 +31,14 @@ public class ClientOptions : DVCLocalOptions
 public class ClientRequestBody
 {
     public string? ClientId { get; set; }
+
     public ClientOptions? Options { get; set; }
 
     public string? SdkKey { get; set; }
 
     public bool? EnableCloudBucketing { get; set; }
+
+    public bool? WaitForInitialization { get; set; }
 }
 
 [ApiController]
@@ -50,7 +53,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpPost]
-    public object Post(ClientRequestBody ClientBody)
+    public async Task<object> Post(ClientRequestBody ClientBody)
     {
         if (ClientBody.ClientId == null)
         {
@@ -61,6 +64,7 @@ public class ClientController : ControllerBase
 
         try
         {
+            string? asyncError = null;
             if (ClientBody.EnableCloudBucketing ?? false)
             {
                 DVCCloudOptions cloudOptions = new DVCCloudOptions();
@@ -92,15 +96,39 @@ public class ClientController : ControllerBase
                     ClientBody.Options.EventsApiUri = ClientBody.Options.EventsAPIURLOverride;
                 }
 
-                DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
-                    .SetEnvironmentKey(ClientBody.SdkKey)
-                    .SetOptions(ClientBody.Options)
-                    .SetLogger(new LoggerFactory())
-                    .Build();
+                if (ClientBody.WaitForInitialization == true) {
+                    Task task = new Task(() => {});
+                    DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
+                        .SetEnvironmentKey(ClientBody.SdkKey)
+                        .SetInitializedSubscriber((o, e) =>
+                        {
+                            task.Start();
+                            if (!e.Success)
+                            {
+                                asyncError = e.Errors.Last().ErrorResponse.Message;
+                            }
+                        })
+                        .SetOptions(ClientBody.Options)
+                        .SetLogger(new LoggerFactory())
+                        .Build();
+
+                        await task;
+                } else {
+                    DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
+                        .SetEnvironmentKey(ClientBody.SdkKey)
+                        .SetOptions(ClientBody.Options)
+                        .SetLogger(new LoggerFactory())
+                        .Build();
+                }
             }
 
             Response.Headers.Add("Location", "client/" + ClientBody.ClientId);
             Response.StatusCode = 201;
+
+            if (asyncError != null)
+            {
+                return new { asyncError = asyncError };
+            }
 
             return new { message = "success" };
         }
