@@ -3,28 +3,28 @@ using DevCycle.SDK.Server.Cloud.Api;
 using DevCycle.SDK.Server.Local.Api;
 using DevCycle.SDK.Server.Common.Model.Local;
 using DevCycle.SDK.Server.Common.Model.Cloud;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace dotnet.Controllers;
 
 public class ClientOptions : DVCLocalOptions
 {
-    [JsonPropertyName("configPollingIntervalMs")]
+    [JsonProperty("configPollingIntervalMs")]
     public new int ConfigPollingIntervalMs { get; set; }
 
-    [JsonPropertyName("eventFlushIntervalMS")]
+    [JsonProperty("eventFlushIntervalMS")]
     public new int EventFlushIntervalMs { get; set; }
 
-    [JsonPropertyName("bucketingAPIURI")]
+    [JsonProperty("bucketingAPIURI")]
     public string? BucketingAPIURLOverride { get; set; }
 
-    [JsonPropertyName("configCDNURI")] 
+    [JsonProperty("configCDNURI")] 
     public string? ConfigCDNURLOverride { get; set; }
     
-    [JsonPropertyName("eventsAPIURI")] 
+    [JsonProperty("eventsAPIURI")] 
     public string? EventsAPIURLOverride { get; set; }
     
-    [JsonPropertyName("enableEdgeDB")] 
+    [JsonProperty("enableEdgeDB")] 
     public bool? EnableEdgeDB { get; set; }
 }
 
