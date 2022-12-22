@@ -5,12 +5,13 @@ import { dataStore } from '../app'
 type ClientRequestBody = {
     clientId: string
     sdkKey: string
-    enableCloudBucketing: boolean
+    enableCloudBucketing?: boolean
+    waitForInitialization?: boolean
     options: { [key: string]: string }
 }
 
 export const handleClient = async (ctx: Koa.ParameterizedContext) => {
-    const { clientId, sdkKey, enableCloudBucketing, options } = <ClientRequestBody>ctx.request.body
+    const { clientId, sdkKey, enableCloudBucketing, waitForInitialization, options } = <ClientRequestBody>ctx.request.body
     if (clientId === undefined) {
         ctx.status = 400
         ctx.body = {
@@ -19,11 +20,33 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         return ctx
     }
     try {
-        dataStore.clients[clientId] = initialize(sdkKey, { ...options,  enableCloudBucketing })
+        let asyncError
+        let client: DVCClient | DVCCloudClient
+        if (!enableCloudBucketing) {
+            client = initialize(sdkKey, { ...options })
+            if (waitForInitialization) {
+                try {
+                    await client.onClientInitialized()
+                } catch (e) {
+                    asyncError = e
+                }
+            }
+        } else {
+            client = initialize(sdkKey, { ...options, enableCloudBucketing: true })
+        }
+        dataStore.clients[clientId] = client
         ctx.status = 201
         ctx.set('Location', `client/${clientId}`)
-        ctx.body = {
-            message: 'success'
+
+        if (asyncError) {
+            ctx.status = 201
+            ctx.body = {
+                asyncError: asyncError.message
+            }
+        } else {
+            ctx.body = {
+                message: 'success'
+            }
         }
     } catch (error) {
         ctx.status = 200
