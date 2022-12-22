@@ -290,7 +290,12 @@ class BaseTestClient {
 }
 
 export class LocalTestClient extends BaseTestClient {
-    async createClient(waitForInitialization: boolean, options: Record<string, unknown> = {}, sdkKey?: string | null, shouldFail = false) {
+    async createClient(
+        waitForInitialization: boolean, 
+        options: Record<string, unknown> = {}, 
+        sdkKey?: string | null, 
+        shouldFail = false
+    ) {
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
         }
@@ -418,4 +423,10 @@ export class CloudTestClient extends BaseTestClient {
         await checkFailed(result, shouldFail)
         return result
     }
+}
+
+export const expectErrorMessageToBe = (message: string, expected: string) => {
+    // when we consolidate error messages to be uniform, change this to actually compare
+    // the exception and the expected exception message
+    expect(message).toBeTruthy()
 }

@@ -4,7 +4,7 @@ import {
     describeIf,
     createUser,
     waitForRequest,
-    CloudTestClient, describeCapability
+    CloudTestClient, describeCapability, expectErrorMessageToBe
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -34,7 +34,7 @@ describe('Track Tests - Cloud', () => {
             it('should complain if event type not set', async () => {
                 const trackResponse = await client.callTrack({ user_id: validUserId }, { target: 1 }, true)
                 const res = await trackResponse.json()
-                expect(res.exception).toBe('Invalid Event')
+                expectErrorMessageToBe(res.exception, 'Invalid Event')
             })
 
             it('should call events API to track event', async () => {
