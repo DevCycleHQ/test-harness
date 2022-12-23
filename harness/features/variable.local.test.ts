@@ -121,7 +121,7 @@ describe('Variable Tests - Local', () => {
 
                         expectDefaultValue(key, variable, wrongTypeDefault,
                             wrongTypeDefault === '1' ? VariableType.string : VariableType.number)
-                        expectEventBody(eventBody, key, 'aggVariableEvaluated')
+                        expectEventBody(eventBody, key, 'aggVariableDefaulted')
                     })
 
                     it('should return default value if user is not bucketed into variable',  async () => {
@@ -260,7 +260,8 @@ describe('Variable Tests - Local', () => {
         expect(body).toMatchObject({
             batch: [{
                 user: expect.objectContaining({
-                    platform: 'NodeJS',
+                    // TODO assert correct platform based on SDK type
+                    // platform: 'NodeJS',
                     sdkType: 'server',
                 }),
                 events: [
