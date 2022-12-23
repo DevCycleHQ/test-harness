@@ -9,22 +9,19 @@ namespace dotnet.Controllers;
 
 public class ClientOptions : DVCLocalOptions
 {
-    [JsonProperty("configPollingIntervalMs")]
-    public new int ConfigPollingIntervalMs { get; set; }
-
     [JsonProperty("eventFlushIntervalMS")]
-    public new int EventFlushIntervalMs { get; set; }
+    public int EventFlushIntervalMsOverride { get; set; }
 
     [JsonProperty("bucketingAPIURI")]
     public string? BucketingAPIURLOverride { get; set; }
 
-    [JsonProperty("configCDNURI")] 
+    [JsonProperty("configCDNURI")]
     public string? ConfigCDNURLOverride { get; set; }
-    
-    [JsonProperty("eventsAPIURI")] 
+
+    [JsonProperty("eventsAPIURI")]
     public string? EventsAPIURLOverride { get; set; }
-    
-    [JsonProperty("enableEdgeDB")] 
+
+    [JsonProperty("enableEdgeDB")]
     public bool? EnableEdgeDB { get; set; }
 }
 
@@ -80,7 +77,7 @@ public class ClientController : ControllerBase
                 DataStore.CloudClients[ClientBody.ClientId] = new DVCCloudClientBuilder()
                     .SetEnvironmentKey(ClientBody.SdkKey)
                     .SetOptions(cloudOptions)
-                    .SetLogger(new LoggerFactory())
+                    .SetLogger(LoggerFactory.Create(builder => builder.AddConsole()))
                     .SetRestClientOptions(RestOptions)
                     .Build();
             }
@@ -96,6 +93,11 @@ public class ClientController : ControllerBase
                     ClientBody.Options.EventsApiUri = ClientBody.Options.EventsAPIURLOverride;
                 }
 
+                if (ClientBody.Options != null)
+                {
+                    ClientBody.Options.EventFlushIntervalMs = ClientBody.Options.EventFlushIntervalMsOverride;
+                }
+
                 if (ClientBody.WaitForInitialization == true) {
                     Task task = new Task(() => {});
                     DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
@@ -109,7 +111,7 @@ public class ClientController : ControllerBase
                             }
                         })
                         .SetOptions(ClientBody.Options)
-                        .SetLogger(new LoggerFactory())
+                        .SetLogger(LoggerFactory.Create(builder => builder.AddConsole()))
                         .Build();
 
                         await task;
@@ -117,7 +119,7 @@ public class ClientController : ControllerBase
                     DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
                         .SetEnvironmentKey(ClientBody.SdkKey)
                         .SetOptions(ClientBody.Options)
-                        .SetLogger(new LoggerFactory())
+                        .SetLogger(LoggerFactory.Create(builder => builder.AddConsole()))
                         .Build();
                 }
             }
