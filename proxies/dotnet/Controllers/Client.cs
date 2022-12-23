@@ -93,7 +93,7 @@ public class ClientController : ControllerBase
                     ClientBody.Options.EventsApiUri = ClientBody.Options.EventsAPIURLOverride;
                 }
 
-                if (ClientBody.Options != null)
+                if (ClientBody.Options != null && ClientBody.Options.EventFlushIntervalMsOverride > 0)
                 {
                     ClientBody.Options.EventFlushIntervalMs = ClientBody.Options.EventFlushIntervalMsOverride;
                 }
@@ -137,6 +137,7 @@ public class ClientController : ControllerBase
         catch (Exception e)
         {
             Response.StatusCode = 200;
+            Console.WriteLine(e);
             return new { exception = e.Message };
         }
     }
