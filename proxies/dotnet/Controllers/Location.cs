@@ -135,7 +135,9 @@ public class LocationController : ControllerBase
                 result.Add(sdkEvent);
             } else if (param["value"] != null) {
                 var type = param["value"].Type;
-                if (type == JTokenType.Float || type == JTokenType.Integer) {
+                if (type == JTokenType.Float) {
+                    result.Add(param["value"].Value<decimal>());
+                } else if (type == JTokenType.Integer) {
                     result.Add(param["value"].Value<long>());
                 } else if (type == JTokenType.String) {
                     result.Add(param["value"].Value<string>() ?? "");
