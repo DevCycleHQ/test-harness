@@ -136,7 +136,7 @@ public class LocationController : ControllerBase
             } else if (param["value"] != null) {
                 var type = param["value"].Type;
                 if (type == JTokenType.Float || type == JTokenType.Integer) {
-                    result.Add(param["value"].Value<decimal>());
+                    result.Add(param["value"].Value<long>());
                 } else if (type == JTokenType.String) {
                     result.Add(param["value"].Value<string>() ?? "");
                 } else if (type == JTokenType.Object) {
@@ -186,6 +186,9 @@ public class LocationController : ControllerBase
         MethodInfo? commandMethod = entity.GetType().GetMethod(parsedCommand);
         if (command == "variable") {
             Type defaultValueClass = parsedParams[parsedParams.Count - 1].GetType();
+            Console.WriteLine("PARAM");
+            Console.WriteLine(parsedParams.Last());
+            Console.WriteLine(defaultValueClass);
             commandMethod = commandMethod?.MakeGenericMethod(defaultValueClass); // have to set the generic type for defaultValue before invoke
         }
 
