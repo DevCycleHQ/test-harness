@@ -78,7 +78,7 @@ describe('Track Tests - Local', () => {
                         batch: [
                             {
                                 user: expect.objectContaining({
-                                    platform: 'NodeJS',
+                                    // platform: 'NodeJS',
                                     sdkType: 'server',
                                     user_id: validUserId,
                                 }),
@@ -125,7 +125,7 @@ describe('Track Tests - Local', () => {
                         batch: [
                             {
                                 user: expect.objectContaining({
-                                    platform: 'NodeJS',
+                                    // platform: 'NodeJS',
                                     sdkType: 'server',
                                     user_id: validUserId,
                                 }),
@@ -204,7 +204,7 @@ describe('Track Tests - Local', () => {
                             batch: [
                                 {
                                     user: expect.objectContaining({
-                                        platform: 'NodeJS',
+                                        // platform: 'NodeJS',
                                         sdkType: 'server',
                                         user_id: validUserId,
                                     }),
