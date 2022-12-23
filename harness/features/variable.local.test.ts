@@ -87,7 +87,7 @@ describe('Variable Tests - Local', () => {
                             defaultValue
                         )
                         const variable = await variableResponse.json()
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
+                        await waitForRequest(scope, interceptor, 2000, 'Event callback timed out')
 
                         expect(variable).toEqual(expect.objectContaining({
                             entityType: 'Variable',
@@ -109,7 +109,7 @@ describe('Variable Tests - Local', () => {
                             return [201]
                         })
 
-                        const wrongTypeDefault = type === 'number' ? '1' : 1
+                        const wrongTypeDefault = type === 'number' ? '1' : 10
                         const variableResponse =
                             await testClient.callVariable(
                                 { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -121,7 +121,7 @@ describe('Variable Tests - Local', () => {
 
                         expectDefaultValue(key, variable, wrongTypeDefault,
                             wrongTypeDefault === '1' ? VariableType.string : VariableType.number)
-                        expectEventBody(eventBody, key, 'aggVariableEvaluated')
+                        expectEventBody(eventBody, key, 'aggVariableDefaulted')
                     })
 
                     it('should return default value if user is not bucketed into variable',  async () => {
@@ -260,7 +260,8 @@ describe('Variable Tests - Local', () => {
         expect(body).toMatchObject({
             batch: [{
                 user: expect.objectContaining({
-                    platform: 'NodeJS',
+                    // TODO assert correct platform based on SDK type
+                    // platform: 'NodeJS',
                     sdkType: 'server',
                 }),
                 events: [
