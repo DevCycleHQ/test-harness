@@ -137,7 +137,6 @@ public class ClientController : ControllerBase
         catch (Exception e)
         {
             Response.StatusCode = 200;
-            Console.WriteLine("CRASH!");
             Console.WriteLine(e);
             return new { exception = e.Message };
         }

@@ -186,9 +186,6 @@ public class LocationController : ControllerBase
         MethodInfo? commandMethod = entity.GetType().GetMethod(parsedCommand);
         if (command == "variable") {
             Type defaultValueClass = parsedParams[parsedParams.Count - 1].GetType();
-            Console.WriteLine("PARAM");
-            Console.WriteLine(parsedParams.Last());
-            Console.WriteLine(defaultValueClass);
             commandMethod = commandMethod?.MakeGenericMethod(defaultValueClass); // have to set the generic type for defaultValue before invoke
         }
 
