@@ -87,7 +87,7 @@ describe('Variable Tests - Local', () => {
                             defaultValue
                         )
                         const variable = await variableResponse.json()
-                        await waitForRequest(scope, interceptor, 2000, 'Event callback timed out')
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
 
                         expect(variable).toEqual(expect.objectContaining({
                             entityType: 'Variable',
@@ -109,7 +109,7 @@ describe('Variable Tests - Local', () => {
                             return [201]
                         })
 
-                        const wrongTypeDefault = type === 'number' ? '1' : 10
+                        const wrongTypeDefault = type === 'number' ? '1' : 1
                         const variableResponse =
                             await testClient.callVariable(
                                 { user_id: 'user1', customData: { 'should-bucket': true } },
