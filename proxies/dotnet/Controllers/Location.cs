@@ -65,13 +65,13 @@ public class LocationController : ControllerBase
         
         try {
            entity = GetEntity(location);
-           parsedParams = ParseParams(body.Params, body.User, body.Event);
         } catch (Exception e) {
             Response.StatusCode = 404;
             return new { message = e.Message };
         }
 
         try {
+            parsedParams = ParseParams(body.Params, body.User, body.Event);
             var result = await InvokeCommand(entity, body.Command, body.IsAsync, parsedParams);
 
             Response.StatusCode = 201;
@@ -85,6 +85,7 @@ public class LocationController : ControllerBase
 
         } catch (Exception e) {
             Response.StatusCode = 200;
+            
 
             if (body.IsAsync) {
                 return new {
