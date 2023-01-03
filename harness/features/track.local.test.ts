@@ -4,7 +4,7 @@ import {
     describeIf,
     wait,
     waitForRequest,
-    LocalTestClient, describeCapability, expectErrorMessageToBe
+    LocalTestClient, describeCapability, expectErrorMessageToBe, getPlatformBySdkName,
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -17,6 +17,8 @@ const scope = getServerScope()
 describe('Track Tests - Local', () => {
     const validUserId = 'user1'
     forEachSDK((name) => {
+        const expectedPlatform = getPlatformBySdkName(name, true)
+
         let url: string
         const eventFlushIntervalMS = 1000
 
@@ -78,7 +80,7 @@ describe('Track Tests - Local', () => {
                         batch: [
                             {
                                 user: expect.objectContaining({
-                                    // platform: 'NodeJS',
+                                    platform: expectedPlatform,
                                     sdkType: 'server',
                                     user_id: validUserId,
                                 }),
@@ -125,7 +127,7 @@ describe('Track Tests - Local', () => {
                         batch: [
                             {
                                 user: expect.objectContaining({
-                                    // platform: 'NodeJS',
+                                    platform: expectedPlatform,
                                     sdkType: 'server',
                                     user_id: validUserId,
                                 }),
@@ -204,7 +206,7 @@ describe('Track Tests - Local', () => {
                             batch: [
                                 {
                                     user: expect.objectContaining({
-                                        // platform: 'NodeJS',
+                                        platform: expectedPlatform,
                                         sdkType: 'server',
                                         user_id: validUserId,
                                     }),

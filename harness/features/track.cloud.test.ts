@@ -4,7 +4,7 @@ import {
     describeIf,
     createUser,
     waitForRequest,
-    CloudTestClient, describeCapability, expectErrorMessageToBe
+    CloudTestClient, describeCapability, expectErrorMessageToBe, getPlatformBySdkName,
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -16,6 +16,7 @@ const scope = getServerScope()
 describe('Track Tests - Cloud', () => {
     const validUserId = 'user1'
     forEachSDK((name) => {
+        const expectedPlatform = getPlatformBySdkName(name, false)
         let url: string
 
         let client: CloudTestClient
@@ -91,27 +92,27 @@ describe('Track Tests - Cloud', () => {
             })
 
         })
-    })
 
-    const expectEventBody = (
-        body: Record<string, unknown>,
-        variableId: string,
-        eventType: string,
-        value?: number,
-    ) => {
-        expect(body).toEqual({
-            user: expect.objectContaining({
-                platform: 'NodeJS',
-                sdkType: 'server',
-                user_id: validUserId,
-            }),
-            events: [
-                expect.objectContaining({
-                    type: eventType,
-                    target: variableId,
-                    value: value !== undefined ? value : 1,
-                })
-            ]
-        })
-    }
+        const expectEventBody = (
+            body: Record<string, unknown>,
+            variableId: string,
+            eventType: string,
+            value?: number,
+        ) => {
+            expect(body).toEqual({
+                user: expect.objectContaining({
+                    platform: expectedPlatform,
+                    sdkType: 'server',
+                    user_id: validUserId,
+                }),
+                events: [
+                    expect.objectContaining({
+                        type: eventType,
+                        target: variableId,
+                        value: value !== undefined ? value : 1,
+                    })
+                ]
+            })
+        }
+    })
 })

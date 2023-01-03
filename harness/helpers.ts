@@ -430,3 +430,9 @@ export const expectErrorMessageToBe = (message: string, expected: string) => {
     // the exception and the expected exception message
     expect(message).toBeTruthy()
 }
+
+export const getPlatformBySdkName = (name: string, isLocal: boolean) => {
+    return name === 'DotNet' ? // TODO use Sdks.dotnet instead of 'DotNet' when enable dotnet
+        `C# ${isLocal ? 'Local' : 'Cloud'}` 
+        : name 
+}

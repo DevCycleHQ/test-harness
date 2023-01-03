@@ -3,6 +3,7 @@ import {
 
     forEachSDK,
     forEachVariableType,
+    getPlatformBySdkName,
     LocalTestClient,
     waitForRequest
 } from '../helpers'
@@ -47,6 +48,8 @@ const expectedVariablesByType = {
 
 describe('Variable Tests - Local', () => {
     forEachSDK((name) => {
+        const expectedPlatform = getPlatformBySdkName(name, true)
+
         describeCapability(name, Capabilities.local)(name, () => {
             const testClient = new LocalTestClient(name)
             let eventsUrl: string
@@ -249,31 +252,30 @@ describe('Variable Tests - Local', () => {
                 })
             })
         })
-    })
 
-    const expectEventBody = (
-        body: Record<string, unknown>,
-        variableId: string,
-        eventType: string,
-        value?: number
-    ) => {
-        expect(body).toMatchObject({
-            batch: [{
-                user: expect.objectContaining({
-                    // TODO assert correct platform based on SDK type
-                    // platform: 'NodeJS',
-                    sdkType: 'server',
-                }),
-                events: [
-                    expect.objectContaining({
-                        type: eventType,
-                        target: variableId,
-                        value: value !== undefined ? value : 1,
-                    })
-                ]
-            }]
-        })
-    }
+        const expectEventBody = (
+            body: Record<string, unknown>,
+            variableId: string,
+            eventType: string,
+            value?: number
+        ) => {
+            expect(body).toMatchObject({
+                batch: [{
+                    user: expect.objectContaining({
+                        platform: expectedPlatform,
+                        sdkType: 'server',
+                    }),
+                    events: [
+                        expect.objectContaining({
+                            type: eventType,
+                            target: variableId,
+                            value: value !== undefined ? value : 1,
+                        })
+                    ]
+                }]
+            })
+        }
+    })
 
     type ValueTypes = string | boolean | number | JSON
 
