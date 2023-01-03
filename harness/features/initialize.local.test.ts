@@ -1,10 +1,9 @@
 import {
     forEachSDK,
-    describeIf,
     wait,
     LocalTestClient, describeCapability, expectErrorMessageToBe
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 import { config } from '../mockData'
 import { getServerScope } from '../nock'
 
@@ -45,7 +44,7 @@ describe('Initialize Tests - Local', () => {
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(200, config)
 
-                const response = await testClient.createClient(true)
+                const response = await testClient.createClient(true, { configPollingIntervalMS: 10000 })
                 const { message } = await response.json()
 
                 expect(message).toEqual('success')
@@ -58,7 +57,7 @@ describe('Initialize Tests - Local', () => {
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(200, config)
 
-                await testClient.createClient(true)
+                await testClient.createClient(true, { configPollingIntervalMS: 10000 })
                 await testClient.close()
             })
 
@@ -69,23 +68,18 @@ describe('Initialize Tests - Local', () => {
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(404)
 
-                await testClient.createClient(true)
+                await testClient.createClient(true, { configPollingIntervalMS: 10000 })
                 await testClient.close()
             })
 
-            it('fetches config again after 3 seconds when config polling inteval is overriden', async () => {
+            it('fetches config again after 3 seconds when config polling interval is overriden', async () => {
                 const testClient = new LocalTestClient(name)
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .times(2)
                     .reply(200, config)
 
-                await testClient.createClient(
-                    true,
-                    {
-                        configPollingIntervalMS: 3000
-                    }
-                )
+                await testClient.createClient(true, { configPollingIntervalMS: 3000 })
 
                 expect(scope.pendingMocks().length).toEqual(1)
 

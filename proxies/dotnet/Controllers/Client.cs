@@ -4,6 +4,7 @@ using DevCycle.SDK.Server.Local.Api;
 using DevCycle.SDK.Server.Common.Model.Local;
 using DevCycle.SDK.Server.Common.Model.Cloud;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace dotnet.Controllers;
 
@@ -23,6 +24,20 @@ public class ClientOptions : DVCLocalOptions
 
     [JsonProperty("enableEdgeDB")]
     public bool? EnableEdgeDB { get; set; }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        sb.Append("ClientOptions {").Append("\n");
+        sb.Append("  ConfigPollingIntervalMs: ").Append(ConfigPollingIntervalMs).Append("\n");
+        sb.Append("  EventFlushIntervalMs: ").Append(EventFlushIntervalMs).Append("\n");
+        sb.Append("  BucketingAPIURLOverride: ").Append(BucketingAPIURLOverride).Append("\n");
+        sb.Append("  ConfigCDNURLOverride: ").Append(ConfigCDNURLOverride).Append("\n");
+        sb.Append("  EventsAPIURLOverride: ").Append(EventsAPIURLOverride).Append("\n");
+        sb.Append("  EnableEdgeDB: ").Append(EnableEdgeDB).Append("\n");
+        sb.Append("}");
+        return sb.ToString();
+    }
 }
 
 public class ClientRequestBody
@@ -61,7 +76,6 @@ public class ClientController : ControllerBase
 
         try
         {
-            string? asyncError = null;
             if (ClientBody.EnableCloudBucketing ?? false)
             {
                 DVCCloudOptions cloudOptions = new DVCCloudOptions();
@@ -105,10 +119,6 @@ public class ClientController : ControllerBase
                         .SetInitializedSubscriber((o, e) =>
                         {
                             task.Start();
-                            if (!e.Success)
-                            {
-                                asyncError = e.Errors.Last().ErrorResponse.Message;
-                            }
                         })
                         .SetOptions(ClientBody.Options)
                         .SetLogger(LoggerFactory.Create(builder => builder.AddConsole()))
@@ -126,11 +136,6 @@ public class ClientController : ControllerBase
 
             Response.Headers.Add("Location", "client/" + ClientBody.ClientId);
             Response.StatusCode = 201;
-
-            if (asyncError != null)
-            {
-                return new { asyncError = asyncError };
-            }
 
             return new { message = "success" };
         }
