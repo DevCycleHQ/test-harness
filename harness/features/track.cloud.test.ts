@@ -35,7 +35,7 @@ describe('Track Tests - Cloud', () => {
             it('should complain if event type not set', async () => {
                 const trackResponse = await client.callTrack({ user_id: validUserId }, { target: 1 }, true)
                 const res = await trackResponse.json()
-                expectErrorMessageToBe(res.exception, 'Invalid Event')
+                expectErrorMessageToBe(res.asyncError, 'Invalid Event')
             })
 
             it('should call events API to track event', async () => {
