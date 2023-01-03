@@ -23,7 +23,6 @@ describe('Initialize Tests - Local', () => {
                     exception,
                     'Missing environment key! Call initialize with a valid environment key'
                 )
-                await testClient.close()
             })
 
             it('should error when SDK key is invalid', async () => {
@@ -35,7 +34,6 @@ describe('Initialize Tests - Local', () => {
                     exception,
                     'Invalid environment key provided. Please call initialize with a valid server environment key'
                 )
-                await testClient.close()
             })
 
             it('initializes correctly on valid data', async () => {
