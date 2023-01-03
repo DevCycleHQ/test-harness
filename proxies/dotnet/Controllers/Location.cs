@@ -85,6 +85,7 @@ public class LocationController : ControllerBase
 
         } catch (Exception e) {
             Response.StatusCode = 200;
+            _logger.LogError(e, "");
             
 
             if (body.IsAsync) {
@@ -192,7 +193,7 @@ public class LocationController : ControllerBase
 
         if (isAsync) {
             dynamic? task = commandMethod?.Invoke(entity, parsedParams.ToArray());
-            result = (await task) ?? result;
+            result = result == null ? result : (await task);
         } else {
             result = commandMethod?.Invoke(entity, parsedParams.ToArray()) ?? result;
         }
