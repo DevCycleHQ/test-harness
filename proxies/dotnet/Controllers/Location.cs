@@ -193,7 +193,7 @@ public class LocationController : ControllerBase
 
         if (isAsync) {
             dynamic? task = commandMethod?.Invoke(entity, parsedParams.ToArray());
-            result = result == null ? result : (await task);
+            result = task == null ? result : (await task);
         } else {
             result = commandMethod?.Invoke(entity, parsedParams.ToArray()) ?? result;
         }
