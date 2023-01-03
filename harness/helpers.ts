@@ -204,13 +204,13 @@ const callAllVariables = async (url: string, user: Record<string, unknown>, isAs
     })
 }
 
-const callTrack = async (url: string, user: Record<string, unknown>, event: Record<string, unknown>) => {
+const callTrack = async (url: string, user: Record<string, unknown>, event: Record<string, unknown>, isAsync: boolean) => {
     return await sendCommand(url, {
         command: 'track',
         user,
         event,
         params: [{ type: 'user' }, { type: 'event' }],
-        isAsync: false
+        isAsync
     })
 }
 
@@ -258,6 +258,9 @@ export const waitForRequest = async (
 
 const checkFailed = async (response: Response, shouldFail: boolean) => {
     if (!shouldFail) {
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}, ${await response.text()}`)
+        }
         const result = await response.clone().json()
         expect(result.exception).toBeUndefined()
         expect(result.asyncError).toBeUndefined()
@@ -279,21 +282,13 @@ class BaseTestClient {
     protected getClientUrl() {
         return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
-
-    async callTrack(user: Record<string, unknown>, event: Record<string, unknown>, shouldFail = false) {
-        const result = await callTrack(this.getClientUrl(), user, event)
-
-        await checkFailed(result, shouldFail)
-
-        return result
-    }
 }
 
 export class LocalTestClient extends BaseTestClient {
     async createClient(
-        waitForInitialization: boolean, 
-        options: Record<string, unknown> = {}, 
-        sdkKey?: string | null, 
+        waitForInitialization: boolean,
+        options: Record<string, unknown> = {},
+        sdkKey?: string | null,
         shouldFail = false
     ) {
         if (sdkKey !== undefined) {
@@ -362,6 +357,14 @@ export class LocalTestClient extends BaseTestClient {
         await checkFailed(result, shouldFail)
         return result
     }
+
+    async callTrack(user: Record<string, unknown>, event: Record<string, unknown>, shouldFail = false) {
+        const result = await callTrack(this.getClientUrl(), user, event, false)
+
+        await checkFailed(result, shouldFail)
+
+        return result
+    }
 }
 
 export class CloudTestClient extends BaseTestClient {
@@ -423,6 +426,14 @@ export class CloudTestClient extends BaseTestClient {
         await checkFailed(result, shouldFail)
         return result
     }
+
+    async callTrack(user: Record<string, unknown>, event: Record<string, unknown>, shouldFail = false) {
+        const result = await callTrack(this.getClientUrl(), user, event, true)
+
+        await checkFailed(result, shouldFail)
+
+        return result
+    }
 }
 
 export const expectErrorMessageToBe = (message: string, expected: string) => {
@@ -433,6 +444,6 @@ export const expectErrorMessageToBe = (message: string, expected: string) => {
 
 export const getPlatformBySdkName = (name: string, isLocal: boolean) => {
     return name === 'DotNet' ? // TODO use Sdks.dotnet instead of 'DotNet' when enable dotnet
-        `C# ${isLocal ? 'Local' : 'Cloud'}` 
-        : name 
+        `C# ${isLocal ? 'Local' : 'Cloud'}`
+        : name
 }
