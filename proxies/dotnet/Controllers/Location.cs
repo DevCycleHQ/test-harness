@@ -179,11 +179,7 @@ public class LocationController : ControllerBase
 
         if (parsedCommand == "Close")
         {
-            return new CommandResult
-            {
-                EntityType = "Void",
-                Data = new { }
-            };
+            parsedCommand = "Dispose";
         }
 
         MethodInfo? commandMethod = entity.GetType().GetMethod(parsedCommand);
