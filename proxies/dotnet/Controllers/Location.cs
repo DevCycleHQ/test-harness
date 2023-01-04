@@ -73,6 +73,13 @@ public class LocationController : ControllerBase
         try {
             parsedParams = ParseParams(body.Params, body.User, body.Event);
             var result = await InvokeCommand(entity, body.Command, body.IsAsync, parsedParams);
+            
+            if (body.Command == "close")
+            {
+                // TODO move this to its own dedicated endpoint
+                var id = location.Split('/')[1];
+                DataStore.LocalClients.Remove(id);
+            }
 
             Response.StatusCode = 201;
             Response.Headers.Add("Location", $"command/{body.Command}/{result.CommandId}");
@@ -85,7 +92,7 @@ public class LocationController : ControllerBase
 
         } catch (Exception e) {
             Response.StatusCode = 200;
-            _logger.LogError(e, "");
+            // _logger.LogError(e, "");
             
 
             if (body.IsAsync) {
@@ -199,7 +206,7 @@ public class LocationController : ControllerBase
         } else {
             result = commandMethod?.Invoke(entity, parsedParams.ToArray()) ?? result;
         }
-        
+
         var resultId = DataStore.Commands.Count.ToString();
         if (result != null) DataStore.Commands.Add(resultId, result);
 
