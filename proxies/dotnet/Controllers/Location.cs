@@ -92,8 +92,6 @@ public class LocationController : ControllerBase
 
         } catch (Exception e) {
             Response.StatusCode = 200;
-            // _logger.LogError(e, "");
-            
 
             if (body.IsAsync) {
                 return new {
