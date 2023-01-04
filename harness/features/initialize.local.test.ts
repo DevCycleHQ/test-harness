@@ -4,7 +4,7 @@ import {
     LocalTestClient, describeCapability, expectErrorMessageToBe
 } from '../helpers'
 import { Capabilities } from '../types'
-import { config } from '../mockData'
+import { config, shouldBucketUser } from '../mockData'
 import { getServerScope } from '../nock'
 
 jest.setTimeout(10000)
@@ -84,6 +84,53 @@ describe('Initialize Tests - Local', () => {
                 await wait(3100)
                 await testClient.close()
             }, 5000)
+
+            it('uses the same config if the etag matches', async () => {
+                const testClient = new LocalTestClient(name)
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .reply(200, config)
+
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .matchHeader('If-None-Match', (value) => {
+                        return true
+                    })
+                    .reply(304, {})
+
+                await testClient.createClient(true, { configPollingIntervalMS: 1000 })
+
+                expect(scope.pendingMocks().length).toEqual(1)
+
+                await wait(1100)
+                expect(scope.pendingMocks().length).toEqual(0)
+                // make sure the original config is still in use
+                const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
+                expect((await variable.json()).data.value).toEqual(1)
+                await testClient.close()
+            })
+
+            it('uses the same config if the refetch fails', async () => {
+                const testClient = new LocalTestClient(name)
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .reply(200, config)
+
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .reply(503, {})
+
+                await testClient.createClient(true, { configPollingIntervalMS: 1000 })
+
+                expect(scope.pendingMocks().length).toEqual(1)
+
+                await wait(1100)
+                expect(scope.pendingMocks().length).toEqual(0)
+                // make sure the original config is still in use
+                const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
+                expect((await variable.json()).data.value).toEqual(1)
+                await testClient.close()
+            })
         })
     })
 })
