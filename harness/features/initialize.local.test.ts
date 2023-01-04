@@ -110,7 +110,7 @@ describe('Initialize Tests - Local', () => {
                 await testClient.close()
             })
 
-            it('uses the same config if the refetch fails', async () => {
+            it('uses the same config if the refetch fails, after retrying once', async () => {
                 const testClient = new LocalTestClient(name)
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
@@ -118,13 +118,36 @@ describe('Initialize Tests - Local', () => {
 
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .times(2)
                     .reply(503, {})
 
                 await testClient.createClient(true, { configPollingIntervalMS: 1000 })
 
                 expect(scope.pendingMocks().length).toEqual(1)
 
-                await wait(1100)
+                await wait(1500)
+                expect(scope.pendingMocks().length).toEqual(0)
+                // make sure the original config is still in use
+                const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
+                expect((await variable.json()).data.value).toEqual(1)
+                await testClient.close()
+            })
+
+            it('uses the same config if the response is invalid JSON', async () => {
+                const testClient = new LocalTestClient(name)
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .reply(200, config)
+
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .reply(200, "I'm not JSON!")
+
+                await testClient.createClient(true, { configPollingIntervalMS: 1000 })
+
+                expect(scope.pendingMocks().length).toEqual(1)
+
+                await wait(1200)
                 expect(scope.pendingMocks().length).toEqual(0)
                 // make sure the original config is still in use
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
