@@ -55,10 +55,6 @@ export const forEachSDK = (tests) => {
             resetServerScope()
             await global.assertNoUnmatchedRequests()
         })
-        afterAll(() => {
-            // recommended by nock to avoid Jest memory issues
-            nock.restore()
-        })
         tests(name)
     })
 }
