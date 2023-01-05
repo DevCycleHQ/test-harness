@@ -218,7 +218,7 @@ describe('Variable Tests - Local', () => {
                 const testClient = new LocalTestClient(name)
 
                 beforeAll(async () => {
-                    const configRequestUrl = `/${testClient.clientLocation}/config/v1/server/${testClient.sdkKey}.json`
+                    const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
                     const interceptor = scope
                         .get(configRequestUrl)
 
