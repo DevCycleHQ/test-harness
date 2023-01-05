@@ -9,8 +9,6 @@ import { config, variables } from '../mockData'
 import { Interceptor } from 'nock'
 import { getServerScope } from '../nock'
 
-jest.setTimeout(10000)
-
 describe('allVariables Tests - Local', () => {
     const scope = getServerScope()
     let configInterceptor: Interceptor

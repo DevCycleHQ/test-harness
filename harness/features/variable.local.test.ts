@@ -12,8 +12,6 @@ import { getServerScope } from '../nock'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
 
-jest.setTimeout(10000)
-
 const scope = getServerScope()
 
 const expectedVariablesByType = {

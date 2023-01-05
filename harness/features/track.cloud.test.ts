@@ -9,8 +9,6 @@ import {
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
 
-jest.setTimeout(10000)
-
 const scope = getServerScope()
 
 describe('Track Tests - Cloud', () => {

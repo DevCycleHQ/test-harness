@@ -8,8 +8,6 @@ import {
 import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
 
-jest.setTimeout(10000)
-
 const scope = getServerScope()
 
 describe('Variable Tests - Cloud', () => {
@@ -25,9 +23,9 @@ describe('Variable Tests - Cloud', () => {
         describeCapability(name, Capabilities.cloud)(name, () => {
             it('will throw error variable called with invalid key', async () => {
                 const variableResponse = await testClient.callVariable(
-                    { user_id: 'user1' }, 
-                    null, 
-                    'default_value', 
+                    { user_id: 'user1' },
+                    null,
+                    'default_value',
                     true
                 )
                 const error = await variableResponse.json()
@@ -36,9 +34,9 @@ describe('Variable Tests - Cloud', () => {
 
             it('will throw error variable called with invalid default value', async () => {
                 const variableResponse = await testClient.callVariable(
-                    { user_id: 'user1' }, 
-                    'var_key', 
-                    null, 
+                    { user_id: 'user1' },
+                    'var_key',
+                    null,
                     true
                 )
 
@@ -62,8 +60,8 @@ describe('Variable Tests - Cloud', () => {
                         isDefaulted: false
                     })
                 const variableResponse = await testClient.callVariable(
-                    { user_id: 'user1' }, 
-                    'var_key', 
+                    { user_id: 'user1' },
+                    'var_key',
                     'default_value'
                 )
                 await variableResponse.json()
@@ -92,8 +90,8 @@ describe('Variable Tests - Cloud', () => {
                         isDefaulted: false
                     })
                 const variableResponse = await testClient.callVariable(
-                    { user_id: 'user1' }, 
-                    'var_key', 
+                    { user_id: 'user1' },
+                    'var_key',
                     'default_value'
                 )
                 await variableResponse.json()

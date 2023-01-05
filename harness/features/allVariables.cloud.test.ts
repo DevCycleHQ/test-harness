@@ -9,8 +9,6 @@ import { getServerScope } from '../nock'
 import { Capabilities, SDKCapabilities } from '../types'
 import { variables } from '../mockData'
 
-jest.setTimeout(10000)
-
 describe('allVariables Tests - Cloud', () => {
     const scope = getServerScope()
 
