@@ -1,6 +1,6 @@
 import nock, { Interceptor, Scope } from 'nock'
 
-const scope = nock('https://nock.com')
+const scope = nock('https://myfakenockurl')
 
 type ScopeArgs = Parameters<nock.Scope['post']>
 

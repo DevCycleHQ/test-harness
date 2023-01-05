@@ -25,7 +25,7 @@ export function initialize() {
     router.all('/(.*)', async (ctx) => {
         const { headers, request } = ctx
         try {
-            const response = await axios[request.method.toLowerCase()](`https://nock.com${ctx.request.url}`,
+            const response = await axios[request.method.toLowerCase()](`https://myfakenockurl${ctx.request.url}`,
                 request.body,
                 {
                     headers
@@ -37,7 +37,7 @@ export function initialize() {
                 ctx.body = error.response.data
                 ctx.status = error.response.status
             } else {
-                console.log('Error', error.message)
+                console.log('Error Forwarding Request to Nock Server: ', error.message)
                 unmatchedRequests.push(error)
             }
         }
