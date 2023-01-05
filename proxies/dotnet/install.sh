@@ -14,7 +14,6 @@ if [[ -n "$SDK_GITHUB_SHA" && "$SDKS_TO_TEST" == *"dotnet"* ]]; then
     dotnet add reference "../dotnet-server-sdk/DevCycle.SDK.Server.Local/DevCycle.SDK.Server.Local.csproj"
     dotnet add reference "../dotnet-server-sdk/DevCycle.SDK.Server.Cloud/DevCycle.SDK.Server.Cloud.csproj"
     dotnet restore
-    cat dotnet.csproj
     exit 0
 fi
 
