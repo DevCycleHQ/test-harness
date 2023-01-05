@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ -n "$SDK_GITHUB_SHA" && "$SDKS_TO_TEST" == *"dotnet"* ]]; then
-    echo "CHECKING OUT"
+    echo "Checking out SDK at $SDK_GITHUB_SHA"
     # changing directory so dotnet doesn't run again when starting up the server
     cd ..
     git clone https://github.com/DevCycleHQ/dotnet-server-sdk.git
