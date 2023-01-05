@@ -435,6 +435,9 @@ export class CloudTestClient extends BaseTestClient {
 export const expectErrorMessageToBe = (message: string, expected: string) => {
     // when we consolidate error messages to be uniform, change this to actually compare
     // the exception and the expected exception message
+    if (message !== expected) {
+        console.warn(`Expected error message to be: \n ${expected}, but got: \n ${message}`)
+    }
     expect(message).toBeTruthy()
 }
 
