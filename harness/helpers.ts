@@ -45,11 +45,15 @@ const clientTestNameMap: Record<string, string> = {}
 // It can be formatted as a JSON array or a comma-separated list.
 // The SDKs are returned as their human-readable names from the Sdks enum, not the enum keys.
 export const getSDKs = () => {
+    const SDKS_TO_TEST = process.env.SDKS_TO_TEST || global.JEST_PROJECT_SDK_TO_TEST
+
     try {
-        return JSON.parse(process.env.SDKS_TO_TEST ?? '').map((sdk) => Sdks[sdk])
+        return JSON.parse(SDKS_TO_TEST ?? '').map((sdk) => Sdks[sdk])
     } catch (e) {
-        if (process.env.SDKS_TO_TEST) {
-            return process.env.SDKS_TO_TEST.split(',')
+        if (SDKS_TO_TEST && Sdks[SDKS_TO_TEST]) {
+            return [Sdks[SDKS_TO_TEST]]
+        } else if (SDKS_TO_TEST) {
+            return SDKS_TO_TEST.split(',')
                 .map((sdk) => Sdks[sdk])
                 .filter((sdkName) => sdkName !== undefined)
         } else {
@@ -60,9 +64,13 @@ export const getSDKs = () => {
 }
 
 export const forEachSDK = (tests) => {
+    const SDKs = getSDKs()
     const scope = getServerScope()
 
-    const SDKs = getSDKs()
+    if (process.env.SDKS_TO_TEST && global.JEST_PROJECT_SDK_TO_TEST && process.env.SDKS_TO_TEST !== global.JEST_PROJECT_SDK_TO_TEST) {
+        // environment has overriden the SDKs we want to test, this Jest project should skip all tests
+        SDKs = []
+    }
 
     describe.each(SDKs)('%s SDK tests', (name) => {
         afterEach(async () => {
