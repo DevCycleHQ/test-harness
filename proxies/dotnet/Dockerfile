@@ -11,6 +11,7 @@ ENV DOTNET_CLOUD_SDK_VERSION $DOTNET_CLOUD_SDK_VERSION
 
 COPY . /src
 WORKDIR /src
+RUN ./install.sh
 RUN dotnet build "dotnet.csproj"
 
 ENTRYPOINT ["dotnet", "run"]
