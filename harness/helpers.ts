@@ -31,18 +31,24 @@ export const getConnectionStringForProxy = (proxy: string) => {
 
 export const forEachSDK = (tests) => {
     // get the list of SDK's and their capabilities
+    const SDKS_TO_TEST = process.env.SDKS_TO_TEST || global.JEST_PROJECT_SDK_TO_TEST
     let SDKs
     try {
-        SDKs = JSON.parse(process.env.SDKS_TO_TEST ?? '').map((sdk) => Sdks[sdk])
+        SDKs = JSON.parse(SDKS_TO_TEST ?? '').map((sdk) => Sdks[sdk])
     } catch (e) {
-        if (process.env.SDKS_TO_TEST && Sdks[process.env.SDKS_TO_TEST]) {
-            SDKs = [Sdks[process.env.SDKS_TO_TEST]]
+        if (SDKS_TO_TEST && Sdks[SDKS_TO_TEST]) {
+            SDKs = [Sdks[SDKS_TO_TEST]]
         } else {
             console.log('No specified SDKs to test, running all tests')
             SDKs = Object.values(Sdks)
         }
     }
     const scope = getServerScope()
+
+    if (process.env.SDKS_TO_TEST && global.JEST_PROJECT_SDK_TO_TEST && process.env.SDKS_TO_TEST !== global.JEST_PROJECT_SDK_TO_TEST) {
+        // environment has overriden the SDKs we want to test, this Jest project should skip all tests
+        SDKs = []
+    }
 
     describe.each(SDKs)('%s SDK tests', (name) => {
         afterEach(async () => {
