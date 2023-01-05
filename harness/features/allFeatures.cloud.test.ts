@@ -9,8 +9,6 @@ import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope } from '../nock'
 import { expectedFeaturesVariationOn } from '../mockData'
 
-jest.setTimeout(10000)
-
 const scope = getServerScope()
 
 describe('allFeatures Tests - Cloud', () => {
@@ -33,9 +31,9 @@ describe('allFeatures Tests - Cloud', () => {
                         return !queryObj.enableEdgeDB
                     })
                     .reply(200, expectedFeaturesVariationOn)
-                const featuresResponse = await testClient.callAllFeatures({ 
-                    user_id: 'user1', 
-                    customData: { 'should-bucket': true } 
+                const featuresResponse = await testClient.callAllFeatures({
+                    user_id: 'user1',
+                    customData: { 'should-bucket': true }
                 })
 
                 const features = await featuresResponse.json()
@@ -62,9 +60,9 @@ describe('allFeatures Tests - Cloud', () => {
                     })
                     .reply(200, expectedFeaturesVariationOn)
 
-                const featuresResponse = await edgeDBTestClient.callAllFeatures({ 
-                    user_id: 'user1', 
-                    customData: { 'should-bucket': true } 
+                const featuresResponse = await edgeDBTestClient.callAllFeatures({
+                    user_id: 'user1',
+                    customData: { 'should-bucket': true }
                 })
                 const features = await featuresResponse.json()
                 expect(features).toMatchObject({

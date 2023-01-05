@@ -7,8 +7,6 @@ import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
 import { config, expectedFeaturesVariationOn } from '../mockData/config'
 
-jest.setTimeout(10000)
-
 const scope = getServerScope()
 
 describe('allFeatures Tests - Local', () => {

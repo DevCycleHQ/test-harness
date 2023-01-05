@@ -6,8 +6,6 @@ import {
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 
-jest.setTimeout(10000)
-
 describe('Client Initialize Tests - Cloud', () => {
     forEachSDK((name) => {
         let url: string
