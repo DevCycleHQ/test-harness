@@ -8,7 +8,7 @@ if [[ -n "$SDK_GITHUB_SHA" && "$SDKS_TO_TEST" == *"dotnet"* ]]; then
     cd dotnet-server-sdk
     git checkout $SDK_GITHUB_SHA
     dotnet restore
-    cd ../../src
+    cd ../src
     dotnet remove package DevCycle.SDK.Server.Local
     dotnet remove package DevCycle.SDK.Server.Cloud
     dotnet add reference "../dotnet-server-sdk/DevCycle.SDK.Server.Local/DevCycle.SDK.Server.Local.csproj"
