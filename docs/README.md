@@ -8,15 +8,12 @@ Setting that URL to the test harness server’s address allows the harness to mo
 
 ### About `entityType`
 To check that the SDK methods are returning a correct type of an instance, they will all contain an `entityType` in their response. `enityType` can be one of four values:
-`Variable`, `User`, `Feature`, `Object`, `Void`
+`Variable`, `User`, `Feature`, `Object`, `Void`, `Client`
 
 ### How to use
-Before calling any SDK methods, you must first create an instance of the SDK client. This is done by calling the `/client` endpoint with the `POST` method. The response will contain a `Location` header
-which can be used to reference the client instance in subsequent calls.
+Before calling any SDK methods, you must first create an instance of the SDK client. This is done by calling the `/client` endpoint with the `POST` method.
 
-The next step is to create a user instance. This is done by calling the `/user` endpoint with the `POST` method. The response will contain a `Location` header which can be used to reference the user instance in subsequent calls.
-
-Once you have a client and user instance, you can invoke any SDK method by calling the `/{location}/command` endpoint with the `POST` method.
+Once you have a client instance, you can invoke any SDK method by calling the `/{location}/command` endpoint with the `POST` method.
 
 <h1 id="devcycle-test-harness-proxy-client">Client</h1>
 
@@ -35,7 +32,8 @@ SDK Client
   "clientId": "string",
   "sdkKey": "string",
   "options": {},
-  "enableCloudBucketing": true
+  "enableCloudBucketing": true,
+  "waitForInitialization": true
 }
 ```
 
@@ -47,6 +45,7 @@ SDK Client
 |`sdkKey`|body|string|false|A unique key used to initialize the DVC SDK|
 |`options`|body|object|false|An object of launch parameters. See [DevCycle Docs](https://docs.devcycle.com/docs/sdk/server-side-sdks/node#initialization-options) for a full list of options|
 |`enableCloudBucketing`|body|boolean|false|An option to use the cloud bucketing version of the SDK|
+|`waitForInitialization`|body|boolean|false|An option to wait for the client to be initialized before responding to the request.|
 
 > Example responses
 
@@ -108,83 +107,6 @@ Status Code **400**
 |---|---|---|---|---|
 |201|Location|string||Location of the Client instance on the proxy server|
 
-<h1 id="devcycle-test-harness-proxy-user">User</h1>
-
-SDK user
-
-<a id="opIdcreateUser"></a>
-
-`POST /user`
-
-*Create a DVC user instance*
-
-> Body parameter
-
-```json
-{
-  "user_id": "string",
-  "email": "string",
-  "name": "string",
-  "language": "string",
-  "country": "string",
-  "appVersion": "string",
-  "appBuild": "string",
-  "customData": {},
-  "privateCustomData": {}
-}
-```
-
-<h3 id="createuser-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|`body`|body|[User](#schemauser)|false|none|
-
-> Example responses
-
-> Created
-
-```json
-{
-  "entityType": "User",
-  "data": {
-    "user_id": "test_id",
-    "email": "testUser@gmail.com",
-    "country": "CA"
-  }
-}
-```
-
-<h3 id="createuser-responses">Responses</h3>
-
-|Status|Meaning|Description|
-|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|
-
-<h3 id="createuser-responseschema">Response Schema</h3>
-
-Status Code **201**
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|`» entityType`|string|false|A string literal `User`|
-|`» data`|[User](#schemauser)|false|A User instance that's stored on the proxy|
-|`»» user_id`|string|false|Identifies the current user on a client instance|
-|`»» email`|string|false|Email used for identifying a user, or used for audience segmentation|
-|`»» name`|string|false|Name of the user which can be used for identifying a user, or used for audience segmentation|
-|`»» language`|string|false|ISO 639-1 two-letter codes, or ISO 639-2 three-letter codes|
-|`»» country`|string|false|ISO 3166 two or three-letter codes|
-|`»» appVersion`|string|false|Application Version, can be used for audience segmentation|
-|`»» appBuild`|string|false|Application Build, can be used for audience segmentation|
-|`»» customData`|object|false|Custom JSON data used for audience segmentation|
-|`»» privateCustomData`|object|false|Private Custom JSON data used for audience segmentation|
-
-### Response Headers
-
-|Status|Header|Type|Format|Description|
-|---|---|---|---|---|
-|201|Location|string||Location of the User instance on the proxy server|
-
 <h1 id="devcycle-test-harness-proxy-location">Location</h1>
 
 A general endpoint to call a method on previously created object instances, such as SDK clients or DVC variables.
@@ -200,10 +122,15 @@ A general endpoint to call a method on previously created object instances, such
 ```json
 {
   "command": "variable",
+  "user": {
+    "user_id": "test",
+    "email": "test@test.com",
+    "name": "test"
+  },
   "isAsync": true,
   "params": [
     {
-      "location": "user/3"
+      "type": "user"
     },
     {
       "value": "string-key"
@@ -220,12 +147,30 @@ A general endpoint to call a method on previously created object instances, such
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
 |`command`|body|string|false|The name of the SDK method to invoke|
+|`user`|body|[User](#schemauser)|false|An object that the proxy will turn into a user instance.|
+|`» user_id`|body|string|false|Identifies the current user on a client instance|
+|`» email`|body|string|false|Email used for identifying a user, or used for audience segmentation|
+|`» name`|body|string|false|Name of the user which can be used for identifying a user, or used for audience segmentation|
+|`» language`|body|string|false|ISO 639-1 two-letter codes, or ISO 639-2 three-letter codes|
+|`» country`|body|string|false|ISO 3166 two or three-letter codes|
+|`» appVersion`|body|string|false|Application Version, can be used for audience segmentation|
+|`» appBuild`|body|string|false|Application Build, can be used for audience segmentation|
+|`» customData`|body|object|false|Custom JSON data used for audience segmentation|
+|`» privateCustomData`|body|object|false|Private Custom JSON data used for audience segmentation|
+|`event`|body|[Event](#schemaevent)|false|An object that the proxy will turn into an event instance.|
+|`» type`|body|string|false|The main identifier for an event.|
+|`» date`|body|number|false|Date stamp at which the event was generated|
+|`» target`|body|string|false|Subject of the event. Contextual to event type.|
+|`» value`|body|number|false|Numerical value of the event. Contextual to event type.|
+|`» metaData`|body|object|false|Any additional data about the event.|
 |`isAsync`|body|boolean|false|Tells the proxy weather to wait on the SDK method or not|
 |`params`|body|[anyOf]|false|Arguments to the SDK method. They should appear in the order they are passed to the SDK method|
 |`» *anonymous*`|body|[LocationParam](#schemalocationparam)|false|An argument to an SDK method|
 |`»» location`|body|string|false|Used to reference an instance that needs to be passed to the method. Need to use "location" of the instance i.e. `user/3`|
 |`» *anonymous*`|body|[ValueParam](#schemavalueparam)|false|An argument to an SDK method|
 |`»» value`|body|string|false|Used to pass a value to the method. For example, if you wish to call the `.variable` method of the SDK, the params array should contain `{ value: 'my-key' }`, `{ value: 'default-value'}`|
+|`» *anonymous*`|body|[TypeParam](#schematypeparam)|false|An argument to an SDK method|
+|`»» type`|body|string|false|Used to indicate that the user/event which was provided in the request body should be passed in to the SDK method as a param. Value must be `user` or `event`.|
 |`location`|path|string|true|Location of the instance that the method is being called on. For example, `client/464bb685-fd58-41b6-afa0-6df49e38c705` or `variable/3|
 
 > Example responses
@@ -348,7 +293,7 @@ Status Code **404**
 
 ```
 
-A User instance that's stored on the proxy
+An object that the proxy will turn into a user instance.
 
 ### Properties
 
@@ -363,6 +308,36 @@ A User instance that's stored on the proxy
 |`appBuild`|string|false|Application Build, can be used for audience segmentation|
 |`customData`|object|false|Custom JSON data used for audience segmentation|
 |`privateCustomData`|object|false|Private Custom JSON data used for audience segmentation|
+
+<h2 id="tocS_Event">Event</h2>
+
+<a id="schemaevent"></a>
+<a id="schema_Event"></a>
+<a id="tocSevent"></a>
+<a id="tocsevent"></a>
+
+```json
+{
+  "type": "string",
+  "date": 0,
+  "target": "string",
+  "value": 0,
+  "metaData": {}
+}
+
+```
+
+An object that the proxy will turn into an event instance.
+
+### Properties
+
+|Name|Type|Required|Description|
+|---|---|---|---|
+|`type`|string|false|The main identifier for an event.|
+|`date`|number|false|Date stamp at which the event was generated|
+|`target`|string|false|Subject of the event. Contextual to event type.|
+|`value`|number|false|Numerical value of the event. Contextual to event type.|
+|`metaData`|object|false|Any additional data about the event.|
 
 <h2 id="tocS_LocationParam">LocationParam</h2>
 
@@ -385,6 +360,28 @@ An argument to an SDK method
 |Name|Type|Required|Description|
 |---|---|---|---|
 |`location`|string|false|Used to reference an instance that needs to be passed to the method. Need to use "location" of the instance i.e. `user/3`|
+
+<h2 id="tocS_TypeParam">TypeParam</h2>
+
+<a id="schematypeparam"></a>
+<a id="schema_TypeParam"></a>
+<a id="tocStypeparam"></a>
+<a id="tocstypeparam"></a>
+
+```json
+{
+  "type": "string"
+}
+
+```
+
+An argument to an SDK method
+
+### Properties
+
+|Name|Type|Required|Description|
+|---|---|---|---|
+|`type`|string|false|Used to indicate that the user/event which was provided in the request body should be passed in to the SDK method as a param. Value must be `user` or `event`.|
 
 <h2 id="tocS_ValueParam">ValueParam</h2>
 
