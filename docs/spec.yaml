@@ -1,9 +1,7 @@
 openapi: 3.0.2
 info:
   version: '1.0.0'
-  
-  title: DevCycle Test Harness - Proxy 
-  
+  title: DevCycle Test Harness - Proxy
   description: |
     # Overview
     The SDK proxy server is responsible for wrapping the SDK under test with an HTTP interface that can be used to call any of its public-facing methods with an arbitrary set of arguments,
@@ -12,21 +10,16 @@ info:
 
     ### About `entityType`
     To check that the SDK methods are returning a correct type of an instance, they will all contain an `entityType` in their response. `enityType` can be one of four values:
-    `Variable`, `User`, `Feature`, `Object`, `Void`
+    `Variable`, `User`, `Feature`, `Object`, `Void`, `Client`
 
     ### How to use
-    Before calling any SDK methods, you must first create an instance of the SDK client. This is done by calling the `/client` endpoint with the `POST` method. The response will contain a `Location` header
-    which can be used to reference the client instance in subsequent calls.
+    Before calling any SDK methods, you must first create an instance of the SDK client. This is done by calling the `/client` endpoint with the `POST` method.
 
-    The next step is to create a user instance. This is done by calling the `/user` endpoint with the `POST` method. The response will contain a `Location` header which can be used to reference the user instance in subsequent calls.
-
-    Once you have a client and user instance, you can invoke any SDK method by calling the `/{location}/command` endpoint with the `POST` method.
+    Once you have a client instance, you can invoke any SDK method by calling the `/{location}/command` endpoint with the `POST` method.
 
 tags:
   - name: Client
     description: SDK Client
-  - name: User
-    description: SDK user
   - name: Location
     description: A general endpoint to call a method on previously created object instances, such as SDK clients or DVC variables.
 servers:
@@ -34,18 +27,14 @@ servers:
 
 paths:
   '/client':
-
     post:
       tags:
         - Client
-      
-      summary: Create a DVC client instance 
+      summary: Create a DVC client instance
       operationId: createClient
       security: []
-      
       requestBody:
         $ref: '#/components/requestBodies/ClientRequestBody'
-  
       responses:
         '201':
           description: Created
@@ -58,7 +47,7 @@ paths:
                 Location: 'client/464bb685-fd58-41b6-afa0-6df49e38c705'
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   message:
@@ -67,12 +56,12 @@ paths:
                 required:
                   - message
               example:
-                  message: 'Success'
+                message: 'Success'
         '200':
           description: OK
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   exception:
@@ -84,42 +73,39 @@ paths:
           description: Bad Request
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   message:
                     type: string
                     description: 'An error message indicating what went wrong with the request'
-                required: 
+                required:
                   -  message
               example:
                 message: 'Invalid request: missing clientId'
 
   '/{location}/command':
-    parameters: 
+    parameters:
       - name: location
         in: path
         required: true
         description: 'Location of the instance that the method is being called on. For example, `client/464bb685-fd58-41b6-afa0-6df49e38c705` or `variable/3'
-        schema: 
+        schema:
           type: string
     post:
       tags:
         -  Location
-      
       summary: Invoke a method on a previously created instance
       operationId: command
       security: []
-      
       requestBody:
         $ref: '#/components/requestBodies/ClientCommandRequestBody'
-      
       responses:
         '200':
           description: OK
           content:
             application/json:
-              schema: 
+              schema:
                 properties:
                   message:
                     type:
@@ -145,7 +131,7 @@ paths:
           description: Created
           content:
             application/json:
-              schema: 
+              schema:
                 properties:
                   entityType:
                     type: string
@@ -179,17 +165,17 @@ paths:
                   value:
                     entityType: 'Object'
                     data: {
-                        "string-var": {
-                          "_id": "638681f059f1b81cc9e6c7fb",
-                          "key": "string-var",
-                          "type": VariableType.string,
-                          "value": "string"
+                      "string-var": {
+                        "_id": "638681f059f1b81cc9e6c7fb",
+                        "key": "string-var",
+                        "type": VariableType.string,
+                        "value": "string"
                       },
                       "number-var": {
-                          "_id": "638681f059f1b81cc9e6c7fc",
-                          "key": "number-var",
-                          "type": VariableType.number,
-                          "value": 1
+                        "_id": "638681f059f1b81cc9e6c7fc",
+                        "key": "number-var",
+                        "type": VariableType.number,
+                        "value": 1
                       }
                     }
                     logs: []
@@ -199,52 +185,14 @@ paths:
             application/json:
               schema:
                 properties:
-                  message: 
+                  message:
                     type: string
                     description: 'An error message indicating what went wrong with the request'
-                required: 
+                required:
                   -  message
 
-  '/user':
-    post:
-      tags: 
-        - User
-      summary: Create a DVC user instance
-      operationId: createUser
-      security: []
-      
-      requestBody: 
-        $ref: '#/components/requestBodies/UserRequestBody'
-        
-      responses:
-        '201':
-          description: Created
-          headers:
-            Location:
-              description: 'Location of the User instance on the proxy server'
-              schema:
-                type: string
-          content:
-            application/json:
-              schema: 
-                type: object
-                properties:
-                  entityType:
-                    type: string
-                    description: 'A string literal `User`'
-                  data:
-                    $ref: '#/components/schemas/User'
-              examples:
-                  success:
-                    value:
-                      entityType: 'User'
-                      data:
-                        user_id: 'test_id'
-                        email: 'testUser@gmail.com'
-                        country: 'CA'
-
 components:
-  requestBodies: 
+  requestBodies:
     ClientRequestBody:
       content:
         application/json:
@@ -263,6 +211,9 @@ components:
               enableCloudBucketing:
                 type: boolean
                 description: 'An option to use the cloud bucketing version of the SDK'
+              waitForInitialization:
+                type: boolean
+                description: 'An option to wait for the client to be initialized before responding to the request.'
             required:
               - clientId
           example:
@@ -272,7 +223,7 @@ components:
               baseURLOverride: 'http://localhost:4000/client/464bb685-fd58-41b6-afa0-6df49e38c705'
               logLevel: 'info'
             enableCloudBucketing: true
-    
+
     ClientCommandRequestBody:
       content:
         application/json:
@@ -282,6 +233,10 @@ components:
               command:
                 type: string
                 description: 'The name of the SDK method to invoke'
+              user:
+                $ref: '#/components/schemas/User'
+              event:
+                $ref: '#/components/schemas/Event'
               isAsync:
                 type: boolean
                 description: 'Tells the proxy weather to wait on the SDK method or not'
@@ -290,17 +245,23 @@ components:
                 description: 'Arguments to the SDK method. They should appear in the order they are passed to the SDK method'
                 items:
                   type: object
-                  anyOf: 
+                  anyOf:
                     - $ref: '#/components/schemas/LocationParam'
                     - $ref: '#/components/schemas/ValueParam'
+                    - $ref: '#/components/schemas/TypeParam'
           examples:
             variable:
               value:
                 command: 'variable'
+                user: {
+                  user_id: 'test',
+                  email: 'test@test.com',
+                  name: 'test'
+                }
                 isAsync: true
                 params: [
                   {
-                    location: 'user/3'
+                    type: 'user'
                   },
                   {
                     value: 'string-key'
@@ -312,10 +273,15 @@ components:
             allVariables:
               value:
                 command: 'allVarables'
+                user: {
+                  user_id: 'test',
+                  email: 'test@test.com',
+                  name: 'test'
+                }
                 isAsync: false
                 params: [
                   {
-                    location: 'user/3'
+                    type: 'user'
                   }
                 ]
 
@@ -328,7 +294,7 @@ components:
   schemas:
     User:
       type: object
-      description: "A User instance that's stored on the proxy"
+      description: "An object that the proxy will turn into a user instance."
       properties:
         user_id:
           type: string
@@ -357,7 +323,25 @@ components:
         privateCustomData:
           type: object
           description: 'Private Custom JSON data used for audience segmentation'
-
+    Event:
+      type: object
+      description: "An object that the proxy will turn into an event instance."
+      properties:
+        type:
+          type: string
+          description: 'The main identifier for an event.'
+        date:
+          type: number
+          description: 'Date stamp at which the event was generated'
+        target:
+          type: string
+          description: 'Subject of the event. Contextual to event type.'
+        value:
+          type: number
+          description: 'Numerical value of the event. Contextual to event type.'
+        metaData:
+          type: object
+          description: 'Any additional data about the event.'
     LocationParam:
       type: object
       description: 'An argument to an SDK method'
@@ -365,7 +349,14 @@ components:
         location:
           type: string
           description: 'Used to reference an instance that needs to be passed to the method. Need to use "location" of the instance i.e. `user/3`'
-    
+    TypeParam:
+      type: object
+      description: 'An argument to an SDK method'
+      properties:
+        type:
+          type: string
+          description: 'Used to indicate that the user/event which was provided in the request body
+            should be passed in to the SDK method as a param. Value must be `user` or `event`.'
     ValueParam:
       type: object
       description: 'An argument to an SDK method'
