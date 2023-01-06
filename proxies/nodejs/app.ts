@@ -1,7 +1,6 @@
 import Koa from 'koa'
 import Router from 'koa-router'
 import bodyParser from 'koa-bodyparser'
-import { handleUser } from './handlers/user'
 import { handleClient } from './handlers/client'
 import { handleLocation, validateLocationReqMiddleware } from './handlers/location'
 import { DataStore } from './entityTypes'
@@ -28,7 +27,6 @@ async function start() {
     })
 
     router.post('/client', handleClient)
-    router.post('/user', handleUser)
     router.post('/:location*', validateLocationReqMiddleware, handleLocation)
 
     app.use(router.routes()).use(router.allowedMethods())
