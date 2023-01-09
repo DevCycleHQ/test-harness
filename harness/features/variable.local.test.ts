@@ -1,17 +1,17 @@
 import {
     describeCapability,
-
     forEachSDK,
     forEachVariableType,
     getPlatformBySdkName,
     LocalTestClient,
     waitForRequest
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
 
+// This is our proxy scope that is used to mock endpoints that are called in the SDK
 const scope = getServerScope()
 
 const expectedVariablesByType = {
@@ -45,37 +45,62 @@ const expectedVariablesByType = {
 }
 
 describe('Variable Tests - Local', () => {
+    // This helper method enumerates all the SDKs and calls each test suite
+    // for each SDK, and creates a test client from the name.
+    // All supported SDKs can be found under harness/types/sdks.ts
     forEachSDK((name) => {
         const expectedPlatform = getPlatformBySdkName(name, true)
 
+        // This describeCapability only runs if the SDK has the "local" capability.
+        // Capabilities are located under harness/types/capabilities and follow the same
+        // name mapping from the sdks.ts file under harness/types/sdks.ts
         describeCapability(name, Capabilities.local)(name, () => {
             const testClient = new LocalTestClient(name)
             let eventsUrl: string
 
             describe('initialized client', () => {
                 beforeAll(async () => {
-                    // mock endpoints
+                    // This allows us to mock out the our specific client (using the clientId),
+                    // allowing us to have multiple clients serving different clients without
+                    // conflicting. This one is used to mock the config that the local client is going to use
+                    // locally in all of its methods.
                     scope
                         .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                         .reply(200, config)
 
-                    // create client
-                    await testClient.createClient(true,{
+                    // Creating a client will pass to the proxy server by default: 
+                    // - sdk key based on the client id created when creating the client
+                    // - urls for the bucketing/config/events endpoints to redirect traffic
+                    // into the proxy server so nock can mock out the responses
+                    //, or should expect it to error out
+                    // also it sets the client location which can be used
+                    // to access the client instance on the proxy server so we can
+                    // refer to the correct instance from multiple client instances
+                    // the waitForInitialization param is used to wait for the config
+                    // to come back on the proxy server before resolving this promise
+                    await testClient.createClient(true, {
                         configPollingIntervalMS: 100000,
                         eventFlushIntervalMS: 500,
                     })
 
                     eventsUrl = `/${testClient.clientLocation}/v1/events/batch`
                 })
+
                 afterAll(async () => {
                     await testClient.close()
                 })
 
+                // Instead of writing tests for each different type we support (String, Boolean, Number, JSON), 
+                // this function enumerates each type and runs all tests encapsulated within it 
+                // to condense repeated tests.
                 forEachVariableType((type) => {
                     const { key, defaultValue, variationOn, variableType } = expectedVariablesByType[type]
 
                     it('should return variable if mock server returns object matching default type',  async () => {
                         let eventBody = {}
+                        // The interceptor instance is used to wait on events that are triggered when calling 
+                        // methods so that we can verify events being sent out and mock out responses from the 
+                        // event server
                         const interceptor = scope.post(eventsUrl)
                         interceptor.reply((uri, body) => {
                             eventBody = body
@@ -88,8 +113,12 @@ describe('Variable Tests - Local', () => {
                             defaultValue
                         )
                         const variable = await variableResponse.json()
+
+                        // waits for the request to the events API
                         await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
 
+                        // Expect that the variable returned is not defaulted and has a value,
+                        // with an entity type "Variable"
                         expect(variable).toEqual(expect.objectContaining({
                             entityType: 'Variable',
                             data: expect.objectContaining({
@@ -99,6 +128,8 @@ describe('Variable Tests - Local', () => {
                             })
                         }))
 
+                        // Expect that the SDK sends an "aggVariableEvaluated" event
+                        // for the variable call
                         expectEventBody(eventBody, key, 'aggVariableEvaluated')
                     })
 
@@ -120,8 +151,11 @@ describe('Variable Tests - Local', () => {
                         const variable = await variableResponse.json()
                         await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
 
+                        // Expect that the test returns a defaulted variable
                         expectDefaultValue(key, variable, wrongTypeDefault,
                             wrongTypeDefault === '1' ? VariableType.string : VariableType.number)
+                        // Expects that the SDK sends an "aggVariableDefaulted" event for the 
+                        // defaulted variable
                         expectEventBody(eventBody, key, 'aggVariableDefaulted')
                     })
 
@@ -222,6 +256,9 @@ describe('Variable Tests - Local', () => {
 
                     interceptor.reply(404)
 
+                    // A special option is passed in to prevent the proxy server from waiting
+                    // for the client to have a config for the purposes of this uninitialized test suite
+                    // (The call to the proxy server is still awaited)
                     await testClient.createClient(false)
 
                     await waitForRequest(
