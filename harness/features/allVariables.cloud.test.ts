@@ -2,6 +2,7 @@ import {
     getConnectionStringForProxy,
     forEachSDK,
     CloudTestClient, describeCapability,
+    expectErrorMessageToBe
 } from '../helpers'
 import { getServerScope } from '../nock'
 import { Capabilities } from '../types'
@@ -23,8 +24,9 @@ describe('allVariables Tests - Cloud', () => {
         describeCapability(name, Capabilities.cloud)(name, () => {
             it('should return an empty object if variables request fails', async () => {
                 scope
+                    .persist() // need to persist because the client will retry on 500
                     .post(`/client/${client.clientId}/v1/variables`)
-                    .reply(404)
+                    .reply(500)
 
                 const response = await client.callAllVariables({
                     user_id: 'test_user',
@@ -33,6 +35,19 @@ describe('allVariables Tests - Cloud', () => {
                 const { data: variablesMap } = await response.json()
 
                 expect(variablesMap).toMatchObject({})
+            })
+
+            it('should throw if variables request fails on user error', async () => {
+                scope
+                    .post(`/client/${client.clientId}/v1/variables`)
+                    .reply(401, { message: 'Invalid sdk token' })
+
+                const response = await client.callAllVariables({
+                    user_id: 'test_user',
+                    email: 'user@gmail.com'
+                }, true)
+                const res = await response.json()
+                expectErrorMessageToBe(res.asyncError, 'Invalid sdk token')
             })
 
             it('should return a variable map', async () => {
