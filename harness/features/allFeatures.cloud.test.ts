@@ -24,7 +24,7 @@ describe('allFeatures Tests - Cloud', () => {
         describeCapability(name, Capabilities.cloud)(name, () => {
             it('should return all features without edgeDB', async () => {
                 scope
-                    .post(`/${testClient.clientLocation}/v1/features`, (body) => body.user_id === 'user1')
+                    .post(`/client/${testClient.clientId}/v1/features`, (body) => body.user_id === 'user1')
                     .matchHeader('Content-Type', 'application/json')
                     .matchHeader('authorization', testClient.sdkKey)
                     .query((queryObj) => {
@@ -52,7 +52,7 @@ describe('allFeatures Tests - Cloud', () => {
                 })
 
                 scope
-                    .post(`/${edgeDBTestClient.clientLocation}/v1/features`)
+                    .post(`/client/${edgeDBTestClient.clientId}/v1/features`)
                     .matchHeader('Content-Type', 'application/json')
                     .matchHeader('authorization', edgeDBTestClient.sdkKey)
                     .query((queryObj) => {

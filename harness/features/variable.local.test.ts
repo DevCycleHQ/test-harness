@@ -83,7 +83,7 @@ describe('Variable Tests - Local', () => {
                         eventFlushIntervalMS: 500,
                     })
 
-                    eventsUrl = `/${testClient.clientLocation}/v1/events/batch`
+                    eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
                 })
 
                 afterAll(async () => {
