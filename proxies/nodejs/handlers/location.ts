@@ -107,9 +107,6 @@ const getEntityFromLocation = (location: string, data: DataStore) => {
     } else if (locationType === 'client') {
         const [clientId] = locationPath
         return data.clients[clientId]
-    } else if (locationType === 'user') {
-        const [userId] = locationPath
-        return data.users[userId]
     }
 
     return undefined

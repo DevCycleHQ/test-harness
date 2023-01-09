@@ -7,7 +7,6 @@ import { DataStore } from './entityTypes'
 
 export const dataStore: DataStore = {
     clients: {},
-    users: {},
     commandResults: {},
 }
 
