@@ -1,12 +1,10 @@
 import {
     getConnectionStringForProxy,
     forEachSDK,
-    describeIf,
-    createUser,
     CloudTestClient, describeCapability,
 } from '../helpers'
 import { getServerScope } from '../nock'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 import { variables } from '../mockData'
 
 describe('allVariables Tests - Cloud', () => {

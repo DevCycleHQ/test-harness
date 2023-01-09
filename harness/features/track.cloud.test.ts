@@ -1,12 +1,10 @@
 import {
     getConnectionStringForProxy,
     forEachSDK,
-    describeIf,
-    createUser,
     waitForRequest,
     CloudTestClient, describeCapability, expectErrorMessageToBe, getPlatformBySdkName,
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
 
 const scope = getServerScope()

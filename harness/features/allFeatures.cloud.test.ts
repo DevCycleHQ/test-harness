@@ -1,11 +1,8 @@
 import {
-    getConnectionStringForProxy,
     forEachSDK,
-    describeIf,
-    createUser,
     CloudTestClient, describeCapability,
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
 import { expectedFeaturesVariationOn } from '../mockData'
 

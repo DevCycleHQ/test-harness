@@ -124,22 +124,6 @@ const createClient = async (
     })
 }
 
-export const createUser = async (url: string, user: object, shouldFail = false) => {
-    const result = await fetch(`${url}/user`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            ...user
-        })
-    })
-
-    await checkFailed(result, shouldFail)
-
-    return result
-}
-
 type CommandBody = {
     command: string,
     isAsync?: boolean,

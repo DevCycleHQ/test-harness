@@ -1,10 +1,9 @@
 import {
     getConnectionStringForProxy,
     forEachSDK,
-    createUser,
     LocalTestClient, describeCapability
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 import { config, variables } from '../mockData'
 import { Interceptor } from 'nock'
 import { getServerScope } from '../nock'
