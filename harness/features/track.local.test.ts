@@ -1,12 +1,11 @@
 import {
     getConnectionStringForProxy,
     forEachSDK,
-    describeIf,
     wait,
     waitForRequest,
     LocalTestClient, describeCapability, expectErrorMessageToBe, getPlatformBySdkName,
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
 import { config } from '../mockData'
 

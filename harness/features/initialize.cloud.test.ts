@@ -1,10 +1,9 @@
 import {
     getConnectionStringForProxy,
     forEachSDK,
-    describeIf,
     CloudTestClient, describeCapability, expectErrorMessageToBe
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 
 describe('Client Initialize Tests - Cloud', () => {
     forEachSDK((name) => {
