@@ -11,6 +11,10 @@ on:
       sha:
         type: string
         description: The SHA that triggered this test harness run
+      title:
+        type: string
+        description: The title of the PR that triggered this test harness run
+
 
 jobs:
   run-tests:
