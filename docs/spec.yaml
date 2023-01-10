@@ -246,7 +246,6 @@ components:
                 items:
                   type: object
                   anyOf:
-                    - $ref: '#/components/schemas/LocationParam'
                     - $ref: '#/components/schemas/ValueParam'
                     - $ref: '#/components/schemas/TypeParam'
           examples:
@@ -342,13 +341,6 @@ components:
         metaData:
           type: object
           description: 'Any additional data about the event.'
-    LocationParam:
-      type: object
-      description: 'An argument to an SDK method'
-      properties:
-        location:
-          type: string
-          description: 'Used to reference an instance that needs to be passed to the method. Need to use "location" of the instance i.e. `user/3`'
     TypeParam:
       type: object
       description: 'An argument to an SDK method'

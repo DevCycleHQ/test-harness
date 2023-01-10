@@ -165,8 +165,6 @@ A general endpoint to call a method on previously created object instances, such
 |`» metaData`|body|object|false|Any additional data about the event.|
 |`isAsync`|body|boolean|false|Tells the proxy weather to wait on the SDK method or not|
 |`params`|body|[anyOf]|false|Arguments to the SDK method. They should appear in the order they are passed to the SDK method|
-|`» *anonymous*`|body|[LocationParam](#schemalocationparam)|false|An argument to an SDK method|
-|`»» location`|body|string|false|Used to reference an instance that needs to be passed to the method. Need to use "location" of the instance i.e. `user/3`|
 |`» *anonymous*`|body|[ValueParam](#schemavalueparam)|false|An argument to an SDK method|
 |`»» value`|body|string|false|Used to pass a value to the method. For example, if you wish to call the `.variable` method of the SDK, the params array should contain `{ value: 'my-key' }`, `{ value: 'default-value'}`|
 |`» *anonymous*`|body|[TypeParam](#schematypeparam)|false|An argument to an SDK method|
@@ -338,28 +336,6 @@ An object that the proxy will turn into an event instance.
 |`target`|string|false|Subject of the event. Contextual to event type.|
 |`value`|number|false|Numerical value of the event. Contextual to event type.|
 |`metaData`|object|false|Any additional data about the event.|
-
-<h2 id="tocS_LocationParam">LocationParam</h2>
-
-<a id="schemalocationparam"></a>
-<a id="schema_LocationParam"></a>
-<a id="tocSlocationparam"></a>
-<a id="tocslocationparam"></a>
-
-```json
-{
-  "location": "string"
-}
-
-```
-
-An argument to an SDK method
-
-### Properties
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|`location`|string|false|Used to reference an instance that needs to be passed to the method. Need to use "location" of the instance i.e. `user/3`|
 
 <h2 id="tocS_TypeParam">TypeParam</h2>
 
