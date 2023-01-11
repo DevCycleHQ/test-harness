@@ -38,3 +38,13 @@ services:
 #    container_name: java
 #    ports:
 #      - "3000"
+  go:
+    build:
+      context: ./proxies/go
+      args:
+        - GO_SDK_VERSION=${GO_SDK_VERSION}
+        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+        - SDKS_TO_TEST=${SDKS_TO_TEST}
+    container_name: go
+    ports:
+      - "3000"
