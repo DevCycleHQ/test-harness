@@ -15,11 +15,11 @@ type Param struct {
 }
 
 type CommandBody struct {
-	Command string            `json:"command"`
-	IsAsync bool              `json:"isAsync"`
-	User    devcycle.UserData `json:"user,omitempty"`
-	Event   devcycle.DVCEvent `json:"event,omitempty"`
-	Params  []Param           `json:"params"`
+	Command string             `json:"command"`
+	IsAsync bool               `json:"isAsync"`
+	User    *devcycle.UserData `json:"user,omitempty"`
+	Event   *devcycle.DVCEvent `json:"event,omitempty"`
+	Params  []Param            `json:"params"`
 }
 
 func commandHandler(w http.ResponseWriter, r *http.Request) {
