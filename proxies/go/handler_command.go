@@ -26,7 +26,7 @@ func commandHandler(w http.ResponseWriter, r *http.Request) {
 	var body CommandBody
 	vars := mux.Vars(r)
 
-	fmt.Fprintf(w, "Location: %v\n", vars["location"])
+	fmt.Printf("Location: %v\n", vars["location"])
 
 	err := json.NewDecoder(r.Body).Decode(&body)
 
