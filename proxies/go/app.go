@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -11,17 +12,19 @@ import (
 )
 
 type DataStore = struct {
-	clients        map[string]devcycle.DVCClient
-	commandResults map[string]map[int]any
+	clients            map[string]devcycle.DVCClient
+	clientAuthContexts map[string]context.Context
+	commandResults     map[string]map[string]any
 }
 
 var datastore = DataStore{
 	make(map[string]devcycle.DVCClient),
-	map[string]map[int]any{
-		"variable":     make(map[int]any),
-		"allVariables": make(map[int]any),
-		"allFeatures":  make(map[int]any),
-		"track":        make(map[int]any),
+	make(map[string]context.Context),
+	map[string]map[string]any{
+		"variable":     make(map[string]any),
+		"allVariables": make(map[string]any),
+		"allFeatures":  make(map[string]any),
+		"track":        make(map[string]any),
 	},
 }
 
@@ -51,7 +54,8 @@ func main() {
 
 	r.HandleFunc("/spec", specHandler).Methods("GET")
 	r.HandleFunc("/client", clientHandler).Methods("POST")
-	r.HandleFunc("/{location}", commandHandler).Methods("POST")
+	r.HandleFunc("/command/{location}/{id}", locationCommandHandler).Methods("POST")
+	r.HandleFunc("/client/{id}", clientCommandHandler).Methods("POST")
 
 	http.Handle("/", r)
 
