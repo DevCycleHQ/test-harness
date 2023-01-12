@@ -10,8 +10,8 @@ import (
 )
 
 type Param struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
+	Type  *string `json:"type,omitempty"`
+	Value *any    `json:"value,omitempty"`
 }
 
 type CommandBody struct {

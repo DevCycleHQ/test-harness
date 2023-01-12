@@ -49,9 +49,9 @@ func main() {
 		fmt.Fprintf(w, "Hello!")
 	})
 
-	r.HandleFunc("/spec", specHandler)
-	r.HandleFunc("/client", clientHandler)
-	r.HandleFunc("/{location}", commandHandler)
+	r.HandleFunc("/spec", specHandler).Methods("GET")
+	r.HandleFunc("/client", clientHandler).Methods("POST")
+	r.HandleFunc("/{location}", commandHandler).Methods("POST")
 
 	http.Handle("/", r)
 
