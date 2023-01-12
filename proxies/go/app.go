@@ -50,6 +50,7 @@ func main() {
 	})
 
 	r.HandleFunc("/spec", specHandler)
+	r.HandleFunc("/client", clientHandler)
 	r.HandleFunc("/{location}", commandHandler)
 
 	http.Handle("/", r)
