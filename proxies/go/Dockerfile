@@ -11,9 +11,6 @@ ENV SDK_GITHUB_SHA $SDK_GITHUB_SHA
 ARG SDKS_TO_TEST
 ENV SDKS_TO_TEST $SDKS_TO_TEST
 
-ENV CGO_ENABLED 0
-ENV GOOS linux
-
 WORKDIR /app
 COPY go.mod ./
 COPY go.sum ./
@@ -23,16 +20,7 @@ RUN ./install.sh
 
 RUN go mod download
 COPY *.go ./
-RUN go build -a -installsuffix cgo -o proxy .
-
-
-FROM alpine:latest
-
-RUN apk --no-cache add ca-certificates
-
-# Copy the pre-built binary file from the previous stage
-COPY --from=builder /app/proxy .
+RUN go build -o proxy .
 
 EXPOSE 3000
-
 ENTRYPOINT ["./proxy"]
