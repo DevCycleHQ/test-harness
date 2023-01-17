@@ -19,16 +19,16 @@ type clientRequestBodyOptions struct {
 
 type clientRequestBody struct {
 	ClientId              string                   `json:"clientId"`
-	SdkKey                string                   `json:"sdkKey, omitempty"`
+	SdkKey                string                   `json:"sdkKey,omitempty"`
 	EnableCloudBucketing  bool                     `json:"enableCloudBucketing"`
 	WaitForInitialization bool                     `json:"waitForInitialization"`
 	Options               clientRequestBodyOptions `json:"options"`
 }
 
 type clientResponseBody struct {
-	Message    string `json:"message, omitempty"`
-	AsyncError string `json:"asyncError, omitempty"`
-	Exception  string `json:"exception, omitempty"`
+	Message    string `json:"message,omitempty"`
+	AsyncError string `json:"asyncError,omitempty"`
+	Exception  string `json:"exception,omitempty"`
 }
 
 func clientHandler(w http.ResponseWriter, r *http.Request) {
