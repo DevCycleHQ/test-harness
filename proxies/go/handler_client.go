@@ -43,17 +43,17 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	options := devcycle.DVCOptions{
-		ConfigCDNOverride:     reqBody.Options.ConfigCDNOverride,
-		EventsAPIOverride:     reqBody.Options.EventsAPIOverride,
+		ConfigCDNURI:     reqBody.Options.ConfigCDNOverride,
+		EventsAPIURI:     reqBody.Options.EventsAPIOverride,
 		EnableEdgeDB:          reqBody.Options.EnableEdgeDB,
-		PollingInterval:       reqBody.Options.PollingInterval,
-		EventsFlushInterval:   reqBody.Options.EventsFlushInterval,
-		DisableLocalBucketing: reqBody.EnableCloudBucketing,
+		ConfigPollingIntervalMS:       reqBody.Options.PollingInterval,
+		EventFlushIntervalMS:   reqBody.Options.EventsFlushInterval,
+		EnableCloudBucketing: reqBody.EnableCloudBucketing,
 	}
 
 	var lb *devcycle.DevCycleLocalBucketing
 	var res clientResponseBody
-	if options.DisableLocalBucketing == false {
+	if options.EnableCloudBucketing == false {
 		lb, err = devcycle.InitializeLocalBucketing(reqBody.SdkKey, &options)
 		if err != nil {
 			res.Exception = err.Error()
