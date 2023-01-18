@@ -15,10 +15,20 @@ global.fetch = async (...args) => {
     }
 }
 
-export const getMockServerUrl = () =>
-    `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
+export const getMockServerUrl = () => {
+    if (process.env.LOCAL_MODE === "1") {
+        return `http://localhost:${global.__MOCK_SERVER_PORT__}`
+    }
+
+    return `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
+}
+
 
 export const getConnectionStringForProxy = (proxy: string) => {
+    if (process.env.LOCAL_MODE === "1") {
+        return `http://localhost:3000`
+    }
+
     const host = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_IP__`]
     const port = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_PORT_3000__`]
 
