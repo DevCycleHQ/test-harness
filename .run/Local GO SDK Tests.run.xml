@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Local GO SDK Tests" type="JavaScriptTestRunnerJest">
+    <node-interpreter value="$USER_HOME$/.nvm/versions/node/v18.12.1/bin/node" />
+    <node-options value="" />
+    <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+    <working-dir value="$PROJECT_DIR$" />
+    <envs>
+      <env name="LOCAL_MODE" value="1" />
+    </envs>
+    <scope-kind value="ALL" />
+    <method v="2" />
+  </configuration>
+</component>

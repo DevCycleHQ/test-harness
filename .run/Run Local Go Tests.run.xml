@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Local Go Tests" type="CompoundRunConfigurationType">
+    <toRun name="Local GO SDK Tests" type="JavaScriptTestRunnerJest" />
+    <toRun name="start:go" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>
