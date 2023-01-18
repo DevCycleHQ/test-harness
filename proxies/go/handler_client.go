@@ -10,11 +10,12 @@ import (
 )
 
 type clientRequestBodyOptions struct {
-	ConfigCDNOverride   string        `json:"configCDNURI"`
-	EventsAPIOverride   string        `json:"eventsAPIURI"`
-	EnableEdgeDB        bool          `json:"enableEdgeDB"`
-	PollingInterval     time.Duration `json:"configPollingIntervalMS"`
-	EventsFlushInterval time.Duration `json:"eventFlushIntervalMS"`
+	ConfigCDNURI            string        `json:"configCDNURI"`
+	EventsAPIURI            string        `json:"eventsAPIURI"`
+	EnableEdgeDB            bool          `json:"enableEdgeDB"`
+	ConfigPollingIntervalMS time.Duration `json:"configPollingIntervalMS"`
+	EventFlushIntervalMS    time.Duration `json:"eventFlushIntervalMS"`
+	EnableCloudBucketing    bool          `json:"enableCloudBucketing"`
 }
 
 type clientRequestBody struct {
@@ -43,26 +44,16 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	options := devcycle.DVCOptions{
-		ConfigCDNURI:     reqBody.Options.ConfigCDNOverride,
-		EventsAPIURI:     reqBody.Options.EventsAPIOverride,
-		EnableEdgeDB:          reqBody.Options.EnableEdgeDB,
-		ConfigPollingIntervalMS:       reqBody.Options.PollingInterval,
-		EventFlushIntervalMS:   reqBody.Options.EventsFlushInterval,
-		EnableCloudBucketing: reqBody.EnableCloudBucketing,
+		ConfigCDNURI:            reqBody.Options.ConfigCDNURI,
+		EventsAPIURI:            reqBody.Options.EventsAPIURI,
+		EnableEdgeDB:            reqBody.Options.EnableEdgeDB,
+		ConfigPollingIntervalMS: reqBody.Options.ConfigPollingIntervalMS,
+		EventFlushIntervalMS:    reqBody.Options.EventFlushIntervalMS,
+		EnableCloudBucketing:    reqBody.EnableCloudBucketing,
 	}
 
-	var lb *devcycle.DevCycleLocalBucketing
 	var res clientResponseBody
-	if options.EnableCloudBucketing == false {
-		lb, err = devcycle.InitializeLocalBucketing(reqBody.SdkKey, &options)
-		if err != nil {
-			res.Exception = err.Error()
-			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(res)
-			return
-		}
-	}
-	client, err := devcycle.NewDVCClient(reqBody.SdkKey, &options, lb)
+	client, err := devcycle.NewDVCClient(reqBody.SdkKey, &options)
 	if err != nil {
 		res.Exception = err.Error()
 		w.WriteHeader(http.StatusOK)
