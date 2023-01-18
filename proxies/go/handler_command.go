@@ -66,6 +66,9 @@ func commandHandler(locationIsClient bool, w http.ResponseWriter, r *http.Reques
 	if err == nil {
 		err = jsonErr
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+
 	if err != nil {
 		var errorResponse ErrorResponse
 		if body.IsAsync {
@@ -80,9 +83,11 @@ func commandHandler(locationIsClient bool, w http.ResponseWriter, r *http.Reques
 			}
 		}
 
+		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(errorResponse)
 	} else {
-		w.Header().Set("Location", locationHeader)
+		w.Header().Add("Location", locationHeader)
+		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(locationResponse)
 	}
 }

@@ -65,8 +65,10 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		})
 
 		datastore.clientAuthContexts[reqBody.ClientId] = auth
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Add("Location", "client/"+reqBody.ClientId)
 		w.WriteHeader(http.StatusCreated)
 	}
-	w.Header().Set("Location", "client/"+reqBody.ClientId)
+
 	json.NewEncoder(w).Encode(res)
 }
