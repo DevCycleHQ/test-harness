@@ -6,3 +6,4 @@ The shared test harness for testing DevCycle SDKs
 - Comment out whatever proxy server you want to run locally in `docker-compose.yml`
 - Set the environment variable "LOCAL_MODE" to 1
 - Follow the instructions to point to a local SDK for whatever language you’re using. See [this document](https://www.notion.so/taplytics/How-to-run-example-apps-against-local-SDKs-for-testing-18da8452603246968f8550cc808b8f30)
+- The proxy server can be started using the yarn script `yarn start:<name>`, eg. `yarn start:nodejs`, or done directly from the proxy folder.
