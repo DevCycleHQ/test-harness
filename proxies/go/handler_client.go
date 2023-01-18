@@ -10,12 +10,12 @@ import (
 )
 
 type clientRequestBodyOptions struct {
-	ConfigCDNURI            string        `json:"configCDNURI"`
-	EventsAPIURI            string        `json:"eventsAPIURI"`
-	EnableEdgeDB            bool          `json:"enableEdgeDB"`
-	ConfigPollingIntervalMS time.Duration `json:"configPollingIntervalMS"`
-	EventFlushIntervalMS    time.Duration `json:"eventFlushIntervalMS"`
-	EnableCloudBucketing    bool          `json:"enableCloudBucketing"`
+	ConfigCDNURI            string `json:"configCDNURI"`
+	EventsAPIURI            string `json:"eventsAPIURI"`
+	EnableEdgeDB            bool   `json:"enableEdgeDB"`
+	ConfigPollingIntervalMS int64  `json:"configPollingIntervalMS"`
+	EventFlushIntervalMS    int64  `json:"eventFlushIntervalMS"`
+	EnableCloudBucketing    bool   `json:"enableCloudBucketing"`
 }
 
 type clientRequestBody struct {
@@ -47,8 +47,8 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		ConfigCDNURI:            reqBody.Options.ConfigCDNURI,
 		EventsAPIURI:            reqBody.Options.EventsAPIURI,
 		EnableEdgeDB:            reqBody.Options.EnableEdgeDB,
-		ConfigPollingIntervalMS: reqBody.Options.ConfigPollingIntervalMS,
-		EventFlushIntervalMS:    reqBody.Options.EventFlushIntervalMS,
+		ConfigPollingIntervalMS: time.Duration(reqBody.Options.ConfigPollingIntervalMS * 1000000),
+		EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
 		EnableCloudBucketing:    reqBody.EnableCloudBucketing,
 	}
 
