@@ -2,7 +2,10 @@
   "name": "@devcycle/test-harness",
   "scripts": {
     "test": "jest --verbose",
-    "test:ci": "yarn test --setupFiles=./ci-config.ts"
+    "test:ci": "yarn test --setupFiles=./ci-config.ts",
+    "start:nodejs": "cd proxies/nodejs && ts-node app.ts",
+    "start:go": "cd proxies/go && go run .",
+    "start:dotnet": "cd proxies/dotnet && dotnet run"
   },
   "version": "1.0.0",
   "description": "A universal testing system for DevCycle SDKs",
@@ -26,6 +29,7 @@
     "lint-staged": "^13.0.3",
     "nock": "^13.2.9",
     "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
     "typescript": "^4.9.3"
   },
   "dependencies": {
