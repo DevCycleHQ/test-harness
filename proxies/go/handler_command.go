@@ -184,15 +184,12 @@ func callMethodOnEntity(
 	}
 
 	result := method.Call(params)
-
-	entityType := method.Type().Out(0).Name()
-	if entityType != "Variable" {
-		entityType = "Object"
-	}
+	entityType := method.Type().Out(0)
+	entityName, parsedResult := parseEntity(entityType, result, err)
 
 	response := LocationResponse{
-		entityType,
-		result[0].Interface(),
+		entityName,
+		parsedResult,
 		make([]string, 0),
 	}
 
@@ -201,5 +198,37 @@ func callMethodOnEntity(
 	datastore.commandResults[command][locationId] = result[0]
 
 	return response, locationHeader
+
+}
+
+func parseEntity(entityType reflect.Type, result []reflect.Value, err *error) (string, any) {
+	defer func() {
+		if r := recover(); r != nil {
+			handleError(r, err)
+		}
+	}()
+
+	var parsedResult any
+	parsedResult = result[0]
+
+	// map types need to be explicitly cast to map[string]<type> for json parsing
+	if entityType == reflect.TypeOf(make(map[string]devcycle.Variable)) {
+		variables := result[0].Interface().(map[string]devcycle.Variable)
+		if len(variables) > 0 {
+			parsedResult = variables
+		}
+	} else if entityType == reflect.TypeOf(make(map[string]devcycle.Feature)) {
+		features := result[0].Interface().(map[string]devcycle.Feature)
+		if len(features) > 0 {
+			parsedResult = features
+		}
+	}
+
+	entityName := entityType.Name()
+	if entityName != "Variable" {
+		entityName = "Object"
+	}
+
+	return entityName, parsedResult
 
 }
