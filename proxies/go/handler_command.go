@@ -212,8 +212,8 @@ func parseEntity(entityType reflect.Type, result []reflect.Value, err *error) (s
 	parsedResult = result[0]
 
 	// map types need to be explicitly cast to map[string]<type> for json parsing
-	if entityType == reflect.TypeOf(make(map[string]devcycle.Variable)) {
-		variables := result[0].Interface().(map[string]devcycle.Variable)
+	if entityType == reflect.TypeOf(make(map[string]devcycle.ReadOnlyVariable)) {
+		variables := result[0].Interface().(map[string]devcycle.ReadOnlyVariable)
 		if len(variables) > 0 {
 			parsedResult = variables
 		}
