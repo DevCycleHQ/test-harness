@@ -12,6 +12,7 @@ import (
 type clientRequestBodyOptions struct {
 	ConfigCDNURI            string `json:"configCDNURI"`
 	EventsAPIURI            string `json:"eventsAPIURI"`
+	BucketingAPIURI         string `json:"bucketingAPIURI"`
 	EnableEdgeDB            bool   `json:"enableEdgeDB"`
 	ConfigPollingIntervalMS int64  `json:"configPollingIntervalMS"`
 	EventFlushIntervalMS    int64  `json:"eventFlushIntervalMS"`
@@ -46,6 +47,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 	options := devcycle.DVCOptions{
 		ConfigCDNURI:            reqBody.Options.ConfigCDNURI,
 		EventsAPIURI:            reqBody.Options.EventsAPIURI,
+		BucketingAPIURI:         reqBody.Options.BucketingAPIURI,
 		EnableEdgeDB:            reqBody.Options.EnableEdgeDB,
 		ConfigPollingIntervalMS: time.Duration(reqBody.Options.ConfigPollingIntervalMS * 1000000),
 		EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
