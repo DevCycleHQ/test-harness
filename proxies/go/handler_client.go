@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -67,11 +66,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		res.Message = "success"
 		datastore.clients[reqBody.ClientId] = *client
-		auth := context.WithValue(context.Background(), devcycle.ContextAPIKey, devcycle.APIKey{
-			Key: reqBody.SdkKey,
-		})
 
-		datastore.clientAuthContexts[reqBody.ClientId] = auth
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Location", "client/"+reqBody.ClientId)
 		w.WriteHeader(http.StatusCreated)

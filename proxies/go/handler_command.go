@@ -183,10 +183,6 @@ func callMethodOnEntity(
 	if locationIsClient {
 		log.Printf("command %s on client", command)
 		apiClient := entity.(devcycle.DVCClient).DevCycleApi
-		auth := datastore.clientAuthContexts[id]
-		if command != "close" {
-			params = append([]reflect.Value{reflect.ValueOf(auth)}, params...)
-		}
 		method = reflect.ValueOf(apiClient).MethodByName(strings.Title(command))
 	} else {
 		method = reflect.ValueOf(entity).MethodByName(strings.Title(command))
