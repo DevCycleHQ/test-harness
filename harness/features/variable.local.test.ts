@@ -68,7 +68,7 @@ describe('Variable Tests - Local', () => {
                         .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                         .reply(200, config)
 
-                    // Creating a client will pass to the proxy server by default: 
+                    // Creating a client will pass to the proxy server by default:
                     // - sdk key based on the client id created when creating the client
                     // - urls for the bucketing/config/events endpoints to redirect traffic
                     // into the proxy server so nock can mock out the responses
@@ -90,16 +90,16 @@ describe('Variable Tests - Local', () => {
                     await testClient.close()
                 })
 
-                // Instead of writing tests for each different type we support (String, Boolean, Number, JSON), 
-                // this function enumerates each type and runs all tests encapsulated within it 
+                // Instead of writing tests for each different type we support (String, Boolean, Number, JSON),
+                // this function enumerates each type and runs all tests encapsulated within it
                 // to condense repeated tests.
                 forEachVariableType((type) => {
                     const { key, defaultValue, variationOn, variableType } = expectedVariablesByType[type]
 
                     it('should return variable if mock server returns object matching default type',  async () => {
                         let eventBody = {}
-                        // The interceptor instance is used to wait on events that are triggered when calling 
-                        // methods so that we can verify events being sent out and mock out responses from the 
+                        // The interceptor instance is used to wait on events that are triggered when calling
+                        // methods so that we can verify events being sent out and mock out responses from the
                         // event server
                         const interceptor = scope.post(eventsUrl)
                         interceptor.reply((uri, body) => {
@@ -121,11 +121,13 @@ describe('Variable Tests - Local', () => {
                         // with an entity type "Variable"
                         expect(variable).toEqual(expect.objectContaining({
                             entityType: 'Variable',
-                            data: expect.objectContaining({
+                            data: {
+                                type: variableType,
                                 isDefaulted: false,
+                                key,
                                 defaultValue: defaultValue,
                                 value: variationOn
-                            })
+                            }
                         }))
 
                         // Expect that the SDK sends an "aggVariableEvaluated" event
@@ -154,7 +156,7 @@ describe('Variable Tests - Local', () => {
                         // Expect that the test returns a defaulted variable
                         expectDefaultValue(key, variable, wrongTypeDefault,
                             wrongTypeDefault === '1' ? VariableType.string : VariableType.number)
-                        // Expects that the SDK sends an "aggVariableDefaulted" event for the 
+                        // Expects that the SDK sends an "aggVariableDefaulted" event for the
                         // defaulted variable
                         expectEventBody(eventBody, key, 'aggVariableDefaulted')
                     })
