@@ -43,6 +43,10 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request: missing clientId", http.StatusBadRequest)
 		return
 	}
+	var onInitializedChannel chan bool
+	if !reqBody.WaitForInitialization {
+		onInitializedChannel = make(chan bool)
+	}
 
 	options := devcycle.DVCOptions{
 		ConfigCDNURI:            reqBody.Options.ConfigCDNURI,
@@ -52,6 +56,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		ConfigPollingIntervalMS: time.Duration(reqBody.Options.ConfigPollingIntervalMS * 1000000),
 		EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
 		EnableCloudBucketing:    reqBody.EnableCloudBucketing,
+		OnInitializedChannel:    onInitializedChannel,
 	}
 
 	var res clientResponseBody
