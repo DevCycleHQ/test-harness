@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -70,6 +71,7 @@ func commandHandler(locationIsClient bool, w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
+		log.Printf(err.Error())
 		var errorResponse ErrorResponse
 		if body.IsAsync {
 			errorResponse = ErrorResponse{
@@ -172,12 +174,19 @@ func callMethodOnEntity(
 		}
 	}()
 
+	if datastore.commandResults[command] == nil {
+		datastore.commandResults[command] = make(map[string]any)
+	}
+
 	var method reflect.Value
 
 	if locationIsClient {
+		log.Printf("command %s on client", command)
 		apiClient := entity.(devcycle.DVCClient).DevCycleApi
 		auth := datastore.clientAuthContexts[id]
-		params = append([]reflect.Value{reflect.ValueOf(auth)}, params...)
+		if command != "close" {
+			params = append([]reflect.Value{reflect.ValueOf(auth)}, params...)
+		}
 		method = reflect.ValueOf(apiClient).MethodByName(strings.Title(command))
 	} else {
 		method = reflect.ValueOf(entity).MethodByName(strings.Title(command))
@@ -195,6 +204,7 @@ func callMethodOnEntity(
 
 	locationId := strconv.Itoa(len(datastore.commandResults[command]))
 	locationHeader := "command/" + command + "/" + locationId
+
 	datastore.commandResults[command][locationId] = result[0]
 
 	return response, locationHeader
