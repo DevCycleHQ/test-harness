@@ -5,7 +5,8 @@
     "test:ci": "yarn test --setupFiles=./ci-config.ts",
     "start:nodejs": "cd proxies/nodejs && ts-node app.ts",
     "start:go": "cd proxies/go && go run .",
-    "start:dotnet": "cd proxies/dotnet && dotnet run"
+    "start:dotnet": "cd proxies/dotnet && dotnet run",
+    "start:java": "cd proxies/java && ./gradlew bootRun"
   },
   "version": "1.0.0",
   "description": "A universal testing system for DevCycle SDKs",

@@ -30,36 +30,6 @@ public class ProxyController {
         return new Spec();
     }
 
-    @PostMapping("/user")
-    public BaseResponse user(@RequestBody UserRequestBody body, HttpServletResponse response) {
-        try {
-            User sdkUser = User.builder()
-                .userId(body.user_id)
-                .name(body.name)
-                .language(body.language)
-                .country(body.country)
-                .appVersion(body.appVersion)
-                .appBuild(body.appBuild)
-                .customData(body.customData)
-                .privateCustomData(body.privateCustomData)
-                .createdDate(body.createdDate)
-                .lastSeenDate(body.lastSeenDate)
-                .build();
-
-            var userId = Integer.toString(DataStore.Users.size());
-            DataStore.Users.put(userId, sdkUser);
-
-            var result = new UserData(sdkUser);
-            response.setStatus(201);
-            response.addHeader("Location", "user/" + userId);
-            return result;
-        } catch (Exception e) {
-            response.setStatus(200);
-            return new ExceptionResponse(e.getMessage());
-        }
-        
-    }
-
     @PostMapping("/client")
     public BaseResponse client(@RequestBody ClientRequestBody body, HttpServletResponse response) {
         try {
