@@ -60,12 +60,13 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 
 	var res clientResponseBody
 	client, err := devcycle.NewDVCClient(reqBody.SdkKey, &options)
+
 	if err != nil {
 		res.Exception = err.Error()
 		w.WriteHeader(http.StatusOK)
 	} else {
 		res.Message = "success"
-		datastore.clients[reqBody.ClientId] = *client
+		datastore.clients[reqBody.ClientId] = client
 
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Location", "client/"+reqBody.ClientId)
