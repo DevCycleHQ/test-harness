@@ -182,7 +182,7 @@ func callMethodOnEntity(
 
 	if locationIsClient {
 		log.Printf("command %s on client", command)
-		apiClient := entity.(devcycle.DVCClient)
+		apiClient := entity.(*devcycle.DVCClient)
 		method = reflect.ValueOf(apiClient).MethodByName(strings.Title(command))
 	} else {
 		method = reflect.ValueOf(entity).MethodByName(strings.Title(command))

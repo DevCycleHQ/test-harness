@@ -11,12 +11,12 @@ import (
 )
 
 type DataStore = struct {
-	clients        map[string]devcycle.DVCClient
+	clients        map[string]*devcycle.DVCClient
 	commandResults map[string]map[string]any
 }
 
 var datastore = DataStore{
-	make(map[string]devcycle.DVCClient),
+	make(map[string]*devcycle.DVCClient),
 	map[string]map[string]any{
 		"variable":     make(map[string]any),
 		"allVariables": make(map[string]any),
