@@ -237,6 +237,10 @@ func parseEntity(entityType reflect.Type, result []reflect.Value, err *error) (s
 		entityName = "Object"
 	}
 
+	if result[1].Interface() != nil {
+		handleError(result[1].Interface(), err)
+	}
+
 	return entityName, parsedResult
 
 }
