@@ -189,6 +189,7 @@ func callMethodOnEntity(
 	}
 
 	result := method.Call(params)
+
 	entityType := method.Type().Out(0)
 	entityName, parsedResult := parseEntity(entityType, result, err)
 
@@ -237,7 +238,7 @@ func parseEntity(entityType reflect.Type, result []reflect.Value, err *error) (s
 		entityName = "Object"
 	}
 
-	if result[1].Interface() != nil {
+	if len(result) > 1 && result[1].Interface() != nil {
 		handleError(result[1].Interface(), err)
 	}
 
