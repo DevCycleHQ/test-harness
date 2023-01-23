@@ -1,7 +1,7 @@
 import {
     getConnectionStringForProxy,
     forEachSDK,
-    LocalTestClient, describeCapability
+    LocalTestClient, describeCapability, waitForRequest
 } from '../helpers'
 import { Capabilities } from '../types'
 import { config, variables } from '../mockData'
@@ -20,11 +20,13 @@ describe('allVariables Tests - Local', () => {
         beforeAll(async () => {
             configInterceptor = scope
                 .get(`/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`)
-            configInterceptor
+             configInterceptor
                 .reply(200, config)
 
             url = getConnectionStringForProxy(name)
-            await client.createClient(true)
+            await client.createClient(true, {
+                configPollingIntervalMS: 60000
+            })
         })
 
         afterAll(async () => {
@@ -35,9 +37,11 @@ describe('allVariables Tests - Local', () => {
             it('should return an empty object if client is not initialized', async () => {
                 const delayClient = new LocalTestClient(name)
 
-                scope
+                const interceptor = scope
                     .get(`/client/${delayClient.clientId}/config/v1/server/${delayClient.sdkKey}.json`)
                     .delay(2000)
+
+                interceptor
                     .reply(200, config)
 
                 await delayClient.createClient(false)
@@ -50,6 +54,7 @@ describe('allVariables Tests - Local', () => {
                 const { data: variablesMap } = await response.json()
 
                 expect(variablesMap).toMatchObject({})
+                await waitForRequest(scope, interceptor, 1000, 'Config request never received!')
                 await delayClient.close()
             })
 
