@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	devcycle "github.com/devcyclehq/go-server-sdk"
+	devcycle "github.com/devcyclehq/go-server-sdk/v2"
 )
 
 type clientRequestBodyOptions struct {
