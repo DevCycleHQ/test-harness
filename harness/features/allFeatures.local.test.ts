@@ -17,18 +17,10 @@ describe('allFeatures Tests - Local', () => {
 
                 beforeAll(async () => {
                     const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
-                    const interceptor = scope
+                    scope
                         .get(configRequestUrl)
-
-                    interceptor.reply(404)
-                    await testClient.createClient(false)
-
-                    await waitForRequest(
-                        scope,
-                        interceptor,
-                        3000,
-                        'Config request timed out'
-                    )
+                        .reply(404)
+                    await testClient.createClient(true, {configPollingIntervalMS: 60000})
                 })
 
                 afterAll(async () => {
@@ -52,7 +44,7 @@ describe('allFeatures Tests - Local', () => {
                     scope
                         .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                         .reply(200, config)
-                    await testClient.createClient(true)
+                    await testClient.createClient(true, {configPollingIntervalMS: 60000})
                 })
 
                 afterAll(async () => {
