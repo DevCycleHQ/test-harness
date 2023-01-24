@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	devcycle "github.com/devcyclehq/go-server-sdk"
+	devcycle "github.com/devcyclehq/go-server-sdk/v2"
 	"github.com/gorilla/mux"
 )
 
