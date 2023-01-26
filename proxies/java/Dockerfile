@@ -1,4 +1,4 @@
-FROM gradle:7.6.0-jdk17 AS build
+FROM amd64/gradle:7.6.0-jdk17 AS build
 COPY --chown=gradle:gradle . /home/gradle/src/
 WORKDIR /home/gradle/src
 
@@ -7,7 +7,7 @@ ENV JAVA_SDK_VERSION $JAVA_SDK_VERSION
 
 RUN gradle build --no-daemon
 
-FROM openjdk:17-jdk-slim-buster
+FROM amd64/openjdk:17-jdk-slim-buster
 
 EXPOSE 3000
 
