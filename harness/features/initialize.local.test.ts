@@ -68,6 +68,19 @@ describe('Initialize Tests - Local', () => {
                 await testClient.close()
             })
 
+            it('stops the polling interval when the sdk key is invalid and cdn responds 403', async () => {
+                const testClient = new LocalTestClient(name)
+
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .reply(403)
+
+                await testClient.createClient(true, { configPollingIntervalMS: 1000 })
+                await wait(1100)
+                // test will fail if another config request was sent that wasn't covered by the nock scope
+                await testClient.close()
+            })
+
             it('fetches config again after 3 seconds when config polling interval is overriden', async () => {
                 const testClient = new LocalTestClient(name)
                 scope
