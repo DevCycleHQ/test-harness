@@ -3,5 +3,6 @@ export const Sdks = {
     dotnet: 'DotNet',
     // TODO add once python is ready
     // python: "Python"
-    go: 'Go'
+    // go: 'Go',
+    java: 'Java'
 }
