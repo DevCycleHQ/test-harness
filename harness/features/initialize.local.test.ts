@@ -75,10 +75,8 @@ describe('Initialize Tests - Local', () => {
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(403)
 
-                await testClient.createClient(true, { configPollingIntervalMS: 1000 })
+                await testClient.createClient(true, { configPollingIntervalMS: 1000 }, testClient.sdkKey, true)
                 await wait(1100)
-                // test will fail if another config request was sent that wasn't covered by the nock scope
-                await testClient.close()
             })
 
             it('fetches config again after 3 seconds when config polling interval is overriden', async () => {
@@ -115,6 +113,7 @@ describe('Initialize Tests - Local', () => {
 
                 await wait(1100)
                 expect(scope.pendingMocks().length).toEqual(0)
+                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
                 // make sure the original config is still in use
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
@@ -139,6 +138,7 @@ describe('Initialize Tests - Local', () => {
                 await wait(1500)
                 expect(scope.pendingMocks().length).toEqual(0)
                 // make sure the original config is still in use
+                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
                 await testClient.close()
@@ -161,6 +161,7 @@ describe('Initialize Tests - Local', () => {
                 await wait(1200)
                 expect(scope.pendingMocks().length).toEqual(0)
                 // make sure the original config is still in use
+                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
                 await testClient.close()
