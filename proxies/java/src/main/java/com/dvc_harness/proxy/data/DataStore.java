@@ -10,6 +10,5 @@ public class DataStore {
     public static Hashtable<String, DVCLocalClient> LocalClients = new Hashtable<>();
     public static Hashtable<String, DVCCloudClient> CloudClients = new Hashtable<>();
 
-    public static Hashtable<String, User> Users = new Hashtable<>();
-    public static Hashtable<String, Object> Commands = new Hashtable<>();
+    public static Hashtable<String, Hashtable> CommandResults = new Hashtable<>();
 }
