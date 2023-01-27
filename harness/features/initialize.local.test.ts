@@ -68,7 +68,8 @@ describe('Initialize Tests - Local', () => {
                 await testClient.close()
             })
 
-            it('stops the polling interval when the sdk key is invalid and cdn responds 403', async () => {
+            it('stops the polling interval when the sdk key is invalid and cdn responds 403,' +
+                ' throws error', async () => {
                 const testClient = new LocalTestClient(name)
 
                 scope
