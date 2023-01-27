@@ -167,6 +167,29 @@ describe('Initialize Tests - Local', () => {
                 expect((await variable.json()).data.value).toEqual(1)
                 await testClient.close()
             })
+
+            it('uses the same config if the response is valid JSON but invalid data', async () => {
+                const testClient = new LocalTestClient(name)
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .reply(200, config)
+
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .reply(200, "{\"snatch_movie_quote\": \"d'ya like dags?\"}")
+
+                await testClient.createClient(true, { configPollingIntervalMS: 1000 })
+
+                expect(scope.pendingMocks().length).toEqual(1)
+
+                await wait(1200)
+                expect(scope.pendingMocks().length).toEqual(0)
+                // make sure the original config is still in use
+                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
+                expect((await variable.json()).data.value).toEqual(1)
+                await testClient.close()
+            })
         })
     })
 })
