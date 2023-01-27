@@ -136,7 +136,7 @@ describe('Initialize Tests - Local', () => {
 
                 expect(scope.pendingMocks().length).toEqual(1)
 
-                await wait(1500)
+                await wait(1300)
                 expect(scope.pendingMocks().length).toEqual(0)
                 // make sure the original config is still in use
                 scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
