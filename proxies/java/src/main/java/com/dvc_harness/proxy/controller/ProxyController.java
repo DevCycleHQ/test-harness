@@ -1,24 +1,25 @@
 package com.dvc_harness.proxy.controller;
 
+import com.devcycle.sdk.server.cloud.api.DVCCloudClient;
 import com.devcycle.sdk.server.cloud.model.DVCCloudOptions;
+import com.devcycle.sdk.server.local.api.DVCLocalClient;
 import com.devcycle.sdk.server.local.model.DVCLocalOptions;
 import com.dvc_harness.proxy.data.DataStore;
 import com.dvc_harness.proxy.models.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-
-import com.devcycle.sdk.server.local.api.DVCLocalClient;
-import com.devcycle.sdk.server.cloud.api.DVCCloudClient;
-import com.devcycle.sdk.server.common.model.User;
 
 @Controller
 @RestController
 public class ProxyController {
+    private Logger logger = Logger.getLogger(this.getClass().getName());
 
     @GetMapping("/healthz")
     public String index() {
@@ -69,7 +70,94 @@ public class ProxyController {
             return new MessageResponse("success");
         } catch (Exception e) {
             response.setStatus(200);
-            return new ExceptionResponse(e.getMessage());
+            return new ExceptionResponse(e);
         }
+    }
+
+    @PostMapping("/*/*")
+    public BaseResponse location(
+        HttpServletRequest request,
+        @RequestBody LocationRequestBody body,
+        HttpServletResponse response
+    ) {
+        if (body.command == null) {
+            response.setStatus(404);
+            return new MessageResponse("Invalid request: missing command");
+        }
+
+        if (body.params == null) {
+            response.setStatus(404);
+            return new MessageResponse("Invalid request: missing params");
+        }
+
+        Object[] parsedParams;
+        try {
+            parsedParams = this.parseParams(body);
+        } catch (Exception e) {
+            response.setStatus(404);
+            return new MessageResponse("Invalid request: missing entity from param");
+        }
+
+        try {
+            Object entity = getEntityFromLocation(request.getRequestURI());
+
+            if (entity == null) {
+                response.setStatus(404);
+                return new MessageResponse("Invalid request: missing entity");
+            }
+
+            String command = body.command;
+            CommandResult result = new CommandResult(entity, command).invokeCommand(parsedParams);
+
+            response.setStatus(201);
+            response.addHeader("Location", "command/" + command + "/" + result.commandId);
+            return new LocationResponse(
+                    result.entityType.name(),
+                    result.entityType.equals(EntityTypes.Client) ? new Object() : result.body
+            );
+        } catch (Exception e) {
+            logger.log(Level.INFO, e.toString());
+            return new ExceptionResponse(e);
+        }
+    }
+
+    private Object getEntityFromLocation(String uri) {
+        String[] urlParts = uri.substring(1).split("/");
+        String locationType = urlParts[0];
+
+        if (locationType.equals("command")) {
+            String entityType = urlParts[1];
+            String commandId = urlParts[2];
+            return DataStore.CommandResults.get(entityType).get(commandId);
+        }
+        if (locationType.equals("client")) {
+
+            Object clientEntity;
+            String clientId = urlParts[1];
+            if ((clientEntity = DataStore.LocalClients.get(clientId)) != null) return clientEntity;
+            if ((clientEntity = DataStore.CloudClients.get(clientId)) != null) return clientEntity;
+        }
+        return null;
+    }
+
+    private Object[] parseParams(LocationRequestBody body) throws Exception {
+        Object[] parsedParams = new Object[body.params.length];
+        for (int i=0; i < body.params.length; i++) {
+            LocationParam element = body.params[i];
+            if (element.callbackURL != null) {
+                parsedParams[i] = element.callbackURL;
+            } else if (element.type != null && element.type.equals(LocationParamType.user)) {
+                parsedParams[i] = body.user;
+            } else if (element.type != null && element.type.equals(LocationParamType.event)) {
+                parsedParams[i] = body.event;
+            } else {
+                parsedParams[i] = element.value;
+            }
+
+            if (parsedParams[i] == null) {
+                throw new Exception("Missing parameter value");
+            }
+        }
+        return parsedParams;
     }
 }
