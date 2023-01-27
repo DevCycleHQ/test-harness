@@ -41,7 +41,7 @@ public class CommandResult<T> {
     }
 
     private void parseResult(Object result) {
-        String entityClassName = result != null ? result.getClass().getName() : null;
+        String entityClassName = result != null ? result.getClass().getSimpleName() : null;
         EntityTypes entityType = entityClassName != null
             ? this.getEntityFromType(entityClassName)
             : EntityTypes.Void;
@@ -60,13 +60,14 @@ public class CommandResult<T> {
 
     private EntityTypes getEntityFromType(String value) {
         switch (value) {
-            case "DVCUser":
+            case "User":
                 return EntityTypes.User;
-            case "DVCVariable":
+            case "Variable":
                 return EntityTypes.Variable;
-            case "DVCFeature":
+            case "Feature":
                 return EntityTypes.Feature;
-            case "DVCClient":
+            case "DVCLocalClient":
+            case "DVCCloudClient":
                 return EntityTypes.Client;
             default:
                 return EntityTypes.Object;
