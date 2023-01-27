@@ -149,7 +149,12 @@ func parseParams(body CommandBody, err *error) []reflect.Value {
 	var parsedParams = []reflect.Value{}
 	for _, element := range body.Params {
 		if element.Type == nil {
-			parsedParams = append(parsedParams, reflect.ValueOf(*element.Value))
+			if element.Value == nil {
+				// if nil is passed, create a "zero value" reflect value object
+				parsedParams = append(parsedParams, reflect.ValueOf(nil))
+			} else {
+				parsedParams = append(parsedParams, reflect.ValueOf(*element.Value))
+			}
 		} else if *element.Type == "user" {
 			parsedParams = append(parsedParams, reflect.ValueOf(*body.User))
 		} else if *element.Type == "event" {
@@ -186,6 +191,15 @@ func callMethodOnEntity(
 		method = reflect.ValueOf(apiClient).MethodByName(strings.Title(command))
 	} else {
 		method = reflect.ValueOf(entity).MethodByName(strings.Title(command))
+	}
+
+	for index, value := range params {
+		expectedType := method.Type().In(index)
+		// if the reflect value is a "zero value", convert it to a zero value of the correct type for this argument
+		// e.g. for a string argument, the zero value is "". It is impossible to pass nil there.
+		if !value.IsValid() {
+			params[index] = reflect.New(expectedType).Elem()
+		}
 	}
 
 	result := method.Call(params)
