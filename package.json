@@ -1,5 +1,8 @@
 {
   "name": "@devcycle/test-harness",
+  "engines" : { 
+    "node" : ">=18.0.0"
+  },
   "scripts": {
     "test": "jest --verbose",
     "test:ci": "yarn test --setupFiles=./ci-config.ts",
