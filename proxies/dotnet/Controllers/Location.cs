@@ -187,7 +187,7 @@ public class LocationController : ControllerBase
 
         if (parsedCommand == "Close")
         {
-            parsedCommand = "Dispose";
+            parsedCommand = "DisposeAsync";
         }
 
         MethodInfo? commandMethod = entity.GetType().GetMethod(parsedCommand);
@@ -197,12 +197,23 @@ public class LocationController : ControllerBase
         }
 
         object result = null;
+        dynamic task = commandMethod?.Invoke(entity, parsedParams.ToArray());
+        Type returnType = commandMethod?.ReturnType;
 
-        if (isAsync) {
-            dynamic? task = commandMethod?.Invoke(entity, parsedParams.ToArray());
-            result = task == null ? result : (await task);
-        } else {
-            result = commandMethod?.Invoke(entity, parsedParams.ToArray()) ?? result;
+        if (isAsync)
+        {
+            if (returnType == typeof(Task) || returnType == typeof(ValueTask))
+            {
+                await task;
+            }
+            else
+            {
+                result = task == null ? result : (await task);
+            }
+        }
+        else
+        {
+            result = task ?? result;
         }
 
         var resultId = DataStore.Commands.Count.ToString();
