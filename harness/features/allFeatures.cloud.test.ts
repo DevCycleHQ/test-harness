@@ -1,6 +1,6 @@
 import {
     forEachSDK,
-    CloudTestClient, describeCapability,
+    CloudTestClient, describeCapability, expectErrorMessageToBe,
 } from '../helpers'
 import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -67,6 +67,19 @@ describe('allFeatures Tests - Cloud', () => {
                     data: expectedFeaturesVariationOn,
                     logs: []
                 })
+            })
+
+            // TODO DVC-5954 investigate why these were failing on the SDKs
+            it.skip('should throw if features request fails on invalid sdk key', async () => {
+                scope
+                    .post(`/client/${testClient.clientId}/v1/features`)
+                    .reply(401, { message: 'Invalid sdk key' })
+
+                const response = await testClient.callAllFeatures({
+                    user_id: 'user1'
+                }, true)
+                const res = await response.json()
+                expectErrorMessageToBe(res.asyncError, 'Invalid sdk key')
             })
         })
     })

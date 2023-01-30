@@ -87,6 +87,19 @@ describe('Track Tests - Cloud', () => {
                 expectEventBody(eventBody, variableId, eventType, value)
             })
 
+            // TODO DVC-5954 investigate why these were failing on the SDKs
+            it.skip('should throw if track request fails on invalid sdk key', async () => {
+                scope
+                    .post(`/client/${client.clientId}/v1/track`)
+                    .reply(401, { message: 'Invalid sdk key' })
+
+                const response = await client.callTrack({
+                    user_id: 'user1'
+                }, { target: 1 },true)
+                const res = await response.json()
+                expectErrorMessageToBe(res.asyncError, 'Invalid sdk key')
+            })
+
         })
 
         const expectEventBody = (
