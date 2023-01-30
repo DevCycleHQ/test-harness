@@ -254,6 +254,10 @@ const checkFailed = async (response: Response, shouldFail: boolean) => {
         const result = await response.clone().json()
         expect(result.exception).toBeUndefined()
         expect(result.asyncError).toBeUndefined()
+    } else {
+        const result = await response.clone().json()
+        // We are expecting this operation to fail, so throw if it succeeds
+        expect(result.exception || result.asyncError).toBeDefined()
     }
 }
 
