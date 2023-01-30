@@ -30,14 +30,16 @@ services:
     container_name: dotnet
     ports:
       - "3000"
-#  java:
-#    build:
-#      context: ./proxies/java
-#      args:
-#        - JAVA_SDK_VERSION=${JAVA_SDK_VERSION}
-#    container_name: java
-#    ports:
-#      - "3000"
+  java:
+   build:
+     context: ./proxies/java
+     args:
+       - JAVA_SDK_VERSION=${JAVA_SDK_VERSION}
+       - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+       - SDKS_TO_TEST=${SDKS_TO_TEST}
+   container_name: java
+   ports:
+     - "3000"
   go:
     build:
       context: ./proxies/go

@@ -5,6 +5,9 @@ WORKDIR /home/gradle/src
 ARG JAVA_SDK_VERSION
 ENV JAVA_SDK_VERSION $JAVA_SDK_VERSION
 
+ARG SDK_GITHUB_SHA
+ENV SDK_GITHUB_SHA $SDK_GITHUB_SHA
+
 RUN gradle build --no-daemon
 
 FROM openjdk:17-jdk-slim-buster
