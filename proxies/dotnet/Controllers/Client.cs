@@ -114,10 +114,13 @@ public class ClientController : ControllerBase
 
                 if (ClientBody.WaitForInitialization == true) {
                     Task task = new Task(() => {});
+                    DevCycle.SDK.Server.Common.Model.DVCEventArgs? eventArgs = null;
+
                     DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
                         .SetEnvironmentKey(ClientBody.SdkKey)
                         .SetInitializedSubscriber((o, e) =>
                         {
+                            eventArgs = e;
                             task.Start();
                         })
                         .SetOptions(ClientBody.Options)
@@ -125,6 +128,9 @@ public class ClientController : ControllerBase
                         .Build();
 
                         await task;
+                        if (eventArgs != null && !eventArgs.Success) {
+                            throw eventArgs.Errors[0];
+                        }
                 } else {
                     DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
                         .SetEnvironmentKey(ClientBody.SdkKey)

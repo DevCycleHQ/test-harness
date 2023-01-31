@@ -62,7 +62,8 @@ describe('Initialize Tests - Local', () => {
 
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                    .reply(404)
+                    .times(2)
+                    .reply(500)
 
                 await testClient.createClient(true, { configPollingIntervalMS: 10000 })
                 await testClient.close()
@@ -76,8 +77,15 @@ describe('Initialize Tests - Local', () => {
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .reply(403)
 
-                await testClient.createClient(true, { configPollingIntervalMS: 1000 }, testClient.sdkKey, true)
-                await wait(1100)
+                const response = 
+                    await testClient.createClient(true, { configPollingIntervalMS: 1000 }, testClient.sdkKey, true)
+                const { exception } = await response.json()
+
+                expectErrorMessageToBe(
+                    exception,
+                    'Invalid environment key provided. Please call initialize with a valid server environment key'
+                )
+
             })
 
             it('fetches config again after 3 seconds when config polling interval is overriden', async () => {
