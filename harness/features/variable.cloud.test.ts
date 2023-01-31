@@ -18,11 +18,11 @@ describe('Variable Tests - Cloud', () => {
         const testClient = new CloudTestClient(name)
 
         beforeAll(async () => {
-            // Creating a client will pass to the proxy server by default: 
+            // Creating a client will pass to the proxy server by default:
             // - sdk key based on the client id created when creating the client
             // - urls for the bucketing/config/events endpoints to redirect traffic
             // into the proxy server so nock can mock out the responses
-            // - options like should wait for initialization, or should 
+            // - options like should wait for initialization, or should
             // expect it to error out
             await testClient.createClient({
                 enableCloudBucketing: true
@@ -46,6 +46,25 @@ describe('Variable Tests - Cloud', () => {
                 // Helper method to equate error messages from the error object returned
                 // from the proxy server
                 expectErrorMessageToBe(error.asyncError, 'Missing parameter: key')
+            })
+            // TODO DVC-5954 investigate why these were failing on the SDKs
+            it.skip('will throw error if variable called with invalid sdk key', async () => {
+                scope
+                    .post(`/client/${testClient.clientId}/v1/variable/var_key`)
+                    .reply(401, { message: 'Invalid sdk key' })
+
+                // Helper method calls the proxy server to trigger the "variable" method in
+                // the SDK
+                const variableResponse = await testClient.callVariable(
+                    { user_id: 'user1' },
+                    'var_key',
+                    'default_value',
+                    true
+                )
+                const error = await variableResponse.json()
+                // Helper method to equate error messages from the error object returned
+                // from the proxy server
+                expectErrorMessageToBe(error.asyncError, 'Invalid sdk key')
             })
 
             it('will throw error variable called with invalid default value', async () => {
@@ -140,7 +159,7 @@ describe('Variable Tests - Cloud', () => {
                 )
                 const variable = await variableResponse.json()
 
-                // We can expect that the object we mocked out earlier is going to be 
+                // We can expect that the object we mocked out earlier is going to be
                 // what is returned to us from the proxy server and verify the entityType
                 // is of type "Variable"
                 expect(variable).toEqual(expect.objectContaining({
@@ -155,7 +174,7 @@ describe('Variable Tests - Cloud', () => {
                 }))
             })
 
-            // Instead of writing tests for each different type we support (String, Boolean, Number, JSON), 
+            // Instead of writing tests for each different type we support (String, Boolean, Number, JSON),
             // this function enumerates each type and runs all tests encapsulated within it to condense repeated tests.
             forEachVariableType((type) => {
                 it(`should return default ${type} variable if mock server returns undefined`, async () => {
