@@ -69,6 +69,7 @@ describe('Initialize Tests - Local', () => {
                 await testClient.close()
             })
 
+            // TODO DVC-6016 investigate why these were failing on the nodeJS SDK
             it.skip('stops the polling interval when the sdk key is invalid and cdn responds 403,' +
                 ' throws error', async () => {
                 const testClient = new LocalTestClient(name)
