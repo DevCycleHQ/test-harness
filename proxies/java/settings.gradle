@@ -1,1 +1,4 @@
 rootProject.name = 'proxy'
+// Uncomment the following line to use the local java-server-sdk
+// include ':java-server-sdk'
+// project(':java-server-sdk').projectDir = new File('../../../java-server-sdk')

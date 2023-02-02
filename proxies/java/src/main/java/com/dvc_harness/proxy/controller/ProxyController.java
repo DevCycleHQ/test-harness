@@ -38,6 +38,7 @@ public class ProxyController {
                 DVCCloudOptions.DVCCloudOptionsBuilder builder = DVCCloudOptions.builder();
                 if (body.options != null) {
                     builder.enableEdgeDB(body.options.enableEdgeDB);
+                    builder.baseURLOverride(body.options.baseURLOverride);
                 }
 
                 DVCCloudClient client = new DVCCloudClient(body.sdkKey, builder.build());
