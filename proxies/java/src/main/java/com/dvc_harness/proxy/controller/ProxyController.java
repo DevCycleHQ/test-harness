@@ -38,7 +38,7 @@ public class ProxyController {
                 DVCCloudOptions.DVCCloudOptionsBuilder builder = DVCCloudOptions.builder();
                 if (body.options != null) {
                     builder.enableEdgeDB(body.options.enableEdgeDB);
-                    builder.baseURLOverride(body.options.baseURLOverride);
+                    builder.baseURLOverride(body.options.bucketingAPIURI);
                 }
 
                 DVCCloudClient client = new DVCCloudClient(body.sdkKey, builder.build());
@@ -47,9 +47,12 @@ public class ProxyController {
                 DVCLocalOptions.DVCLocalOptionsBuilder builder = DVCLocalOptions.builder();
 
                 if (body.options != null) {
-                    if (body.options.baseURLOverride != null) {
-                        builder.configCdnBaseUrl(body.options.baseURLOverride);
-                        builder.eventsApiBaseUrl(body.options.baseURLOverride);
+                    if (body.options.configCDNURI != null) {
+                        builder.configCdnBaseUrl(body.options.configCDNURI);
+                    }
+
+                    if (body.options.eventsAPIURI != null) {
+                        builder.eventsApiBaseUrl(body.options.eventsAPIURI);
                     }
 
                     if (body.options.configPollingIntervalMS != null) {
