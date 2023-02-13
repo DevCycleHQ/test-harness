@@ -1,7 +1,9 @@
 import {
     getConnectionStringForProxy,
     forEachSDK,
-    LocalTestClient, describeCapability, CloudTestClient, waitForRequest
+    LocalTestClient,
+    describeCapability,
+    waitForRequest
 } from '../helpers'
 import { Capabilities } from '../types'
 import { config } from '../mockData'
