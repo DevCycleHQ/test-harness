@@ -121,7 +121,7 @@ public class ProxyController {
             );
         } catch (Exception e) {
             logger.log(Level.INFO, e.toString());
-            return new ExceptionResponse(e);
+            return new ExceptionResponse((Exception) e.getCause());
         }
     }
 
@@ -156,10 +156,6 @@ public class ProxyController {
                 parsedParams[i] = body.event;
             } else {
                 parsedParams[i] = element.value;
-            }
-
-            if (parsedParams[i] == null) {
-                throw new Exception("Missing parameter value");
             }
         }
         return parsedParams;

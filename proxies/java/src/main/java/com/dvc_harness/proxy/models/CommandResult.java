@@ -3,6 +3,7 @@ package com.dvc_harness.proxy.models;
 import com.dvc_harness.proxy.data.DataStore;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,18 +25,18 @@ public class CommandResult<T> {
     public CommandResult invokeCommand(
         Object[] params
     ) throws NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException {
-        Class<?>[] paramTypes = new Class<?>[params.length];
-        for (int i=0; i < params.length; i++) {
-            paramTypes[i] = params[i].getClass();
+        Method[] allEntityMethods = this.entity.getClass().getMethods();
+        Method methodToExecute = null;
+        for(int i = 0; i < allEntityMethods.length; i++) {
+            if (allEntityMethods[i].getName().equals(this.command)) {
+                methodToExecute = allEntityMethods[i];
+            }
         }
 
-        // When getting methods with generic params, the param type should be an Object
-        if (this.command.equals("variable")) paramTypes[2] = Object.class;
-
-        this.body = this.entity
-                .getClass()
-                .getMethod(this.command, paramTypes)
-                .invoke(this.entity, params);
+        if (methodToExecute == null) {
+            throw new NoSuchMethodException();
+        }
+        this.body = methodToExecute.invoke(this.entity, params);
         this.parseResult(this.body);
         return this;
     }
