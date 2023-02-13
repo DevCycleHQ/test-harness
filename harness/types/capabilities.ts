@@ -2,7 +2,8 @@ export const Capabilities = {
     edgeDB: 'EdgeDB',
     local: 'LocalBucketing',
     cloud: 'CloudBucketing',
-    sse: 'SSE'
+    sse: 'SSE',
+    clientCustomData: 'ClientCustomData',
 }
 
 export const SDKCapabilities = {
@@ -10,5 +11,5 @@ export const SDKCapabilities = {
     Python: [Capabilities.cloud, Capabilities.edgeDB],
     DotNet: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB],
     Java: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB],
-    Go: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB],
+    Go: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData],
 }

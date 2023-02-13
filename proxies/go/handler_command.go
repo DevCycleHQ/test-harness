@@ -204,6 +204,13 @@ func callMethodOnEntity(
 
 	result := method.Call(params)
 
+	for _, value := range result {
+		if value.Type().Implements(reflect.TypeOf(err).Elem()) && value.Interface() != nil {
+			// panic to catch error in defer function above
+			panic(value.Interface())
+		}
+	}
+
 	entityType := method.Type().Out(0)
 	entityName, parsedResult := parseEntity(entityType, result, err)
 
