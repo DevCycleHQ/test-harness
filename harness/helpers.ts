@@ -359,6 +359,18 @@ export class LocalTestClient extends BaseTestClient {
 
         return result
     }
+
+    async callSetClientCustomData(data: Record<string, unknown>, shouldFail = false) {
+        const result = await sendCommand(this.getClientUrl(), {
+            command: 'setClientCustomData',
+            params: [{ value: data }],
+            isAsync: false
+        })
+
+        await checkFailed(result, shouldFail)
+
+        return result
+    }
 }
 
 export class CloudTestClient extends BaseTestClient {
