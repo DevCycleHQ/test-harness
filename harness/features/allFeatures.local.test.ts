@@ -1,7 +1,7 @@
 import {
     forEachSDK,
     LocalTestClient,
-    waitForRequest, describeCapability
+    describeCapability
 } from '../helpers'
 import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
@@ -19,8 +19,9 @@ describe('allFeatures Tests - Local', () => {
                     const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
                     scope
                         .get(configRequestUrl)
-                        .reply(404)
-                    await testClient.createClient(true, {configPollingIntervalMS: 60000})
+                        .times(2)
+                        .reply(500)
+                    await testClient.createClient(true, { configPollingIntervalMS: 60000 })
                 })
 
                 afterAll(async () => {
@@ -44,7 +45,7 @@ describe('allFeatures Tests - Local', () => {
                     scope
                         .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                         .reply(200, config)
-                    await testClient.createClient(true, {configPollingIntervalMS: 60000})
+                    await testClient.createClient(true, { configPollingIntervalMS: 60000 })
                 })
 
                 afterAll(async () => {
