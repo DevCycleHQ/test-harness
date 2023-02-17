@@ -1,7 +1,9 @@
 import {
     forEachSDK,
     wait,
-    LocalTestClient, describeCapability, expectErrorMessageToBe, expectErrorToContain
+    LocalTestClient,
+    describeCapability,
+    expectErrorMessageToBe
 } from '../helpers'
 import { Capabilities } from '../types'
 import { config, shouldBucketUser } from '../mockData'
@@ -17,9 +19,9 @@ describe('Initialize Tests - Local', () => {
                 const response = await testClient.createClient(true, {}, null, true)
                 const { exception } = await response.json()
 
-                expectErrorToContain(
+                expectErrorMessageToBe(
                     exception,
-                    ['Missing SDK key! Call ', ' with a valid SDK key']
+                    'Missing SDK key! Call initialize with a valid SDK key'
                 )
             })
 
@@ -28,9 +30,9 @@ describe('Initialize Tests - Local', () => {
                 const response = await testClient.createClient(true, {}, 'invalid key', true)
                 const { exception } = await response.json()
 
-                expectErrorToContain(
+                expectErrorMessageToBe(
                     exception,
-                    ['Invalid SDK key provided. Please call ', ' with a valid server SDK key']
+                    'Invalid SDK key provided. Please call initialize with a valid server SDK key'
                 )
             })
 

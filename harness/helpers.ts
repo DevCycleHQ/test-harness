@@ -442,15 +442,6 @@ export class CloudTestClient extends BaseTestClient {
     }
 }
 
-export const expectErrorToContain = (message: string, expectedStrings: string[]) => {
-    expectedStrings.forEach((expected) => {
-        if (!message.includes(expected)) {
-            console.warn(`Expected error message to contain: \n ${expected}, but got: \n ${message}`)
-        }
-        expect(message).toContain(expected)
-    })
-}
-
 export const expectErrorMessageToBe = (message: string, expected: string) => {
     // when we consolidate error messages to be uniform, change this to actually compare
     // the exception and the expected exception message
