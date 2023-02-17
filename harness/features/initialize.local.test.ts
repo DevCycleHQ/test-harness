@@ -19,7 +19,7 @@ describe('Initialize Tests - Local', () => {
 
                 expectErrorToContain(
                     exception,
-                    ['Missing SDK key! Call ' + ' with a valid SDK key']
+                    ['Missing SDK key! Call ', ' with a valid SDK key']
                 )
             })
 
@@ -30,7 +30,7 @@ describe('Initialize Tests - Local', () => {
 
                 expectErrorToContain(
                     exception,
-                    ['Invalid SDK key provided. Please call ' + ' with a valid server SDK key']
+                    ['Invalid SDK key provided. Please call ', ' with a valid server SDK key']
                 )
             })
 
