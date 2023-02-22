@@ -94,13 +94,7 @@ public class ProxyController {
             return new MessageResponse("Invalid request: missing params");
         }
 
-        Object[] parsedParams;
-        try {
-            parsedParams = this.parseParams(body);
-        } catch (Exception e) {
-            response.setStatus(404);
-            return new MessageResponse("Invalid request: missing entity from param");
-        }
+        Object[] parsedParams = this.parseParams(body);
 
         try {
             Object entity = getEntityFromLocation(request.getRequestURI());
@@ -121,7 +115,7 @@ public class ProxyController {
             );
         } catch (Exception e) {
             logger.log(Level.INFO, e.toString());
-            return new ExceptionResponse((Exception) e.getCause());
+            return body.isAsync ? new AsyncErrorResponse(e) : new ExceptionResponse(e);
         }
     }
 
@@ -144,7 +138,7 @@ public class ProxyController {
         return null;
     }
 
-    private Object[] parseParams(LocationRequestBody body) throws Exception {
+    private Object[] parseParams(LocationRequestBody body) {
         Object[] parsedParams = new Object[body.params.length];
         for (int i=0; i < body.params.length; i++) {
             LocationParam element = body.params[i];
