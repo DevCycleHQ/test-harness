@@ -326,7 +326,8 @@ describe('Variable Tests - Local', () => {
                     events: [
                         {
                             clientDate: expect.any(String),
-                            date: expect.any(String),
+                            // TODO expect this to be empty when these are fixed: DVC-6300, DVC-6301
+                            date: expect.toBeOneOf([undefined, null, expect.any(String)]),
                             user_id: expect.any(String),
                             type: eventType,
                             target: variableId,
