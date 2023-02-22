@@ -64,7 +64,7 @@ describe('Track Tests - Local', () => {
                     const interceptor = scope.post(`/client/${client.clientId}/v1/events/batch`)
                     interceptor.reply((uri, body) => {
                         eventBody = body
-                        return [201]
+                        return [201, body]
                     })
 
                     const trackResponse = await client.callTrack({ user_id: validUserId },
@@ -110,7 +110,7 @@ describe('Track Tests - Local', () => {
                     const interceptor = scope.post(`/client/${client.clientId}/v1/events/batch`)
                     interceptor.reply((uri, body) => {
                         eventBody = body
-                        return [201]
+                        return [201, body]
                     })
 
                     await client.callTrack({ user_id: validUserId },
@@ -178,7 +178,7 @@ describe('Track Tests - Local', () => {
                         interceptor.reply((uri, body) => {
                             eventBody = body
                             timestamps.push(Date.now() - startDate)
-                            return [201]
+                            return [201, body]
                         })
 
                         await client.callTrack({ user_id: validUserId },
