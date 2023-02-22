@@ -5,5 +5,6 @@ module.exports = {
         '^.+\\.tsx?$': ['ts-jest', {}]
     },
     testEnvironment: './jest-environment.ts',
+    setupFilesAfterEnv: ["./jest-setup.js"],
     testTimeout: 60000,
 };

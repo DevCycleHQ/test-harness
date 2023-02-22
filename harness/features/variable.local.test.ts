@@ -44,6 +44,11 @@ const expectedVariablesByType = {
     }
 }
 
+const bucketedEventMetadata = {
+    _feature: "638680d6fcb67b96878d90e6",
+    _variation: "638680d6fcb67b96878d90ec"
+}
+
 describe('Variable Tests - Local', () => {
     // This helper method enumerates all the SDKs and calls each test suite
     // for each SDK, and creates a test client from the name.
@@ -297,18 +302,40 @@ describe('Variable Tests - Local', () => {
             eventType: string,
             value?: number
         ) => {
-            expect(body).toMatchObject({
+            expect(body).toEqual({
                 batch: [{
-                    user: expect.objectContaining({
+                    user: {
+                        platformVersion: expect.any(String),
+                        sdkVersion: expect.any(String),
+                        user_id: expect.any(String),
+                        createdDate: expect.any(String),
+                        lastSeenDate: expect.any(String),
                         platform: expectedPlatform,
                         sdkType: 'server',
-                    }),
+                        customData: expect.toBeNil(),
+                        privateCustomData: expect.toBeNil(),
+                        email: expect.toBeNil(),
+                        name: expect.toBeNil(),
+                        language: expect.toBeNil(),
+                        deviceModel: expect.toBeNil(),
+                        country: expect.toBeNil(),
+                        appVersion: expect.toBeNil(),
+                        // TODO remove 0 when this is fixed https://taplytics.atlassian.net/browse/DVC-6295
+                        appBuild: expect.toBeOneOf([undefined, null, 0])
+                    },
                     events: [
-                        expect.objectContaining({
+                        {
+                            clientDate: expect.any(String),
+                            date: expect.any(String),
+                            user_id: expect.any(String),
                             type: eventType,
                             target: variableId,
+                            metaData: eventType === 'aggVariableEvaluated' ? bucketedEventMetadata : expect.toBeNil(),
+                            // featureVars is always empty for aggregated evaluation events
+                            featureVars: {},
                             value: value !== undefined ? value : 1,
-                        })
+                            customType: expect.toBeNil()
+                        }
                     ]
                 }]
             })
