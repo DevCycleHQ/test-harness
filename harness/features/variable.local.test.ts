@@ -319,6 +319,8 @@ describe('Variable Tests - Local', () => {
                         language: expect.toBeNil(),
                         deviceModel: expect.toBeNil(),
                         country: expect.toBeNil(),
+                        // TODO expect this to always be a string when these are fixed: DVC-6303, DVC-6304, DVC-6305
+                        hostname: expect.toBeOneOf([undefined, null, expect.any(String)]),
                         appVersion: expect.toBeNil(),
                         // TODO remove 0 when this is fixed https://taplytics.atlassian.net/browse/DVC-6295
                         appBuild: expect.toBeOneOf([undefined, null, 0])
@@ -326,7 +328,8 @@ describe('Variable Tests - Local', () => {
                     events: [
                         {
                             clientDate: expect.any(String),
-                            date: expect.any(String),
+                            // TODO expect this to be empty when these are fixed: DVC-6300, DVC-6301
+                            date: expect.toBeOneOf([undefined, null, expect.any(String)]),
                             user_id: expect.any(String),
                             type: eventType,
                             target: variableId,
