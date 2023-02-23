@@ -10,9 +10,10 @@ const scope = getServerScope()
 
 describe('allFeatures Tests - Cloud', () => {
     forEachSDK((name) => {
-        const testClient = new CloudTestClient(name)
+        let testClient: CloudTestClient
 
-        beforeAll(async () => {
+        beforeEach(async () => {
+            testClient = new CloudTestClient(name)
             await testClient.createClient({
                 enableCloudBucketing: true,
             })

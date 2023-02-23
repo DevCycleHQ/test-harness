@@ -47,7 +47,6 @@ describe('Client Custom Data Tests', () => {
                         value: 'string'
                     }
                 }))
-                await client.close()
             })
 
             it('should do nothing when client has not initialized', async () => {
@@ -76,8 +75,6 @@ describe('Client Custom Data Tests', () => {
                         value: 'some-default'
                     }
                 }))
-
-                await client.close()
             })
         })
     })

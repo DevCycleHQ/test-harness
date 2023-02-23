@@ -15,9 +15,10 @@ describe('allVariables Tests - Local', () => {
     forEachSDK((name: string) => {
         let url: string
 
-        const client = new LocalTestClient(name)
+        let client: LocalTestClient
 
-        beforeAll(async () => {
+        beforeEach(async () => {
+            client = new LocalTestClient(name)
             configInterceptor = scope
                 .get(`/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`)
              configInterceptor
@@ -27,10 +28,6 @@ describe('allVariables Tests - Local', () => {
             await client.createClient(true, {
                 configPollingIntervalMS: 60000
             })
-        })
-
-        afterAll(async () => {
-            await client.close()
         })
 
         describeCapability(name, Capabilities.local)(name, () => {
@@ -55,7 +52,6 @@ describe('allVariables Tests - Local', () => {
 
                 expect(variablesMap).toMatchObject({})
                 await waitForRequest(scope, interceptor, 1000, 'Config request never received!')
-                await delayClient.close()
             })
 
             it('should return a variable map for a bucketed user', async () => {

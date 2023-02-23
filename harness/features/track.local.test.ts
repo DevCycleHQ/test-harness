@@ -21,9 +21,10 @@ describe('Track Tests - Local', () => {
 
         describeCapability(name, Capabilities.local)(name, () => {
 
-            const client = new LocalTestClient(name)
+            let client: LocalTestClient
 
-            beforeAll(async () => {
+            beforeEach(async () => {
+                client = new LocalTestClient(name)
                 url = getConnectionStringForProxy(name)
 
                 scope
@@ -35,10 +36,6 @@ describe('Track Tests - Local', () => {
                     logLevel: 'debug',
                     configPollingIntervalMS: 1000 * 60
                 })
-            })
-
-            afterAll(async () => {
-                await client.close()
             })
 
             describe('Expect no events sent', () => {

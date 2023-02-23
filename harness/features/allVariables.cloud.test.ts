@@ -14,9 +14,10 @@ describe('allVariables Tests - Cloud', () => {
     forEachSDK((name: string) => {
         let url: string
 
-        const client = new CloudTestClient(name)
+        let client: CloudTestClient
 
-        beforeAll(async () => {
+        beforeEach(async () => {
+            client = new CloudTestClient(name)
             url = getConnectionStringForProxy(name)
             await client.createClient()
         })

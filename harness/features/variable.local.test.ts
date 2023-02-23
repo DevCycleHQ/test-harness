@@ -60,11 +60,12 @@ describe('Variable Tests - Local', () => {
         // Capabilities are located under harness/types/capabilities and follow the same
         // name mapping from the sdks.ts file under harness/types/sdks.ts
         describeCapability(name, Capabilities.local)(name, () => {
-            const testClient = new LocalTestClient(name)
+            let testClient: LocalTestClient
             let eventsUrl: string
 
             describe('initialized client', () => {
-                beforeAll(async () => {
+                beforeEach(async () => {
+                    testClient = new LocalTestClient(name)
                     // This allows us to mock out the our specific client (using the clientId),
                     // allowing us to have multiple clients serving different clients without
                     // conflicting. This one is used to mock the config that the local client is going to use
@@ -89,10 +90,6 @@ describe('Variable Tests - Local', () => {
                     })
 
                     eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
-                })
-
-                afterAll(async () => {
-                    await testClient.close()
                 })
 
                 // Instead of writing tests for each different type we support (String, Boolean, Number, JSON),
@@ -254,9 +251,10 @@ describe('Variable Tests - Local', () => {
             })
 
             describe('uninitialized client', () => {
-                const testClient = new LocalTestClient(name)
+                let testClient: LocalTestClient
 
-                beforeAll(async () => {
+                beforeEach(async () => {
+                    testClient = new LocalTestClient(name)
                     const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
                     const interceptor = scope
                         .get(configRequestUrl)
@@ -274,10 +272,6 @@ describe('Variable Tests - Local', () => {
                         3000,
                         'Config request timed out'
                     )
-                })
-
-                afterAll(async () => {
-                    await testClient.close()
                 })
 
                 forEachVariableType((type) => {

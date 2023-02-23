@@ -10,11 +10,18 @@ import bodyParser from 'koa-bodyparser'
 
 let unmatchedRequests = []
 
-export const assertNoUnmatchedRequests = async () => {
+export const assertNoUnmatchedRequests = async (currentClientId, testNameMap) => {
     if (unmatchedRequests.length > 0) {
         const currentUnmatchedRequests = unmatchedRequests
         unmatchedRequests = []
-        throw new Error('Unmatched requests: ' + currentUnmatchedRequests)
+        const url = currentUnmatchedRequests[0].config.url
+        const clientId = url.split('/')[4]
+        if (url.includes(currentClientId)) {
+            throw new Error('Unmatched requests: ' + currentUnmatchedRequests)
+        } else {
+            const testName = testNameMap[clientId]
+            throw new Error(`Unmatched requests from test case ${testName} ` + currentUnmatchedRequests)
+        }
     }
 }
 

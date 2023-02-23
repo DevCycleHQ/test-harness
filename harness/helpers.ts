@@ -1,6 +1,5 @@
 import { Interceptor, Scope } from 'nock'
 import { SDKCapabilities, Sdks } from './types'
-import nock from 'nock'
 import { getServerScope, resetServerScope } from './nock'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -39,6 +38,9 @@ export const getConnectionStringForProxy = (proxy: string) => {
     return `http://${host}:${port}`
 }
 
+let currentClient: BaseTestClient
+const clientTestNameMap: Record<string, string> = {}
+
 export const forEachSDK = (tests) => {
     // get the list of SDK's and their capabilities
     let SDKs
@@ -56,6 +58,8 @@ export const forEachSDK = (tests) => {
 
     describe.each(SDKs)('%s SDK tests', (name) => {
         afterEach(async () => {
+            await currentClient.close()
+
             if (!scope.isDone()) {
                 const pendingMocks = scope.pendingMocks()
                 resetServerScope()
@@ -63,7 +67,7 @@ export const forEachSDK = (tests) => {
             }
 
             resetServerScope()
-            await global.assertNoUnmatchedRequests()
+            await global.assertNoUnmatchedRequests(currentClient.clientId, clientTestNameMap)
         })
         tests(name)
     })
@@ -270,21 +274,31 @@ class BaseTestClient {
     constructor(sdkName: string) {
         this.clientId = uuidv4()
         this.sdkName = sdkName
+        currentClient = this
+        const currentTestName = expect.getState().currentTestName
+        if (!currentTestName) {
+            throw new Error("Clients can only be created inside individual test cases!")
+        }
+        clientTestNameMap[this.clientId] = expect.getState().currentTestName
         this.sdkKey = `dvc_server_${this.clientId}`
     }
 
     protected getClientUrl() {
         return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
+
+    async close() {}
 }
 
 export class LocalTestClient extends BaseTestClient {
+    private shouldFailInit = false
     async createClient(
         waitForInitialization: boolean,
         options: Record<string, unknown> = {},
         sdkKey?: string | null,
         shouldFail = false
     ) {
+        this.shouldFailInit = shouldFail
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
         }
@@ -337,6 +351,9 @@ export class LocalTestClient extends BaseTestClient {
     }
 
     async close() {
+        if (this.shouldFailInit) {
+            return
+        }
         const result = await sendCommand(this.getClientUrl(), {
             command: 'close', params: [], isAsync: true
         })
