@@ -10,6 +10,7 @@ import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
+import { optionalEventFields, optionalUserEventFields } from '../mockData/events'
 
 // This is our proxy scope that is used to mock endpoints that are called in the SDK
 const scope = getServerScope()
@@ -299,31 +300,14 @@ describe('Variable Tests - Local', () => {
             expect(body).toEqual({
                 batch: [{
                     user: {
-                        platformVersion: expect.any(String),
-                        sdkVersion: expect.any(String),
+                        ...optionalUserEventFields,
                         user_id: expect.any(String),
-                        createdDate: expect.any(String),
-                        lastSeenDate: expect.any(String),
                         platform: expectedPlatform,
-                        sdkType: 'server',
-                        customData: expect.toBeNil(),
-                        privateCustomData: expect.toBeNil(),
-                        email: expect.toBeNil(),
-                        name: expect.toBeNil(),
-                        language: expect.toBeNil(),
-                        deviceModel: expect.toBeNil(),
-                        country: expect.toBeNil(),
-                        // TODO expect this to always be a string when these are fixed: DVC-6303, DVC-6304, DVC-6305
-                        hostname: expect.toBeOneOf([undefined, null, expect.any(String)]),
-                        appVersion: expect.toBeNil(),
-                        // TODO remove 0 when this is fixed https://taplytics.atlassian.net/browse/DVC-6295
-                        appBuild: expect.toBeOneOf([undefined, null, 0])
+                        sdkType: 'server'
                     },
                     events: [
                         {
-                            clientDate: expect.any(String),
-                            // TODO expect this to be empty when these are fixed: DVC-6300, DVC-6301
-                            date: expect.toBeOneOf([undefined, null, expect.any(String)]),
+                            ...optionalEventFields,
                             user_id: expect.any(String),
                             type: eventType,
                             target: variableId,

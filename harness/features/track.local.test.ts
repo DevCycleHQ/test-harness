@@ -8,6 +8,7 @@ import {
 import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
 import { config } from '../mockData'
+import { optionalEventFields, optionalUserEventFields } from '../mockData/events'
 
 const scope = getServerScope()
 
@@ -73,19 +74,25 @@ describe('Track Tests - Local', () => {
                     expect(eventBody).toEqual({
                         batch: [
                             {
-                                user: expect.objectContaining({
+                                user: {
+                                    ...optionalUserEventFields,
                                     platform: expectedPlatform,
                                     sdkType: 'server',
                                     user_id: validUserId,
-                                }),
+                                },
                                 events: [
-                                    expect.objectContaining({
+                                    {
+                                        ...optionalEventFields,
                                         type: 'customEvent',
+                                        featureVars: {
+                                            "6386813a59f1b81cc9e6c68d": "6386813a59f1b81cc9e6c693"
+                                        },
+                                        metaData: expect.toBeNil(),
                                         customType: eventType,
                                         target: variableId,
                                         value: value,
                                         user_id: validUserId,
-                                    })
+                                    }
                                 ]
                             },
                         ],
@@ -120,26 +127,37 @@ describe('Track Tests - Local', () => {
                     expect(eventBody).toEqual({
                         batch: [
                             {
-                                user: expect.objectContaining({
+                                user: {
+                                    ...optionalUserEventFields,
                                     platform: expectedPlatform,
                                     sdkType: 'server',
                                     user_id: validUserId,
-                                }),
+                                },
                                 events: [
-                                    expect.objectContaining({
+                                    {
+                                        ...optionalEventFields,
                                         type: 'customEvent',
+                                        featureVars: {
+                                            "6386813a59f1b81cc9e6c68d": "6386813a59f1b81cc9e6c693"
+                                        },
+                                        metaData: expect.toBeNil(),
                                         customType: eventType,
                                         target: variableId,
                                         value: value,
                                         user_id: validUserId,
-                                    }),
-                                    expect.objectContaining({
+                                    },
+                                    {
+                                        ...optionalEventFields,
                                         type: 'customEvent',
+                                        featureVars: {
+                                            "6386813a59f1b81cc9e6c68d": "6386813a59f1b81cc9e6c693"
+                                        },
+                                        metaData: expect.toBeNil(),
                                         customType: eventType2,
                                         target: variableId2,
                                         value: value2,
                                         user_id: validUserId,
-                                    })
+                                    }
                                 ]
                             },
                         ],
@@ -199,26 +217,39 @@ describe('Track Tests - Local', () => {
                         expect(eventBody).toEqual({
                             batch: [
                                 {
-                                    user: expect.objectContaining({
+                                    user: {
+                                        ...optionalUserEventFields,
                                         platform: expectedPlatform,
                                         sdkType: 'server',
                                         user_id: validUserId,
-                                    }),
+                                    },
                                     events: [
-                                        expect.objectContaining({
+                                        {
                                             type: 'customEvent',
                                             customType: eventType,
+                                            clientDate: expect.any(String),
+                                            date: expect.toBeOneOf([null, undefined, expect.any(String)]),
+                                            featureVars: {
+                                                "6386813a59f1b81cc9e6c68d": "6386813a59f1b81cc9e6c693"
+                                            },
+                                            metaData: expect.toBeNil(),
                                             target: variableId,
                                             value: value,
                                             user_id: validUserId,
-                                        }),
-                                        expect.objectContaining({
+                                        },
+                                        {
                                             type: 'customEvent',
+                                            clientDate: expect.any(String),
+                                            date: expect.toBeOneOf([null, undefined, expect.any(String)]),
+                                            featureVars: {
+                                                "6386813a59f1b81cc9e6c68d": "6386813a59f1b81cc9e6c693"
+                                            },
+                                            metaData: expect.toBeNil(),
                                             customType: eventType2,
                                             target: variableId2,
                                             value: value2,
                                             user_id: validUserId,
-                                        })
+                                        }
                                     ]
                                 },
                             ],
