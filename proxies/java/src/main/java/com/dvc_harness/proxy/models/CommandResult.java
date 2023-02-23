@@ -1,5 +1,6 @@
 package com.dvc_harness.proxy.models;
 
+import com.devcycle.sdk.server.common.model.User;
 import com.dvc_harness.proxy.data.DataStore;
 
 import java.lang.reflect.InvocationTargetException;
@@ -24,7 +25,7 @@ public class CommandResult<T> {
 
     public CommandResult invokeCommand(
         Object[] params
-    ) throws NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException {
+    ) throws NoSuchMethodException, Exception {
         Method[] allEntityMethods = this.entity.getClass().getMethods();
         Method methodToExecute = null;
         for(int i = 0; i < allEntityMethods.length; i++) {
@@ -36,7 +37,11 @@ public class CommandResult<T> {
         if (methodToExecute == null) {
             throw new NoSuchMethodException();
         }
-        this.body = methodToExecute.invoke(this.entity, params);
+        try {
+            this.body = methodToExecute.invoke(this.entity, params);
+        } catch (Throwable t) {
+            throw new Exception(t.getCause().toString());
+        }
         this.parseResult(this.body);
         return this;
     }
