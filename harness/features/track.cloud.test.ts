@@ -17,7 +17,7 @@ describe('Track Tests - Cloud', () => {
 
         let client: CloudTestClient
 
-        beforeAll(async () => {
+        beforeEach(async () => {
             client = new CloudTestClient(name)
             url = getConnectionStringForProxy(name)
             await client.createClient()

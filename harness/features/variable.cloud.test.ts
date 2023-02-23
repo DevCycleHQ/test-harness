@@ -15,9 +15,10 @@ describe('Variable Tests - Cloud', () => {
     // for each SDK, and creates a test client from the name.
     // All supported SDKs can be found under harness/types/sdks.ts
     forEachSDK((name) => {
-        const testClient = new CloudTestClient(name)
+        let testClient: CloudTestClient
 
-        beforeAll(async () => {
+        beforeEach(async () => {
+            testClient = new CloudTestClient(name)
             // Creating a client will pass to the proxy server by default:
             // - sdk key based on the client id created when creating the client
             // - urls for the bucketing/config/events endpoints to redirect traffic

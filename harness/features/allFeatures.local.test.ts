@@ -13,19 +13,16 @@ describe('allFeatures Tests - Local', () => {
     forEachSDK((name) => {
         describeCapability(name, Capabilities.local)(name, () => {
             describe('uninitialized client', () => {
-                const testClient = new LocalTestClient(name)
+                let testClient: LocalTestClient
 
-                beforeAll(async () => {
+                beforeEach(async () => {
+                    testClient = new LocalTestClient(name)
                     const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
                     scope
                         .get(configRequestUrl)
                         .times(2)
                         .reply(500)
                     await testClient.createClient(true, { configPollingIntervalMS: 60000 })
-                })
-
-                afterAll(async () => {
-                    await testClient.close()
                 })
 
                 it('should return empty object if client is uninitialized',  async () => {
@@ -39,17 +36,14 @@ describe('allFeatures Tests - Local', () => {
             })
 
             describe('initialized client', () => {
-                const testClient = new LocalTestClient(name)
+                let testClient: LocalTestClient
 
-                beforeAll(async () => {
+                beforeEach(async () => {
+                    testClient = new LocalTestClient(name)
                     scope
                         .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                         .reply(200, config)
                     await testClient.createClient(true, { configPollingIntervalMS: 60000 })
-                })
-
-                afterAll(async () => {
-                    await testClient.close()
                 })
 
                 it('should return all features for user without custom data',  async () => {

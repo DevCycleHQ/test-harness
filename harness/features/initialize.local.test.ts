@@ -46,7 +46,6 @@ describe('Initialize Tests - Local', () => {
                 const { message } = await response.json()
 
                 expect(message).toEqual('success')
-                await testClient.close()
             })
 
             it('calls initialize promise/callback when config is successfully retrieved', async () => {
@@ -56,7 +55,6 @@ describe('Initialize Tests - Local', () => {
                     .reply(200, config)
 
                 await testClient.createClient(true, { configPollingIntervalMS: 10000 })
-                await testClient.close()
             })
 
             it('calls initialize promise/callback when config fails to be retrieved', async () => {
@@ -68,7 +66,6 @@ describe('Initialize Tests - Local', () => {
                     .reply(500)
 
                 await testClient.createClient(true, { configPollingIntervalMS: 10000 })
-                await testClient.close()
             })
 
             // TODO DVC-6016 investigate why these were failing on the nodeJS SDK
@@ -103,7 +100,6 @@ describe('Initialize Tests - Local', () => {
                 expect(scope.pendingMocks().length).toEqual(1)
 
                 await wait(3100)
-                await testClient.close()
             }, 5000)
 
             it('uses the same config if the etag matches', async () => {
@@ -129,7 +125,6 @@ describe('Initialize Tests - Local', () => {
                 // make sure the original config is still in use
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
-                await testClient.close()
             })
 
             it('uses the same config if the refetch fails, after retrying once', async () => {
@@ -153,7 +148,6 @@ describe('Initialize Tests - Local', () => {
                 scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
-                await testClient.close()
             })
 
             it('uses the same config if the response is invalid JSON', async () => {
@@ -176,7 +170,6 @@ describe('Initialize Tests - Local', () => {
                 scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
-                await testClient.close()
             })
 
             it('uses the same config if the response is valid JSON but invalid data', async () => {
@@ -199,7 +192,6 @@ describe('Initialize Tests - Local', () => {
                 scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
-                await testClient.close()
             })
         })
     })
