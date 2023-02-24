@@ -30,12 +30,22 @@ services:
     container_name: dotnet
     ports:
       - "3000"
-  java:
+# java:
+#   build:
+#     context: ./proxies/java
+#     args:
+#       - JAVA_SDK_VERSION=${JAVA_SDK_VERSION}
+#   container_name: java
+#   ports:
+#     - "3000"
+  go:
     build:
-      context: ./proxies/java
+      context: ./proxies/go
       args:
-        - JAVA_SDK_VERSION=${JAVA_SDK_VERSION}
-    container_name: java
+        - GO_SDK_VERSION=${GO_SDK_VERSION}
+        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+        - SDKS_TO_TEST=${SDKS_TO_TEST}
+    container_name: go
     ports:
       - "3000"
 #  ruby:
@@ -48,13 +58,3 @@ services:
 #    container_name: ruby
 #    ports:
 #      - "3000"
-  # go:
-  #   build:
-  #     context: ./proxies/go
-  #     args:
-  #       - GO_SDK_VERSION=${GO_SDK_VERSION}
-  #       - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-  #       - SDKS_TO_TEST=${SDKS_TO_TEST}
-  #   container_name: go
-  #   ports:
-  #     - "3000"
