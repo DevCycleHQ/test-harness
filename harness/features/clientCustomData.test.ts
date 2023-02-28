@@ -63,6 +63,8 @@ describe('Client Custom Data Tests', () => {
                 await client.callSetClientCustomData(customData)
                 await waitForRequest(scope, configCall, 1000, 'Config request timed out')
 
+                scope.post(`/client/${client.clientId}/v1/events/batch`).reply(201)
+
                 const response = await client.callVariable({user: 'user-id'}, 'string-var', 'some-default')
                 const variable = await response.json()
                 expect(variable).toEqual(expect.objectContaining({
