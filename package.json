@@ -3,7 +3,7 @@
   "scripts": {
     "test": "jest --verbose",
     "test:ci": "yarn test --setupFiles=./ci-config.ts",
-    "start:nodejs": "cd proxies/nodejs && ts-node app.ts",
+    "start:nodejs": "cd proxies/nodejs && NODE_PRESERVE_SYMLINKS=1 ts-node app.ts",
     "start:go": "cd proxies/go && go run .",
     "start:dotnet": "cd proxies/dotnet && dotnet run",
     "start:java": "cd proxies/java && ./gradlew bootRun"
