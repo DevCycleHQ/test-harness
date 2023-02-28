@@ -7,6 +7,9 @@ inputs:
   sdk-github-sha:
     description: 'The SHA ref of the SDK to test - used in PRs. If not specified; sdk-version is used'
     required: false
+  github-token:
+    description: 'The GitHub token to use for the checkout action'
+    required: true
 
 runs:
   using: "composite"
@@ -14,7 +17,7 @@ runs:
     - uses: actions/checkout@v3.3.0
       with:
         repository: DevCycleHQ/test-harness
-        token: ${{ secrets.TEST_HARNESS_GH_SECRET }}
+        token: ${{ inputs.github-token }}
     - uses: actions/setup-node@v3
       with:
         node-version: 18
