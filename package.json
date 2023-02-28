@@ -42,5 +42,6 @@
     "*.{ts,js}": [
       "eslint --fix"
     ]
-  }
+  },
+  "packageManager": "yarn@3.4.1"
 }
