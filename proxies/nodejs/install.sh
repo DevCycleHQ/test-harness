@@ -1,9 +1,3 @@
-echo "Installing NodeJS Proxy"
-echo "Config: "
-echo "SDK_GITHUB_SHA: $SDK_GITHUB_SHA"
-echo "SDKS_TO_TEST: $SDKS_TO_TEST"
-echo "NODEJS_SDK_VERSION: $NODEJS_SDK_VERSION"
-
 if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
     git clone https://github.com/DevCycleHQ/js-sdks.git
     cd js-sdks
