@@ -1,8 +1,8 @@
 name: 'DevCycle Test Harness'
 description: 'Run test harness tests against given SDKs'
 inputs:
-  sdk:
-    description: 'Which SDK to test'
+  sdks-to-test:
+    description: 'Which SDKs to test'
     required: true
   sdk-github-sha:
     description: 'The SHA ref of the SDK to test - used in PRs. If not specified; sdk-version is used'
@@ -28,7 +28,7 @@ runs:
         if [ ! -f ".env" ]
         then
          echo "SDK_GITHUB_SHA='${{ inputs.sdk-github-sha }}'" >> ".env"
-         echo "SDKS_TO_TEST='${{ inputs.sdk }}'" >> ".env"
+         echo "SDKS_TO_TEST='${{ inputs.sdks-to-test }}'" >> ".env"
         fi
     - name: Install Dependencies
       shell: bash
