@@ -14,5 +14,5 @@ RUN apk update && apk upgrade && \
 COPY . /app
 WORKDIR /app
 RUN yarn
-RUN ./install.sh
+RUN bash ./install.sh
 ENTRYPOINT yarn ts-node app.ts
