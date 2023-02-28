@@ -38,4 +38,4 @@ runs:
       run: yarn test:ci
       env:
         SDK_GITHUB_SHA: ${{ inputs.sdk-github-sha }}
-        SDKS_TO_TEST: ${{ inputs.sdk }}
+        SDKS_TO_TEST: ${{ inputs.sdks-to-test }}
