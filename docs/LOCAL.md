@@ -7,12 +7,19 @@ the `test-harness` repository.
 Follow the steps in that repo for installing dependencies and building the SDKs.
 
 Then, in the `test-harness` repo, make the following changes in the `proxies/nodejs` folder.
-Change the dependencies in the `package.json` file to point to the local SDKs, eg.:
+Change the dependency in the `package.json` file to point to the local SDK, and set `resolutions`
+to override the version of the dependent packages that will be used to the local ones eg.:
 
 ```json
-"@devcycle/bucketing-assembly-script": "link:../../../js-sdks/lib/shared/bucketing-assembly-script",
-"@devcycle/nodejs-server-sdk": "link:../../../js-sdks/dist/sdk/nodejs",
-"@devcycle/types": "link:../../../js-sdks/dist/lib/shared/types",
+"dependencies": {
+  ...
+  "@devcycle/bucketing-assembly-script": "portal:../../../js-sdks/lib/shared/bucketing-assembly-script",
+},
+"resolutions": {
+  "@devcycle/nodejs-server-sdk": "portal:../../../js-sdks/dist/sdk/nodejs",
+  "@devcycle/types": "portal:../../../js-sdks/dist/lib/shared/types",
+}
+
 ```
 
 then:
