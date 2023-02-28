@@ -54,7 +54,7 @@ the `test-harness` repository.
 
 Add this line to the bottom of the `go.mod` file in `proxies/go`:
 ```
-replace github.com/devcyclehq/go-server-sdk => ../../../go-server-sdk
+replace github.com/devcyclehq/go-server-sdk/v2 => ../../../go-server-sdk
 ```
 
 Run `go mod tidy` in the same directory
