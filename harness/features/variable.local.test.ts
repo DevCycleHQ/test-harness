@@ -255,30 +255,36 @@ describe('Variable Tests - Local', () => {
                 let testClient: LocalTestClient
 
                 beforeEach(async () => {
-                    testClient = new LocalTestClient(name)
-                    const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
-                    const interceptor = scope
-                        .get(configRequestUrl)
 
-                    interceptor.reply(404)
-
-                    // A special option is passed in to prevent the proxy server from waiting
-                    // for the client to have a config for the purposes of this uninitialized test suite
-                    // (The call to the proxy server is still awaited)
-                    await testClient.createClient(false)
-
-                    await waitForRequest(
-                        scope,
-                        interceptor,
-                        3000,
-                        'Config request timed out'
-                    )
                 })
 
                 forEachVariableType((type) => {
                     const { key, defaultValue, variableType } = expectedVariablesByType[type]
 
-                    it('should return default value if client is uninitialized',  async () => {
+                    it('should return default value if client is uninitialized, log event',  async () => {
+                        testClient = new LocalTestClient(name)
+                        const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
+                        scope
+                            .get(configRequestUrl)
+                            .delay(2000)
+                            .reply(200)
+
+                        eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
+
+                        // A special option is passed in to prevent the proxy server from waiting
+                        // for the client to have a config for the purposes of this uninitialized test suite
+                        // (The call to the proxy server is still awaited)
+                        await testClient.createClient(false, {
+                            eventFlushIntervalMS: 500
+                        })
+
+                        let eventBody = {}
+                        const interceptor = scope.post(eventsUrl)
+                        interceptor.reply((uri, body) => {
+                            eventBody = body
+                            return [201]
+                        })
+
                         const variableResponse = await testClient.callVariable(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
                             key,
@@ -286,6 +292,44 @@ describe('Variable Tests - Local', () => {
                         )
                         const variable = await variableResponse.json()
                         expectDefaultValue(key, variable, defaultValue, variableType)
+
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
+                        expectEventBody(eventBody, key, 'aggVariableDefaulted', 1)
+                    })
+
+                    it('should return default value if client config failed, log event',  async () => {
+                        testClient = new LocalTestClient(name)
+                        const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
+                        scope
+                            .get(configRequestUrl)
+                            .reply(500)
+
+                        eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
+
+                        // A special option is passed in to prevent the proxy server from waiting
+                        // for the client to have a config for the purposes of this uninitialized test suite
+                        // (The call to the proxy server is still awaited)
+                        await testClient.createClient(false, {
+                            eventFlushIntervalMS: 500
+                        })
+
+                        let eventBody = {}
+                        const interceptor = scope.post(eventsUrl)
+                        interceptor.reply((uri, body) => {
+                            eventBody = body
+                            return [201]
+                        })
+
+                        const variableResponse = await testClient.callVariable(
+                            { user_id: 'user1', customData: { 'should-bucket': true } },
+                            key,
+                            defaultValue
+                        )
+                        const variable = await variableResponse.json()
+                        expectDefaultValue(key, variable, defaultValue, variableType)
+
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
+                        expectEventBody(eventBody, key, 'aggVariableDefaulted', 1)
                     })
                 })
             })
