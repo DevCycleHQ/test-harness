@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@devcycle/nodejs-server-sdk": "^1.4.27",
+    "@devcycle/nodejs-server-sdk": "^1.8.0",
     "@types/koa": "^2.13.5",
     "@types/koa-bodyparser": "^4.3.10",
     "@types/koa-router": "^7.4.4",
@@ -11,5 +11,6 @@
   },
   "devDependencies": {
     "typescript": "^4.9.3"
-  }
+  },
+  "packageManager": "yarn@3.4.1"
 }
