@@ -302,6 +302,8 @@ describe('Variable Tests - Local', () => {
                         const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
                         scope
                             .get(configRequestUrl)
+                            // account for the immediate retry of the request
+                            .times(2)
                             .reply(500)
 
                         eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
