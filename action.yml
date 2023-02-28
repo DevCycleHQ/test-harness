@@ -4,9 +4,6 @@ inputs:
   sdk:
     description: 'Which SDK to test'
     required: true
-  sdk-version:
-    description: 'Which version of the SDK to test. If not specified; defaults to the latest version'
-    required: false
   sdk-github-sha:
     description: 'The SHA ref of the SDK to test - used in PRs. If not specified; sdk-version is used'
     required: false
@@ -27,8 +24,8 @@ runs:
       run: |
         if [ ! -f ".env" ]
         then
-         echo "SDK_GITHUB_SHA='${{ env.GITHUB_SHA }}'" >> ".env"
-         echo "SDKS_TO_TEST='${{ env.SDKS_TO_TEST }}'" >> ".env"
+         echo "SDK_GITHUB_SHA='${{ inputs.sdk-github-sha }}'" >> ".env"
+         echo "SDKS_TO_TEST='${{ inputs.sdk }}'" >> ".env"
         fi
     - name: Install Dependencies
       shell: bash
