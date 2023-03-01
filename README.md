@@ -36,7 +36,24 @@ It is also typically necessary to run the SDK proxy server locally in order to l
 See the section below on running the harness against a local SDK.
 
 ## Running the harness against a local SDK
-- Follow the directions as outlined in [this document](docs/LOCAL.md) to run the harness against a local SDK.
+For an easy way to just get the configurations set up the "recommended" way, simply run:
+`yarn use-local`
+
+this will apply the changes from a special branch in the repo containing the local configurations. To do this you must
+have a "clean" working directory with no uncommitted changes. Make sure not to commit the changed configuration files
+when running in local mode!
+
+You can then run the proxy server for the SDK you want to work on using:
+`yarn start:{sdk}` eg. `yarn start:nodejs`
+
+When running proxy tests, use the following environment variables to specify local mode:
+
+`LOCAL_MODE=1`
+
+`SDKS_TO_TEST=nodejs`
+
+You may still need to run the package manager for the particular proxy (e.g. `yarn`, `go mod tidy` etc.)
+, see [this document](docs/LOCAL.md) for details on how to run the proxies.
 
 ## Development
 To understand how the system works and write new proxies, see the documentation in the `docs` folder.
