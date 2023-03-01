@@ -13,24 +13,16 @@ inputs:
 
 runs:
   using: "composite"
+
   steps:
     - uses: actions/checkout@v3.3.0
       with:
         repository: DevCycleHQ/test-harness
         token: ${{ inputs.github-token }}
-        fetch-depth: 0
     - uses: actions/setup-node@v3
       with:
         node-version: 18
         cache: 'yarn'
-    - name: Write variables to .env file
-      shell: bash
-      run: |
-        if [ ! -f ".env" ]
-        then
-         echo "SDK_GITHUB_SHA='${{ inputs.sdk-github-sha }}'" >> ".env"
-         echo "SDKS_TO_TEST='${{ inputs.sdks-to-test }}'" >> ".env"
-        fi
     - name: Install Dependencies
       shell: bash
       run: yarn install
