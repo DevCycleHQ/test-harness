@@ -12,4 +12,5 @@ export const SDKCapabilities = {
     DotNet: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB],
     Java: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB],
     Go: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData],
+    Ruby: [Capabilities.local, Capabilities.clientCustomData]
 }
