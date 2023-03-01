@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@devcycle/nodejs-server-sdk": "^1.8.0",
+    "@devcycle/nodejs-server-sdk": "portal:../../../js-sdks/dist/sdk/nodejs",
     "@types/koa": "^2.13.5",
     "@types/koa-bodyparser": "^4.3.10",
     "@types/koa-router": "^7.4.4",
@@ -11,6 +11,10 @@
   },
   "devDependencies": {
     "typescript": "^4.9.3"
+  },
+  "resolutions": {
+    "@devcycle/bucketing-assembly-script": "portal:../../../js-sdks/lib/shared/bucketing-assembly-script",
+    "@devcycle/types": "portal:../../../js-sdks/dist/lib/shared/types"
   },
   "packageManager": "yarn@3.4.1"
 }

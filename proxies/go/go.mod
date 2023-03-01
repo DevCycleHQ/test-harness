@@ -12,3 +12,5 @@ require (
 	github.com/jarcoal/httpmock v1.2.0 // indirect
 	github.com/matryer/try v0.0.0-20161228173917-9ac251b645a2 // indirect
 )
+
+replace github.com/devcyclehq/go-server-sdk/v2 => ../../../go-server-sdk

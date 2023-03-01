@@ -8,10 +8,16 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.1" />
-    <PackageReference Include="DevCycle.SDK.Server.Cloud" Version="1.6.0" />
-    <PackageReference Include="DevCycle.SDK.Server.Local" Version="2.3.0" />
+<!--     <PackageReference Include="DevCycle.SDK.Server.Cloud" Version="1.6.0" /> -->
+<!--     <PackageReference Include="DevCycle.SDK.Server.Local" Version="2.3.0" /> -->
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+  	<ProjectReference Include="..\..\..\dotnet-server-sdk\DevCycle.SDK.Server.Common\DevCycle.SDK.Server.Common.csproj" />
+  	<ProjectReference Include="..\..\..\dotnet-server-sdk\DevCycle.SDK.Server.Cloud\DevCycle.SDK.Server.Cloud.csproj" />
+      <ProjectReference Include="..\..\..\dotnet-server-sdk\DevCycle.SDK.Server.Local\DevCycle.SDK.Server.Local.csproj" />
   </ItemGroup>
 
 </Project>

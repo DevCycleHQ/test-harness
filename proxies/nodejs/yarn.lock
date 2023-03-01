@@ -14,16 +14,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:^1.3.3":
-  version: 1.3.3
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.3.3"
-  checksum: c9bb37bea5173d1b0dc5c9ec5e77b9a8f5cb2cddffbd8ddd9afd3a85acf191a4e3076a9c8b07d702f3d066b411fc39d85412d19f4121bd0a8ade50163174f073
+"@devcycle/bucketing-assembly-script@portal:../../../js-sdks/lib/shared/bucketing-assembly-script::locator=root-workspace-0b6124%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@devcycle/bucketing-assembly-script@portal:../../../js-sdks/lib/shared/bucketing-assembly-script::locator=root-workspace-0b6124%40workspace%3A."
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@devcycle/nodejs-server-sdk@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.8.0"
+"@devcycle/nodejs-server-sdk@portal:../../../js-sdks/dist/sdk/nodejs::locator=root-workspace-0b6124%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@devcycle/nodejs-server-sdk@portal:../../../js-sdks/dist/sdk/nodejs::locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
     "@devcycle/bucketing-assembly-script": ^1.3.3
     "@devcycle/types": 1.0.62
@@ -38,13 +37,12 @@ __metadata:
     murmurhash: ^2.0.0
     reflect-metadata: ^0.1.13
     uuid: ^8.3.2
-  checksum: 04d5c34790f91a32a8da1a0cf01f408536f3940cb777d6d9edc1c156a089c11d4dcc23e818101dad8da8b820d3dd3dd44ab8a5edb22ba68ca3d0038c1c86e1fa
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@devcycle/types@npm:1.0.62":
-  version: 1.0.62
-  resolution: "@devcycle/types@npm:1.0.62"
+"@devcycle/types@portal:../../../js-sdks/dist/lib/shared/types::locator=root-workspace-0b6124%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@devcycle/types@portal:../../../js-sdks/dist/lib/shared/types::locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
     "@nestjs/class-validator": ^0.13.4
     "@types/validator": 13.7.6
@@ -52,9 +50,8 @@ __metadata:
     iso-639-1: ^2.1.13
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
-  checksum: 930b6f428b08d3f9375c4cdca715bb8cc1d6e60c280745bc06a39b15b7a0dcdb560b1d5bb099c2b5c731490e826e8aa23fa8d417378526ae93c55af4ad275abd
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "@jridgewell/resolve-uri@npm:^3.0.3":
   version: 3.1.0
@@ -887,7 +884,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": ^1.8.0
+    "@devcycle/nodejs-server-sdk": "portal:../../../js-sdks/dist/sdk/nodejs"
     "@types/koa": ^2.13.5
     "@types/koa-bodyparser": ^4.3.10
     "@types/koa-router": ^7.4.4
