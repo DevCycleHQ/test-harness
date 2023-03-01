@@ -48,13 +48,13 @@ services:
     container_name: go
     ports:
       - "3000"
-  ruby:
-    build:
-      context: ./proxies/ruby
-      args:
-        - RUBY_SDK_VERSION=${RUBY_SDK_VERSION}
-        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-        - SDKS_TO_TEST=${SDKS_TO_TEST}
-    container_name: ruby
-    ports:
-      - "3000"
+#  ruby:
+#    build:
+#      context: ./proxies/ruby
+#      args:
+#        - RUBY_SDK_VERSION=${RUBY_SDK_VERSION}
+#        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+#        - SDKS_TO_TEST=${SDKS_TO_TEST}
+#    container_name: ruby
+#    ports:
+#      - "3000"
