@@ -3,6 +3,9 @@
 require 'sinatra'
 require 'devcycle-ruby-server-sdk'
 
+require './helpers'
+require './utils'
+
 set :port, 3000
 
 get '/hello_world' do
@@ -19,15 +22,15 @@ end
 
 data_store = {
   clients: {},
-  commandResults: {}
+  command_results: {}
 }
 
 post '/client' do
   request.body.rewind
-  data = JSON.parse request.body.read
+  body = JSON.parse request.body.read
 
   client_id, sdk_key, wait_for_initialization, options =
-    data.values_at('clientId', 'sdkKey', 'waitForInitialization', 'options')
+    body.values_at('clientId', 'sdkKey', 'waitForInitialization', 'options')
 
   if client_id.nil?
     status 400
@@ -35,33 +38,66 @@ post '/client' do
   end
 
   begin
-    options = DevCycle::DVCOptions.new(
-      config_cdn_uri: options.fetch('configCDNURI', 'https://config-cdn.devcycle.com'),
-      events_api_uri: options.fetch('eventsAPIURI', 'https://events.devcycle.com'),
+    dvc_options = DevCycle::DVCOptions.new(
+      config_cdn_uri: options.fetch('configCDNURI', ''),
+      events_api_uri: options.fetch('eventsAPIURI', ''),
       config_polling_interval_ms: options.fetch('configPollingIntervalMS', 10_000),
-      event_flush_interval_ms: options.fetch('eventFlushIntervalMS', 1000)
+      event_flush_interval_ms: options.fetch('eventFlushIntervalMS', 10_000)
     )
 
-    async_error = nil
-
-    if wait_for_initialization
-      begin
-        data_store[:clients][client_id] = DevCycle::DVCClient.new(sdk_key, options, true)
-      rescue StandardError => e
-        async_error = e
-      end
-    else
-      data_store[:clients][client_id] = DevCycle::DVCClient.new(sdk_key, options, false)
-    end
+    data_store[:clients][client_id] = DevCycle::DVCClient.new(sdk_key, dvc_options, wait_for_initialization)
 
     status 201
     headers 'Location' => "/client/#{client_id}"
-
-    return { asyncError: async_error }.to_json if async_error
-
     { message: 'success' }.to_json
   rescue StandardError => e
     status 200
-    { error: e.message }.to_json
+    { exception: e.message }.to_json
+  end
+end
+
+post %r{\/(client|command\/\w+)\/[\w-]+} do
+  request.body.rewind
+  body = JSON.parse request.body.read
+
+  command, params, is_async = body.values_at('command', 'params', 'isAsync')
+  if command.nil?
+    status 404
+    return { message: 'Invalid request: missing command' }.to_json
+  end
+
+  entity = get_entity_from_location(request.path, data_store)
+  if entity.nil?
+    status 404
+    return { message: 'Invalid request: missing entity' }.to_json
+  end
+
+  begin
+    parsed_params = parse_params(body, params)
+    if parsed_params.include? nil
+      status 404
+      return { message: 'Invalid request: missing entity' }.to_json
+    end
+
+    command = underscore(command)
+    result = entity.send(command, *parsed_params)
+    entity_type = get_entity_type_from_class_name(result.class.name)
+    command_id = data_store[:command_results].length.to_s
+    data_store[:command_results][command_id] = result
+
+    status 201
+    headers 'Location' => "/command/#{command}/#{command_id}"
+    {
+      entityType: entity_type,
+      data: entity_type == 'Void' ? nil : result.to_hash,
+      logs: []
+    }.to_json
+  rescue StandardError => e
+    status 200
+    if is_async
+      { asyncError: e.message }.to_json
+    else
+      { error: e.message }.to_json
+    end
   end
 end
