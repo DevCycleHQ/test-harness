@@ -9,7 +9,8 @@
     "start:nodejs": "cd proxies/nodejs && NODE_PRESERVE_SYMLINKS=1 ts-node app.ts",
     "start:go": "cd proxies/go && go run .",
     "start:dotnet": "cd proxies/dotnet && dotnet run",
-    "start:java": "cd proxies/java && ./gradlew bootRun"
+    "start:java": "cd proxies/java && ./gradlew bootRun",
+    "use-local": "scripts/use-local.sh"
   },
   "version": "1.0.0",
   "description": "A universal testing system for DevCycle SDKs",
