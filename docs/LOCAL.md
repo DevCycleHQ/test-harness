@@ -86,3 +86,18 @@ project(':java-server-sdk').projectDir = new File('../../../java-server-sdk')
 
 Follow the same numbered steps as above for NodeJS, substituting `java` for `nodejs` in the environment variables
 and shell commands.
+
+## Ruby
+Ensure you have the [ruby-server-sdk](https://github.com/DevCycleHQ/ruby-server-sdk) repository cloned.
+
+In the `proxies/ruby/Gemfile` file, change the `devcycle-ruby-server-sdk` gem to point to where the SDK is located locally:
+
+`Gemfile`
+```
+gem 'devcycle-ruby-server-sdk', path: 'path/to/local/sdk'
+```
+
+Run `bundle install` in the `proxies/ruby` folder.
+
+Follow the same numbered steps as above for NodeJS, substituting `ruby` for `nodejs` in the environment variables
+and shell commands.
