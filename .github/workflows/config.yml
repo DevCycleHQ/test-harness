@@ -33,7 +33,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: depot/setup-action@v1
-      - uses: depot/build-push-action@v1
       - name: Write variables to .env file
         run: |
           if [ ! -f ".env" ]
