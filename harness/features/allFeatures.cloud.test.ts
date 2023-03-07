@@ -70,8 +70,7 @@ describe('allFeatures Tests - Cloud', () => {
                 })
             })
 
-            // TODO DVC-5954 investigate why these were failing on the SDKs
-            it.skip('should throw if features request fails on invalid sdk key', async () => {
+            it('should throw if features request fails on invalid sdk key', async () => {
                 scope
                     .post(`/client/${testClient.clientId}/v1/features`)
                     .reply(401, { message: 'Invalid sdk key' })
