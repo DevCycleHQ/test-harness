@@ -20,6 +20,9 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     name: Run Tests
+    permissions:
+      contents: read
+      id-token: write
     env:
       DOCKER_HOST_IP: '172.17.0.1'
     steps:
@@ -29,6 +32,8 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - uses: depot/setup-action@v1
+      - uses: depot/build-push-action@v1
       - name: Write variables to .env file
         run: |
           if [ ! -f ".env" ]
@@ -38,7 +43,13 @@ jobs:
           fi
       - name: Install Dependencies
         run: yarn
-      - name: Build Docker Images with Depot.dev
-        run: yarn build:docker
+      - name: Build Docker Images with depot.dev
+        uses: depot/build-push-action@v1
+        with:
+          project: p52dtjfn6z
+          token: ${{ secrets.DEPOT_PROJECT_TOKEN }}
+          platforms: linux/amd64
+          load: true
+          file: docker-compose.yml
       - name: Run All Tests
         run: yarn test:ci
