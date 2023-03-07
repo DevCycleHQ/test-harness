@@ -43,12 +43,12 @@ jobs:
       - name: Install Dependencies
         run: yarn
       - name: Build Docker Images with depot.dev
-        uses: depot/build-push-action@v1
+        uses: depot/bake-action@v1
         with:
           project: p52dtjfn6z
-          token: ${{ secrets.DEPOT_PROJECT_TOKEN }}
+          token: ${{ secrets.DEPOT_TOKEN }}
           platforms: linux/amd64
           load: true
-          file: docker-compose.yml
+          files: docker-compose.yml
       - name: Run All Tests
         run: yarn test:ci
