@@ -97,7 +97,7 @@ post %r{\/(client|command\/\w+)\/[\w-]+} do
     if is_async
       { asyncError: e.message }.to_json
     else
-      { error: e.message }.to_json
+      { exception: e.message }.to_json
     end
   end
 end
