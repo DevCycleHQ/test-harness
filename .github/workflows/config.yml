@@ -38,5 +38,7 @@ jobs:
           fi
       - name: Install Dependencies
         run: yarn
+      - name: Build Docker Images with Depot.dev
+        run: yarn build:docker
       - name: Run All Tests
         run: yarn test:ci
