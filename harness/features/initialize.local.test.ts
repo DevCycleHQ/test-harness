@@ -78,10 +78,10 @@ describe('Initialize Tests - Local', () => {
 
                 const response =
                     await testClient.createClient(true, { configPollingIntervalMS: 1000 }, testClient.sdkKey, true)
-                const { exception } = await response.json()
+                const { asyncError } = await response.json()
 
                 expectErrorMessageToBe(
-                    exception,
+                    asyncError,
                     'Invalid environment key provided. Please call initialize with a valid server environment key'
                 )
 

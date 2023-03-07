@@ -48,7 +48,7 @@ describe('Variable Tests - Cloud', () => {
                 // from the proxy server
                 expectErrorMessageToBe(error.asyncError, 'Missing parameter: key')
             })
-            
+
             it('will throw error if variable called with invalid sdk key', async () => {
                 scope
                     .post(`/client/${testClient.clientId}/v1/variable/var_key`)
