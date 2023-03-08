@@ -84,7 +84,6 @@ describe('Initialize Tests - Local', () => {
                     asyncError,
                     'Invalid environment key provided. Please call initialize with a valid server environment key'
                 )
-
             })
 
             it('fetches config again after 3 seconds when config polling interval is overriden', async () => {
