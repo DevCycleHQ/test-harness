@@ -9,7 +9,7 @@ ARG SDKS_TO_TEST
 ENV SDKS_TO_TEST $SDKS_TO_TEST
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh
+    apk add --no-cache bash git openssh protoc
 
 COPY . /app
 WORKDIR /app
