@@ -26,12 +26,6 @@ runs:
     - name: Install Dependencies
       shell: bash
       run: yarn install
-    - name: Build Docker Images with Depot.dev
-      shell: bash
-      run: yarn build:docker
-      env:
-        SDK_GITHUB_SHA: ${{ inputs.sdk-github-sha }}
-        SDKS_TO_TEST: ${{ inputs.sdks-to-test }}
     - name: Run All Tests
       shell: bash
       run: yarn test:ci

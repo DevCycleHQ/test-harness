@@ -1,7 +1,7 @@
 {
   "name": "@devcycle/test-harness",
-  "engines": {
-    "node": ">=18.0.0"
+  "engines" : { 
+    "node" : ">=18.0.0"
   },
   "scripts": {
     "test": "jest --verbose",
@@ -10,8 +10,7 @@
     "start:go": "cd proxies/go && go run .",
     "start:dotnet": "cd proxies/dotnet && dotnet run",
     "start:java": "cd proxies/java && ./gradlew bootRun",
-    "use-local": "scripts/use-local.sh",
-    "build:docker": "depot bake --project p52dtjfn6z -f docker-compose.yml --load"
+    "use-local": "scripts/use-local.sh"
   },
   "version": "1.0.0",
   "description": "A universal testing system for DevCycle SDKs",
