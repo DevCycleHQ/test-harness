@@ -16,6 +16,7 @@ type clientRequestBodyOptions struct {
 	ConfigPollingIntervalMS int64  `json:"configPollingIntervalMS"`
 	EventFlushIntervalMS    int64  `json:"eventFlushIntervalMS"`
 	EnableCloudBucketing    bool   `json:"enableCloudBucketing"`
+	MaxWasmWorkers          int    `json:"maxWasmWorkers"`
 }
 
 type clientRequestBody struct {
@@ -47,6 +48,11 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		onInitializedChannel = make(chan bool)
 	}
 
+	maxWasmWorkers := reqBody.Options.MaxWasmWorkers
+	if maxWasmWorkers == 0 {
+		maxWasmWorkers = 1
+	}
+
 	options := devcycle.DVCOptions{
 		ConfigCDNURI:            reqBody.Options.ConfigCDNURI,
 		EventsAPIURI:            reqBody.Options.EventsAPIURI,
@@ -56,6 +62,9 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
 		EnableCloudBucketing:    reqBody.EnableCloudBucketing,
 		OnInitializedChannel:    onInitializedChannel,
+		AdvancedOptions: devcycle.AdvancedOptions{
+			MaxWasmWorkers: maxWasmWorkers,
+		},
 	}
 
 	var res clientResponseBody
