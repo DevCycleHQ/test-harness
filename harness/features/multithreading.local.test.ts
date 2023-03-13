@@ -31,7 +31,7 @@ describe('Multithreading Tests', () => {
     forEachSDK((name) => {
         const expectedPlatform = getPlatformBySdkName(name, true)
 
-        describeCapability(name, Capabilities.local)(name, () => {
+        describeCapability(name, Capabilities.multithreading)(name, () => {
             let testClient: LocalTestClient
             let eventsUrl: string
 
