@@ -65,7 +65,7 @@ describe('Client Custom Data Tests', () => {
 
                 scope.post(`/client/${client.clientId}/v1/events/batch`).reply(201)
 
-                const response = await client.callVariable({user: 'user-id'}, 'string-var', 'some-default')
+                const response = await client.callVariable({ user_id: 'user-id' }, 'string-var', 'some-default')
                 const variable = await response.json()
                 expect(variable).toEqual(expect.objectContaining({
                     entityType: 'Variable',
