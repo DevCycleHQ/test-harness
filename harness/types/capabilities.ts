@@ -4,6 +4,7 @@ export const Capabilities = {
     cloud: 'CloudBucketing',
     sse: 'SSE',
     clientCustomData: 'ClientCustomData',
+    multithreading: 'Multithreading',
 }
 
 export const SDKCapabilities = {
@@ -11,6 +12,6 @@ export const SDKCapabilities = {
     Python: [Capabilities.cloud, Capabilities.edgeDB],
     DotNet: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB],
     Java: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB],
-    Go: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData],
+    Go: [Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData, Capabilities.multithreading],
     Ruby: [Capabilities.local, Capabilities.clientCustomData]
 }

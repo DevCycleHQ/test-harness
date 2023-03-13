@@ -239,7 +239,9 @@ export const waitForRequest = async (
         new Promise((resolve) => {
             callback = (req, inter) => {
                 if (inter === interceptor) {
-                    resolve(true)
+                    if (!(interceptor as any).counter) {
+                        resolve(true)
+                    }
                 }
             }
             scope.on('request', callback)
