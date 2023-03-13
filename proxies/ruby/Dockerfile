@@ -11,7 +11,6 @@ ENV SDKS_TO_TEST $SDKS_TO_TEST
 
 WORKDIR /app
 COPY Gemfile ./
-COPY Gemfile.lock ./
 COPY install.sh ./
 
 RUN echo $(ls -alh)
@@ -20,6 +19,7 @@ RUN ./install.sh
 
 RUN bundle install
 COPY *.rb ./
+COPY config.ru ./
 
 EXPOSE 3000
-ENTRYPOINT ["ruby", "app.rb"]
+ENTRYPOINT ["puma", "config.ru", "-C", "puma.rb"]
