@@ -133,6 +133,44 @@ describe('Multithreading Tests', () => {
                     // expect that in total we tracked four evaluations
                     expect(eventBodies[0].batch[0].events[0].value + eventBodies[1].batch[0].events[0].value).toEqual(4)
                 })
+
+                describeCapability(name, Capabilities.clientCustomData)(name, () => {
+                    it('should set client custom data and use it for segmentation', async () => {
+                        const interceptor = scope
+                            .post(eventsUrl)
+                            .times(2)
+
+                        interceptor
+                            .reply(201)
+
+
+                        const customData = { 'should-bucket': true }
+                        await testClient.callSetClientCustomData(customData)
+                        const user = { user_id: 'test-user'}
+                        const responses = await Promise.all([
+                            testClient.callVariable(user, 'string-var', 'some-default'),
+                            testClient.callVariable(user, 'string-var', 'some-default'),
+                            testClient.callVariable(user, 'string-var', 'some-default'),
+                            testClient.callVariable(user, 'string-var', 'some-default')
+
+                        ])
+                        for (const response of responses) {
+                            const variable = await response.json()
+                            expect(variable).toEqual(expect.objectContaining({
+                                entityType: 'Variable',
+                                data: {
+                                    type: 'String',
+                                    isDefaulted: false,
+                                    key: 'string-var',
+                                    defaultValue: 'some-default',
+                                    value: 'string'
+                                }
+                            }))
+                        }
+
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
+                    })
+                })
             })
 
             describe('uninitialized client', () => {
