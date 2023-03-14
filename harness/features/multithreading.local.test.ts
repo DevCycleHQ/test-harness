@@ -133,6 +133,91 @@ describe('Multithreading Tests', () => {
                     // expect that in total we tracked four evaluations
                     expect(eventBodies[0].batch[0].events[0].value + eventBodies[1].batch[0].events[0].value).toEqual(4)
                 })
+
+                it('should retry events across threads', async () => {
+                    let eventBodies = []
+
+                    const interceptor1 = scope.post(eventsUrl).times(2)
+
+                    interceptor1.reply(500)
+
+                    const interceptor2 = scope.post(eventsUrl).times(2)
+                    interceptor2.reply((uri, body) => {
+                        eventBodies.push( body)
+                        return [201]
+                    })
+
+                    await Promise.all([
+                        testClient.callVariable(
+                            {user_id: 'user1', customData: {'should-bucket': true}},
+                            key,
+                            defaultValue
+                        ),
+                        testClient.callVariable(
+                            {user_id: 'user1', customData: {'should-bucket': true}},
+                            key,
+                            defaultValue
+                        ),
+                        testClient.callVariable(
+                            {user_id: 'user1', customData: {'should-bucket': true}},
+                            key,
+                            defaultValue
+                        ),
+                        testClient.callVariable(
+                            {user_id: 'user1', customData: {'should-bucket': true}},
+                            key,
+                            defaultValue
+                        )
+                    ])
+
+                    // waits for the request to the events API
+                    await waitForRequest(scope, interceptor1, 600, 'Initial event requests not received')
+                    await waitForRequest(scope, interceptor2, 600, 'Retried event requests not received')
+
+                    // Expect that the SDK sends an "aggVariableEvaluated" event per thread
+                    expectEventBody(eventBodies[0], key, 'aggVariableEvaluated', expect.any(Number))
+                    expectEventBody(eventBodies[1], key, 'aggVariableEvaluated', expect.any(Number))
+                    // expect that in total we tracked four evaluations
+                    expect(eventBodies[0].batch[0].events[0].value + eventBodies[1].batch[0].events[0].value).toEqual(4)
+                })
+
+                describeCapability(name, Capabilities.clientCustomData)(name, () => {
+                    it('should set client custom data and use it for segmentation', async () => {
+                        const interceptor = scope
+                            .post(eventsUrl)
+                            .times(2)
+
+                        interceptor
+                            .reply(201)
+
+
+                        const customData = { 'should-bucket': true }
+                        await testClient.callSetClientCustomData(customData)
+                        const user = { user_id: 'test-user'}
+                        const responses = await Promise.all([
+                            testClient.callVariable(user, 'string-var', 'some-default'),
+                            testClient.callVariable(user, 'string-var', 'some-default'),
+                            testClient.callVariable(user, 'string-var', 'some-default'),
+                            testClient.callVariable(user, 'string-var', 'some-default')
+
+                        ])
+                        for (const response of responses) {
+                            const variable = await response.json()
+                            expect(variable).toEqual(expect.objectContaining({
+                                entityType: 'Variable',
+                                data: {
+                                    type: 'String',
+                                    isDefaulted: false,
+                                    key: 'string-var',
+                                    defaultValue: 'some-default',
+                                    value: 'string'
+                                }
+                            }))
+                        }
+
+                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
+                    })
+                })
             })
 
             describe('uninitialized client', () => {
