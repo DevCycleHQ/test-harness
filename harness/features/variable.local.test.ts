@@ -99,7 +99,7 @@ describe('Variable Tests - Local', () => {
                 forEachVariableType((type) => {
                     const { key, defaultValue, variationOn, variableType } = expectedVariablesByType[type]
 
-                    it('should return variable if mock server returns object matching default type',  async () => {
+                    it('should return variable if mock server returns object matching default type', async () => {
                         let eventBody = {}
                         // The interceptor instance is used to wait on events that are triggered when calling
                         // methods so that we can verify events being sent out and mock out responses from the
@@ -129,7 +129,8 @@ describe('Variable Tests - Local', () => {
                                 isDefaulted: false,
                                 key,
                                 defaultValue: defaultValue,
-                                value: variationOn
+                                value: variationOn,
+                                evalReason: expect.toBeNil()
                             }
                         }))
 
@@ -393,7 +394,8 @@ describe('Variable Tests - Local', () => {
                 defaultValue: defaultValue,
                 value: defaultValue,
                 key: key,
-                type
+                type,
+                evalReason: expect.toBeNil()
             },
             logs: []
         })
