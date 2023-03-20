@@ -184,7 +184,7 @@ describe('Variable Tests - Local', () => {
                         expectEventBody(eventBody, key, 'aggVariableDefaulted')
                     })
 
-                    it('should return default value if variable doesn\' exist',  async () => {
+                    it('should return default value if variable doesn\'t exist',  async () => {
                         let eventBody = {}
                         const interceptor = scope.post(eventsUrl)
                         interceptor.reply((uri, body) => {
@@ -249,6 +249,38 @@ describe('Variable Tests - Local', () => {
                         await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
                         expectEventBody(eventBody, key, 'aggVariableEvaluated', 2)
                     })
+                })
+
+                it('should return a valid unicode string',  async () => {
+                    let eventBody = {}
+                    const interceptor = scope.post(eventsUrl)
+                    interceptor.reply((uri, body) => {
+                        eventBody = body
+                        return [201]
+                    })
+
+                    const variableResponse = await testClient.callVariable(
+                        { user_id: 'user1', customData: { 'should-bucket': true } },
+                        'unicode-var',
+                        'default'
+                    )
+                    const variable = await variableResponse.json()
+
+                    expect(variable).toEqual(expect.objectContaining({
+                        entityType: 'Variable',
+                        data: {
+                            type: VariableType.string,
+                            isDefaulted: false,
+                            key: 'unicode-var',
+                            defaultValue: 'default',
+                            value: '↑↑↓↓←→←→BA 🤖',
+                            evalReason: expect.toBeNil()
+                        },
+                        logs: []
+                    }))
+
+                    await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
+                    expectEventBody(eventBody, 'unicode-var', 'aggVariableEvaluated', 1)
                 })
             })
 
