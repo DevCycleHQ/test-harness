@@ -62,8 +62,6 @@ func locationCommandHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func commandHandler(locationIsClient bool, w http.ResponseWriter, r *http.Request) {
-	commandMutex.Lock()
-	defer commandMutex.Unlock()
 	var body CommandBody
 	jsonErr := json.NewDecoder(r.Body).Decode(&body)
 
@@ -227,6 +225,9 @@ func callMethodOnEntity(
 
 	locationId := strconv.Itoa(len(datastore.commandResults[command]))
 	locationHeader := "command/" + command + "/" + locationId
+
+	commandMutex.Lock()
+	defer commandMutex.Unlock()
 
 	datastore.commandResults[command][locationId] = result[0]
 
