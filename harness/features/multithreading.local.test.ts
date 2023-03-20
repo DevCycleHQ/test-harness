@@ -2,12 +2,12 @@ import {
     describeCapability,
     forEachSDK,
     getPlatformBySdkName,
-    LocalTestClient,
+    LocalTestClient, wait,
     waitForRequest
 } from '../helpers'
 import { Capabilities } from '../types'
 import { getServerScope } from '../nock'
-import { config } from '../mockData'
+import { config, config2 } from '../mockData'
 import { VariableType } from '@devcycle/types'
 import { optionalEventFields, optionalUserEventFields } from '../mockData/events'
 
@@ -32,30 +32,32 @@ describe('Multithreading Tests', () => {
         const expectedPlatform = getPlatformBySdkName(name, true)
 
         describeCapability(name, Capabilities.multithreading)(name, () => {
-            let testClient: LocalTestClient
             let eventsUrl: string
 
+            const createClient = async (mockConfig = config, options = {
+                configPollingIntervalMS: 100000,
+                eventFlushIntervalMS: 500,
+                // set two thread workers to test multithreading
+                maxWasmWorkers: 2
+            }) => {
+                const testClient = new LocalTestClient(name)
+
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .reply(200, config)
+
+                await testClient.createClient(true, options)
+
+                eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
+
+                return testClient
+            }
+
             describe('initialized client', () => {
-                beforeEach(async () => {
-                    testClient = new LocalTestClient(name)
-
-                    scope
-                        .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                        .reply(200, config)
-
-                    await testClient.createClient(true, {
-                        configPollingIntervalMS: 100000,
-                        eventFlushIntervalMS: 500,
-                        // set two thread workers to test multithreading
-                        maxWasmWorkers: 2
-                    })
-
-                    eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
-                })
-
                 const {key, defaultValue, variationOn} = expectedVariable
 
                 it('should return variable if SDK returns object matching default type', async () => {
+                    const testClient = await createClient()
                     let eventBody = {}
 
                     const interceptor = scope.post(eventsUrl)
@@ -92,7 +94,75 @@ describe('Multithreading Tests', () => {
                     expectEventBody(eventBody, key, 'aggVariableEvaluated')
                 })
 
+                it('should return correct variable value when the config changes during execution', async () => {
+                    const testClient = await createClient(config, {
+                        configPollingIntervalMS: 2000,
+                        eventFlushIntervalMS: 500,
+                        maxWasmWorkers: 2
+                    })
+
+                    const configRequest = scope.get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    configRequest.reply(200, config2)
+
+                    let eventBody = {}
+
+                    const interceptor = scope.post(eventsUrl).times(2)
+                    interceptor.reply((uri, body) => {
+                        eventBody = body
+                        return [201]
+                    })
+
+                    const variableResponse = await testClient.callVariable(
+                        {user_id: 'user1', customData: {'should-bucket': true}},
+                        key,
+                        defaultValue
+                    )
+                    const variable = await variableResponse.json()
+
+                    expect(variable).toEqual(expect.objectContaining({
+                        entityType: 'Variable',
+                        data: {
+                            type: variableType,
+                            isDefaulted: false,
+                            key,
+                            defaultValue: defaultValue,
+                            value: variationOn
+                        }
+                    }))
+
+                    await waitForRequest(scope, configRequest, 2000, "Second config request timed out")
+
+                    // wait an arbitrary amount of time for config to be updated across the object pools
+                    await wait(500)
+
+                    const newVariableResponse = await testClient.callVariable(
+                        {user_id: 'user1', customData: {'should-bucket': true}},
+                        key,
+                        defaultValue
+                    )
+                    const newVariable = await newVariableResponse.json()
+
+                    expect(newVariable).toEqual(expect.objectContaining({
+                        entityType: 'Variable',
+                        data: {
+                            type: variableType,
+                            isDefaulted: false,
+                            key,
+                            defaultValue: defaultValue,
+                            value: "string2"
+                        }
+                    }))
+
+                    await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
+
+                    // Expect that the SDK sends an "aggVariableEvaluated" event
+                    // for the variable call
+                    expectEventBody(eventBody, key, 'aggVariableEvaluated')
+                })
+
                 it('should aggregate events across threads', async () => {
+                    const testClient = await createClient()
+
                     let eventBodies = []
 
                     const interceptor = scope.post(eventsUrl).times(2)
@@ -135,6 +205,8 @@ describe('Multithreading Tests', () => {
                 })
 
                 it('should retry events across threads', async () => {
+                    const testClient = await createClient()
+
                     let eventBodies = []
 
                     const interceptor1 = scope.post(eventsUrl).times(2)
@@ -183,6 +255,8 @@ describe('Multithreading Tests', () => {
 
                 describeCapability(name, Capabilities.clientCustomData)(name, () => {
                     it('should set client custom data and use it for segmentation', async () => {
+                        const testClient = await createClient()
+
                         const interceptor = scope
                             .post(eventsUrl)
                             .times(2)

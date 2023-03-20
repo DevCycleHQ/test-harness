@@ -99,7 +99,7 @@ describe('Variable Tests - Local', () => {
                 forEachVariableType((type) => {
                     const { key, defaultValue, variationOn, variableType } = expectedVariablesByType[type]
 
-                    it('should return variable if mock server returns object matching default type', async () => {
+                    it('should return variable if SDK returns object matching default type',  async () => {
                         let eventBody = {}
                         // The interceptor instance is used to wait on events that are triggered when calling
                         // methods so that we can verify events being sent out and mock out responses from the

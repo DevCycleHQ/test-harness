@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 
 	devcycle "github.com/devcyclehq/go-server-sdk/v2"
 	"github.com/gorilla/mux"
@@ -39,6 +40,8 @@ type ErrorResponse struct {
 	Stack      error  `json:"stack"`
 }
 
+var commandMutex = sync.Mutex{}
+
 func handleError(r any, err *error) {
 	switch x := r.(type) {
 	case string:
@@ -59,6 +62,8 @@ func locationCommandHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func commandHandler(locationIsClient bool, w http.ResponseWriter, r *http.Request) {
+	commandMutex.Lock()
+	defer commandMutex.Unlock()
 	var body CommandBody
 	jsonErr := json.NewDecoder(r.Body).Decode(&body)
 

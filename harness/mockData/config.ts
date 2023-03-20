@@ -182,6 +182,37 @@ export const config: ConfigBody = {
     }
 }
 
+export const config2 = {
+    ...config,
+    features: [
+        {
+            ...config.features[0],
+            variations: [
+                {
+                    ...config.features[0].variations[0],
+                    "variables": [{
+                        "_var": "638681f059f1b81cc9e6c7fa",
+                        "value": false
+                    }, {
+                        "_var": "638681f059f1b81cc9e6c7fb",
+                        "value": "string2"
+                    }, {
+                        "_var": "638681f059f1b81cc9e6c7fc",
+                        "value": 2
+                    }, {
+                        "_var": "638681f059f1b81cc9e6c7fd",
+                        "value": {
+                            "facts": "indeed"
+                        }
+                    }],
+                },
+                ...config.features[0].variations.slice(1)
+            ]
+        },
+        ...config.features.slice(1)
+    ]
+}
+
 export const expectedFeaturesVariationOn = {
     'test-harness': {
         _id: '638680d6fcb67b96878d90e6',
