@@ -48,13 +48,24 @@ services:
     container_name: go
     ports:
       - "3000"
+  gonative:
+    build:
+      context: ./proxies/go
+      args:
+        - GO_SDK_VERSION=${GO_SDK_VERSION}
+        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+        - SDKS_TO_TEST=${SDKS_TO_TEST}
+        - GO_BUILD_TAGS=native_bucketing
+    container_name: gonative
+    ports:
+      - "3000"
   ruby:
-   build:
-     context: ./proxies/ruby
-     args:
-       - RUBY_SDK_VERSION=${RUBY_SDK_VERSION}
-       - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-       - SDKS_TO_TEST=${SDKS_TO_TEST}
-   container_name: ruby
-   ports:
-     - "3000"
+    build:
+      context: ./proxies/ruby
+      args:
+        - RUBY_SDK_VERSION=${RUBY_SDK_VERSION}
+        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+        - SDKS_TO_TEST=${SDKS_TO_TEST}
+    container_name: ruby
+    ports:
+      - "3000"
