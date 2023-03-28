@@ -471,6 +471,10 @@ export const expectErrorMessageToBe = (message: string, expected: string) => {
 }
 
 export const getPlatformBySdkName = (name: string, isLocal: boolean) => {
+    // GoNative is using the same SDK as Go but with different build args
+    if (name === 'GoNative') {
+        return 'Go'
+    }
     return name === 'DotNet' ? // TODO use Sdks.dotnet instead of 'DotNet' when enable dotnet
         `C# ${isLocal ? 'Local' : 'Cloud'}`
         : name
