@@ -52,6 +52,9 @@ export const config: ConfigBody = {
                 "value": {
                     "facts": true
                 }
+            }, {
+                "_var": "638681f059f1b81cc9e6c7fe",
+                "value": "↑↑↓↓←→←→BA 🤖"
             }],
             "_id": "638680d6fcb67b96878d90ec"
         }, {
@@ -71,6 +74,9 @@ export const config: ConfigBody = {
                 "value": {
                     "facts": false
                 }
+            }, {
+                "_var": "638681f059f1b81cc9e6c7fe",
+                "value": "🙃"
             }],
             "_id": "638680d6fcb67b96878d90ed"
         }],
@@ -168,6 +174,10 @@ export const config: ConfigBody = {
         "_id": "638680d6fcb67b96878d90e8",
         "key": "test-harness",
         "type": VariableType.boolean
+    }, {
+        "_id": "638681f059f1b81cc9e6c7fe",
+        "key": "unicode-var",
+        "type": VariableType.string
     }],
     "variableHashes": {
         "bool-var": 4169114058,
@@ -175,7 +185,8 @@ export const config: ConfigBody = {
         "number-var": 2467683513,
         "schedule-feature": 66456795,
         "string-var": 2413071944,
-        "test-harness": 1034405338
+        "test-harness": 1034405338,
+        "unicode-var": 2917818241
     },
     "ably": {
         "apiKey": "fakekey"

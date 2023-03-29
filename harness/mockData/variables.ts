@@ -32,5 +32,11 @@ export const variables: BucketedUserConfig['variables'] = {
         "key": "schedule-feature",
         "type": VariableType.boolean,
         "value": true
+    },
+    "unicode-var": {
+        "_id": "638681f059f1b81cc9e6c7fe",
+        "key": "unicode-var",
+        "type": VariableType.string,
+        "value": "↑↑↓↓←→←→BA 🤖"
     }
 }
