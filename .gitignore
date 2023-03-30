@@ -115,6 +115,9 @@ dist
 # TernJS port file
 .tern-port
 
+# Jest test output
+jest-*.xml
+
 .env
 
 **/.DS_Store
