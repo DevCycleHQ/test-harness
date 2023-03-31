@@ -32,3 +32,12 @@ runs:
       env:
         SDK_GITHUB_SHA: ${{ inputs.sdk-github-sha }}
         SDKS_TO_TEST: ${{ inputs.sdks-to-test }}
+
+    # TODO: Support PRs from forks with https://github.com/marketplace/actions/test-reporter#recommended-setup-for-public-repositories
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    # run this step even if previous step failed
+      with:
+        name: JEST Tests            # Name of the check run which will be created
+        path: reports/jest-*.xml    # Path to test results
+        reporter: jest-junit        # Format of test results
