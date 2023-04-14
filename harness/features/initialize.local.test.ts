@@ -3,7 +3,8 @@ import {
     wait,
     LocalTestClient,
     describeCapability,
-    expectErrorMessageToBe
+    expectErrorMessageToBe,
+    hasCapability
 } from '../helpers'
 import { Capabilities } from '../types'
 import { config, shouldBucketUser } from '../mockData'
@@ -121,7 +122,11 @@ describe('Initialize Tests - Local', () => {
 
                 await wait(1100)
                 expect(scope.pendingMocks().length).toEqual(0)
-                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+
+                if (hasCapability(name, Capabilities.events)) {
+                    scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                }
+
                 // make sure the original config is still in use
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
@@ -145,7 +150,9 @@ describe('Initialize Tests - Local', () => {
                 await wait(1500)
                 expect(scope.pendingMocks().length).toEqual(0)
                 // make sure the original config is still in use
-                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                if (hasCapability(name, Capabilities.events)) {
+                    scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                }
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
             })
@@ -167,7 +174,9 @@ describe('Initialize Tests - Local', () => {
                 await wait(1200)
                 expect(scope.pendingMocks().length).toEqual(0)
                 // make sure the original config is still in use
-                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                if (hasCapability(name, Capabilities.events)) {
+                    scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                }
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
             })
@@ -189,7 +198,9 @@ describe('Initialize Tests - Local', () => {
                 await wait(1200)
                 expect(scope.pendingMocks().length).toEqual(0)
                 // make sure the original config is still in use
-                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                if (hasCapability(name, Capabilities.events)) {
+                    scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                }
                 const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 0)
                 expect((await variable.json()).data.value).toEqual(1)
             })

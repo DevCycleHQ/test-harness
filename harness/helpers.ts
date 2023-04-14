@@ -75,8 +75,12 @@ export const forEachSDK = (tests) => {
 
 export const describeIf = (condition: boolean) => condition ? describe : describe.skip
 
-export const describeCapability = (sdkName: string, capability: string) => {
-    return describeIf(SDKCapabilities[sdkName].includes(capability))
+export const describeCapability = (sdkName: string, ...capabilities: string[]) => {
+    return describeIf(capabilities.every((capability) => SDKCapabilities[sdkName].includes(capability)))
+}
+
+export const hasCapability = (sdkName: string, capability: string) => {
+    return SDKCapabilities[sdkName].includes(capability)
 }
 
 export const forEachVariableType = (tests) => {
