@@ -60,7 +60,7 @@ describe('Variable Tests - Local', () => {
         // This describeCapability only runs if the SDK has the "local" capability.
         // Capabilities are located under harness/types/capabilities and follow the same
         // name mapping from the sdks.ts file under harness/types/sdks.ts
-        describeCapability(name, Capabilities.local)(name, () => {
+        describeCapability(name, Capabilities.local, Capabilities.events)(name, () => {
             let testClient: LocalTestClient
             let eventsUrl: string
 

@@ -20,7 +20,7 @@ describe('Track Tests - Local', () => {
         let url: string
         const eventFlushIntervalMS = 1000
 
-        describeCapability(name, Capabilities.local)(name, () => {
+        describeCapability(name, Capabilities.local, Capabilities.events)(name, () => {
 
             let client: LocalTestClient
 
