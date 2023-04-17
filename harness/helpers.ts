@@ -262,7 +262,13 @@ const checkFailed = async (response: Response, shouldFail: boolean) => {
             throw new Error(`Request failed with status ${response.status}, ${await response.text()}`)
         }
         const result = await response.clone().json()
+        if (result.exception) {
+            console.log(`Exception: ${result.exception.constructor} ${result.exception}`)
+        }
         expect(result.exception).toBeUndefined()
+        if (result.asyncError) {
+            console.log(`AsyncError: ${result.exception.constructor} ${result.asyncError}`)
+        }
         expect(result.asyncError).toBeUndefined()
     } else {
         const result = await response.clone().json()
