@@ -3,6 +3,7 @@ import {
     forEachSDK,
     LocalTestClient,
     describeCapability,
+    hasCapability,
     waitForRequest
 } from '../helpers'
 import { Capabilities } from '../types'
@@ -26,15 +27,17 @@ describe('Client Custom Data Tests', () => {
                     .get(`/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`)
                     .reply(200, config)
 
-                scope
-                    .post(`/client/${client.clientId}/v1/events/batch`)
-                    .reply(201)
+                if (hasCapability(name, Capabilities.events)) {
+                    scope
+                        .post(`/client/${client.clientId}/v1/events/batch`)
+                        .reply(201)
+                }
 
 
                 const customData = { 'should-bucket': true }
                 await client.createClient(true)
                 await client.callSetClientCustomData(customData)
-                const user = { user_id: 'test-user'}
+                const user = { user_id: 'test-user' }
                 const response = await client.callVariable(user, 'string-var', 'some-default')
                 const variable = await response.json()
                 expect(variable).toEqual(expect.objectContaining({
@@ -63,7 +66,9 @@ describe('Client Custom Data Tests', () => {
                 await client.callSetClientCustomData(customData)
                 await waitForRequest(scope, configCall, 1000, 'Config request timed out')
 
-                scope.post(`/client/${client.clientId}/v1/events/batch`).reply(201)
+                if (hasCapability(name, Capabilities.events)) {
+                    scope.post(`/client/${client.clientId}/v1/events/batch`).reply(201)
+                }
 
                 const response = await client.callVariable({ user_id: 'user-id' }, 'string-var', 'some-default')
                 const variable = await response.json()

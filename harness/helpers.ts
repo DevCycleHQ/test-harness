@@ -227,7 +227,7 @@ export const waitForRequest = async (
     timeout: number,
     timeoutMessage: string
 ) => {
-    if (scope.isDone()){
+    if (scope.isDone()) {
         return
     }
 
@@ -293,7 +293,7 @@ class BaseTestClient {
         return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
 
-    async close() {}
+    async close() { }
 }
 
 export class LocalTestClient extends BaseTestClient {
