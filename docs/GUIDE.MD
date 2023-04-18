@@ -6,7 +6,7 @@ _Refer to the Variable Cloud tests and Variable Local tests on how to write test
 
 The test harness is built using `jest-testcontainers` which can run docker containers that can be used in our tests. The test harness uses it to spin up
 proxy servers, written in the language they are meant to test.The `docker-compose.yml` file lists the images that are to be spun up when the tests start up.
-There is also `jest-environment.ts` where some globals are set up and where the mock API server is setup and torn down.
+There is also `jest-environment.ts` where some globals are set up and where the mock API server is setup and torn down. The global setup used by `jest-testcontainers` is wrapped in `jest-global.ts` to set the profiles used by docker-compose. This limits which containers are actually built and run based on their `profiles` setting.
 
 The tests send commands to the proxy server through http requests, the spec of which you can find at `docs/spec.yaml`. The proxy server then calls the SDK based on the request from the test harness and will respond back with the results to the test harness. The SDK is also configured by the test harness to point all API calls to the mock server using `nock`; the proxy server initializes the SDK with options that change the base URL to the urls passed by the proxy server. This allows us to mock API calls from the SDK.
 

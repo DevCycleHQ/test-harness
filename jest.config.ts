@@ -4,7 +4,8 @@ module.exports = {
     transform: {
         '^.+\\.tsx?$': ['ts-jest', {}]
     },
+    globalSetup: './jest-global.ts',
     testEnvironment: './jest-environment.ts',
-    setupFilesAfterEnv: ["./jest-setup.js"],
+    setupFilesAfterEnv: ['./jest-setup.js'],
     testTimeout: 60000,
-};
+}
