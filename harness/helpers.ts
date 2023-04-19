@@ -71,7 +71,7 @@ export const forEachSDK = (tests) => {
             if (!scope.isDone()) {
                 const pendingMocks = scope.pendingMocks()
                 resetServerScope()
-                throw new Error('Unsatisfied nock scopes: ' + pendingMocks)
+                throw new Error('Requests were expected but not received: ' + pendingMocks)
             }
 
             resetServerScope()
