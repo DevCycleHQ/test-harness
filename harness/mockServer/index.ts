@@ -16,11 +16,14 @@ export const assertNoUnmatchedRequests = async (currentClientId, testNameMap) =>
         unmatchedRequests = []
         const url = currentUnmatchedRequests[0].config.url
         const clientId = url.split('/')[4]
+
         if (url.includes(currentClientId)) {
-            throw new Error('Unmatched requests: ' + currentUnmatchedRequests)
+            console.error('Unmatched requests: ' + currentUnmatchedRequests)
+            throw new Error('Unexpected requests received: ' + currentUnmatchedRequests)
         } else {
             const testName = testNameMap[clientId]
-            throw new Error(`Unmatched requests from test case ${testName} ` + currentUnmatchedRequests)
+            console.error(`Unmatched requests from test case ${testName} ` + currentUnmatchedRequests)
+            throw new Error(`Unexpected requests received from test case ${testName} ` + currentUnmatchedRequests)
         }
     }
 }

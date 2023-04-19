@@ -3,6 +3,7 @@ import {
     forEachSDK,
     forEachVariableType,
     getPlatformBySdkName,
+    hasCapability,
     LocalTestClient,
     waitForRequest
 } from '../helpers'
@@ -46,8 +47,8 @@ const expectedVariablesByType = {
 }
 
 const bucketedEventMetadata = {
-    _feature: "638680d6fcb67b96878d90e6",
-    _variation: "638680d6fcb67b96878d90ec"
+    _feature: '638680d6fcb67b96878d90e6',
+    _variation: '638680d6fcb67b96878d90ec'
 }
 
 describe('Variable Tests - Local', () => {
@@ -60,7 +61,7 @@ describe('Variable Tests - Local', () => {
         // This describeCapability only runs if the SDK has the "local" capability.
         // Capabilities are located under harness/types/capabilities and follow the same
         // name mapping from the sdks.ts file under harness/types/sdks.ts
-        describeCapability(name, Capabilities.local, Capabilities.events)(name, () => {
+        describeCapability(name, Capabilities.local)(name, () => {
             let testClient: LocalTestClient
             let eventsUrl: string
 
@@ -100,15 +101,7 @@ describe('Variable Tests - Local', () => {
                     const { key, defaultValue, variationOn, variableType } = expectedVariablesByType[type]
 
                     it('should return variable if mock server returns object matching default type', async () => {
-                        let eventBody = {}
-                        // The interceptor instance is used to wait on events that are triggered when calling
-                        // methods so that we can verify events being sent out and mock out responses from the
-                        // event server
-                        const interceptor = scope.post(eventsUrl)
-                        interceptor.reply((uri, body) => {
-                            eventBody = body
-                            return [201]
-                        })
+                        const eventResult = interceptEvents(name, eventsUrl)
 
                         const variableResponse = await testClient.callVariable(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -116,9 +109,6 @@ describe('Variable Tests - Local', () => {
                             defaultValue
                         )
                         const variable = await variableResponse.json()
-
-                        // waits for the request to the events API
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
 
                         // Expect that the variable returned is not defaulted and has a value,
                         // with an entity type "Variable"
@@ -134,18 +124,20 @@ describe('Variable Tests - Local', () => {
                             }
                         }))
 
+                        if (!hasCapability(name, Capabilities.events)) {
+                            return
+                        }
+
+                        // waits for the request to the events API
+                        await eventResult.wait()
+
                         // Expect that the SDK sends an "aggVariableEvaluated" event
                         // for the variable call
-                        expectEventBody(eventBody, key, 'aggVariableEvaluated')
+                        expectEventBody(eventResult.body, key, 'aggVariableEvaluated')
                     })
 
                     it('should return default value if default type doesn\'t match variable type',  async () => {
-                        let eventBody = {}
-                        const interceptor = scope.post(eventsUrl)
-                        interceptor.reply((uri, body) => {
-                            eventBody = body
-                            return [201]
-                        })
+                        const eventResult = interceptEvents(name, eventsUrl)
 
                         const wrongTypeDefault = type === 'number' ? '1' : 1
                         const variableResponse =
@@ -155,42 +147,44 @@ describe('Variable Tests - Local', () => {
                                 wrongTypeDefault
                             )
                         const variable = await variableResponse.json()
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
 
                         // Expect that the test returns a defaulted variable
                         expectDefaultValue(key, variable, wrongTypeDefault,
                             wrongTypeDefault === '1' ? VariableType.string : VariableType.number)
+
+                        if (!hasCapability(name, Capabilities.events)) {
+                            return
+                        }
+
+                        await eventResult.wait()
+
                         // Expects that the SDK sends an "aggVariableDefaulted" event for the
                         // defaulted variable
-                        expectEventBody(eventBody, key, 'aggVariableDefaulted')
+                        expectEventBody(eventResult.body, key, 'aggVariableDefaulted')
                     })
 
                     it('should return default value if user is not bucketed into variable',  async () => {
-                        let eventBody = {}
-                        const interceptor = scope.post(eventsUrl)
-                        interceptor.reply((uri, body) => {
-                            eventBody = body
-                            return [201]
-                        })
+                        const eventResult = interceptEvents(name, eventsUrl)
                         const variableResponse = await testClient.callVariable(
                             { user_id: 'user3' },
                             key,
                             defaultValue
                         )
                         const variable = await variableResponse.json()
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
 
                         expectDefaultValue(key, variable, defaultValue, variableType)
-                        expectEventBody(eventBody, key, 'aggVariableDefaulted')
+
+                        if (!hasCapability(name, Capabilities.events)) {
+                            return
+                        }
+
+                        await eventResult.wait()
+
+                        expectEventBody(eventResult.body, key, 'aggVariableDefaulted')
                     })
 
                     it('should return default value if variable doesn\'t exist',  async () => {
-                        let eventBody = {}
-                        const interceptor = scope.post(eventsUrl)
-                        interceptor.reply((uri, body) => {
-                            eventBody = body
-                            return [201]
-                        })
+                        const eventResult = interceptEvents(name, eventsUrl)
 
                         const variableResponse = await testClient.callVariable(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -198,19 +192,20 @@ describe('Variable Tests - Local', () => {
                             defaultValue
                         )
                         const variable = await variableResponse.json()
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
 
                         expectDefaultValue('nonexistent', variable, defaultValue, variableType)
-                        expectEventBody(eventBody, 'nonexistent', 'aggVariableDefaulted')
+
+                        if (!hasCapability(name, Capabilities.events)) {
+                            return
+                        }
+
+                        await eventResult.wait()
+
+                        expectEventBody(eventResult.body, 'nonexistent', 'aggVariableDefaulted')
                     })
 
                     it('should aggregate aggVariableDefaulted events',  async () => {
-                        let eventBody = {}
-                        const interceptor = scope.post(eventsUrl)
-                        interceptor.reply((uri, body) => {
-                            eventBody = body
-                            return [201]
-                        })
+                        const eventResult = interceptEvents(name, eventsUrl)
 
                         await testClient.callVariable(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -223,17 +218,16 @@ describe('Variable Tests - Local', () => {
                             defaultValue
                         )
 
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-                        expectEventBody(eventBody, 'nonexistent', 'aggVariableDefaulted', 2)
+                        if (!hasCapability(name, Capabilities.events)) {
+                            return
+                        }
+
+                        await eventResult.wait()
+                        expectEventBody(eventResult.body, 'nonexistent', 'aggVariableDefaulted', 2)
                     })
 
                     it('should aggregate aggVariableEvaluated events',  async () => {
-                        let eventBody = {}
-                        const interceptor = scope.post(eventsUrl)
-                        interceptor.reply((uri, body) => {
-                            eventBody = body
-                            return [201]
-                        })
+                        const eventResult = interceptEvents(name, eventsUrl)
 
                         await testClient.callVariable(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -246,18 +240,16 @@ describe('Variable Tests - Local', () => {
                             defaultValue
                         )
 
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-                        expectEventBody(eventBody, key, 'aggVariableEvaluated', 2)
+                        if (!hasCapability(name, Capabilities.events)) {
+                            return
+                        }
+                        await eventResult.wait()
+                        expectEventBody(eventResult.body, key, 'aggVariableEvaluated', 2)
                     })
                 })
 
                 it('should return a valid unicode string',  async () => {
-                    let eventBody = {}
-                    const interceptor = scope.post(eventsUrl)
-                    interceptor.reply((uri, body) => {
-                        eventBody = body
-                        return [201]
-                    })
+                    const eventResult = interceptEvents(name, eventsUrl)
 
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -279,8 +271,12 @@ describe('Variable Tests - Local', () => {
                         logs: []
                     }))
 
-                    await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-                    expectEventBody(eventBody, 'unicode-var', 'aggVariableEvaluated', 1)
+                    if (!hasCapability(name, Capabilities.events)) {
+                        return
+                    }
+
+                        await eventResult.wait()
+                    expectEventBody(eventResult.body, 'unicode-var', 'aggVariableEvaluated', 1)
                 })
             })
 
@@ -311,12 +307,7 @@ describe('Variable Tests - Local', () => {
                             eventFlushIntervalMS: 500
                         })
 
-                        let eventBody = {}
-                        const interceptor = scope.post(eventsUrl)
-                        interceptor.reply((uri, body) => {
-                            eventBody = body
-                            return [201]
-                        })
+                        const eventResult = interceptEvents(name, eventsUrl)
 
                         const variableResponse = await testClient.callVariable(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -326,8 +317,12 @@ describe('Variable Tests - Local', () => {
                         const variable = await variableResponse.json()
                         expectDefaultValue(key, variable, defaultValue, variableType)
 
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-                        expectEventBody(eventBody, key, 'aggVariableDefaulted', 1)
+                        if (!hasCapability(name, Capabilities.events)) {
+                            return
+                        }
+
+                        await eventResult.wait()
+                        expectEventBody(eventResult.body, key, 'aggVariableDefaulted', 1)
                     })
 
                     it('should return default value if client config failed, log event',  async () => {
@@ -348,12 +343,7 @@ describe('Variable Tests - Local', () => {
                             eventFlushIntervalMS: 500
                         })
 
-                        let eventBody = {}
-                        const interceptor = scope.post(eventsUrl)
-                        interceptor.reply((uri, body) => {
-                            eventBody = body
-                            return [201]
-                        })
+                        const eventResult = interceptEvents(name, eventsUrl)
 
                         const variableResponse = await testClient.callVariable(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -363,8 +353,12 @@ describe('Variable Tests - Local', () => {
                         const variable = await variableResponse.json()
                         expectDefaultValue(key, variable, defaultValue, variableType)
 
-                        await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-                        expectEventBody(eventBody, key, 'aggVariableDefaulted', 1)
+                        if (!hasCapability(name, Capabilities.events)) {
+                            return
+                        }
+
+                        await eventResult.wait()
+                        expectEventBody(eventResult.body, key, 'aggVariableDefaulted', 1)
                     })
                 })
             })
@@ -431,5 +425,26 @@ describe('Variable Tests - Local', () => {
             },
             logs: []
         })
+    }
+
+    const interceptEvents = (sdkName: string, eventsUrl: string) => {
+        if (!hasCapability(sdkName, Capabilities.events)) {
+            return
+        }
+        // The interceptor instance is used to wait on events that are triggered when calling
+        // methods so that we can verify events being sent out and mock out responses from the
+        // event server
+        const interceptor = scope.post(eventsUrl)
+
+        const eventResult = {
+            body: {},
+            wait: () => waitForRequest(scope, interceptor, 600, 'Event callback timed out')
+        }
+
+        interceptor.reply((uri, body) => {
+            eventResult.body = body
+            return [201]
+        })
+        return eventResult
     }
 })

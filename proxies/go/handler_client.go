@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"sync"
 	"time"
 
 	devcycle "github.com/devcyclehq/go-server-sdk/v2"
@@ -32,6 +33,8 @@ type clientResponseBody struct {
 	AsyncError string `json:"asyncError,omitempty"`
 	Exception  string `json:"exception,omitempty"`
 }
+
+var clientMutex = sync.Mutex{}
 
 func clientHandler(w http.ResponseWriter, r *http.Request) {
 	var reqBody clientRequestBody
@@ -75,7 +78,10 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	} else {
 		res.Message = "success"
+
+		clientMutex.Lock()
 		datastore.clients[reqBody.ClientId] = client
+		clientMutex.Unlock()
 
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Location", "client/"+reqBody.ClientId)
