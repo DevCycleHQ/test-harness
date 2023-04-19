@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 
 	devcycle "github.com/devcyclehq/go-server-sdk/v2"
 	"github.com/gorilla/mux"
@@ -38,6 +39,8 @@ type ErrorResponse struct {
 	Exception  string `json:"exception,omitempty"`
 	Stack      error  `json:"stack"`
 }
+
+var commandMutex = sync.RWMutex{}
 
 func handleError(r any, err *error) {
 	switch x := r.(type) {
@@ -132,6 +135,9 @@ func getEntityFromLocation(location string, id string, locationIsClient bool, er
 		}
 	}()
 
+	commandMutex.RLock()
+	defer commandMutex.RUnlock()
+
 	if locationIsClient {
 		return datastore.clients[id]
 	} else {
@@ -179,9 +185,13 @@ func callMethodOnEntity(
 		}
 	}()
 
+	commandMutex.Lock()
+
 	if datastore.commandResults[command] == nil {
 		datastore.commandResults[command] = make(map[string]any)
 	}
+
+	commandMutex.Unlock()
 
 	var method reflect.Value
 
@@ -220,6 +230,8 @@ func callMethodOnEntity(
 		make([]string, 0),
 	}
 
+	commandMutex.Lock()
+	defer commandMutex.Unlock()
 	locationId := strconv.Itoa(len(datastore.commandResults[command]))
 	locationHeader := "command/" + command + "/" + locationId
 
