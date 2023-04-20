@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	devcycle "github.com/devcyclehq/go-server-sdk/v2"
 	"github.com/gorilla/mux"
@@ -40,7 +44,7 @@ func specHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Printf("Starting Go proxy server at port 3000\n")
+	log.Print("Starting Go proxy server at port 3000")
 
 	r := mux.NewRouter()
 
@@ -56,7 +60,22 @@ func main() {
 
 	http.Handle("/", r)
 
-	if err := http.ListenAndServe(":3000", nil); err != nil {
+	server := &http.Server{Addr: ":3000", Handler: nil}
+
+	sigHandler := make(chan os.Signal, 1)
+	signal.Notify(sigHandler, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
+	go func() {
+		sig := <-sigHandler
+		log.Printf("Received %s signal, shutting down server", sig)
+		if err := server.Shutdown(context.Background()); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	if err := server.ListenAndServe(); err != nil {
+		if err == http.ErrServerClosed {
+			return
+		}
 		log.Fatal(err)
 	}
 }
