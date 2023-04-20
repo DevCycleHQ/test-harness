@@ -91,6 +91,8 @@ public class LocationController : ControllerBase
             };
 
         } catch (Exception e) {
+            Console.WriteLine("[COMMAND ERROR] " + body.Command + ": " + e);
+
             Response.StatusCode = 200;
 
             if (body.IsAsync) {
@@ -194,6 +196,12 @@ public class LocationController : ControllerBase
         if (command == "variable") {
             Type defaultValueClass = parsedParams[parsedParams.Count - 1].GetType();
             commandMethod = commandMethod?.MakeGenericMethod(defaultValueClass); // have to set the generic type for defaultValue before invoke
+        }
+        else if(parsedCommand == "SetClientCustomData") {
+            // need to convert from a JObject to a Dictionary<string, object> to match the method signature
+            var customDataJson = parsedParams[0] as JObject;
+            var customDataDict = customDataJson.ToObject<Dictionary<string, object>>();
+            parsedParams[0] = customDataDict;
         }
 
         object result = null;
