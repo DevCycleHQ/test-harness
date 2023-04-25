@@ -45,6 +45,7 @@ func specHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	log.Print("Starting Go proxy server at port 3000")
+	log.Printf("Native bucketing: %v", devcycle.NATIVE_SDK)
 
 	r := mux.NewRouter()
 
