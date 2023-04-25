@@ -196,8 +196,7 @@ func callMethodOnEntity(
 
 	for _, value := range result {
 		if value.Type().Implements(reflect.TypeOf(err).Elem()) && value.Interface() != nil {
-			// panic to catch error in defer function above
-			panic(value.Interface())
+			*err = value.Interface().(error)
 		}
 	}
 
