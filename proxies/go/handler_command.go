@@ -37,7 +37,7 @@ type LocationResponse struct {
 type ErrorResponse struct {
 	AsyncError string `json:"asyncError,omitempty"`
 	Exception  string `json:"exception,omitempty"`
-	Stack      error  `json:"stack"`
+	Stack      string `json:"stack"`
 }
 
 var commandMutex = sync.RWMutex{}
@@ -74,26 +74,24 @@ func commandHandler(locationIsClient bool, w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
-		log.Printf(err.Error())
+		log.Printf("%v", err)
 		var errorResponse ErrorResponse
 		if body.IsAsync {
 			errorResponse = ErrorResponse{
 				AsyncError: err.Error(),
-				Stack:      err,
 			}
 		} else {
 			errorResponse = ErrorResponse{
 				Exception: err.Error(),
-				Stack:     err,
 			}
 		}
 
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(errorResponse)
+		_ = json.NewEncoder(w).Encode(errorResponse)
 	} else {
 		w.Header().Add("Location", locationHeader)
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(locationResponse)
+		_ = json.NewEncoder(w).Encode(locationResponse)
 	}
 }
 
@@ -129,12 +127,6 @@ func getCommandResponse(
 }
 
 func getEntityFromLocation(location string, id string, locationIsClient bool, err *error) any {
-	defer func() {
-		if r := recover(); r != nil {
-			handleError(r, err)
-		}
-	}()
-
 	commandMutex.RLock()
 	defer commandMutex.RUnlock()
 
@@ -146,12 +138,6 @@ func getEntityFromLocation(location string, id string, locationIsClient bool, er
 }
 
 func parseParams(body CommandBody, err *error) []reflect.Value {
-	defer func() {
-		if r := recover(); r != nil {
-			handleError(r, err)
-		}
-	}()
-
 	var parsedParams = []reflect.Value{}
 	for _, element := range body.Params {
 		if element.Type == nil {
@@ -179,12 +165,6 @@ func callMethodOnEntity(
 	locationIsClient bool,
 	err *error,
 ) (LocationResponse, string) {
-	defer func() {
-		if r := recover(); r != nil {
-			handleError(r, err)
-		}
-	}()
-
 	commandMutex.Lock()
 
 	if datastore.commandResults[command] == nil {
@@ -216,8 +196,7 @@ func callMethodOnEntity(
 
 	for _, value := range result {
 		if value.Type().Implements(reflect.TypeOf(err).Elem()) && value.Interface() != nil {
-			// panic to catch error in defer function above
-			panic(value.Interface())
+			*err = value.Interface().(error)
 		}
 	}
 
@@ -242,12 +221,6 @@ func callMethodOnEntity(
 }
 
 func parseEntity(entityType reflect.Type, result []reflect.Value, err *error) (string, any) {
-	defer func() {
-		if r := recover(); r != nil {
-			handleError(r, err)
-		}
-	}()
-
 	var parsedResult any
 	parsedResult = result[0]
 

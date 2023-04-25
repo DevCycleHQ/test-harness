@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime/debug"
 	"syscall"
 
 	devcycle "github.com/devcyclehq/go-server-sdk/v2"
@@ -40,11 +41,12 @@ func specHandler(w http.ResponseWriter, r *http.Request) {
 		[]string{"EdgeDB", "LocalBucketing", "CloudBucketing"},
 	}
 	fmt.Println("/spec called")
-	json.NewEncoder(w).Encode(res)
+	_ = json.NewEncoder(w).Encode(res)
 }
 
 func main() {
 	log.Print("Starting Go proxy server at port 3000")
+	log.Printf("Native bucketing: %v", devcycle.NATIVE_SDK)
 
 	r := mux.NewRouter()
 
@@ -54,9 +56,9 @@ func main() {
 	})
 
 	r.HandleFunc("/spec", specHandler).Methods("GET")
-	r.HandleFunc("/client", clientHandler).Methods("POST")
-	r.HandleFunc("/command/{location}/{id}", locationCommandHandler).Methods("POST")
-	r.HandleFunc("/client/{id}", clientCommandHandler).Methods("POST")
+	r.Handle("/client", panicHandler(clientHandler)).Methods("POST")
+	r.Handle("/command/{location}/{id}", panicHandler(locationCommandHandler)).Methods("POST")
+	r.Handle("/client/{id}", panicHandler(clientCommandHandler)).Methods("POST")
 
 	http.Handle("/", r)
 
@@ -78,4 +80,20 @@ func main() {
 		}
 		log.Fatal(err)
 	}
+}
+
+func panicHandler(handler http.HandlerFunc) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Printf("Panic recovered by proxy: %v", err)
+				w.WriteHeader(http.StatusOK)
+				_ = json.NewEncoder(w).Encode(ErrorResponse{
+					Exception: fmt.Sprintf("Unhandled panic: %v", err),
+					Stack:     string(debug.Stack()),
+				})
+			}
+		}()
+		handler(w, r)
+	})
 }

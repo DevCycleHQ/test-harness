@@ -271,12 +271,15 @@ const checkFailed = async (response: Response, shouldFail: boolean) => {
         }
         const result = await response.clone().json()
         if (result.exception) {
-            console.log(`Exception: ${result.exception.constructor} ${result.exception}`)
+            console.error(`Exception from proxy: ${result.exception}`)
+        }
+        if (result.asyncError) {
+            console.error(`AsyncError from proxy: ${result.asyncError}`)
+        }
+        if (result.stack) {
+            console.error('Stack trace from proxy:', result.stack)
         }
         expect(result.exception).toBeUndefined()
-        if (result.asyncError) {
-            console.log(`AsyncError: ${result.exception.constructor} ${result.asyncError}`)
-        }
         expect(result.asyncError).toBeUndefined()
     } else {
         const result = await response.clone().json()
