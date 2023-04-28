@@ -1,6 +1,13 @@
 version: "3.7"
 
 services:
+  # Dummy service to keep docker-compose happy when running in local mode
+  local:
+    profiles:
+      - local
+    container_name: busybox
+    command: sleep 1000000000
+    image: busybox
   nodejs:
     profiles:
       - nodejs
