@@ -1,0 +1,4 @@
+/go
+go.work
+go.work.sum
+*_localdev.go
