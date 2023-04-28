@@ -32,6 +32,15 @@ If a test run fails for a particular SDK change, use the environment variables a
 against the version of the SDK causing the issue. It also helps to isolate the test failure by running against
 a particular test file, or using `it.only` to run only a single test within a file.
 
+You can run yarn much faster against a single test file with:
+```
+yarn test --testPathPattern='variable.local'
+```
+or against a single test in that file (the matching against dynamic test names is tricky, so you might not be able to just run one):
+```
+yarn test --testPathPattern='variable.local' --testNamePattern='should return a valid unicode string'
+```
+
 It is also typically necessary to run the SDK proxy server locally in order to log / debug what is going on.
 See the section below on running the harness against a local SDK.
 
@@ -52,8 +61,11 @@ When running proxy tests, use the following environment variables to specify loc
 LOCAL_MODE=1 SDKS_TO_TEST=nodejs yarn test
 ```
 
+This will point the test harness at a proxy running at http://localhost:3000, and disable all the containers in docker-compose. See [these instructions](docs/LOCAL.md) for details on how to run the proxy for each SDK.
+
+A specific version of docker-compose may be required to support the profiles in the docker-compose.yml config file. 1.29.2 seems to work.
+
 You may still need to run the package manager for the particular proxy (e.g. `yarn`, `go mod tidy` etc.)
-, see [this document](docs/LOCAL.md) for details on how to run the proxies.
 
 ## Development
 To understand how the system works and write new proxies, see the documentation in the `docs` folder.

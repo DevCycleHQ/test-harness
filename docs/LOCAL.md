@@ -24,12 +24,10 @@ to override the version of the dependent packages that will be used to the local
 
 then:
 1. Run `yarn` inside the `proxies/nodejs` folder
-2. Comment out the `nodejs` container in `docker-compose.yml`
 3. Set the environment variable `LOCAL_MODE` to `1`
 4. Set the environment variable `SDKS_TO_TEST` to `nodejs`
 5. Run `yarn start:nodejs` in the root of the `test-harness` repository to start the proxy server process
 6. Run `yarn test` in the root of the `test-harness` repository (in a different shell) to run the tests
-
 
 ## DotNet
 Ensure you have the [dotnet-server-sdk](https://github.com/DevCycleHQ/dotnet-server-sdk) repository cloned in the same parent directory as
@@ -52,12 +50,15 @@ and shell commands.
 Ensure you have the [go-server-sdk](https://github.com/DevCycleHQ/go-server-sdk) repository cloned in the same parent directory as
 the `test-harness` repository.
 
-Add this line to the bottom of the `go.mod` file in `proxies/go`:
+Create a `go.work` file in the `<test-harness directory>/proxies/go` directory that will override the dependency on the SDK to point to your local copy:
 ```
-replace github.com/devcyclehq/go-server-sdk/v2 => ../../../go-server-sdk
+cd proxies/go
+go work init .
+go work edit -replace github.com/devcyclehq/go-server-sdk/v2=../../../go-server-sdk
 ```
+This assumes your local SDK is in a directory called `go-server-sdk` located next to the top-level test harness directory. Adjust the path as needed.
 
-Run `go mod tidy` in the same directory
+Run `go mod tidy` in the same directory to resolve any changed dependencies from your local copy.
 
 Follow the same numbered steps as above for NodeJS, substituting `go` for `nodejs` in the environment variables
 and shell commands.
@@ -69,7 +70,7 @@ the `test-harness` repository.
 Uncomment the lines in `build.gradle` and `settings.gradle` in the `proxies/java` folder which are in reference to the
 local SDK:
 
-`build.grade`
+`build.gradle`
 ```
 // comment the original dependency out
 // implementation("com.devcycle:java-server-sdk:${System.getenv('JAVA_SDK_VERSION') ?: "+"}")
