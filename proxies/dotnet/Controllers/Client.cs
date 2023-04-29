@@ -127,10 +127,15 @@ public class ClientController : ControllerBase
                         .SetLogger(LoggerFactory.Create(builder => builder.AddConsole()))
                         .Build();
 
+                    try {
                         await task;
                         if (eventArgs != null && !eventArgs.Success) {
                             throw eventArgs.Errors[0];
                         }
+                    } catch (Exception e) {
+                        Response.StatusCode = 200;
+                        return new { asyncError = e.Message };
+                    }
                 } else {
                     DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
                         .SetEnvironmentKey(ClientBody.SdkKey)

@@ -74,7 +74,11 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 	client, err := devcycle.NewDVCClient(reqBody.SdkKey, &options)
 
 	if err != nil {
-		res.Exception = err.Error()
+		if reqBody.WaitForInitialization {
+			res.AsyncError = err.Error()
+		} else {
+			res.Exception = err.Error()
+		}
 		w.WriteHeader(http.StatusOK)
 	} else {
 		res.Message = "success"

@@ -69,8 +69,7 @@ describe('Initialize Tests - Local', () => {
                 await testClient.createClient(true, { configPollingIntervalMS: 10000 })
             })
 
-            // TODO DVC-6016 investigate why these were failing on the nodeJS SDK
-            it.skip('stops the polling interval when the sdk key is invalid and cdn responds 403,' +
+            it('stops the polling interval when the sdk key is invalid and cdn responds 403,' +
                 ' throws error', async () => {
                 const testClient = new LocalTestClient(name)
 
@@ -80,13 +79,12 @@ describe('Initialize Tests - Local', () => {
 
                 const response =
                     await testClient.createClient(true, { configPollingIntervalMS: 1000 }, testClient.sdkKey, true)
-                const { exception } = await response.json()
+                const { asyncError } = await response.json()
 
                 expectErrorMessageToBe(
-                    exception,
+                    asyncError,
                     'Invalid environment key provided. Please call initialize with a valid server environment key'
                 )
-
             })
 
             it('fetches config again after 3 seconds when config polling interval is overriden', async () => {
@@ -165,7 +163,7 @@ describe('Initialize Tests - Local', () => {
 
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                    .reply(200, "I'm not JSON!")
+                    .reply(200, 'I\'m not JSON!')
 
                 await testClient.createClient(true, { configPollingIntervalMS: 1000 })
 
@@ -189,7 +187,7 @@ describe('Initialize Tests - Local', () => {
 
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                    .reply(200, "{\"snatch_movie_quote\": \"d'ya like dags?\"}")
+                    .reply(200, '{"snatch_movie_quote": "d\'ya like dags?"}')
 
                 await testClient.createClient(true, { configPollingIntervalMS: 1000 })
 

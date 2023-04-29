@@ -48,6 +48,7 @@ describe('Variable Tests - Cloud', () => {
                 // from the proxy server
                 expectErrorMessageToBe(error.asyncError, 'Missing parameter: key')
             })
+
             // TODO DVC-5954 investigate why these were failing on the SDKs
             it.skip('will throw error if variable called with invalid sdk key', async () => {
                 scope
