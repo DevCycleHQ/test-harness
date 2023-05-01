@@ -65,6 +65,7 @@ describe('Multithreading Tests', () => {
                 const variableResponse = await testClient.callVariable(
                     { user_id: 'user1', customData: { 'should-bucket': true } },
                     key,
+                    variableType,
                     defaultValue
                 )
                 const variable = await variableResponse.json()
@@ -103,21 +104,25 @@ describe('Multithreading Tests', () => {
                     testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
                         key,
+                        variableType,
                         defaultValue
                     ),
                     testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
                         key,
+                        variableType,
                         defaultValue
                     ),
                     testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
                         key,
+                        variableType,
                         defaultValue
                     ),
                     testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
                         key,
+                        variableType,
                         defaultValue
                     )
                 ])
@@ -149,21 +154,25 @@ describe('Multithreading Tests', () => {
                     testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
                         key,
+                        variableType,
                         defaultValue
                     ),
                     testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
                         key,
+                        variableType,
                         defaultValue
                     ),
                     testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
                         key,
+                        variableType,
                         defaultValue
                     ),
                     testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
                         key,
+                        variableType,
                         defaultValue
                     )
                 ])
@@ -192,12 +201,12 @@ describe('Multithreading Tests', () => {
                     await testClient.callSetClientCustomData(customData)
                     const user = { user_id: 'test-user' }
                     const responses = await Promise.all([
-                        testClient.callVariable(user, 'string-var', 'some-default'),
-                        testClient.callVariable(user, 'string-var', 'some-default'),
-                        testClient.callVariable(user, 'string-var', 'some-default'),
-                        testClient.callVariable(user, 'string-var', 'some-default')
-
+                        testClient.callVariable(user, 'string-var', 'string', 'some-default'),
+                        testClient.callVariable(user, 'string-var', 'string', 'some-default'),
+                        testClient.callVariable(user, 'string-var', 'string', 'some-default'),
+                        testClient.callVariable(user, 'string-var', 'string', 'some-default')
                     ])
+
                     for (const response of responses) {
                         const variable = await response.json()
                         expect(variable).toEqual(expect.objectContaining({
@@ -249,6 +258,7 @@ describe('Multithreading Tests', () => {
                 const variableResponse = await testClient.callVariable(
                     { user_id: 'user1', customData: { 'should-bucket': true } },
                     key,
+                    variableType,
                     defaultValue
                 )
                 const variable = await variableResponse.json()

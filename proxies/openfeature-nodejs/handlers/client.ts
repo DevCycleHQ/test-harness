@@ -1,6 +1,8 @@
 import Koa from 'koa'
-import { DVCClient, DVCCloudClient, initialize } from '@devcycle/nodejs-server-sdk'
+import { DVCClient, DVCCloudClient, DVCOptions, initialize } from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
+import DevCycleProvider from '@devcycle/openfeature-nodejs-provider'
+import { OpenFeature } from '@openfeature/js-sdk'
 
 type ClientRequestBody = {
     clientId: string
@@ -29,20 +31,29 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
 
     try {
         let asyncError
-        let client: DVCClient | DVCCloudClient
+        let dvcClient: DVCClient | DVCCloudClient
+        let dvcOptions: DVCOptions
+
         if (!enableCloudBucketing) {
-            client = initialize(sdkKey, { ...options })
-            if (waitForInitialization) {
+            dvcOptions = { ...options }
+            dvcClient = initialize(sdkKey, dvcOptions)
+            if (waitForInitialization && dvcClient instanceof DVCClient) {
                 try {
-                    await client.onClientInitialized()
+                    await dvcClient.onClientInitialized()
                 } catch (e) {
                     asyncError = e
                 }
             }
+
         } else {
-            client = initialize(sdkKey, { ...options, enableCloudBucketing: true })
+            dvcClient = initialize(sdkKey, { ...options, enableCloudBucketing: true })
         }
-        dataStore.clients[clientId] = client
+
+        // @ts-ignore
+        OpenFeature.setProvider(new DevCycleProvider(dvcClient, dvcOptions))
+        const openFeatureClient = OpenFeature.getClient()
+
+        dataStore.clients[clientId] = { dvcClient, openFeatureClient }
         ctx.status = 201
         ctx.set('Location', `client/${clientId}`)
 

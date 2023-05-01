@@ -61,6 +61,13 @@ When running proxy tests, use the following environment variables to specify loc
 LOCAL_MODE=1 SDKS_TO_TEST=nodejs yarn test
 ```
 
+*NOTE For OpenFeature NodeJS:* you will need to run tests with `--runInBand` as OpenFeature has a global singleton
+which we can only have one DVCClient active at a time.
+
+```
+LOCAL_MODE=1 SDKS_TO_TEST=of-nodejs yarn test --runInBand
+```
+
 This will point the test harness at a proxy running at http://localhost:3000, and disable all the containers in docker-compose. See [these instructions](docs/LOCAL.md) for details on how to run the proxy for each SDK.
 
 A specific version of docker-compose may be required to support the profiles in the docker-compose.yml config file. 1.29.2 seems to work.

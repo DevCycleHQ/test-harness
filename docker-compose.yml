@@ -20,6 +20,18 @@ services:
     container_name: nodejs
     ports:
       - "3000"
+  of-nodejs:
+    profiles:
+      - nodejs
+    build:
+      context: ./proxies/openfeature-nodejs
+      args:
+        - NODEJS_SDK_VERSION=${OF_NODEJS_SDK_VERSION}
+        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+        - SDKS_TO_TEST=${SDKS_TO_TEST}
+    container_name: of-nodejs
+    ports:
+      - "3000"
   python:
     profiles:
       - python
