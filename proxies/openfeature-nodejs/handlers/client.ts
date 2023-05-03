@@ -49,7 +49,6 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
             dvcClient = initialize(sdkKey, { ...options, enableCloudBucketing: true })
         }
 
-        // @ts-ignore
         OpenFeature.setProvider(new DevCycleProvider(dvcClient, dvcOptions))
         const openFeatureClient = OpenFeature.getClient()
 

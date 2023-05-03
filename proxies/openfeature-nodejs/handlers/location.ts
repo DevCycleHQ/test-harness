@@ -226,7 +226,7 @@ const invokeCommand = (
     command: string,
     params: ParsedParams,
 ) => {
-    console.log(`invoking command ${command} on ${typeof entity} with params ${JSON.stringify(params)}`)
+    console.log(`invoking command "${command}" on "${typeof entity}" with params ${JSON.stringify(params)}`)
     const dataStoreClient = entity as DataStoreClient
     if (command === 'variable') {
         return getOpenFeatureVariable(dataStoreClient.openFeatureClient, params)
