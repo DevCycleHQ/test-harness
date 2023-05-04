@@ -22,7 +22,6 @@ export const getMockServerUrl = () => {
     return `http://${process.env.DOCKER_HOST_IP ?? 'host.docker.internal'}:${global.__MOCK_SERVER_PORT__}`
 }
 
-
 export const getConnectionStringForProxy = (proxy: string) => {
     if (process.env.LOCAL_MODE === "1") {
         return `http://localhost:3000`
@@ -45,7 +44,7 @@ const clientTestNameMap: Record<string, string> = {}
 // It can be formatted as a JSON array or a comma-separated list.
 // The SDKs are returned as their human-readable names from the Sdks enum, not the enum keys.
 export const getSDKs = () => {
-    const SDKS_TO_TEST = process.env.SDKS_TO_TEST || global.JEST_PROJECT_SDK_TO_TEST
+    const SDKS_TO_TEST = process.env.SDKS_TO_TEST
 
     try {
         return JSON.parse(SDKS_TO_TEST ?? '').map((sdk) => Sdks[sdk])
@@ -63,30 +62,31 @@ export const getSDKs = () => {
     }
 }
 
-export const forEachSDK = (tests) => {
-    const SDKs = getSDKs()
+/**
+ * This is used within the jest tests to fetch the running SDK environment for the current jest project.
+ * See `jest.config.ts` for more details on all projects. We also use this function to get the current nock server scope
+ * and add an `afterEach()` method to cleanup the client.
+ */
+export const getSDKScope = (): { sdkName: string, scope: Scope } => {
+    const sdkName = global.JEST_PROJECT_SDK_TO_TEST
+    if (!sdkName) {
+        throw new Error('No SDK specified to test using global.JEST_PROJECT_SDK_TO_TEST in jest.config.ts')
+    }
     const scope = getServerScope()
 
-    if (process.env.SDKS_TO_TEST && global.JEST_PROJECT_SDK_TO_TEST && process.env.SDKS_TO_TEST !== global.JEST_PROJECT_SDK_TO_TEST) {
-        // environment has overriden the SDKs we want to test, this Jest project should skip all tests
-        SDKs = []
-    }
+    afterEach(async () => {
+        await currentClient.close()
 
-    describe.each(SDKs)('%s SDK tests', (name) => {
-        afterEach(async () => {
-            await currentClient.close()
-
-            if (!scope.isDone()) {
-                const pendingMocks = scope.pendingMocks()
-                resetServerScope()
-                throw new Error('Requests were expected but not received: ' + pendingMocks)
-            }
-
+        if (!scope.isDone()) {
+            const pendingMocks = scope.pendingMocks()
             resetServerScope()
-            await global.assertNoUnmatchedRequests(currentClient.clientId, clientTestNameMap)
-        })
-        tests(name)
+            throw new Error('Requests were expected but not received: ' + pendingMocks)
+        }
+
+        resetServerScope()
+        await global.assertNoUnmatchedRequests(currentClient.clientId, clientTestNameMap)
     })
+    return { sdkName, scope }
 }
 
 export const describeIf = (condition: boolean) => condition ? describe : describe.skip

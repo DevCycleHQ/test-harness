@@ -1,6 +1,4 @@
-import {
-    getSDKs
-} from './harness/helpers'
+import { getSDKs } from './harness/helpers'
 import testContainersSetup from '@trendyol/jest-testcontainers/dist/setup'
 
 async function setup(opts) {
@@ -10,7 +8,7 @@ async function setup(opts) {
 
     // COMPOSE_PROFILES controls which docker-compose services are run via their profiles setting in docker-compose.yml
     process.env.COMPOSE_PROFILES = sdks.map((sdkName: string) => sdkName.toLowerCase()).join(',')
-    
+
     if (process.env.LOCAL_MODE === '1') {
         // Effectively disable all docker containers by setting a profile that none of them use
         process.env.COMPOSE_PROFILES = 'local'
