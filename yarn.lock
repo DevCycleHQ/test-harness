@@ -452,6 +452,7 @@ __metadata:
     jest: ^29.3.1
     jest-extended: ^3.2.4
     jest-junit: ^15.0.0
+    jest-serial-runner: ^1.2.1
     koa: ^2.13.4
     koa-bodyparser: ^4.3.0
     lint-staged: ^13.0.3
@@ -3800,6 +3801,15 @@ __metadata:
     slash: ^3.0.0
     strip-bom: ^4.0.0
   checksum: 82f27b48f000be074064a854e16e768f9453e9b791d8c5f9316606c37f871b5b10f70544c1b218ab9784f00bd972bb77f868c5ab6752c275be2cd219c351f5a7
+  languageName: node
+  linkType: hard
+
+"jest-serial-runner@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "jest-serial-runner@npm:1.2.1"
+  peerDependencies:
+    jest-runner: 24.x - 29.x
+  checksum: a951f6cdbb34dd5892f5132889cb85d18cc196c79abddf47c15fea0909618751a7004b11fe0925e653e7ab98d754c994ac5d78a9e8a74c242e865d60131af743
   languageName: node
   linkType: hard
 

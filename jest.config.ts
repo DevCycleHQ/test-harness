@@ -24,7 +24,7 @@ const projects = [
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'OF-NodeJS',
         },
-        runInBand: true
+        runner: 'jest-serial-runner'
     },
     {
         ...commonConfig,
