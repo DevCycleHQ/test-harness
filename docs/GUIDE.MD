@@ -14,7 +14,7 @@ Tests are divided into separate features that are present in each SDK tested by 
 `harness/features/`. There are also helper methods located under `harness/helpers.ts` that can be used to create SDK clients, call certain
 features on the proxy server and return the response, etc.
 
-An important helper method is the `getSDKScope` helper method, which returns the currently running SDK for the current jest project which is runnig. 
+An important helper method is the `getSDKScope` helper method, which returns the currently running SDK name for the current jest project. 
 You can see all the jest projects in `jest.config.js`. All SDK types are defined in: `harness/types/sdks.ts`.
 
 Another useful method is to wrap tests with a `describeCapability` function, passing in a capability listed under `harness/types/capabilities.ts`. 
