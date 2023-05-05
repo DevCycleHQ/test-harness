@@ -23,7 +23,8 @@ const projects = [
         displayName: 'OF-NodeJS',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'OF-NodeJS',
-        }
+        },
+        runInBand: true
     },
     {
         ...commonConfig,

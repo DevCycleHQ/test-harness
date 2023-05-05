@@ -22,7 +22,7 @@ services:
       - "3000"
   of-nodejs:
     profiles:
-      - nodejs
+      - of-nodejs
     build:
       context: ./proxies/openfeature-nodejs
       args:
