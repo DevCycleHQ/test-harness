@@ -1,70 +1,66 @@
 import {
     getConnectionStringForProxy,
-    forEachSDK,
-    LocalTestClient, describeCapability, waitForRequest
+    LocalTestClient,
+    describeCapability,
+    waitForRequest,
+    getSDKScope
 } from '../helpers'
 import { Capabilities } from '../types'
 import { config, variables } from '../mockData'
 import { Interceptor } from 'nock'
-import { getServerScope } from '../nock'
 
 describe('allVariables Tests - Local', () => {
-    const scope = getServerScope()
+    const { sdkName, scope } = getSDKScope()
     let configInterceptor: Interceptor
+    let url: string
+    let client: LocalTestClient
 
-    forEachSDK((name: string) => {
-        let url: string
+    beforeEach(async () => {
+        client = new LocalTestClient(sdkName)
+        configInterceptor = scope
+            .get(`/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`)
+        configInterceptor.reply(200, config)
 
-        let client: LocalTestClient
+        url = getConnectionStringForProxy(sdkName)
+        await client.createClient(true, {
+            configPollingIntervalMS: 60000
+        })
+    })
 
-        beforeEach(async () => {
-            client = new LocalTestClient(name)
-            configInterceptor = scope
-                .get(`/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`)
-             configInterceptor
+    describeCapability(sdkName, Capabilities.local)(sdkName, () => {
+        it('should return an empty object if client is not initialized', async () => {
+            const delayClient = new LocalTestClient(sdkName)
+
+            const interceptor = scope
+                .get(`/client/${delayClient.clientId}/config/v1/server/${delayClient.sdkKey}.json`)
+                .delay(2000)
+
+            interceptor
                 .reply(200, config)
 
-            url = getConnectionStringForProxy(name)
-            await client.createClient(true, {
-                configPollingIntervalMS: 60000
+            await delayClient.createClient(false)
+
+            const response = await delayClient.callAllVariables({
+                user_id: 'test_user',
+                email: 'user@gmail.com',
+                customData: { 'should-bucket': true }
             })
+            const { data: variablesMap } = await response.json()
+
+            expect(variablesMap).toMatchObject({})
+            await waitForRequest(scope, interceptor, 1000, 'Config request never received!')
         })
 
-        describeCapability(name, Capabilities.local)(name, () => {
-            it('should return an empty object if client is not initialized', async () => {
-                const delayClient = new LocalTestClient(name)
-
-                const interceptor = scope
-                    .get(`/client/${delayClient.clientId}/config/v1/server/${delayClient.sdkKey}.json`)
-                    .delay(2000)
-
-                interceptor
-                    .reply(200, config)
-
-                await delayClient.createClient(false)
-
-                const response = await delayClient.callAllVariables({
-                    user_id: 'test_user',
-                    email: 'user@gmail.com',
-                    customData: { 'should-bucket': true }
-                })
-                const { data: variablesMap } = await response.json()
-
-                expect(variablesMap).toMatchObject({})
-                await waitForRequest(scope, interceptor, 1000, 'Config request never received!')
+        it('should return a variable map for a bucketed user', async () => {
+            const response = await client.callAllVariables({
+                user_id: 'test_user',
+                email: 'user@gmail.com',
+                customData: { 'should-bucket': true }
             })
+            const { data: variablesMap, entityType } = await response.json()
 
-            it('should return a variable map for a bucketed user', async () => {
-                const response = await client.callAllVariables({
-                    user_id: 'test_user',
-                    email: 'user@gmail.com',
-                    customData: { 'should-bucket': true }
-                })
-                const { data: variablesMap, entityType } = await response.json()
-
-                expect(entityType).toEqual('Object')
-                expect(variablesMap).toEqual(variables)
-            })
+            expect(entityType).toEqual('Object')
+            expect(variablesMap).toEqual(variables)
         })
     })
 })
