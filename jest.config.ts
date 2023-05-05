@@ -46,6 +46,22 @@ const projects = [
             JEST_PROJECT_SDK_TO_TEST: 'Ruby',
         }
     },
+    // TODO uncomment once Java is ready
+    // {
+    //     ...commonConfig,
+    //     displayName: 'Java',
+    //     globals: {
+    //         JEST_PROJECT_SDK_TO_TEST: 'Java',
+    //     }
+    // },
+    // TODO uncomment once Python is ready
+    // {
+    //     ...commonConfig,
+    //     displayName: 'Python',
+    //     globals: {
+    //         JEST_PROJECT_SDK_TO_TEST: 'Python',
+    //     }
+    // },
 ]
 const SDKs = getSDKs().map((sdkName) => sdkName.toLowerCase())
 const filteredProjects = projects.filter((project) => SDKs.includes(project.displayName.toLowerCase()))

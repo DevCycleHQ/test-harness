@@ -7,5 +7,5 @@ export const Sdks = {
     // TODO uncomment once Java is ready
     // java: 'Java'
     // TODO add once python is ready
-    // python: "Python"
+    // python: 'Python'
 }
