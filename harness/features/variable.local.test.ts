@@ -102,6 +102,7 @@ describe('Variable Tests - Local', () => {
 
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
                         type,
                         defaultValue
@@ -141,6 +142,7 @@ describe('Variable Tests - Local', () => {
                     const wrongTypeDefault = type === 'number' ? '1' : 1
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
                         type,
                         wrongTypeDefault
@@ -166,6 +168,7 @@ describe('Variable Tests - Local', () => {
                     const eventResult = interceptEvents(sdkName, eventsUrl)
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user3' },
+                        sdkName,
                         key,
                         type,
                         defaultValue
@@ -188,6 +191,7 @@ describe('Variable Tests - Local', () => {
 
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         'nonexistent',
                         type,
                         defaultValue
@@ -210,12 +214,14 @@ describe('Variable Tests - Local', () => {
 
                     await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         'nonexistent',
                         type,
                         defaultValue
                     )
                     await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         'nonexistent',
                         type,
                         defaultValue
@@ -234,12 +240,14 @@ describe('Variable Tests - Local', () => {
 
                     await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
                         type,
                         defaultValue
                     )
                     await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
                         type,
                         defaultValue
@@ -258,6 +266,7 @@ describe('Variable Tests - Local', () => {
 
                 const variableResponse = await testClient.callVariable(
                     { user_id: 'user1', customData: { 'should-bucket': true } },
+                    sdkName,
                     'unicode-var',
                     'string',
                     'default'
@@ -317,6 +326,7 @@ describe('Variable Tests - Local', () => {
 
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
                         type,
                         defaultValue
@@ -354,6 +364,7 @@ describe('Variable Tests - Local', () => {
 
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
                         type,
                         defaultValue

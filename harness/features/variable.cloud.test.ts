@@ -38,6 +38,7 @@ describe('Variable Tests - Cloud', () => {
             // the SDK
             const variableResponse = await testClient.callVariable(
                 { user_id: 'user1' },
+                sdkName,
                 null,
                 'string',
                 'default_value',
@@ -58,6 +59,7 @@ describe('Variable Tests - Cloud', () => {
             // the SDK
             const variableResponse = await testClient.callVariable(
                 { user_id: 'user1' },
+                sdkName,
                 'var_key',
                 'string',
                 'default_value',
@@ -72,6 +74,7 @@ describe('Variable Tests - Cloud', () => {
         it('will throw error variable called with invalid default value', async () => {
             const variableResponse = await testClient.callVariable(
                 { user_id: 'user1' },
+                sdkName,
                 'var_key',
                 'string',
                 null,
@@ -104,6 +107,7 @@ describe('Variable Tests - Cloud', () => {
                 })
             const variableResponse = await testClient.callVariable(
                 { user_id: 'user1' },
+                sdkName,
                 'var_key',
                 'string',
                 'default_value'
@@ -137,6 +141,7 @@ describe('Variable Tests - Cloud', () => {
                 })
             const variableResponse = await testClient.callVariable(
                 { user_id: 'user1' },
+                sdkName,
                 'var_key',
                 'string',
                 'default_value'
@@ -159,6 +164,7 @@ describe('Variable Tests - Cloud', () => {
 
             const variableResponse = await testClient.callVariable(
                 { user_id: 'user1' },
+                sdkName,
                 'var_key',
                 'string',
                 variablesForTypes['string'].defaultValue
@@ -192,6 +198,7 @@ describe('Variable Tests - Cloud', () => {
 
                 const variableResponse = await testClient.callVariable(
                     { user_id: 'user1' },
+                    sdkName,
                     'var_key',
                     'string',
                     variablesForTypes[type].defaultValue
@@ -220,6 +227,7 @@ describe('Variable Tests - Cloud', () => {
 
                 const variableResponse = await testClient.callVariable(
                     { user_id: 'user1' },
+                    sdkName,
                     'var_key',
                     type,
                     variablesForTypes[type].defaultValue
@@ -250,6 +258,7 @@ describe('Variable Tests - Cloud', () => {
 
                 const variableResponse = await testClient.callVariable(
                     { user_id: 'user1' },
+                    sdkName,
                     'var_key',
                     type,
                     variablesForTypes[type].defaultValue

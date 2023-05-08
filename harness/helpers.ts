@@ -185,20 +185,25 @@ export const sendCommand = async (url: string, body: CommandBody) => {
 const callVariable = async (
     url: string,
     user: Record<string, unknown>,
+    sdkName: string,
     isAsync: boolean,
     key?: string,
     variableType?: string,
     defaultValue?: any,
 ) => {
+    const params: CommandBody['params'] = [
+        { type: 'user' },
+        { value: key },
+        { value: defaultValue }
+    ]
+    // Need to pass in the variable type into the OpenFeature provider as it doesn't have a generic variable interface
+    if (sdkName === 'OF-NodeJS') {
+        params.push({ value: variableType })
+    }
     return await sendCommand(url, {
         command: 'variable',
         user,
-        params: [
-            { type: 'user' },
-            { value: key },
-            { value: defaultValue },
-            { value: variableType }
-        ],
+        params,
         isAsync
     })
 }
@@ -362,6 +367,7 @@ export class LocalTestClient extends BaseTestClient {
 
     async callVariable(
         user: Record<string, unknown>,
+        sdkName: string,
         key?: string,
         variableType?: string,
         defaultValue?: any,
@@ -370,6 +376,7 @@ export class LocalTestClient extends BaseTestClient {
         const result = await callVariable(
             this.getClientUrl(),
             user,
+            sdkName,
             false,
             key,
             variableType,
@@ -457,6 +464,7 @@ export class CloudTestClient extends BaseTestClient {
 
     async callVariable(
         user: Record<string, unknown>,
+        sdkName: string,
         key?: string,
         variableType?: string,
         defaultValue?: any,
@@ -465,6 +473,7 @@ export class CloudTestClient extends BaseTestClient {
         const result = await callVariable(
             this.getClientUrl(),
             user,
+            sdkName,
             true,
             key,
             variableType,

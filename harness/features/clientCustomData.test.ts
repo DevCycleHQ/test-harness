@@ -35,7 +35,13 @@ describe('Client Custom Data Tests', () => {
             await client.createClient(true)
             await client.callSetClientCustomData(customData)
             const user = { user_id: 'test-user' }
-            const response = await client.callVariable(user, 'string-var', 'some-default')
+            const response = await client.callVariable(
+                user,
+                sdkName,
+                'string-var',
+                'string',
+                'some-default'
+            )
             const variable = await response.json()
             expect(variable).toEqual(expect.objectContaining({
                 entityType: 'Variable',
@@ -67,7 +73,13 @@ describe('Client Custom Data Tests', () => {
                 scope.post(`/client/${client.clientId}/v1/events/batch`).reply(201)
             }
 
-            const response = await client.callVariable({ user_id: 'user-id' }, 'string-var', 'some-default')
+            const response = await client.callVariable(
+                { user_id: 'user-id' },
+                sdkName,
+                'string-var',
+                'string',
+                'some-default'
+            )
             const variable = await response.json()
             expect(variable).toEqual(expect.objectContaining({
                 entityType: 'Variable',

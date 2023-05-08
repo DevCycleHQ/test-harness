@@ -126,7 +126,7 @@ describe('Initialize Tests - Local', () => {
             }
 
             // make sure the original config is still in use
-            const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 'number', 0)
+            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
             expect((await variable.json()).data.value).toEqual(1)
         })
 
@@ -151,7 +151,7 @@ describe('Initialize Tests - Local', () => {
             if (hasCapability(sdkName, Capabilities.events)) {
                 scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
             }
-            const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 'number', 0)
+            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
             expect((await variable.json()).data.value).toEqual(1)
         })
 
@@ -175,7 +175,7 @@ describe('Initialize Tests - Local', () => {
             if (hasCapability(sdkName, Capabilities.events)) {
                 scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
             }
-            const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 'number', 0)
+            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
             expect((await variable.json()).data.value).toEqual(1)
         })
 
@@ -199,7 +199,7 @@ describe('Initialize Tests - Local', () => {
             if (hasCapability(sdkName, Capabilities.events)) {
                 scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
             }
-            const variable = await testClient.callVariable(shouldBucketUser, 'number-var', 'number', 0)
+            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
             expect((await variable.json()).data.value).toEqual(1)
         })
     })
