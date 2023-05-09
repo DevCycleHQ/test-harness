@@ -364,11 +364,13 @@ class BaseTestClient {
         return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
 
-    async close() { }
+    async close() {
+    }
 }
 
 export class LocalTestClient extends BaseTestClient {
     private shouldFailInit = false
+
     async createClient(
         waitForInitialization: boolean,
         options: Record<string, unknown> = {},
@@ -378,6 +380,8 @@ export class LocalTestClient extends BaseTestClient {
         this.shouldFailInit = shouldFail
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
+        } else if (process.env.TEST_HARNESS_SDK_KEY) {
+            this.sdkKey = process.env.TEST_HARNESS_SDK_KEY
         }
         const response = await createClient(
             getConnectionStringForProxy(this.sdkName),
@@ -497,6 +501,8 @@ export class CloudTestClient extends BaseTestClient {
     async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null, shouldFail = false) {
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
+        } else if (process.env.TEST_HARNESS_SDK_KEY) {
+            this.sdkKey = process.env.TEST_HARNESS_SDK_KEY
         }
         const response = await createClient(
             getConnectionStringForProxy(this.sdkName),
