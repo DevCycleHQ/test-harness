@@ -102,7 +102,9 @@ describe('Variable Tests - Local', () => {
 
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
+                        type,
                         defaultValue
                     )
                     const variable = await variableResponse.json()
@@ -133,16 +135,18 @@ describe('Variable Tests - Local', () => {
                     expectEventBody(eventResult.body, key, 'aggVariableEvaluated')
                 })
 
-                it('should return default value if default type doesn\'t match variable type',  async () => {
+                const testfn = (sdkName === 'OF-NodeJS' ? it.skip : it)
+                testfn('should return default value if default type doesn\'t match variable type',  async () => {
                     const eventResult = interceptEvents(sdkName, eventsUrl)
 
                     const wrongTypeDefault = type === 'number' ? '1' : 1
-                    const variableResponse =
-                        await testClient.callVariable(
-                            { user_id: 'user1', customData: { 'should-bucket': true } },
-                            key,
-                            wrongTypeDefault
-                        )
+                    const variableResponse = await testClient.callVariable(
+                        { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
+                        key,
+                        type,
+                        wrongTypeDefault
+                    )
                     const variable = await variableResponse.json()
 
                     // Expect that the test returns a defaulted variable
@@ -164,7 +168,9 @@ describe('Variable Tests - Local', () => {
                     const eventResult = interceptEvents(sdkName, eventsUrl)
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user3' },
+                        sdkName,
                         key,
+                        type,
                         defaultValue
                     )
                     const variable = await variableResponse.json()
@@ -185,7 +191,9 @@ describe('Variable Tests - Local', () => {
 
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         'nonexistent',
+                        type,
                         defaultValue
                     )
                     const variable = await variableResponse.json()
@@ -206,12 +214,16 @@ describe('Variable Tests - Local', () => {
 
                     await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         'nonexistent',
+                        type,
                         defaultValue
                     )
                     await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         'nonexistent',
+                        type,
                         defaultValue
                     )
 
@@ -228,12 +240,16 @@ describe('Variable Tests - Local', () => {
 
                     await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
+                        type,
                         defaultValue
                     )
                     await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
+                        type,
                         defaultValue
                     )
 
@@ -250,7 +266,9 @@ describe('Variable Tests - Local', () => {
 
                 const variableResponse = await testClient.callVariable(
                     { user_id: 'user1', customData: { 'should-bucket': true } },
+                    sdkName,
                     'unicode-var',
+                    'string',
                     'default'
                 )
                 const variable = await variableResponse.json()
@@ -308,7 +326,9 @@ describe('Variable Tests - Local', () => {
 
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
+                        type,
                         defaultValue
                     )
                     const variable = await variableResponse.json()
@@ -344,7 +364,9 @@ describe('Variable Tests - Local', () => {
 
                     const variableResponse = await testClient.callVariable(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
+                        sdkName,
                         key,
+                        type,
                         defaultValue
                     )
                     const variable = await variableResponse.json()

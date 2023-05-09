@@ -1,5 +1,6 @@
 export const Sdks = {
     nodejs: 'NodeJS',
+    'of-nodejs': 'OF-NodeJS',
     dotnet: 'DotNet',
     go: 'Go',
     gonative: 'GoNative',

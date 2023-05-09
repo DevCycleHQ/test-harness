@@ -10,6 +10,7 @@ export const Capabilities = {
 
 export const SDKCapabilities = {
     NodeJS: [Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud],
+    'OF-NodeJS': [Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud],
     Python: [Capabilities.events, Capabilities.cloud, Capabilities.edgeDB],
     DotNet: [Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData],
     Java: [Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB],

@@ -47,7 +47,9 @@ We can then use our helper methods to call the `variable` method on our proxy se
 ```
 const variableResponse = await testClient.callVariable(
     { user_id: 'user1' },
+    sdkName,
     'var_key',
+    'string',
     'default_value'
 )
 const response = await variableResponse()

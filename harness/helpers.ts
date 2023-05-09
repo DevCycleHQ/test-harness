@@ -15,7 +15,7 @@ global.fetch = async (...args) => {
 }
 
 export const getMockServerUrl = () => {
-    if (process.env.LOCAL_MODE === "1") {
+    if (process.env.LOCAL_MODE === '1') {
         return `http://localhost:${global.__MOCK_SERVER_PORT__}`
     }
 
@@ -23,8 +23,8 @@ export const getMockServerUrl = () => {
 }
 
 export const getConnectionStringForProxy = (proxy: string) => {
-    if (process.env.LOCAL_MODE === "1") {
-        return `http://localhost:3000`
+    if (process.env.LOCAL_MODE === '1') {
+        return 'http://localhost:3000'
     }
 
     const host = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_IP__`]
@@ -185,18 +185,25 @@ export const sendCommand = async (url: string, body: CommandBody) => {
 const callVariable = async (
     url: string,
     user: Record<string, unknown>,
+    sdkName: string,
     isAsync: boolean,
     key?: string,
+    variableType?: string,
     defaultValue?: any,
 ) => {
+    const params: CommandBody['params'] = [
+        { type: 'user' },
+        { value: key },
+        { value: defaultValue }
+    ]
+    // Need to pass in the variable type into the OpenFeature provider as it doesn't have a generic variable interface
+    if (sdkName === 'OF-NodeJS') {
+        params.push({ value: variableType })
+    }
     return await sendCommand(url, {
         command: 'variable',
         user,
-        params: [
-            { type: 'user' },
-            { value: key },
-            { value: defaultValue }
-        ],
+        params,
         isAsync
     })
 }
@@ -218,7 +225,12 @@ const callAllVariables = async (url: string, user: Record<string, unknown>, isAs
     })
 }
 
-const callTrack = async (url: string, user: Record<string, unknown>, event: Record<string, unknown>, isAsync: boolean) => {
+const callTrack = async (
+    url: string,
+    user: Record<string, unknown>,
+    event: Record<string, unknown>,
+    isAsync: boolean
+) => {
     return await sendCommand(url, {
         command: 'track',
         user,
@@ -308,7 +320,7 @@ class BaseTestClient {
         currentClient = this
         const currentTestName = expect.getState().currentTestName
         if (!currentTestName) {
-            throw new Error("Clients can only be created inside individual test cases!")
+            throw new Error('Clients can only be created inside individual test cases!')
         }
         clientTestNameMap[this.clientId] = expect.getState().currentTestName
         this.sdkKey = `dvc_server_${this.clientId}`
@@ -355,15 +367,19 @@ export class LocalTestClient extends BaseTestClient {
 
     async callVariable(
         user: Record<string, unknown>,
+        sdkName: string,
         key?: string,
+        variableType?: string,
         defaultValue?: any,
         shouldFail = false
     ) {
         const result = await callVariable(
             this.getClientUrl(),
             user,
+            sdkName,
             false,
             key,
+            variableType,
             defaultValue,
         )
 
@@ -448,15 +464,19 @@ export class CloudTestClient extends BaseTestClient {
 
     async callVariable(
         user: Record<string, unknown>,
+        sdkName: string,
         key?: string,
+        variableType?: string,
         defaultValue?: any,
         shouldFail = false
     ) {
         const result = await callVariable(
             this.getClientUrl(),
             user,
+            sdkName,
             true,
             key,
+            variableType,
             defaultValue,
         )
         await checkFailed(result, shouldFail)
@@ -503,6 +523,9 @@ export const getPlatformBySdkName = (name: string, isLocal: boolean) => {
     // GoNative is using the same SDK as Go but with different build args
     if (name === 'GoNative') {
         return 'Go'
+    }
+    if (name === 'OF-NodeJS') {
+        return 'NodeJS'
     }
     return name === 'DotNet' ? // TODO use Sdks.dotnet instead of 'DotNet' when enable dotnet
         `C# ${isLocal ? 'Local' : 'Cloud'}`

@@ -20,6 +20,14 @@ const projects = [
     },
     {
         ...commonConfig,
+        displayName: 'OF-NodeJS',
+        globals: {
+            JEST_PROJECT_SDK_TO_TEST: 'OF-NodeJS',
+        },
+        runner: 'jest-serial-runner'
+    },
+    {
+        ...commonConfig,
         displayName: 'DotNet',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'DotNet',

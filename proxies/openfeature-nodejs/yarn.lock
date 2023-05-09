@@ -14,19 +14,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:^1.6.6":
-  version: 1.6.6
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.6.6"
-  checksum: 23f05d2bdab987825bcc470fb59bdaa704aaaa2e4add2ee6da104952a56eb390d837ac33652ae5aa7db2c8f2e7980132dd6b4df6314fd905cad7de51bdba0d3c
+"@devcycle/bucketing-assembly-script@npm:1.6.7, @devcycle/bucketing-assembly-script@npm:^1.6.7":
+  version: 1.6.7
+  resolution: "@devcycle/bucketing-assembly-script@npm:1.6.7"
+  checksum: 8e0180e738f1aee027cbad72ed9f1b13ddfed6757883dc234420e67e61eac79822063e264ed2f1eb2c252ca26c6872bddd2800f31c6560b66cf08ea50ed036ed
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:^1.10.0":
-  version: 1.10.0
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.10.0"
+"@devcycle/nodejs-server-sdk@npm:1.11.0, @devcycle/nodejs-server-sdk@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.11.0"
   dependencies:
-    "@devcycle/bucketing-assembly-script": ^1.6.6
-    "@devcycle/types": 1.1.0
+    "@devcycle/bucketing-assembly-script": ^1.6.7
+    "@devcycle/types": 1.1.1
     "@nestjs/class-validator": ^0.13.4
     class-transformer: 0.5.1
     cross-fetch: ^3.1.5
@@ -38,13 +38,36 @@ __metadata:
     protobufjs: ^7.2.2
     reflect-metadata: ^0.1.13
     uuid: ^8.3.2
-  checksum: 0de3a527d35e94ccbe2b8f6cafc184e43292761317bea1436314da40afe8e9661622f37d023e8dfc8b62759c7e8a92ef69b05ae449666c914a8397c5fcfb1ba2
+  checksum: e5d6d972f4161fc5e2f95b10b0c84457350611ce598c540cc5869762ba543f362245609eb1ff9a2be798101e97fdaca48f51a40bb2993034653f2742855c94d5
   languageName: node
   linkType: hard
 
-"@devcycle/types@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@devcycle/types@npm:1.1.0"
+"@devcycle/openfeature-nodejs-provider@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@devcycle/openfeature-nodejs-provider@npm:1.0.0"
+  dependencies:
+    "@devcycle/bucketing-assembly-script": 1.6.7
+    "@devcycle/nodejs-server-sdk": 1.11.0
+    "@devcycle/types": 1.1.1
+    "@nestjs/class-validator": ^0.13.4
+    "@openfeature/js-sdk": ^1.1.1
+    class-transformer: 0.5.1
+    cross-fetch: ^3.1.5
+    fetch-retry: ^5.0.3
+    iso-639-1: ^2.1.13
+    lodash: ^4.17.21
+    moment: ^2.29.4
+    murmurhash: ^2.0.0
+    protobufjs: ^7.2.2
+    reflect-metadata: ^0.1.13
+    uuid: ^8.3.2
+  checksum: ab3457aca6026274d248ff814346f0ee95c21db26cc1d8bd3bec404e0dcb8e762619883faa1d5ceacd478de0b46584a7c33145eee5eaa3afdc69980a41e70a98
+  languageName: node
+  linkType: hard
+
+"@devcycle/types@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@devcycle/types@npm:1.1.1"
   dependencies:
     "@nestjs/class-validator": ^0.13.4
     "@types/validator": 13.7.6
@@ -52,7 +75,7 @@ __metadata:
     iso-639-1: ^2.1.13
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
-  checksum: 43ce82fdf33d358c7e25f14e83b337e89011a718354fcb63be5cb88ea0e924a1344bf4dc4a19ac17600ab57d82d2bbd7d65baafd958bc5bdf8753116fb0f12b6
+  checksum: d24c08dd595864a1bf2f4032d3adcfe0b39e0be1297bb5107a6f70629b7fee2edec86cbfd7bf5de0a2722bf0917a98309fb365061a8875e89b790eaad3ea2a94
   languageName: node
   linkType: hard
 
@@ -87,6 +110,13 @@ __metadata:
     libphonenumber-js: ^1.9.43
     validator: ^13.7.0
   checksum: 375f3a699ff4d4c801613df3968e13aad29bbca40955f085327f332a055777a3b048fa048c4b9813ced21fc8b501faa62e9a5cfaecc1bf2fb7d6aba2e0b821cc
+  languageName: node
+  linkType: hard
+
+"@openfeature/js-sdk@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@openfeature/js-sdk@npm:1.1.1"
+  checksum: 43faf7da462b82513638e2fec8baf7beabc2c0048c89b956e1c66d5e0313a870d1b7931a83cde16fcfa0fc5cea2d563a45131d08236ebaae4ff59ead91c5bd71
   languageName: node
   linkType: hard
 
@@ -987,7 +1017,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": ^1.10.0
+    "@devcycle/nodejs-server-sdk": ^1.11.0
+    "@devcycle/openfeature-nodejs-provider": ^1.0.0
+    "@openfeature/js-sdk": ^1.1.1
     "@types/koa": ^2.13.5
     "@types/koa-bodyparser": ^4.3.10
     "@types/koa-router": ^7.4.4
