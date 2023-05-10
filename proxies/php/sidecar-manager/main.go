@@ -72,9 +72,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	proxyInstance := lbproxy.ProxyInstance{
 		UnixSocketPath:    fmt.Sprintf("/tmp/%s.sock", reqBody.ClientId),
-		HTTPPort:          0,
 		UnixSocketEnabled: true,
-		HTTPEnabled:       false,
 		SDKKey:            reqBody.SdkKey,
 		PlatformData:      devcycle.PlatformData{},
 		SDKConfig: lbproxy.SDKConfig{

@@ -7,8 +7,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/devcyclehq/go-server-sdk/v2 v2.9.7-0.20230503141249-05a8cad604f1 h1:F6ZQM0z5Isz9mGmJhv/utA74/QItkF7klMEJHQW5LxM=
 github.com/devcyclehq/go-server-sdk/v2 v2.9.7-0.20230503141249-05a8cad604f1/go.mod h1:bIUmiZMp/crMNPX6Iz+vCMABoGAGW641jXIm87/uJRc=
-github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230509202805-86845cc718b5 h1:G2YO1aTjL0ZlM3bwPKcn/WHqT4pxltrhbquqxaSoIf0=
-github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230509202805-86845cc718b5/go.mod h1:OEr+oWZ5M11L6XP8rOf9jg/Y4R9PwssBm8DdkubZNSI=
+github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230510141905-805e0b996d7f h1:TPKBqHv0FsmOOsJmvhbfPrBqYUyxsz4QkWE4h+UILAc=
+github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230510141905-805e0b996d7f/go.mod h1:OEr+oWZ5M11L6XP8rOf9jg/Y4R9PwssBm8DdkubZNSI=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
 github.com/gin-contrib/sse v0.1.0 h1:Y/yl/+YNO8GZSjAhjMsSuLt29uWRFHdHYUb5lYOV9qE=
