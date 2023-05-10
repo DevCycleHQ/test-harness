@@ -1,11 +1,15 @@
 <?php
 
-use DevCycle\Model\UserData;
+use DevCycle\Api\DVCClient;
 use JetBrains\PhpStorm\NoReturn;
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $pathArgs = explode('/', getenv('REQUEST_URI'));
+
+if (sizeof($pathArgs) < 2) {
+    exit(400);
+}
 
 switch ($pathArgs[1]) {
     case "spec":
@@ -19,21 +23,28 @@ switch ($pathArgs[1]) {
 }
 #[NoReturn] function handleCommand(array $pathArgs, bool $isClient): void
 {
-    if ($_SERVER['REQUEST_METHOD'] !== "POST")
-    {
+    if ($_SERVER['REQUEST_METHOD'] !== "POST") {
         exit(405);
     }
 
     $entityBody = json_decode(file_get_contents('php://input'));
-    if (sizeof($pathArgs) < 3 && !$isClient )
-    {
+    if (sizeof($pathArgs) < 3 && !$isClient) {
         exit(400);
+    }
+    if ($isClient) {
+        $client = buildClient($pathArgs[2]);
+        $command = $pathArgs[3];
+        $params = parseParams($entityBody);
+        $client->$command(...$params);
+        exit();
     }
     echo "Path: $pathArgs[1]\n";
     echo "IsClient: $isClient\n";
     $command = $pathArgs[2];
     echo "Command: $command\n";
     var_dump($entityBody);
+
+
     exit();
 }
 
@@ -41,4 +52,38 @@ switch ($pathArgs[1]) {
 {
     echo json_encode(["name" => "PHP", "version" => "1.0.0", "capabilities" => ["LocalBucketing", "CloudBucketing", "Events"]]);
     exit();
+}
+
+function buildClient($clientId): DVCClient
+{
+    $config = DevCycle\Configuration::getDefaultConfiguration()
+        ->setApiKey('Authorization', "dvc_server_" . $clientId)
+        ->setHost("http:/" . $clientId . "/v1")
+        ->setUDSPath("/tmp/" . $clientId . ".sock");
+    $options = new DevCycle\Model\DVCOptions(false);
+    return new DevCycle\Api\DVCClient(
+        $config,
+        dvcOptions: $options
+    );
+}
+
+function parseParams($entityBody): array
+{
+    $ret = array();
+    foreach ($entityBody["params"] as $p) {
+        $param_type = $p["type"];
+        $param_value = $p["value"];
+        if ($param_type == null) {
+            if ($param_value == null) {
+                $ret[] = null;
+            } else {
+                $ret[] = $param_value;
+            }
+        } elseif ($param_type == "user") {
+            $ret[] = $entityBody["user"];
+        } elseif ($param_type == "event") {
+            $ret[] = $entityBody["event"];
+        }
+    }
+    return $ret;
 }
