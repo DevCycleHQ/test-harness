@@ -18,7 +18,7 @@ FROM trafex/php-nginx:latest
 
 COPY --chown=nginx --from=composer /app /var/www/html
 COPY --from=go /sidecar-manager/sidecar-manager /
-COPY ./nginx/nginx.conf /etc/nginx/conf.d/server.conf
+COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./startup.sh /
 USER root
 RUN apk add coreutils
