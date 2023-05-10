@@ -182,6 +182,18 @@ export const sendCommand = async (url: string, body: CommandBody) => {
     })
 }
 
+const callVariableValue = async (
+    url: string,
+    user: Record<string, unknown>,
+    sdkName: string,
+    isAsync: boolean,
+    key?: string,
+    variableType?: string,
+    defaultValue?: any,
+) => {
+    return await performCallVariable(url, user, sdkName, isAsync, key, variableType, defaultValue, 'variableValue')
+}
+
 const callVariable = async (
     url: string,
     user: Record<string, unknown>,
@@ -190,6 +202,19 @@ const callVariable = async (
     key?: string,
     variableType?: string,
     defaultValue?: any,
+) => {
+    return await performCallVariable(url, user, sdkName, isAsync, key, variableType, defaultValue, 'variable')
+}
+
+const performCallVariable = async (
+    url: string,
+    user: Record<string, unknown>,
+    sdkName: string,
+    isAsync: boolean,
+    key?: string,
+    variableType?: string,
+    defaultValue?: any,
+    command = 'variable'
 ) => {
     const params: CommandBody['params'] = [
         { type: 'user' },
@@ -201,7 +226,7 @@ const callVariable = async (
         params.push({ value: variableType })
     }
     return await sendCommand(url, {
-        command: 'variable',
+        command,
         user,
         params,
         isAsync
@@ -483,6 +508,26 @@ export class CloudTestClient extends BaseTestClient {
         return result
     }
 
+    async callVariableValue(
+        user: Record<string, unknown>,
+        sdkName: string,
+        key?: string,
+        variableType?: string,
+        defaultValue?: any,
+        shouldFail = false
+    ) {
+        const result = await callVariableValue(
+            this.getClientUrl(),
+            user,
+            sdkName,
+            true,
+            key,
+            variableType,
+            defaultValue,
+        )
+        await checkFailed(result, shouldFail)
+        return result
+    }
     async callAllVariables(
         user: Record<string, unknown>,
         shouldFail = false

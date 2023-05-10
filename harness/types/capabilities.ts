@@ -6,15 +6,34 @@ export const Capabilities = {
     sse: 'SSE',
     clientCustomData: 'ClientCustomData',
     multithreading: 'Multithreading',
+    variableValue: 'VariableValue'
 }
 
 export const SDKCapabilities = {
-    NodeJS: [Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud],
-    'OF-NodeJS': [Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud],
-    Python: [Capabilities.events, Capabilities.cloud, Capabilities.edgeDB],
-    DotNet: [Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData],
-    Java: [Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB],
-    Go: [Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData, Capabilities.multithreading],
-    GoNative: [Capabilities.local, Capabilities.clientCustomData, Capabilities.events],
-    Ruby: [Capabilities.events, Capabilities.local, Capabilities.clientCustomData]
+    NodeJS: [
+        Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud, Capabilities.variableValue
+    ],
+    'OF-NodeJS': [
+        Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud, Capabilities.variableValue
+    ],
+    Python: [
+        Capabilities.events, Capabilities.cloud, Capabilities.edgeDB, Capabilities.variableValue
+    ],
+    DotNet: [
+        Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB,
+        Capabilities.clientCustomData, Capabilities.variableValue
+    ],
+    Java: [
+        Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.variableValue
+    ],
+    Go: [
+        Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData,
+        Capabilities.multithreading, Capabilities.variableValue
+    ],
+    GoNative: [
+        Capabilities.local, Capabilities.clientCustomData, Capabilities.events, Capabilities.variableValue
+    ],
+    Ruby: [
+        Capabilities.events, Capabilities.local, Capabilities.clientCustomData, Capabilities.variableValue
+    ]
 }

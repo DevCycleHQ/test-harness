@@ -18,7 +18,6 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         waitForInitialization,
         options
     } = <ClientRequestBody>ctx.request.body
-
     if (clientId === undefined) {
         ctx.status = 400
         ctx.body = {

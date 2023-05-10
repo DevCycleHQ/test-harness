@@ -12,5 +12,10 @@
   "devDependencies": {
     "typescript": "^4.9.3"
   },
-  "packageManager": "yarn@3.4.1"
+  "packageManager": "yarn@3.4.1",
+  "resolutions": {
+    "@devcycle/nodejs-server-sdk": "portal:/Users/jonathannorris/git/js-sdks/dist/sdk/nodejs",
+    "@devcycle/bucketing-assembly-script": "portal:/Users/jonathannorris/git/js-sdks/lib/shared/bucketing-assembly-script",
+    "@devcycle/types": "portal:/Users/jonathannorris/git/js-sdks/dist/lib/shared/types"
+  }
 }
