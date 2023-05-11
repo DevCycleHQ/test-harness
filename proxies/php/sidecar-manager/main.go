@@ -21,7 +21,7 @@ func main() {
 	r.Handle("/client", panicHandler(clientHandler)).Methods("POST")
 	http.Handle("/", r)
 
-	server := &http.Server{Addr: ":3000", Handler: nil}
+	server := &http.Server{Addr: ":8000", Handler: nil}
 
 	sigHandler := make(chan os.Signal, 1)
 	signal.Notify(sigHandler, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
