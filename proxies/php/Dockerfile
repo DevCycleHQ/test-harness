@@ -23,5 +23,5 @@ COPY ./startup.sh /
 USER root
 RUN apk add coreutils
 USER nobody
-EXPOSE 3000
+EXPOSE 8080
 CMD ["/startup.sh"]
