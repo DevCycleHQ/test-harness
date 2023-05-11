@@ -29,6 +29,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
     try {
         let asyncError
         let client: DVCClient | DVCCloudClient
+
         if (!enableCloudBucketing) {
             client = initialize(sdkKey, { ...options })
             if (waitForInitialization) {

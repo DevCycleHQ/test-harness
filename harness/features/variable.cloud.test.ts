@@ -4,7 +4,8 @@ import {
     CloudTestClient,
     describeCapability,
     expectErrorMessageToBe,
-    getSDKScope
+    getSDKScope,
+    cleanupCurrentClient
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 
@@ -138,7 +139,8 @@ describe('Variable Tests - Cloud', () => {
         })
 
         it.each(callVariableMethods)('should call %s API with edgeDB option', async (method) => {
-            const testClient = new CloudTestClient(sdkName)
+            await cleanupCurrentClient(scope)
+            testClient = new CloudTestClient(sdkName)
 
             // Some tests require extra params for startup, so we can just create a new test client
             // for these specific tests.

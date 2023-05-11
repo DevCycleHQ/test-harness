@@ -75,18 +75,24 @@ export const getSDKScope = (): { sdkName: string, scope: Scope } => {
     const scope = getServerScope()
 
     afterEach(async () => {
-        await currentClient.close()
-
-        if (!scope.isDone()) {
-            const pendingMocks = scope.pendingMocks()
-            resetServerScope()
-            throw new Error('Requests were expected but not received: ' + pendingMocks)
-        }
-
-        resetServerScope()
-        await global.assertNoUnmatchedRequests(currentClient.clientId, clientTestNameMap)
+        await cleanupCurrentClient(scope)
     })
     return { sdkName, scope }
+}
+
+export const cleanupCurrentClient = async (scope) => {
+    console.log(`Cleaning up client ${currentClient.clientId}`)
+    await currentClient.close()
+
+    if (!scope.isDone()) {
+        const pendingMocks = scope.pendingMocks()
+        resetServerScope()
+        throw new Error('Requests were expected but not received: ' + pendingMocks)
+    }
+
+    resetServerScope()
+    await global.assertNoUnmatchedRequests(currentClient.clientId, clientTestNameMap)
+    currentClient = null
 }
 
 export const describeIf = (condition: boolean) => condition ? describe : describe.skip
