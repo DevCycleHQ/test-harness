@@ -31,21 +31,19 @@ switch ($pathArgs[1]) {
     if (sizeof($pathArgs) < 3 && !$isClient) {
         exit(400);
     }
-    if ($isClient) {
-        $client = buildClient($pathArgs[2]);
-        $command = $pathArgs[3];
-        $params = parseParams($entityBody);
-        $client->$command(...$params);
-        exit();
-    }
-    echo "Path: $pathArgs[1]\n";
-    echo "IsClient: $isClient\n";
-    $command = $pathArgs[2];
-    echo "Command: $command\n";
-    var_dump($entityBody);
 
-
-    exit();
+    throw new Exception(var_export($entityBody, true));
+//    if ($isClient) {
+//        $client = buildClient($pathArgs[2]);
+//        $client->
+//        $command = $pathArgs[3];
+//        $params = parseParams($entityBody);
+//        $client->$command(...$params);
+//        exit();
+//    } else {
+//        echo "CURRENTLY NOT SUPPORTED";
+//        exit(500);
+//    }
 }
 
 #[NoReturn] function handleSpec(): void
