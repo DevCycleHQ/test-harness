@@ -53,7 +53,10 @@ describe('Variable Tests - Cloud', () => {
         const hasVariableValue = SDKCapabilities[sdkName].includes(Capabilities.variableValue)
         const callVariableMethods = hasVariableValue ? ['variable', 'variableValue'] : ['variable']
 
-        it.each(callVariableMethods)('will throw error %s called with invalid key', async (method) => {
+        // Skip variableValue tests that expect an error to be thrown, as OpenFeature doesn't throw exceptions.
+        const ofTestSkip = sdkName === 'OF-NodeJS' ? it.each(['variable']) : it.each(callVariableMethods)
+
+        ofTestSkip('will throw error %s called with invalid key', async (method) => {
             // Helper method calls the proxy server to trigger the "variable" method in
             // the SDK
             const variableResponse = await callVariableMethod(method)(
@@ -94,7 +97,7 @@ describe('Variable Tests - Cloud', () => {
             }
         )
 
-        it.each(callVariableMethods)('will throw error %s called with invalid default value', async (method) => {
+        ofTestSkip('will throw error %s called with invalid default value', async (method) => {
             const variableResponse = await callVariableMethod(method)(
                 { user_id: 'user1' },
                 sdkName,
