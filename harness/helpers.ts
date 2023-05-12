@@ -24,7 +24,7 @@ export const getMockServerUrl = () => {
 
 export const getConnectionStringForProxy = (proxy: string) => {
     if (process.env.LOCAL_MODE === '1') {
-        return 'http://localhost:3000'
+        return `http://${global.LOCAL_HOST_BINDING}:3000`
     }
 
     const host = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_IP__`]

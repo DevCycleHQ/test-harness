@@ -1,5 +1,4 @@
 import {
-    cleanupCurrentClient,
     describeCapability,
     forEachVariableType,
     getPlatformBySdkName,
@@ -8,7 +7,7 @@ import {
     LocalTestClient,
     waitForRequest
 } from '../helpers'
-import {Capabilities, SDKCapabilities} from '../types'
+import { Capabilities, SDKCapabilities } from '../types'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
 import { optionalEventFields, optionalUserEventFields } from '../mockData/events'

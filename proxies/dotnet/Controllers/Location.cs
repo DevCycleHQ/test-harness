@@ -193,11 +193,11 @@ public class LocationController : ControllerBase
         }
 
         MethodInfo? commandMethod = entity.GetType().GetMethod(parsedCommand);
-        if (command == "variable") {
+        if (command == "variable" || command == "variableValue") {
             Type defaultValueClass = parsedParams[parsedParams.Count - 1].GetType();
-            commandMethod = commandMethod?.MakeGenericMethod(defaultValueClass); // have to set the generic type for defaultValue before invoke
-        }
-        else if(parsedCommand == "SetClientCustomData") {
+            // have to set the generic type for defaultValue before invoke
+            commandMethod = commandMethod?.MakeGenericMethod(defaultValueClass);
+        } else if (parsedCommand == "SetClientCustomData") {
             // need to convert from a JObject to a Dictionary<string, object> to match the method signature
             var customDataJson = parsedParams[0] as JObject;
             var customDataDict = customDataJson.ToObject<Dictionary<string, object>>();
@@ -205,7 +205,6 @@ public class LocationController : ControllerBase
         }
 
         object result = null;
-
         if (isAsync) {
             dynamic? task = commandMethod?.Invoke(entity, parsedParams.ToArray());
             result = task == null ? result : (await task);

@@ -31,6 +31,7 @@ const projects = [
         displayName: 'DotNet',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'DotNet',
+            LOCAL_HOST_BINDING: '0.0.0.0'
         }
     },
     {
