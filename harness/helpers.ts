@@ -81,8 +81,9 @@ export const getSDKScope = (): { sdkName: string, scope: Scope } => {
 }
 
 export const cleanupCurrentClient = async (scope) => {
-    console.log(`Cleaning up client ${currentClient.clientId}`)
-    await currentClient.close()
+    if (currentClient) {
+        await currentClient.close()
+    }
 
     if (!scope.isDone()) {
         const pendingMocks = scope.pendingMocks()
@@ -91,8 +92,10 @@ export const cleanupCurrentClient = async (scope) => {
     }
 
     resetServerScope()
-    await global.assertNoUnmatchedRequests(currentClient.clientId, clientTestNameMap)
-    currentClient = null
+    if (currentClient) {
+        await global.assertNoUnmatchedRequests(currentClient.clientId, clientTestNameMap)
+        currentClient = null
+    }
 }
 
 export const describeIf = (condition: boolean) => condition ? describe : describe.skip
@@ -394,6 +397,28 @@ export class LocalTestClient extends BaseTestClient {
 
         this.clientLocation = response.headers.get('location')
         return response
+    }
+
+    async callVariableValue(
+        user: Record<string, unknown>,
+        sdkName: string,
+        key?: string,
+        variableType?: string,
+        defaultValue?: any,
+        shouldFail = false
+    ) {
+        const result = await callVariableValue(
+            this.getClientUrl(),
+            user,
+            sdkName,
+            false,
+            key,
+            variableType,
+            defaultValue,
+        )
+
+        await checkFailed(result, shouldFail)
+        return result
     }
 
     async callVariable(

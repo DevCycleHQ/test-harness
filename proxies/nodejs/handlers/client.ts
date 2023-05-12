@@ -42,6 +42,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         } else {
             client = initialize(sdkKey, { ...options, enableCloudBucketing: true })
         }
+
         dataStore.clients[clientId] = client
         ctx.status = 201
         ctx.set('Location', `client/${clientId}`)
