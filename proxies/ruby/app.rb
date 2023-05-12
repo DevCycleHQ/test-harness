@@ -84,12 +84,12 @@ post %r{\/(client|command\/\w+)\/[\w-]+} do
     entity_type = get_entity_type_from_class_name(result.class.name)
     command_id = data_store[:command_results].length.to_s
     data_store[:command_results][command_id] = result
-
+    
     status 201
     headers 'Location' => "/command/#{command}/#{command_id}"
     {
       entityType: entity_type,
-      data: entity_type == 'Void' ? nil : result.to_hash,
+      data: entity_type == 'Void' ? nil : (command == 'variable_value' ? result : result.to_hash),
       logs: []
     }.to_json
   rescue StandardError => e
