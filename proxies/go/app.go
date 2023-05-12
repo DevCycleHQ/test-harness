@@ -23,10 +23,11 @@ type DataStore = struct {
 var datastore = DataStore{
 	make(map[string]*devcycle.DVCClient),
 	map[string]map[string]any{
-		"variable":     make(map[string]any),
-		"allVariables": make(map[string]any),
-		"allFeatures":  make(map[string]any),
-		"track":        make(map[string]any),
+		"variable":      make(map[string]any),
+		"variableValue": make(map[string]any),
+		"allVariables":  make(map[string]any),
+		"allFeatures":   make(map[string]any),
+		"track":         make(map[string]any),
 	},
 }
 

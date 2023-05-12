@@ -66,7 +66,6 @@ describe('Variable Tests - Local', () => {
         const callVariableMethods = hasVariableValue ? ['variable', 'variableValue'] : ['variable']
 
         function callVariableMethod(method: string) {
-            console.log(`call variable method ${method}, test client id: ${testClient.clientId}`)
             if (method === 'variableValue') {
                 return testClient.callVariableValue.bind(testClient)
             } else {

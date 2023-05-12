@@ -237,6 +237,8 @@ func parseEntity(entityType reflect.Type, result []reflect.Value, err *error) (s
 		}
 	} else if entityType == reflect.TypeOf((*devcycle.Variable)(nil)).Elem() {
 		parsedResult = result[0].Interface().(devcycle.Variable)
+	} else {
+		parsedResult = result[0].Interface()
 	}
 
 	entityName := entityType.Name()
