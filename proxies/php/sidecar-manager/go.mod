@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/devcyclehq/go-server-sdk/v2 v2.9.7-0.20230503141249-05a8cad604f1
-	github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230510173402-e66c01fdc469
+	github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230515145043-2ef863522944
 	github.com/gorilla/mux v1.8.0
 )
 

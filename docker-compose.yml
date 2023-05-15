@@ -112,5 +112,7 @@ services:
         - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
         - SDKS_TO_TEST=${SDKS_TO_TEST}
     container_name: php
+    healthcheck:
+      disable: true
     ports:
-      - "3000:8080"
+      - "3000"
