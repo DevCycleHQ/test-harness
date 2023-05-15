@@ -1,7 +1,8 @@
 import {
     DVCEvent,
     DVCUser,
-    DVCVariable as DVCVariableInterface
+    DVCVariable as DVCVariableInterface,
+    DVCJSON
 } from '@devcycle/nodejs-server-sdk'
 import {
     Client as OFClient,
@@ -188,7 +189,7 @@ const getOpenFeatureVariableValue = async (
     } else if (type === 'number') {
         return await openFeatureClient.getNumberValue(key, defaultValue as number, user)
     } else if (type === 'JSON') {
-        return await openFeatureClient.getObjectValue(key, defaultValue as JsonValue, user)
+        return await openFeatureClient.getObjectValue(key, defaultValue as JsonValue, user) as DVCJSON
     } else if (type === 'string') {
         return await openFeatureClient.getStringValue(key, defaultValue as string, user)
     } else {
