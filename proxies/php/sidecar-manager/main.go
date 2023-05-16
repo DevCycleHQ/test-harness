@@ -74,7 +74,14 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		UnixSocketPath:    fmt.Sprintf("/tmp/%s.sock", reqBody.ClientId),
 		UnixSocketEnabled: true,
 		SDKKey:            reqBody.SdkKey,
-		PlatformData:      devcycle.PlatformData{},
+		PlatformData: devcycle.PlatformData{
+			SdkType:         "server",
+			SdkVersion:      "1.0.0",
+			PlatformVersion: "",
+			DeviceModel:     "",
+			Platform:        "PHP",
+			Hostname:        "test-harness",
+		},
 		SDKConfig: lbproxy.SDKConfig{
 			ConfigPollingIntervalMS: time.Duration(reqBody.Options.ConfigPollingIntervalMS * 1000000),
 			EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
