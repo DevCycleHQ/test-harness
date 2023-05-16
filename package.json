@@ -11,6 +11,7 @@
     "start:go": "cd proxies/go && go run .",
     "start:dotnet": "cd proxies/dotnet && dotnet run",
     "start:java": "cd proxies/java && ./gradlew bootRun",
+    "start:ruby": "cd proxies/ruby && bundle exec ruby app.rb",
     "use-local": "scripts/use-local.sh"
   },
   "version": "1.0.0",

@@ -19,7 +19,6 @@ to override the version of the dependent packages that will be used to the local
   "@devcycle/nodejs-server-sdk": "portal:../../../js-sdks/dist/sdk/nodejs",
   "@devcycle/types": "portal:../../../js-sdks/dist/lib/shared/types",
 }
-
 ```
 
 then:
@@ -28,6 +27,24 @@ then:
 4. Set the environment variable `SDKS_TO_TEST` to `nodejs`
 5. Run `yarn start:nodejs` in the root of the `test-harness` repository to start the proxy server process
 6. Run `yarn test` in the root of the `test-harness` repository (in a different shell) to run the tests
+
+## OpenFeature NodeJS
+
+follow the same steps as NodeJS above, but set the environment variable `SDKS_TO_TEST` to `of-nodejs`, 
+and use `yarn start:of-nodejs`. Also in the `package.json` file in `proxies/openfeature-nodejs`, 
+change the dependency to point to the local SDK, and set `resolutions`:
+
+```json
+"dependencies": {
+  ...
+  "@devcycle/bucketing-assembly-script": "portal:../../../js-sdks/lib/shared/bucketing-assembly-script",
+},
+"resolutions": {
+  "@devcycle/nodejs-server-sdk": "portal:../../../js-sdks/dist/sdk/nodejs",
+  "@devcycle/types": "portal:../../../js-sdks/dist/lib/shared/types",
+  "@devcycle/openfeature-nodejs-provider": "portal:../../../js-sdks/dist/sdk/openfeature-nodejs-provider"
+}
+```
 
 ## DotNet
 Ensure you have the [dotnet-server-sdk](https://github.com/DevCycleHQ/dotnet-server-sdk) repository cloned in the same parent directory as

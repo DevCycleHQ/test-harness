@@ -24,7 +24,7 @@ export const getMockServerUrl = () => {
 
 export const getConnectionStringForProxy = (proxy: string) => {
     if (process.env.LOCAL_MODE === '1') {
-        return 'http://localhost:3000'
+        return `http://${global.LOCAL_HOST_BINDING}:3000`
     }
 
     const host = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_IP__`]
@@ -75,18 +75,27 @@ export const getSDKScope = (): { sdkName: string, scope: Scope } => {
     const scope = getServerScope()
 
     afterEach(async () => {
-        await currentClient.close()
-
-        if (!scope.isDone()) {
-            const pendingMocks = scope.pendingMocks()
-            resetServerScope()
-            throw new Error('Requests were expected but not received: ' + pendingMocks)
-        }
-
-        resetServerScope()
-        await global.assertNoUnmatchedRequests(currentClient.clientId, clientTestNameMap)
+        await cleanupCurrentClient(scope)
     })
     return { sdkName, scope }
+}
+
+export const cleanupCurrentClient = async (scope) => {
+    if (currentClient) {
+        await currentClient.close()
+    }
+
+    if (!scope.isDone()) {
+        const pendingMocks = scope.pendingMocks()
+        resetServerScope()
+        throw new Error('Requests were expected but not received: ' + pendingMocks)
+    }
+
+    resetServerScope()
+    if (currentClient) {
+        await global.assertNoUnmatchedRequests(currentClient.clientId, clientTestNameMap)
+        currentClient = null
+    }
 }
 
 export const describeIf = (condition: boolean) => condition ? describe : describe.skip
@@ -182,6 +191,18 @@ export const sendCommand = async (url: string, body: CommandBody) => {
     })
 }
 
+const callVariableValue = async (
+    url: string,
+    user: Record<string, unknown>,
+    sdkName: string,
+    isAsync: boolean,
+    key?: string,
+    variableType?: string,
+    defaultValue?: any,
+) => {
+    return await performCallVariable(url, user, sdkName, isAsync, key, variableType, defaultValue, 'variableValue')
+}
+
 const callVariable = async (
     url: string,
     user: Record<string, unknown>,
@@ -190,6 +211,19 @@ const callVariable = async (
     key?: string,
     variableType?: string,
     defaultValue?: any,
+) => {
+    return await performCallVariable(url, user, sdkName, isAsync, key, variableType, defaultValue, 'variable')
+}
+
+const performCallVariable = async (
+    url: string,
+    user: Record<string, unknown>,
+    sdkName: string,
+    isAsync: boolean,
+    key?: string,
+    variableType?: string,
+    defaultValue?: any,
+    command = 'variable'
 ) => {
     const params: CommandBody['params'] = [
         { type: 'user' },
@@ -201,7 +235,7 @@ const callVariable = async (
         params.push({ value: variableType })
     }
     return await sendCommand(url, {
-        command: 'variable',
+        command,
         user,
         params,
         isAsync
@@ -365,6 +399,28 @@ export class LocalTestClient extends BaseTestClient {
         return response
     }
 
+    async callVariableValue(
+        user: Record<string, unknown>,
+        sdkName: string,
+        key?: string,
+        variableType?: string,
+        defaultValue?: any,
+        shouldFail = false
+    ) {
+        const result = await callVariableValue(
+            this.getClientUrl(),
+            user,
+            sdkName,
+            false,
+            key,
+            variableType,
+            defaultValue,
+        )
+
+        await checkFailed(result, shouldFail)
+        return result
+    }
+
     async callVariable(
         user: Record<string, unknown>,
         sdkName: string,
@@ -483,6 +539,26 @@ export class CloudTestClient extends BaseTestClient {
         return result
     }
 
+    async callVariableValue(
+        user: Record<string, unknown>,
+        sdkName: string,
+        key?: string,
+        variableType?: string,
+        defaultValue?: any,
+        shouldFail = false
+    ) {
+        const result = await callVariableValue(
+            this.getClientUrl(),
+            user,
+            sdkName,
+            true,
+            key,
+            variableType,
+            defaultValue,
+        )
+        await checkFailed(result, shouldFail)
+        return result
+    }
     async callAllVariables(
         user: Record<string, unknown>,
         shouldFail = false

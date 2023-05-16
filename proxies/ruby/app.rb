@@ -89,7 +89,7 @@ post %r{\/(client|command\/\w+)\/[\w-]+} do
     headers 'Location' => "/command/#{command}/#{command_id}"
     {
       entityType: entity_type,
-      data: entity_type == 'Void' ? nil : result.to_hash,
+      data: entity_type == 'Void' ? nil : (command == 'variable_value' ? result : result.to_hash),
       logs: []
     }.to_json
   rescue StandardError => e

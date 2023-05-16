@@ -1,7 +1,8 @@
 import {
     DVCEvent,
     DVCUser,
-    DVCVariable as DVCVariableInterface
+    DVCVariable as DVCVariableInterface,
+    DVCJSON
 } from '@devcycle/nodejs-server-sdk'
 import {
     Client as OFClient,
@@ -178,6 +179,24 @@ const getOpenFeatureVariable = async (
     }
 }
 
+const getOpenFeatureVariableValue = async (
+    openFeatureClient: OFClient,
+    params: any[]
+): Promise<DVCVariableInterface['value']> => {
+    const [user, key, defaultValue, type] = params
+    if (type === 'boolean') {
+        return await openFeatureClient.getBooleanValue(key, defaultValue as boolean, user)
+    } else if (type === 'number') {
+        return await openFeatureClient.getNumberValue(key, defaultValue as number, user)
+    } else if (type === 'JSON') {
+        return await openFeatureClient.getObjectValue(key, defaultValue as JsonValue, user) as DVCJSON
+    } else if (type === 'string') {
+        return await openFeatureClient.getStringValue(key, defaultValue as string, user)
+    } else {
+        throw new Error('Invalid default value type')
+    }
+}
+
 /**
  * Fake DVCVariable Class so that the variable type reporting works correctly
   */
@@ -187,7 +206,8 @@ class DVCVariable implements DVCVariableInterface {
         public value: DVCVariableInterface['value'],
         public defaultValue: DVCVariableInterface['value'],
         public isDefaulted: DVCVariableInterface['isDefaulted'],
-        public type: DVCVariableInterface['type']) {}
+        public type: DVCVariableInterface['type']
+    ) {}
 }
 
 /**
@@ -230,6 +250,8 @@ const invokeCommand = (
     const dataStoreClient = entity as DataStoreClient
     if (command === 'variable') {
         return getOpenFeatureVariable(dataStoreClient.openFeatureClient, params)
+    } else if (command === 'variableValue') {
+        return getOpenFeatureVariableValue(dataStoreClient.openFeatureClient, params)
     }
 
     return dataStoreClient.dvcClient[command](...params)

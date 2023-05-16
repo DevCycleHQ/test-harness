@@ -18,7 +18,6 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         waitForInitialization,
         options
     } = <ClientRequestBody>ctx.request.body
-
     if (clientId === undefined) {
         ctx.status = 400
         ctx.body = {
@@ -30,6 +29,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
     try {
         let asyncError
         let client: DVCClient | DVCCloudClient
+
         if (!enableCloudBucketing) {
             client = initialize(sdkKey, { ...options })
             if (waitForInitialization) {
@@ -42,6 +42,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         } else {
             client = initialize(sdkKey, { ...options, enableCloudBucketing: true })
         }
+
         dataStore.clients[clientId] = client
         ctx.status = 201
         ctx.set('Location', `client/${clientId}`)

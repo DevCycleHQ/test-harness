@@ -23,6 +23,7 @@ const projects = [
         displayName: 'OF-NodeJS',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'OF-NodeJS',
+            LOCAL_HOST_BINDING: '0.0.0.0'
         },
         runner: 'jest-serial-runner'
     },
@@ -31,6 +32,7 @@ const projects = [
         displayName: 'DotNet',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'DotNet',
+            LOCAL_HOST_BINDING: '0.0.0.0'
         }
     },
     {
@@ -38,6 +40,7 @@ const projects = [
         displayName: 'Go',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'Go',
+            LOCAL_HOST_BINDING: '0.0.0.0'
         }
     },
     {
@@ -45,6 +48,7 @@ const projects = [
         displayName: 'GoNative',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'GoNative',
+            LOCAL_HOST_BINDING: '0.0.0.0'
         }
     },
     {
@@ -52,6 +56,7 @@ const projects = [
         displayName: 'Ruby',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'Ruby',
+            LOCAL_HOST_BINDING: '0.0.0.0'
         }
     },
     // TODO uncomment once Java is ready
