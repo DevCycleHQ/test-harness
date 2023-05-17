@@ -12,13 +12,18 @@ import (
 	"os"
 	"os/signal"
 	"runtime/debug"
+	"sync"
 	"syscall"
 	"time"
 )
 
+var proxyInstances = make(map[string]*lbproxy.ProxyInstance)
+var proxyMutex = &sync.Mutex{}
+
 func main() {
 	r := mux.NewRouter()
 	r.Handle("/client", panicHandler(clientHandler)).Methods("POST")
+	r.Handle("/close/{clientId}", panicHandler(shutdownClient)).Methods("POST")
 	http.Handle("/", r)
 
 	server := &http.Server{Addr: ":8000", Handler: nil}
@@ -83,18 +88,26 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 			Hostname:        "test-harness",
 		},
 		SDKConfig: lbproxy.SDKConfig{
-			ConfigPollingIntervalMS: time.Duration(reqBody.Options.ConfigPollingIntervalMS * 1000000),
-			EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
-			ConfigCDNURI:            reqBody.Options.ConfigCDNURI,
-			EventsAPIURI:            reqBody.Options.EventsAPIURI,
+			EventFlushIntervalMS:         time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
+			ConfigPollingIntervalMS:      time.Duration(reqBody.Options.ConfigPollingIntervalMS * 1000000),
+			RequestTimeout:               0,
+			DisableAutomaticEventLogging: false,
+			DisableCustomEventLogging:    false,
+			MaxEventQueueSize:            0,
+			FlushEventQueueSize:          0,
+			ConfigCDNURI:                 reqBody.Options.ConfigCDNURI,
+			EventsAPIURI:                 reqBody.Options.EventsAPIURI,
 		},
 	}
 	var res clientResponseBody
-	err = lbproxy.NewBucketingProxyInstance(proxyInstance)
+	instance, err := lbproxy.NewBucketingProxyInstance(proxyInstance)
 	if err != nil {
 		res.Exception = err.Error()
 		w.WriteHeader(http.StatusOK)
 	} else {
+		proxyMutex.Lock()
+		defer proxyMutex.Unlock()
+		proxyInstances[reqBody.ClientId] = instance
 		res.Message = "success"
 
 		w.Header().Set("Content-Type", "application/json")
@@ -104,6 +117,28 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(res)
 }
+
+func shutdownClient(w http.ResponseWriter, r *http.Request) {
+	proxyMutex.Lock()
+	defer proxyMutex.Unlock()
+	params := mux.Vars(r)
+	clientId := params["clientId"]
+	if proxyInstance, ok := proxyInstances[clientId]; ok {
+		err := proxyInstance.Close()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]any{"message": "error", "statusCode": http.StatusOK})
+		} else {
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]any{"message": "success", "statusCode": http.StatusOK})
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(map[string]any{"message": "client not found", "statusCode": http.StatusNotFound})
+}
+
 func panicHandler(handler http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {

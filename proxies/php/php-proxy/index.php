@@ -18,32 +18,35 @@ if (getenv("LOCAL_MODE") == "") {
         default:
             exit(404);
     }
-}
-else {
+} else {
     handleCommand(["", "client", "clientName"], true);
 }
 
 function handleCommand(array $pathArgs, bool $isClient): void
 {
 
-    if (getenv("LOCAL_MODE")=="") {
+    if (getenv("LOCAL_MODE") == "") {
         if ($_SERVER['REQUEST_METHOD'] !== "POST") {
             exit(405);
         }
         $entityBody = json_decode(file_get_contents('php://input'), true);
-    }
-    else {
-        $entityBody = json_decode('{"params":[{"type":"user"},{"value":"string-var"},{"value":"defaultValue"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"variable"}', true);
+    } else {
+        $entityBody = json_decode('{"params":[{"type":"user"},{"value":"number-var"},{"value":0}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"variable"}', true);
     }
 
     if (sizeof($pathArgs) < 3 && !$isClient) {
         exit(400);
     }
+    $clientId = $pathArgs[2];
 
-    $client = buildClient($pathArgs[2]);
+    $client = buildClient($clientId);
     $command = $entityBody["command"];
     if ($command == "close") {
-        echo "{}";
+        $closeReq = curl_init();
+        curl_setopt($closeReq, CURLOPT_URL,"http://localhost:3000/close/".$clientId);
+        curl_setopt($closeReq, CURLOPT_POST, 1);
+        curl_exec($closeReq);
+        curl_close($closeReq);
         exit(200);
     }
 
@@ -54,20 +57,35 @@ function handleCommand(array $pathArgs, bool $isClient): void
             case "variable":
                 $user = $params[0];
                 $variableKey = $params[1];
-                $defaultValue = $params[2];
+                $defaultValue = gettype($params[2]) == "array" && sizeof(array_keys($params[2])) == 0 ? new ArrayObject() : $params[2];
                 $varr = $client->variable($user, $variableKey, $defaultValue);
+                $isDefaulted = $varr->getValue() === $defaultValue;
+                $value = $varr->getValue();
+                if (gettype($value) == "array" && sizeof(array_keys($value)) == 1) {
+                    $value = $value[0];
+                }
                 $resp = [
                     "data" => [
                         "defaultValue" => $defaultValue,
-                        "isDefaulted" => $varr->getValue() == $defaultValue,
-                        "value" => gettype($varr->getValue()) == "array" ? $varr->getValue()[0] : $varr->getValue(),
+                        "isDefaulted" => $isDefaulted,
+                        "value" => $value,
                         "key" => $variableKey,
-                        "type" => converNumberType(ucwords(gettype($defaultValue)))
+                        "type" => gettype($defaultValue) == "array" || gettype($defaultValue) == "object" ? "JSON"
+                            : converNumberType(ucwords(gettype($defaultValue)))
                     ],
                     "entityType" => "Variable",
                     "logs" => []
                 ];
                 echo json_encode($resp);
+                exit(200);
+            case "allVariables":
+                $user = $params[0];
+                $vars = $client->allVariables($user);
+                $resp = [
+                    "data" => $vars,
+                    "entityType" => "Variable",
+                    "logs" => []
+                ];
                 exit(200);
         }
         //var_dump($entityBody);
@@ -103,8 +121,8 @@ function handleSpec(): void
 function buildClient(string $clientId)
 {
     $config = DevCycle\Configuration::getDefaultConfiguration()
-        ->setApiKey('Authorization', getenv("LOCAL_MODE") == "" ? "dvc_server_".$clientId : "dvc_server_test-harness-config")
-        ->setHost(getenv("LOCAL_MODE") == "" ?"http:/" . $clientId . "v1" : "http://localhost:8080")
+        ->setApiKey('Authorization', getenv("LOCAL_MODE") == "" ? "dvc_server_" . $clientId : "dvc_server_test-harness-config")
+        ->setHost(getenv("LOCAL_MODE") == "" ? "http:/" . $clientId . "v1" : "http://localhost:8080")
         ->setUDSPath(getenv("LOCAL_MODE") == "" ? "/tmp/" . $clientId . ".sock" : "");
     $options = new DevCycle\Model\DVCOptions(false);
     return new DevCycle\Api\DVCClient(
@@ -119,9 +137,11 @@ function parseParams($entityBody): array
     foreach ($entityBody["params"] as $p) {
         $type = in_array("type", array_keys($p)) ? $p["type"] : null;
         $value = in_array("value", array_keys($p)) ? $p["value"] : null;
-        if ($type == null) {
-            if ($value != null) {
+        if ($type === null) {
+            if ($value !== null) {
                 $ret[] = $p["value"];
+            } else {
+                $ret[] = null;
             }
         } else {
             if ($type == "user") {
@@ -141,8 +161,9 @@ function parseParams($entityBody): array
     return $ret;
 }
 
-function converNumberType($val): string {
-    switch($val) {
+function converNumberType($val): string
+{
+    switch ($val) {
         case "Number":
         case "Integer":
         case "Float":
@@ -150,4 +171,24 @@ function converNumberType($val): string {
         default:
             return $val;
     }
+}
+
+// Returns true if "thing" is an array, false if it's a JSON object.
+// the differentiator is whether or not the php array contains multiple types
+// of values, which would imply that it is not a valid JSON single-typed array.
+function isJSONArrayOrObject($thing)
+{
+    $sameType = true;
+    $type = "";
+    foreach ($thing as $k => $v) {
+        if ($type === "") {
+            $type = gettype($v);
+            continue;
+        }
+        if ($type !== gettype($v)) {
+            $sameType = false;
+            break;
+        }
+    }
+    return $sameType;
 }

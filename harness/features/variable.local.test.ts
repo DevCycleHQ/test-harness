@@ -180,7 +180,11 @@ describe('Variable Tests - Local', () => {
 
                     // Expects that the SDK sends an "aggVariableDefaulted" event for the
                     // defaulted variable
-                    expectEventBody(eventResult.body, key, 'aggVariableDefaulted')
+                    if (!hasCapability(sdkName, Capabilities.cloudProxy)) {
+                        expectEventBody(eventResult.body, key, 'aggVariableDefaulted')
+                    } else {
+                        expectEventBody(eventResult.body, key, 'aggVariableEvaluated')
+                    }
                 })
 
                 it.each(callVariableMethods)('should return default value if user is not bucketed into %s',
