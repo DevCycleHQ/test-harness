@@ -52,6 +52,7 @@ function handleCommand(array $pathArgs, bool $isClient): void
 
     if (method_exists($client, $command)) {
         $params = parseParams($entityBody);
+        try {
 
         switch ($command) {
             case "variable":
@@ -78,14 +79,11 @@ function handleCommand(array $pathArgs, bool $isClient): void
                 ];
                 echo json_encode($resp);
                 exit(200);
-            case "allVariables":
+            case "track":
                 $user = $params[0];
-                $vars = $client->allVariables($user);
-                $resp = [
-                    "data" => $vars,
-                    "entityType" => "Variable",
-                    "logs" => []
-                ];
+                $event = $params[1];
+                $response = $client->track($user, $event);
+                echo json_encode($response);
                 exit(200);
         }
         //var_dump($entityBody);
@@ -96,6 +94,15 @@ function handleCommand(array $pathArgs, bool $isClient): void
         $entityResponse["entityType"] = $command;
         echo json_encode($entityResponse);
         exit(200);
+
+        } catch (Exception $e) {
+            $resp = [
+                "exception" => $e->getMessage(),
+                "statusCode" => 500
+            ];
+            echo json_encode($resp);
+            exit(500);
+        }
     } else {
         exit(501);
     }
