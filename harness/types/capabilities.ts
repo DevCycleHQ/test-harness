@@ -31,8 +31,7 @@ export const SDKCapabilities = {
         Capabilities.multithreading, Capabilities.variableValue
     ],
     GoWASM: [
-        Capabilities.events, Capabilities.local, Capabilities.clientCustomData, Capabilities.multithreading,
-        Capabilities.variableValue
+        Capabilities.events, Capabilities.local, Capabilities.clientCustomData, Capabilities.variableValue
     ],
     Ruby: [
         Capabilities.events, Capabilities.local, Capabilities.clientCustomData, Capabilities.variableValue
