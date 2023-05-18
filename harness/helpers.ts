@@ -596,8 +596,8 @@ export const expectErrorMessageToBe = (message: string, expected: string) => {
 }
 
 export const getPlatformBySdkName = (name: string, isLocal: boolean) => {
-    // GoNative is using the same SDK as Go but with different build args
-    if (name === 'GoNative') {
+    // GoWASM is using the same SDK as Go but with different build args
+    if (name === 'GoWASM') {
         return 'Go'
     }
     if (name === 'OF-NodeJS') {

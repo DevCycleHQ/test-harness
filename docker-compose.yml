@@ -77,17 +77,17 @@ services:
     container_name: go
     ports:
       - "3000"
-  gonative:
+  gowasm:
     profiles:
-      - gonative
+      - gowasm
     build:
       context: ./proxies/go
       args:
         - GO_SDK_VERSION=${GO_SDK_VERSION}
         - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
         - SDKS_TO_TEST=${SDKS_TO_TEST}
-        - GO_BUILD_TAGS=native_bucketing
-    container_name: gonative
+        - GO_BUILD_TAGS=devcycle_wasm_bucketing
+    container_name: gowasm
     ports:
       - "3000"
   ruby:

@@ -3,7 +3,7 @@ export const Sdks = {
     'of-nodejs': 'OF-NodeJS',
     dotnet: 'DotNet',
     go: 'Go',
-    gonative: 'GoNative',
+    gowasm: 'GoWASM',
     ruby: 'Ruby',
     // TODO uncomment once Java is ready
     // java: 'Java'
