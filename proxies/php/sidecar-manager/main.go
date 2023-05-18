@@ -67,7 +67,9 @@ type clientResponseBody struct {
 
 func clientHandler(w http.ResponseWriter, r *http.Request) {
 	var reqBody clientRequestBody
+	var res clientResponseBody
 	err := json.NewDecoder(r.Body).Decode(&reqBody)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -88,18 +90,13 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 			Hostname:        "test-harness",
 		},
 		SDKConfig: lbproxy.SDKConfig{
-			EventFlushIntervalMS:         time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
-			ConfigPollingIntervalMS:      time.Duration(reqBody.Options.ConfigPollingIntervalMS * 1000000),
-			RequestTimeout:               0,
-			DisableAutomaticEventLogging: false,
-			DisableCustomEventLogging:    false,
-			MaxEventQueueSize:            0,
-			FlushEventQueueSize:          0,
-			ConfigCDNURI:                 reqBody.Options.ConfigCDNURI,
-			EventsAPIURI:                 reqBody.Options.EventsAPIURI,
+			EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
+			ConfigPollingIntervalMS: time.Duration(reqBody.Options.ConfigPollingIntervalMS * 1000000),
+			ConfigCDNURI:            reqBody.Options.ConfigCDNURI,
+			EventsAPIURI:            reqBody.Options.EventsAPIURI,
 		},
 	}
-	var res clientResponseBody
+
 	instance, err := lbproxy.NewBucketingProxyInstance(proxyInstance)
 	if err != nil {
 		res.Exception = err.Error()

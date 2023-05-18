@@ -31,7 +31,10 @@ function handleCommand(array $pathArgs, bool $isClient): void
         }
         $entityBody = json_decode(file_get_contents('php://input'), true);
     } else {
-        $entityBody = json_decode('{"params":[{"type":"user"},{"value":"number-var"},{"value":0}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"variable"}', true);
+        // user variable
+        //$entityBody = json_decode('{"params":[{"type":"user"},{"value":"json-var"},{"value":{}}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"variable"}', true);
+        // all variables
+        $entityBody = json_decode('{"params":[{"type":"user"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"allVariables"}', true);
     }
 
     if (sizeof($pathArgs) < 3 && !$isClient) {
@@ -43,7 +46,7 @@ function handleCommand(array $pathArgs, bool $isClient): void
     $command = $entityBody["command"];
     if ($command == "close") {
         $closeReq = curl_init();
-        curl_setopt($closeReq, CURLOPT_URL,"http://localhost:3000/close/".$clientId);
+        curl_setopt($closeReq, CURLOPT_URL, "http://localhost:3000/close/" . $clientId);
         curl_setopt($closeReq, CURLOPT_POST, 1);
         curl_exec($closeReq);
         curl_close($closeReq);
@@ -54,46 +57,52 @@ function handleCommand(array $pathArgs, bool $isClient): void
         $params = parseParams($entityBody);
         try {
 
-        switch ($command) {
-            case "variable":
-                $user = $params[0];
-                $variableKey = $params[1];
-                $defaultValue = gettype($params[2]) == "array" && sizeof(array_keys($params[2])) == 0 ? new ArrayObject() : $params[2];
-                $varr = $client->variable($user, $variableKey, $defaultValue);
-                $isDefaulted = $varr->getValue() === $defaultValue;
-                $value = $varr->getValue();
-                if (gettype($value) == "array" && sizeof(array_keys($value)) == 1) {
-                    $value = $value[0];
-                }
-                $resp = [
-                    "data" => [
-                        "defaultValue" => $defaultValue,
-                        "isDefaulted" => $isDefaulted,
-                        "value" => $value,
-                        "key" => $variableKey,
-                        "type" => gettype($defaultValue) == "array" || gettype($defaultValue) == "object" ? "JSON"
-                            : converNumberType(ucwords(gettype($defaultValue)))
-                    ],
-                    "entityType" => "Variable",
-                    "logs" => []
-                ];
-                echo json_encode($resp);
-                exit(200);
-            case "track":
-                $user = $params[0];
-                $event = $params[1];
-                $response = $client->track($user, $event);
-                echo json_encode($response);
-                exit(200);
-        }
-        //var_dump($entityBody);
-        //var_dump($params);
-        $resp = call_user_func_array([$client, $command], $params);
-        $entityResponse = [];
-        $entityResponse["data"] = $resp;
-        $entityResponse["entityType"] = $command;
-        echo json_encode($entityResponse);
-        exit(200);
+            switch ($command) {
+                case "variable":
+                    $user = $params[0];
+                    $variableKey = $params[1];
+                    $defaultValue = gettype($params[2]) == "array" && sizeof(array_keys($params[2])) == 0 ? new ArrayObject() : $params[2];
+                    $varr = $client->variable($user, $variableKey, $defaultValue);
+                    $isDefaulted = $varr->getIsDefaulted();
+                    $value = $varr->getValue();
+                    $resp = [
+                        "data" => [
+                            "defaultValue" => $defaultValue,
+                            "isDefaulted" => $isDefaulted,
+                            "value" => $value,
+                            "key" => $variableKey,
+                            "type" => gettype($defaultValue) == "array" || gettype($defaultValue) == "object" ? "JSON"
+                                : convertNativeTypes(ucwords(gettype($defaultValue)))
+                        ],
+                        "entityType" => "Variable",
+                        "logs" => []
+                    ];
+                    echo json_encode($resp);
+                    exit(200);
+                case "allVariables":
+                    $user = $params[0];
+                    $resp = [
+                        "data" => $client->allVariables($user),
+                        "entityType" => "Object",
+                        "logs" => []
+                    ];
+                    echo json_encode($resp);
+                    exit(200);
+                case "track":
+                    $user = $params[0];
+                    $event = $params[1];
+                    $response = $client->track($user, $event);
+                    echo json_encode($response);
+                    exit(200);
+            }
+            //var_dump($entityBody);
+            //var_dump($params);
+            $resp = call_user_func_array([$client, $command], $params);
+            $entityResponse = [];
+            $entityResponse["data"] = $resp;
+            $entityResponse["entityType"] = $command;
+            echo json_encode($entityResponse);
+            exit(200);
 
         } catch (Exception $e) {
             $resp = [
@@ -160,7 +169,7 @@ function parseParams($entityBody): array
                 $event = new DevCycle\Model\Event();
                 $event->setTarget($entityBody["event"]["target"]);
                 $event->setType($entityBody["event"]["type"]);
-
+                $event->setValue($entityBody["event"]["value"]);
                 $ret[] = $event;
             }
         }
@@ -168,34 +177,21 @@ function parseParams($entityBody): array
     return $ret;
 }
 
-function converNumberType($val): string
+function convertNativeTypes($val): string
 {
     switch ($val) {
         case "Number":
         case "Integer":
         case "Float":
             return "Number";
+        case "Object":
+        case "Array":
+            return "JSON";
+        case "String":
+            return "String";
+        case "Boolean":
+            return "Boolean";
         default:
             return $val;
     }
-}
-
-// Returns true if "thing" is an array, false if it's a JSON object.
-// the differentiator is whether or not the php array contains multiple types
-// of values, which would imply that it is not a valid JSON single-typed array.
-function isJSONArrayOrObject($thing)
-{
-    $sameType = true;
-    $type = "";
-    foreach ($thing as $k => $v) {
-        if ($type === "") {
-            $type = gettype($v);
-            continue;
-        }
-        if ($type !== gettype($v)) {
-            $sameType = false;
-            break;
-        }
-    }
-    return $sameType;
 }
