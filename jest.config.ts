@@ -45,9 +45,9 @@ const projects = [
     },
     {
         ...commonConfig,
-        displayName: 'GoNative',
+        displayName: 'GoWASM',
         globals: {
-            JEST_PROJECT_SDK_TO_TEST: 'GoNative',
+            JEST_PROJECT_SDK_TO_TEST: 'GoWASM',
             LOCAL_HOST_BINDING: '0.0.0.0'
         }
     },
