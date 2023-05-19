@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04ef603bec5e1c0ab6054e514ea04c0a",
+    "content-hash": "2bfb4e5bb5c105072d5137d23355cffe",
     "packages": [
         {
             "name": "devcycle/php-server-sdk",
-            "version": "v1.1.4",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevCycleHQ/php-server-sdk.git",
-                "reference": "08d3c4f29ca9e5edaa764987662dbc6018447a26"
+                "reference": "f4d982e9da34f4f06e15c6e41d39b9d8a81ce229"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DevCycleHQ/php-server-sdk/zipball/08d3c4f29ca9e5edaa764987662dbc6018447a26",
-                "reference": "08d3c4f29ca9e5edaa764987662dbc6018447a26",
+                "url": "https://api.github.com/repos/DevCycleHQ/php-server-sdk/zipball/f4d982e9da34f4f06e15c6e41d39b9d8a81ce229",
+                "reference": "f4d982e9da34f4f06e15c6e41d39b9d8a81ce229",
                 "shasum": ""
             },
             "require": {
@@ -61,9 +61,9 @@
             ],
             "support": {
                 "issues": "https://github.com/DevCycleHQ/php-server-sdk/issues",
-                "source": "https://github.com/DevCycleHQ/php-server-sdk/tree/v1.1.4"
+                "source": "https://github.com/DevCycleHQ/php-server-sdk/tree/v1.2.0"
             },
-            "time": "2023-05-16T18:07:48+00:00"
+            "time": "2023-05-19T13:58:47+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
