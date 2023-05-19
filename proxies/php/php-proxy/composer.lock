@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevCycleHQ/php-server-sdk.git",
-                "reference": "f4d982e9da34f4f06e15c6e41d39b9d8a81ce229"
+                "reference": "8d1283a5209961bbb0578c5a6827621a3a3e7339"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DevCycleHQ/php-server-sdk/zipball/f4d982e9da34f4f06e15c6e41d39b9d8a81ce229",
-                "reference": "f4d982e9da34f4f06e15c6e41d39b9d8a81ce229",
+                "url": "https://api.github.com/repos/DevCycleHQ/php-server-sdk/zipball/8d1283a5209961bbb0578c5a6827621a3a3e7339",
+                "reference": "8d1283a5209961bbb0578c5a6827621a3a3e7339",
                 "shasum": ""
             },
             "require": {
@@ -63,7 +63,7 @@
                 "issues": "https://github.com/DevCycleHQ/php-server-sdk/issues",
                 "source": "https://github.com/DevCycleHQ/php-server-sdk/tree/v1.2.0"
             },
-            "time": "2023-05-19T13:58:47+00:00"
+            "time": "2023-05-19T15:12:21+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
