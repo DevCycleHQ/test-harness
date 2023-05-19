@@ -42,14 +42,14 @@ type ErrorResponse struct {
 
 var commandMutex = sync.RWMutex{}
 
-func handleError(r any) error {
+func handleError(r any, err *error) {
 	switch x := r.(type) {
 	case string:
-		return errors.New(x)
+		*err = errors.New(x)
 	case error:
-		return x
+		*err = x
 	default:
-		return errors.New("unknown panic")
+		*err = errors.New("unknown panic")
 	}
 }
 
@@ -65,7 +65,7 @@ func commandHandler(locationIsClient bool, w http.ResponseWriter, r *http.Reques
 	var body CommandBody
 	jsonErr := json.NewDecoder(r.Body).Decode(&body)
 
-	locationResponse, locationHeader, err := getCommandResponse(locationIsClient, body, r)
+	locationResponse, locationHeader, err := getCommandResponse(locationIsClient, body, w, r)
 
 	if err == nil {
 		err = jsonErr
@@ -95,7 +95,12 @@ func commandHandler(locationIsClient bool, w http.ResponseWriter, r *http.Reques
 	}
 }
 
-func getCommandResponse(locationIsClient bool, body CommandBody, r *http.Request) (LocationResponse, string, error) {
+func getCommandResponse(
+	locationIsClient bool,
+	body CommandBody,
+	w http.ResponseWriter,
+	r *http.Request,
+) (LocationResponse, string, error) {
 	var err error
 	vars := mux.Vars(r)
 
@@ -107,14 +112,21 @@ func getCommandResponse(locationIsClient bool, body CommandBody, r *http.Request
 		fmt.Printf("Location: client %v \n", id)
 	}
 
-	params := parseParams(body)
-	entity := getEntityFromLocation(location, id, locationIsClient)
-	response, locationHeader, err := callMethodOnEntity(entity, body.Command, params, locationIsClient)
+	params := parseParams(body, &err)
+	entity := getEntityFromLocation(location, id, locationIsClient, &err)
+	response, locationHeader := callMethodOnEntity(
+		entity,
+		body.Command,
+		id,
+		params,
+		locationIsClient,
+		&err,
+	)
 
 	return response, locationHeader, err
 }
 
-func getEntityFromLocation(location string, id string, locationIsClient bool) any {
+func getEntityFromLocation(location string, id string, locationIsClient bool, err *error) any {
 	commandMutex.RLock()
 	defer commandMutex.RUnlock()
 
@@ -125,7 +137,7 @@ func getEntityFromLocation(location string, id string, locationIsClient bool) an
 	}
 }
 
-func parseParams(body CommandBody) []reflect.Value {
+func parseParams(body CommandBody, err *error) []reflect.Value {
 	var parsedParams = []reflect.Value{}
 	for _, element := range body.Params {
 		if element.Type == nil {
@@ -145,7 +157,14 @@ func parseParams(body CommandBody) []reflect.Value {
 	return parsedParams
 }
 
-func callMethodOnEntity(entity any, command string, params []reflect.Value, locationIsClient bool) (response LocationResponse, locationHeader string, err error) {
+func callMethodOnEntity(
+	entity any,
+	command string,
+	id string,
+	params []reflect.Value,
+	locationIsClient bool,
+	err *error,
+) (LocationResponse, string) {
 	commandMutex.Lock()
 
 	if datastore.commandResults[command] == nil {
@@ -177,14 +196,14 @@ func callMethodOnEntity(entity any, command string, params []reflect.Value, loca
 
 	for _, value := range result {
 		if value.Type().Implements(reflect.TypeOf(err).Elem()) && value.Interface() != nil {
-			err = value.Interface().(error)
+			*err = value.Interface().(error)
 		}
 	}
 
 	entityType := method.Type().Out(0)
-	entityName, parsedResult, err := parseEntity(entityType, result)
+	entityName, parsedResult := parseEntity(entityType, result, err)
 
-	response = LocationResponse{
+	response := LocationResponse{
 		entityName,
 		parsedResult,
 		make([]string, 0),
@@ -193,15 +212,16 @@ func callMethodOnEntity(entity any, command string, params []reflect.Value, loca
 	commandMutex.Lock()
 	defer commandMutex.Unlock()
 	locationId := strconv.Itoa(len(datastore.commandResults[command]))
-	locationHeader = "command/" + command + "/" + locationId
+	locationHeader := "command/" + command + "/" + locationId
 
 	datastore.commandResults[command][locationId] = result[0]
 
-	return response, locationHeader, err
+	return response, locationHeader
 
 }
 
-func parseEntity(entityType reflect.Type, result []reflect.Value) (entityname string, parsedResult any, err error) {
+func parseEntity(entityType reflect.Type, result []reflect.Value, err *error) (string, any) {
+	var parsedResult any
 	parsedResult = result[0]
 
 	// map types need to be explicitly cast to map[string]<type> for json parsing
@@ -227,9 +247,9 @@ func parseEntity(entityType reflect.Type, result []reflect.Value) (entityname st
 	}
 
 	if len(result) > 1 && result[1].Interface() != nil {
-		err = handleError(result[1].Interface())
+		handleError(result[1].Interface(), err)
 	}
 
-	return entityName, parsedResult, err
+	return entityName, parsedResult
 
 }
