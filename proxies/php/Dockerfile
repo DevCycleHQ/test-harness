@@ -1,7 +1,20 @@
 FROM composer as composer
+
+ARG PHP_SDK_VERSION
+ENV PHP_SDK_VERSION $PHP_SDK_VERSION
+
+ARG SDK_GITHUB_SHA
+ENV SDK_GITHUB_SHA $SDK_GITHUB_SHA
+
+ARG SDKS_TO_TEST
+ENV SDKS_TO_TEST $SDKS_TO_TEST
+
+RUN apk add --no-cache bash
+
 WORKDIR /app
 COPY php-proxy/ ./
 
+RUN ./install.sh
 RUN composer install --optimize-autoloader --no-interaction --no-progress
 
 FROM golang:alpine as go
