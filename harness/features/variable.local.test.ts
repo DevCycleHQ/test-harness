@@ -327,7 +327,10 @@ describe('Variable Tests - Local', () => {
             forEachVariableType((type) => {
                 const { key, defaultValue, variableType } = expectedVariablesByType[type]
 
-                it.each(callVariableMethods)('should return %s default value if client is uninitialized, log event',
+                const testFn = hasCapability(sdkName, Capabilities.cloudProxy)
+                    ? it.skip.each(callVariableMethods)
+                    : it.each(callVariableMethods)
+                testFn('should return %s default value if client is uninitialized, log event',
                     async (method) => {
                         testClient = new LocalTestClient(sdkName)
                         const configRequestUrl =
