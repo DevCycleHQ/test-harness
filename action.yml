@@ -12,11 +12,6 @@ inputs:
     required: true
 
 runs:
-  services:
-    php-proxy:
-      image: ghcr.io/devcyclehq-internal/local-bucketing-proxy:main
-      ports:
-        - 8080:8080
   using: "composite"
   steps:
     - uses: actions/checkout@v3.3.0
