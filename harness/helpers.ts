@@ -5,11 +5,12 @@ import { v4 as uuidv4 } from 'uuid'
 
 const oldFetch = fetch
 
-global.fetch = async (...args) => {
+global.fetch = async (url, ...args) => {
+    console.log(`Fetching URL: ${url}`, args)
     try {
-        return await oldFetch(...args)
+        return await oldFetch(url, ...args)
     } catch (e) {
-        console.error(e)
+        console.error('Error fetching url: ' + url, e)
         throw e
     }
 }
@@ -321,7 +322,7 @@ export const waitForRequest = async (
 const checkFailed = async (response: Response, shouldFail: boolean) => {
     if (!shouldFail) {
         if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}, ${await response.text()}`)
+            throw new Error(`Request to ${response.url} failed with status ${response.status}, ${await response.text()}`)
         }
         const result = await response.clone().json()
         if (result.exception) {
@@ -400,6 +401,9 @@ export class LocalTestClient extends BaseTestClient {
         await checkFailed(response, shouldFail)
 
         this.clientLocation = response.headers.get('location')
+        if (this.clientLocation) {
+            console.log(`New client location: ${this.clientLocation}`)
+        }
         return response
     }
 
