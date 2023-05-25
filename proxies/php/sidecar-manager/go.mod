@@ -5,7 +5,6 @@ go 1.20
 require (
 	github.com/devcyclehq/go-server-sdk/v2 v2.10.2
 	github.com/devcyclehq/local-bucketing-proxy v0.0.4
-	github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230518150128-693cea9bd3b2
 	github.com/gorilla/mux v1.8.0
 )
 
@@ -30,6 +29,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+	github.com/twmb/murmur3 v1.1.7 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29 // indirect

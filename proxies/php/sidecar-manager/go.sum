@@ -7,8 +7,12 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/devcyclehq/go-server-sdk/v2 v2.9.7-0.20230503141249-05a8cad604f1 h1:F6ZQM0z5Isz9mGmJhv/utA74/QItkF7klMEJHQW5LxM=
 github.com/devcyclehq/go-server-sdk/v2 v2.9.7-0.20230503141249-05a8cad604f1/go.mod h1:bIUmiZMp/crMNPX6Iz+vCMABoGAGW641jXIm87/uJRc=
+github.com/devcyclehq/go-server-sdk/v2 v2.10.2 h1:3C63HCoE7h/0lR33FhHI/sZB4UKNKuk7TBeif+Ju7Tg=
+github.com/devcyclehq/go-server-sdk/v2 v2.10.2/go.mod h1:84aAm2GSCnZAXEL2QsArwUapAtQn1g+R4hkFw4pg44k=
 github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230518150128-693cea9bd3b2 h1:kVOmbSuWm7NsCu9c6qXchTFuDODm85uTQlZacx8MSG8=
 github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230518150128-693cea9bd3b2/go.mod h1:OEr+oWZ5M11L6XP8rOf9jg/Y4R9PwssBm8DdkubZNSI=
+github.com/devcyclehq/local-bucketing-proxy v0.0.4 h1:MAfadB4cjm/oFblulmrOSVZduCDOKcNUX2T6Hdl3+4g=
+github.com/devcyclehq/local-bucketing-proxy v0.0.4/go.mod h1:tn838NI2Q3f4RQOXtJaQRpyMZz+xx5cVfeUI3bZVa7U=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
 github.com/gin-contrib/sse v0.1.0 h1:Y/yl/+YNO8GZSjAhjMsSuLt29uWRFHdHYUb5lYOV9qE=
@@ -70,6 +74,8 @@ github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
+github.com/twmb/murmur3 v1.1.7 h1:ULWBiM04n/XoN3YMSJ6Z2pHDFLf+MeIVQU71ZPrvbWg=
+github.com/twmb/murmur3 v1.1.7/go.mod h1:Qq/R7NUyOfr65zD+6Q5IHKsJLwP7exErjN6lyyq3OSQ=
 github.com/ugorji/go v1.2.7/go.mod h1:nF9osbDWLy6bDVv/Rtoh6QgnvNDpmCalQV5urGCCS6M=
 github.com/ugorji/go/codec v1.2.7 h1:YPXUKf7fYbp/y8xloBqZOw2qaVggbfwMlI8WM3wZUJ0=
 github.com/ugorji/go/codec v1.2.7/go.mod h1:WGN1fab3R1fzQlVQTkfxVtIBhWDRqOviHU95kRgeqEY=
