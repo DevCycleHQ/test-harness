@@ -24,12 +24,11 @@ export const getMockServerUrl = () => {
 
 export const getConnectionStringForProxy = (proxy: string) => {
     if (process.env.LOCAL_MODE === '1') {
-        return `http://${global.LOCAL_HOST_BINDING}:3000`
+        return `http://${global.LOCAL_HOST_BINDING || '0.0.0.0'}:3000`
     }
 
     const host = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_IP__`]
     const port = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_PORT_3000__`]
-    //const port = 3000
 
     if (!host || !port) {
         throw new Error('Could not find container for proxy: ' + proxy)
