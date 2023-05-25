@@ -4,9 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	devcycle "github.com/devcyclehq/go-server-sdk/v2"
-	lbproxy "github.com/devcyclehq/local-bucketing-proxy"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
@@ -15,6 +12,10 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	devcycle "github.com/devcyclehq/go-server-sdk/v2"
+	lbproxy "github.com/devcyclehq/local-bucketing-proxy"
+	"github.com/gorilla/mux"
 )
 
 var proxyInstances = make(map[string]*lbproxy.ProxyInstance)
@@ -38,6 +39,7 @@ func main() {
 		}
 	}()
 
+	log.Printf("Sidecar manager listening on %s", server.Addr)
 	if err := server.ListenAndServe(); err != nil {
 		if err == http.ErrServerClosed {
 			return
@@ -66,9 +68,11 @@ type clientResponseBody struct {
 }
 
 func clientHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Sidecar manager received client request: %v %v", r.Method, r.RequestURI)
 	var reqBody clientRequestBody
 	var res clientResponseBody
 	err := json.NewDecoder(r.Body).Decode(&reqBody)
+	log.Printf("Sidecar manager received client body: %v", reqBody)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -116,6 +120,8 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func shutdownClient(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Sidecar manager received close request: %v %v", r.Method, r.RequestURI)
+
 	proxyMutex.Lock()
 	defer proxyMutex.Unlock()
 	params := mux.Vars(r)
