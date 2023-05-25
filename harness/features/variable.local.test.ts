@@ -377,9 +377,6 @@ describe('Variable Tests - Local', () => {
                         const configRequestUrl =
                             `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
 
-                        console.log(`variable method: ${method}, testClient: ${testClient.clientId}, ` +
-                        `configRequestUrl: ${configRequestUrl}`)
-
                         scope.get(configRequestUrl)
                             // account for the immediate retry of the request
                             .times(2)

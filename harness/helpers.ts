@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid'
 const oldFetch = fetch
 
 global.fetch = async (url, ...args) => {
-    console.log(`Fetching URL: ${url}`, args)
     try {
         return await oldFetch(url, ...args)
     } catch (e) {
@@ -401,9 +400,6 @@ export class LocalTestClient extends BaseTestClient {
         await checkFailed(response, shouldFail)
 
         this.clientLocation = response.headers.get('location')
-        if (this.clientLocation) {
-            console.log(`New client location: ${this.clientLocation}`)
-        }
         return response
     }
 
