@@ -1,0 +1,14 @@
+{
+    "name": "devcyclehq/php-test-harness",
+    "description": "Test Harness proxy for PHP",
+    "type": "project",
+    "require": {
+        "devcycle/php-server-sdk": "^v1.2.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Devcyclehq\\PhpTestHarness\\": "src/"
+        }
+    }
+}

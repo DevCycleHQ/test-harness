@@ -180,7 +180,11 @@ describe('Variable Tests - Local', () => {
 
                     // Expects that the SDK sends an "aggVariableDefaulted" event for the
                     // defaulted variable
-                    expectEventBody(eventResult.body, key, 'aggVariableDefaulted')
+                    if (!hasCapability(sdkName, Capabilities.cloudProxy)) {
+                        expectEventBody(eventResult.body, key, 'aggVariableDefaulted')
+                    } else {
+                        expectEventBody(eventResult.body, key, 'aggVariableEvaluated')
+                    }
                 })
 
                 it.each(callVariableMethods)('should return default value if user is not bucketed into %s',
@@ -323,7 +327,10 @@ describe('Variable Tests - Local', () => {
             forEachVariableType((type) => {
                 const { key, defaultValue, variableType } = expectedVariablesByType[type]
 
-                it.each(callVariableMethods)('should return %s default value if client is uninitialized, log event',
+                const testFn = hasCapability(sdkName, Capabilities.cloudProxy)
+                    ? it.skip.each(callVariableMethods)
+                    : it.each(callVariableMethods)
+                testFn('should return %s default value if client is uninitialized, log event',
                     async (method) => {
                         testClient = new LocalTestClient(sdkName)
                         const configRequestUrl =
@@ -369,9 +376,6 @@ describe('Variable Tests - Local', () => {
                         testClient = new LocalTestClient(sdkName)
                         const configRequestUrl =
                             `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
-
-                        console.log(`variable method: ${method}, testClient: ${testClient.clientId}, ` +
-                        `configRequestUrl: ${configRequestUrl}`)
 
                         scope.get(configRequestUrl)
                             // account for the immediate retry of the request

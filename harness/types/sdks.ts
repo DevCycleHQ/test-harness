@@ -5,6 +5,7 @@ export const Sdks = {
     go: 'Go',
     gowasm: 'GoWASM',
     ruby: 'Ruby',
+    php: 'PHP',
     // TODO uncomment once Java is ready
     // java: 'Java'
     // TODO add once python is ready

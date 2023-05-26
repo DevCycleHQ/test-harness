@@ -119,3 +119,12 @@ Run `bundle install` in the `proxies/ruby` folder.
 
 Follow the same numbered steps as above for NodeJS, substituting `ruby` for `nodejs` in the environment variables
 and shell commands.
+
+## PHP
+
+Ensure that you have a PHP interpreter setup under your project
+Run the `index.php` script in the `proxies/php/php-proxy` folder with the environment variable `LOCAL_MODE` set to `1` and `SDKS_TO_TEST` set to `php`.
+
+The "command" only runs against a fixed request body - and you'll need to modify it in order to test properly locally.
+You'll need to build that request string from whatever unit test you want to setup - but it's not recommended to use this method for full client init debugging as this doesn't handle 
+client creation.

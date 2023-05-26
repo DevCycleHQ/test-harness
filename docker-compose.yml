@@ -102,3 +102,17 @@ services:
     container_name: ruby
     ports:
       - "3000"
+  php:
+    profiles:
+      - php
+    build:
+      context: ./proxies/php
+      args:
+        - PHP_SDK_VERSION=${PHP_SDK_VERSION}
+        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+        - SDKS_TO_TEST=${SDKS_TO_TEST}
+    container_name: php
+    healthcheck:
+      disable: true
+    ports:
+      - "3000"

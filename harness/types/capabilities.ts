@@ -6,7 +6,8 @@ export const Capabilities = {
     sse: 'SSE',
     clientCustomData: 'ClientCustomData',
     multithreading: 'Multithreading',
-    variableValue: 'VariableValue'
+    variableValue: 'VariableValue',
+    cloudProxy: 'CloudProxy',
 }
 
 export const SDKCapabilities = {
@@ -35,5 +36,9 @@ export const SDKCapabilities = {
     ],
     Ruby: [
         Capabilities.events, Capabilities.local, Capabilities.clientCustomData, Capabilities.variableValue
-    ]
+    ],
+    PHP: [
+        Capabilities.events, Capabilities.local, Capabilities.cloudProxy
+    ],
+
 }

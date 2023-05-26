@@ -5,11 +5,11 @@ import { v4 as uuidv4 } from 'uuid'
 
 const oldFetch = fetch
 
-global.fetch = async (...args) => {
+global.fetch = async (url, ...args) => {
     try {
-        return await oldFetch(...args)
+        return await oldFetch(url, ...args)
     } catch (e) {
-        console.error(e)
+        console.error('Error fetching url: ' + url, e)
         throw e
     }
 }
@@ -24,7 +24,7 @@ export const getMockServerUrl = () => {
 
 export const getConnectionStringForProxy = (proxy: string) => {
     if (process.env.LOCAL_MODE === '1') {
-        return `http://${global.LOCAL_HOST_BINDING}:3000`
+        return `http://${global.LOCAL_HOST_BINDING || '0.0.0.0'}:3000`
     }
 
     const host = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_IP__`]
@@ -321,7 +321,7 @@ export const waitForRequest = async (
 const checkFailed = async (response: Response, shouldFail: boolean) => {
     if (!shouldFail) {
         if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}, ${await response.text()}`)
+            throw new Error(`Request to ${response.url} failed with status ${response.status}, ${await response.text()}`)
         }
         const result = await response.clone().json()
         if (result.exception) {
@@ -364,11 +364,13 @@ class BaseTestClient {
         return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
     }
 
-    async close() { }
+    async close() {
+    }
 }
 
 export class LocalTestClient extends BaseTestClient {
     private shouldFailInit = false
+
     async createClient(
         waitForInitialization: boolean,
         options: Record<string, unknown> = {},
@@ -378,6 +380,8 @@ export class LocalTestClient extends BaseTestClient {
         this.shouldFailInit = shouldFail
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
+        } else if (process.env.TEST_HARNESS_SDK_KEY) {
+            this.sdkKey = process.env.TEST_HARNESS_SDK_KEY
         }
         const response = await createClient(
             getConnectionStringForProxy(this.sdkName),
@@ -497,6 +501,8 @@ export class CloudTestClient extends BaseTestClient {
     async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null, shouldFail = false) {
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
+        } else if (process.env.TEST_HARNESS_SDK_KEY) {
+            this.sdkKey = process.env.TEST_HARNESS_SDK_KEY
         }
         const response = await createClient(
             getConnectionStringForProxy(this.sdkName),

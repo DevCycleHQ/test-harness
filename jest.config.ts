@@ -59,6 +59,14 @@ const projects = [
             LOCAL_HOST_BINDING: '0.0.0.0'
         }
     },
+    {
+        ...commonConfig,
+        displayName: 'PHP',
+        globals: {
+            JEST_PROJECT_SDK_TO_TEST: 'PHP',
+            LOCAL_HOST_BINDING: '0.0.0.0'
+        }
+    },
     // TODO uncomment once Java is ready
     // {
     //     ...commonConfig,
