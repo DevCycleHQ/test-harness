@@ -132,7 +132,7 @@ public class ProxyController {
                     result.entityType.equals(EntityTypes.Client) ? new Object() : result.body
             );
         } catch (Exception e) {
-            logger.log(Level.INFO, "[COMMAND ERROR] " + body.command + ": " + e.toString());
+            logger.log(Level.INFO, "[COMMAND ERROR] " + body.command + ": " + e.getMessage());
             e.printStackTrace();
             return body.isAsync ? new AsyncErrorResponse(e) : new ExceptionResponse(e);
         }

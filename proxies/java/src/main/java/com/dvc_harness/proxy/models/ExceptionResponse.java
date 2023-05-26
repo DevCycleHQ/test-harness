@@ -6,8 +6,8 @@ public class ExceptionResponse extends BaseResponse {
     public StackTraceElement[] stack;
 
     public ExceptionResponse(Exception error) {
-        this.exception = error.toString();
-        this.asyncError = error.toString();
+        this.exception = error.getMessage();
+        this.asyncError = error.getMessage();
         this.stack = error.getStackTrace();
     }
 }

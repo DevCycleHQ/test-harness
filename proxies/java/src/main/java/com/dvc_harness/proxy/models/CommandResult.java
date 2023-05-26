@@ -40,7 +40,7 @@ public class CommandResult<T> {
         try {
             this.body = methodToExecute.invoke(this.entity, params);
         } catch (Throwable t) {
-            throw new Exception(t.getCause().toString());
+            throw new Exception(t.getCause().getMessage());
         }
         this.parseResult(this.body);
         return this;
