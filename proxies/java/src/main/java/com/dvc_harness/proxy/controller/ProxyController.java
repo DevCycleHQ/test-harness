@@ -133,6 +133,7 @@ public class ProxyController {
             );
         } catch (Exception e) {
             logger.log(Level.INFO, "[COMMAND ERROR] " + body.command + ": " + e.toString());
+            e.printStackTrace();
             return body.isAsync ? new AsyncErrorResponse(e) : new ExceptionResponse(e);
         }
     }

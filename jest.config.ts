@@ -73,7 +73,8 @@ const projects = [
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'Java',
             LOCAL_HOST_BINDING: '0.0.0.0'
-        }
+        },
+        runner: 'jest-serial-runner'
     }
     // TODO uncomment once Python is ready
     // {
