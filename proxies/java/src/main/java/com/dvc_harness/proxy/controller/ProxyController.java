@@ -67,13 +67,12 @@ public class ProxyController {
 
                 DVCLocalClient client = new DVCLocalClient(body.sdkKey, builder.build());
 
-
                 if(body.waitForInitialization) {
                     try {
                         long startWaitMS = System.currentTimeMillis();
                         while (!client.isInitialized()) {
-                            if (System.currentTimeMillis() - startWaitMS > 500) {
-                                System.out.println("Client initialization timed out after 500ms.");
+                            if (System.currentTimeMillis() - startWaitMS > 2000) {
+                                System.out.println("Client initialization timed out after 2000ms.");
                                 break;
                             }
                             Thread.sleep(50);
