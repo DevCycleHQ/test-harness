@@ -11,7 +11,6 @@ import (
 	"runtime/debug"
 	"sync"
 	"syscall"
-	"time"
 
 	devcycle "github.com/devcyclehq/go-server-sdk/v2"
 	lbproxy "github.com/devcyclehq/local-bucketing-proxy"
@@ -81,7 +80,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request: missing clientId", http.StatusBadRequest)
 		return
 	}
-	proxyInstance := lbproxy.ProxyInstance{
+	proxyInstance := &lbproxy.ProxyInstance{
 		UnixSocketPath:    fmt.Sprintf("/tmp/%s.sock", reqBody.ClientId),
 		UnixSocketEnabled: true,
 		SDKKey:            reqBody.SdkKey,
@@ -94,8 +93,8 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 			Hostname:        "test-harness",
 		},
 		SDKConfig: lbproxy.SDKConfig{
-			EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
-			ConfigPollingIntervalMS: time.Duration(reqBody.Options.ConfigPollingIntervalMS * 1000000),
+			EventFlushIntervalMS:    reqBody.Options.EventFlushIntervalMS,
+			ConfigPollingIntervalMS: reqBody.Options.ConfigPollingIntervalMS,
 			ConfigCDNURI:            reqBody.Options.ConfigCDNURI,
 			EventsAPIURI:            reqBody.Options.EventsAPIURI,
 		},
