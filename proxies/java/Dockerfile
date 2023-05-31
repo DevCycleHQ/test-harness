@@ -11,9 +11,8 @@ ENV SDKS_TO_TEST $SDKS_TO_TEST
 ARG JAVA_SDK_VERSION
 ENV JAVA_SDK_VERSION $JAVA_SDK_VERSION
 
-RUN ./install.sh
-
-RUN gradle build --info --no-daemon
+RUN ./install.sh && \
+    gradle build --info --no-daemon
 
 EXPOSE 3000
 
