@@ -1,5 +1,13 @@
 # Getting Started
 
+## Requirements
+
+The proxy server requires that you have a valid Java SDK installed of v17 or higher, with a 64-bit, x86 architecture runtime.
+
+In addition, it requires [Gradle](https://gradle.org/) >= 7.6+ to be installed.
+
+
+
 ### Reference Documentation
 For further reference, please consider the following sections:
 
@@ -15,8 +23,6 @@ These additional references should also help you:
 
 ### Local Project Setup
 
-The proxy server requires that you have a valid Java SDK installed of v17 or higher, with a 64-bit, x86 architecture runtime.
-
 One you have it installed make sure it is configured properly in Intellij (and cmd line) to both run the project and gradle.
 
 #### Project SDK
@@ -25,7 +31,6 @@ One you have it installed make sure it is configured properly in Intellij (and c
 #### Setup Gradle
 * You need to do this if you want to run inside the IDE and do debugging
 * `Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM`
-
 
 ### Running the Proxy Server
 
@@ -37,8 +42,14 @@ gradle build
 java -jar build/libs/proxy.jar
 ```
 
-
 Building with a specific JDK version:
 ```bash
 JAVA_SDK_VERSION=1.5.1 gradle build
 ```
+
+Building on a local proxy:
+```bash
+LOCAL_MODE=1 gradle build
+```
+
+When you build in local mode, it is expected that the Java Server SDK exist locally in `../../../java-server-sdk`.
