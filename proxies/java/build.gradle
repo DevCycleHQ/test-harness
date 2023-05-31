@@ -24,10 +24,16 @@ dependencies {
 		// use a released version of the SDK from Maven Central
 		logger.info("Using released version of the SDK: ${System.getenv('JAVA_SDK_VERSION')}")
 		implementation("com.devcycle:java-server-sdk:${System.getenv('JAVA_SDK_VERSION')}")
-	} else {
-		// going to use a local copy of the SDK project directly
+	} else if (System.getenv("SDK_GITHUB_SHA") != null && !System.getenv("SDK_GITHUB_SHA").isBlank()) {
 		logger.info("Using local copy of the SDK")
 		implementation project(':java-server-sdk')
+	} else if (System.getenv("LOCAL_MODE") != null && System.getenv("LOCAL_MODE") == "1") {
+		logger.info("Using local copy of the SDK")
+		implementation project(':java-server-sdk')
+	} else {
+		// utilize the latest release of the Java Server SDK
+		logger.info("Using latest release the SDK")
+		implementation("com.devcycle:java-server-sdk:latest.release")
 	}
 
 	implementation("org.springframework.boot:spring-boot-starter-web")
