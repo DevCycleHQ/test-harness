@@ -4,7 +4,6 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.0'
 }
 
-
 group = 'com.dvc_harness'
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
@@ -20,14 +19,16 @@ jar {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-	
-	// The line below makes the Test Harness use the production build of the Java Server SDK
-	implementation("com.devcycle:java-server-sdk:${System.getenv('JAVA_SDK_VERSION') ?: "+"}")
-	// implementation("com.devcycle:java-server-sdk:1.5.1")
 
-	// The line below makes the Test Harness use the local version of the Java Server SDK
-	// Build the local version of the Java Server SDK `cd <location-of-java-server-sdk> && ./gradlew build`
-	// implementation project(':java-server-sdk')
+	if (System.getenv("JAVA_SDK_VERSION") != null && !System.getenv("JAVA_SDK_VERSION").isBlank()) {
+		// use a released version of the SDK from Maven Central
+		logger.info("Using released version of the SDK: ${System.getenv('JAVA_SDK_VERSION')}")
+		implementation("com.devcycle:java-server-sdk:${System.getenv('JAVA_SDK_VERSION')}")
+	} else {
+		// going to use a local copy of the SDK project directly
+		logger.info("Using local copy of the SDK")
+		implementation project(':java-server-sdk')
+	}
 
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -36,3 +36,9 @@ export JAVA_HOME="/Library/Java/JavaVirtualMachines/amazon-corretto-17.jdk/Conte
 gradle build 
 java -jar build/libs/proxy.jar
 ```
+
+
+Building with a specific JDK version:
+```bash
+JAVA_SDK_VERSION=1.5.1 gradle build
+```
