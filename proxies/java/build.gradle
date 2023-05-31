@@ -22,12 +22,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	
 	// The line below makes the Test Harness use the production build of the Java Server SDK
-    //	implementation("com.devcycle:java-server-sdk:${System.getenv('JAVA_SDK_VERSION') ?: "+"}")
-	//	implementation("com.devcycle:java-server-sdk:1.5.1")
+	implementation("com.devcycle:java-server-sdk:${System.getenv('JAVA_SDK_VERSION') ?: "+"}")
+	// implementation("com.devcycle:java-server-sdk:1.5.1")
 
 	// The line below makes the Test Harness use the local version of the Java Server SDK
 	// Build the local version of the Java Server SDK `cd <location-of-java-server-sdk> && ./gradlew build`
-	implementation project(':java-server-sdk')
+	// implementation project(':java-server-sdk')
 
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
