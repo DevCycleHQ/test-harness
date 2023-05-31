@@ -13,6 +13,10 @@ github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230518150128-693cea9bd3b2 h
 github.com/devcyclehq/local-bucketing-proxy v0.0.0-20230518150128-693cea9bd3b2/go.mod h1:OEr+oWZ5M11L6XP8rOf9jg/Y4R9PwssBm8DdkubZNSI=
 github.com/devcyclehq/local-bucketing-proxy v0.0.4 h1:MAfadB4cjm/oFblulmrOSVZduCDOKcNUX2T6Hdl3+4g=
 github.com/devcyclehq/local-bucketing-proxy v0.0.4/go.mod h1:tn838NI2Q3f4RQOXtJaQRpyMZz+xx5cVfeUI3bZVa7U=
+github.com/devcyclehq/local-bucketing-proxy v0.0.5-0.20230530210815-0e8c3a4e87ab h1:Tn6t2n82IxeZjnSBG00CvQdfsjpVJBkvpAAf3EMvt2Q=
+github.com/devcyclehq/local-bucketing-proxy v0.0.5-0.20230530210815-0e8c3a4e87ab/go.mod h1:s9TH/Sge7z38d5TGfwqkF6ipoiMXxkzyD9H0OUw3t1s=
+github.com/devcyclehq/local-bucketing-proxy v1.0.0 h1:jwSPNcZuA9qL5bUNJ3YbpuzLAALjiSXOl2GchP5wmZg=
+github.com/devcyclehq/local-bucketing-proxy v1.0.0/go.mod h1:s9TH/Sge7z38d5TGfwqkF6ipoiMXxkzyD9H0OUw3t1s=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
 github.com/gin-contrib/sse v0.1.0 h1:Y/yl/+YNO8GZSjAhjMsSuLt29uWRFHdHYUb5lYOV9qE=
@@ -42,6 +46,8 @@ github.com/jolestar/go-commons-pool/v2 v2.1.2 h1:E+XGo58F23t7HtZiC/W6jzO2Ux2IccS
 github.com/jolestar/go-commons-pool/v2 v2.1.2/go.mod h1:r4NYccrkS5UqP1YQI1COyTZ9UjPJAAGTUxzcsK1kqhY=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
+github.com/kelseyhightower/envconfig v1.4.0 h1:Im6hONhd3pLkfDFsbRgu68RDNkGF1r3dvMUtDTo2cv8=
+github.com/kelseyhightower/envconfig v1.4.0/go.mod h1:cccZRl6mQpaq41TPp5QxidR+Sa3axMbJDNb//FQX6Gg=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=

@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/devcyclehq/go-server-sdk/v2 v2.10.2
-	github.com/devcyclehq/local-bucketing-proxy v0.0.4
+	github.com/devcyclehq/local-bucketing-proxy v1.0.0
 	github.com/gorilla/mux v1.8.0
 )
 
@@ -20,6 +20,7 @@ require (
 	github.com/jarcoal/httpmock v1.2.0 // indirect
 	github.com/jolestar/go-commons-pool/v2 v2.1.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.2 // indirect
 	github.com/matryer/try v0.0.0-20161228173917-9ac251b645a2 // indirect
