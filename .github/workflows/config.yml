@@ -40,8 +40,6 @@ jobs:
         run: yarn
       - name: Run All Tests
         run: yarn test:ci
-        env:
-          SDKS_TO_TEST: java # FIXME: remove
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure()   # run this step even if previous step failed
