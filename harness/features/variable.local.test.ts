@@ -502,7 +502,7 @@ describe('Variable Tests - Local', () => {
 
         interceptor.reply((uri, body) => {
             eventResult.body = body
-            return [201]
+            return [201, { message:'Successfully received events.' }]
         })
         return eventResult
     }

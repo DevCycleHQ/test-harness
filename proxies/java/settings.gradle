@@ -1,4 +1,11 @@
 rootProject.name = 'proxy'
-// Uncomment the following line to use the local java-server-sdk
-include ':java-server-sdk'
-project(':java-server-sdk').projectDir = new File('../../../java-server-sdk')
+
+if (System.getenv("SDK_GITHUB_SHA") != null && !System.getenv("SDK_GITHUB_SHA").isBlank()) {
+    // Running locally and we are expecting the code to exist at the same level as the test-harness project folder
+    include ':java-server-sdk'
+    project(':java-server-sdk').projectDir = new File('../java-server-sdk')
+} else if (System.getenv("LOCAL_MODE") != null && System.getenv("LOCAL_MODE") == "1") {
+    // Running inside of Docker/GitHub Actions, and the SDK code is already checked out in the parent directory
+    include ':java-server-sdk'
+    project(':java-server-sdk').projectDir = new File('../../../java-server-sdk')
+}

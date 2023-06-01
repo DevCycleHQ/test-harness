@@ -5,4 +5,5 @@ public class ClientRequestBody {
     public String sdkKey;
     public ClientOptions options;
     public Boolean enableCloudBucketing;
+    public Boolean waitForInitialization;
 }

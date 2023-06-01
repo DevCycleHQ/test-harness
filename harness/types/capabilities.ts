@@ -25,7 +25,8 @@ export const SDKCapabilities = {
         Capabilities.clientCustomData, Capabilities.variableValue
     ],
     Java: [
-        Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.variableValue
+        Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB,
+        Capabilities.clientCustomData, Capabilities.variableValue
     ],
     Go: [
         Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData,

@@ -84,25 +84,16 @@ and shell commands.
 Ensure you have the [java-server-sdk](https://github.com/DevCycleHQ/java-server-sdk) repository cloned in the same parent directory as
 the `test-harness` repository.
 
-Uncomment the lines in `build.gradle` and `settings.gradle` in the `proxies/java` folder which are in reference to the
-local SDK:
+Set the `LOCAL_MODE` environment variable to `1` and then build and run the proxy:
 
-`build.gradle`
 ```
-// comment the original dependency out
-// implementation("com.devcycle:java-server-sdk:${System.getenv('JAVA_SDK_VERSION') ?: "+"}")
-
-//uncomment the local dependency
-implementation project(':java-server-sdk')
+export LOCAL_MODE=1
+cd proxies/java
+gradle build 
+java -jar build/libs/proxy.jar
 ```
 
-`settings.gradle`
-```
-include ':java-server-sdk'
-project(':java-server-sdk').projectDir = new File('../../../java-server-sdk') 
-```
-
-Follow the same numbered steps as above for NodeJS, substituting `java` for `nodejs` in the environment variables
+This will start the java proxy and run it in local mode. Follow the same numbered steps as above for NodeJS, substituting `java` for `nodejs` in the environment variables
 and shell commands.
 
 ## Ruby

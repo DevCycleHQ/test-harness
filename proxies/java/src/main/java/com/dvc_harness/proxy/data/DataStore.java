@@ -7,8 +7,8 @@ import com.devcycle.sdk.server.local.api.DVCLocalClient;
 import com.devcycle.sdk.server.common.model.*;
 
 public class DataStore {
-    public static Hashtable<String, DVCLocalClient> LocalClients = new Hashtable<>();
-    public static Hashtable<String, DVCCloudClient> CloudClients = new Hashtable<>();
+    public static Hashtable<String, DVCLocalClient> LocalClients = new Hashtable();
+    public static Hashtable<String, DVCCloudClient> CloudClients = new Hashtable();
 
-    public static Hashtable<String, Hashtable> CommandResults = new Hashtable<>();
+    public static Hashtable<String, Hashtable> CommandResults = new Hashtable();
 }

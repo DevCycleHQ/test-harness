@@ -5,7 +5,7 @@ public class AsyncErrorResponse extends BaseResponse {
     public StackTraceElement[] stack;
 
     public AsyncErrorResponse(Exception error) {
-        this.asyncError = error.toString();
+        this.asyncError = error.getMessage();
         this.stack = error.getStackTrace();
     }
 }

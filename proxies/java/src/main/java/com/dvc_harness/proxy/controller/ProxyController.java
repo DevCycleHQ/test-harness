@@ -9,6 +9,7 @@ import com.dvc_harness.proxy.models.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,6 +67,20 @@ public class ProxyController {
 
                 DVCLocalClient client = new DVCLocalClient(body.sdkKey, builder.build());
 
+                if(body.waitForInitialization) {
+                    try {
+                        long startWaitMS = System.currentTimeMillis();
+                        while (!client.isInitialized()) {
+                            if (System.currentTimeMillis() - startWaitMS > 2000) {
+                                System.out.println("Client initialization timed out after 2000ms.");
+                                break;
+                            }
+                            Thread.sleep(50);
+                        }
+                    } catch (InterruptedException ie) {
+                        // no-op
+                    }
+                }
                 DataStore.LocalClients.put(body.clientId, client);
             }
 
@@ -96,6 +111,8 @@ public class ProxyController {
 
         Object[] parsedParams = this.parseParams(body);
 
+
+        logger.info("[COMMAND] " + body.command + (parsedParams.length > 0 ? ": " + Arrays.toString(Arrays.stream(parsedParams).toArray()) : ""));
         try {
             Object entity = getEntityFromLocation(request.getRequestURI());
 
@@ -114,7 +131,8 @@ public class ProxyController {
                     result.entityType.equals(EntityTypes.Client) ? new Object() : result.body
             );
         } catch (Exception e) {
-            logger.log(Level.INFO, e.toString());
+            logger.log(Level.INFO, "[COMMAND ERROR] " + body.command + ": " + e.getMessage());
+            e.printStackTrace();
             return body.isAsync ? new AsyncErrorResponse(e) : new ExceptionResponse(e);
         }
     }
