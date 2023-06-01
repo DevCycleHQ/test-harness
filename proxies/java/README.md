@@ -6,9 +6,14 @@ The proxy server requires that you have a valid Java SDK installed of v17 or hig
 
 In addition, it requires [Gradle](https://gradle.org/) >= 7.6+ to be installed.
 
+### M1 Macs / Apple Silicon Architecture
+
+There is a known issue with the Docker build of the Java proxy when you are on a M1. The image built ends up using an `aarch64` architecture 
+and the JVM will run the Java Server SDK properly, generating numerous JNI errors when talking to the WASM.  If you are looking to run the Test Harness for Java,
+it is recommended you do it in **Local Mode** and not use the Docker image directly.
 
 
-### Reference Documentation
+## Reference Documentation
 For further reference, please consider the following sections:
 
 * [Official Gradle documentation](https://docs.gradle.org)
@@ -21,18 +26,20 @@ These additional references should also help you:
 * [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
 
 
-### Local Project Setup
+## Local Project Setup in IntelliJ
 
-One you have it installed make sure it is configured properly in Intellij (and cmd line) to both run the project and gradle.
+Once you have to code for both the proxy and the java server sdk setup you need to configure the project in 
+IntelliJ.  The java proxy must use a Java 17 VM that is 64-bit and x86 architecture.  The Java Server SDK must 
+use a JVM that is 64-bit and x86 compatible. Both the IDE and Gradle need to use the same JDK version.
 
-#### Project SDK
+### Set Project SDK
 * `File > Project Structure > Project Settings > Project > SDK`
 
-#### Setup Gradle
+### Set Gradle VM
 * You need to do this if you want to run inside the IDE and do debugging
 * `Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM`
 
-### Running the Proxy Server
+## Running the Proxy Server
 
 Either run it in the IDE by running the `main` method in `ProxyApplication.java` or run it from the command line (see below):
 
