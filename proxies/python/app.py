@@ -4,6 +4,7 @@ from .handlers.client import handle_client
 from .handlers.user import handle_user
 import logging
 import traceback
+import sys
 
 app = Flask(__name__)
 
