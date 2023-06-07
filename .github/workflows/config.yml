@@ -18,7 +18,8 @@ on:
 
 jobs:
   run-tests:
-    runs-on: ubuntu-latest
+    runs-on:
+      labels: ubuntu-latest-4-core
     name: Run Tests
     env:
       DOCKER_HOST_IP: '172.17.0.1'
