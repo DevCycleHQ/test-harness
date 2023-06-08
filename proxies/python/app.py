@@ -39,7 +39,7 @@ def client():
         return handle_client(body, dataStore)
     except Exception as e:
         ex_type, ex_value, _ = sys.exc_info()
-
+        logger.exception("Error handling client request: %s", e)
         return {
             "exception": str(e),
             "stack": traceback.format_exc()
@@ -54,7 +54,7 @@ def user():
         return handle_user(body, dataStore)
     except Exception as e:
         ex_type, ex_value, _ = sys.exc_info()
-
+        logger.exception("Error handling user request: %s", e)
         return {
             "exception": str(e),
             "stack": traceback.format_exc()
@@ -71,7 +71,7 @@ def command(location):
         return handle_command(location, body, dataStore)
     except Exception as e:
         ex_type, ex_value, _ = sys.exc_info()
-
+        logger.exception("Error handling location request: %s", e)
         if is_async:
             return {
                 "asyncError": str(e),
