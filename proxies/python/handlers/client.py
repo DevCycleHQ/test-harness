@@ -25,9 +25,9 @@ def handle_client(body, data_store):
     if 'enableCloudBucketing' in options:
         del options['enableCloudBucketing']
 
-    options = DVCOptions(**options)
+    dvc_options = DVCOptions(**options)
 
-    dvc_client = DVCClient(configuration, options)
+    dvc_client = DVCClient(configuration, dvc_options)
 
     data_store['clients'][client_id] = dvc_client
 
