@@ -78,12 +78,6 @@ def handle_command(path, body, data_store):
 
     result_data, entity_type = to_dict(result)
 
-    if not isinstance(result, dict) and isinstance(result_data, dict):
-        # if result was not already a plain dict, but the resulting data after dict conversion is a dict, convert
-        # keys to camelcase. This basically means if the result was something like a Variable, which converts to a dict,
-        # then camelcase its keys. But don't do this for calls that already return a dict (like all_features)
-        result_data = camel_case_dict(result_data)
-
     return {
         "entityType": entity_type,
         "data": result_data,
