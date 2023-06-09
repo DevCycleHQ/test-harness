@@ -1,4 +1,4 @@
-from devcycle_python_sdk import Configuration, DVCCloudClient, DVCCloudOptions
+from devcycle_python_sdk import DVCCloudClient, DVCCloudOptions
 
 def handle_client(body, data_store):
     client_id, sdk_key, enableCloudBucketing, waitForInitialization, options = [body.get(k, None) for k in ('clientId', 'sdkKey', 'enableCloudBucketing', 'waitForInitialization', 'options')]

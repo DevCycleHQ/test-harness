@@ -3,6 +3,7 @@ from ..helpers.entity_types import get_entity_from_type
 from ..helpers.camelcase import camel_case_dict, snake_case
 from ..helpers.to_dict import to_dict
 
+from devcycle_python_sdk import UserData, Event
 
 def get_entity_from_location(location, data_store):
     url_parts = sub(r"^/", '', location).split('/')
@@ -20,7 +21,7 @@ def get_entity_from_location(location, data_store):
 
     return None
 
-def parse_params(params, data_store):
+def parse_params(params:list, data_store, user:dict=None, event:dict=None):
     parsed_params = []
     for element in params:
         if element.get("location", None):
@@ -28,6 +29,12 @@ def parse_params(params, data_store):
             parsed_params.append(entity)
         elif element.get("callbackURL", None):
             parsed_params.append(element["callbackURL"])
+        elif element.get("type", None) == "user":
+            sdk_user = UserData(**user)
+            parsed_params.append(sdk_user)
+        elif element.get("type", None) == "event":
+            sdk_event = Event(**event)
+            parsed_params.append(sdk_event)
         else:
             parsed_params.append(element["value"])
     return parsed_params
@@ -38,10 +45,10 @@ def invoke_command(subject, command, params):
 
 
 def handle_command(path, body, data_store):
-    entity, command, params, is_async = [body.get(k, None) for k in ('entity', 'command', 'params', 'isAsync')]
+    entity, command, params, is_async, user, event = [body.get(k, None) for k in ('entity', 'command', 'params', 'isAsync', 'user', 'event')]
 
     stored_entity = get_entity_from_location(path, data_store)
-    parsed_params = parse_params(params if params else [], data_store)
+    parsed_params = parse_params(params if params else [], data_store, user=user, event=event)
 
     if not stored_entity:
         return {
