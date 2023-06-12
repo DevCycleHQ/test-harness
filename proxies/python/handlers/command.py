@@ -1,9 +1,12 @@
+import logging
 from re import sub
 from ..helpers.entity_types import get_entity_from_type
 from ..helpers.camelcase import camel_case_dict, snake_case
 from ..helpers.to_dict import to_dict
 
 from devcycle_python_sdk import UserData, Event
+
+logger = logging.getLogger(__name__)
 
 def get_entity_from_location(location, data_store):
     url_parts = sub(r"^/", '', location).split('/')
@@ -51,16 +54,13 @@ def handle_command(path, body, data_store):
     parsed_params = parse_params(params if params else [], data_store, user=user, event=event)
 
     if not stored_entity:
+        logging.error('Invalid request: missing entity: %r', path)
         return {
             "message": "Invalid request: missing entity"
         }, 404
 
-    if None in parsed_params:
-        return {
-            "message": "Invalid request: missing entity from param"
-        }, 404
-
     if not command:
+        logging.error('Invalid request: missing command')
         return {
             "message": "Invalid request: missing command"
         }, 400
