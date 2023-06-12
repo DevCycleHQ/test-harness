@@ -72,14 +72,15 @@ def command(location):
     except Exception as e:
         ex_type, ex_value, _ = sys.exc_info()
         logger.exception("Error handling location request: %s", e)
+        message = getattr(e, 'message', str(e))
         if is_async:
             return {
-                "asyncError": str(e),
+                "asyncError": message,
                 "stack": traceback.format_exc()
             }
         else:
             return {
-                "exception": str(e),
+                "exception": message,
                 "stack": traceback.format_exc()
             }
 

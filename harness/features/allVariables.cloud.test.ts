@@ -48,7 +48,7 @@ describe('allVariables Tests - Cloud', () => {
                 email: 'user@gmail.com'
             }, true)
             const res = await response.json()
-            expectErrorMessageToBe(res.asyncError, 'Invalid sdk token')
+            expectErrorMessageToBe(res.asyncError, 'Invalid sdk token', 'Invalid SDK Key')
         })
 
         it('should return a variable map', async () => {

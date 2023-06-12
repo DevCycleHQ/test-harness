@@ -592,13 +592,20 @@ export class CloudTestClient extends BaseTestClient {
     }
 }
 
-export const expectErrorMessageToBe = (message: string, expected: string) => {
+export const expectErrorMessageToBe = (message: string, ...expected: string[]) => {
+    expect(message).toBeTruthy()
+    let found = false
+    for (const expectedMessage of expected) {
+        if (message === expectedMessage) {
+            found = true
+            break
+        }
+    }
     // when we consolidate error messages to be uniform, change this to actually compare
     // the exception and the expected exception message
-    if (message !== expected) {
-        console.warn(`Expected error message to be: \n ${expected}, but got: \n ${message}`)
+    if (!found) {
+        console.warn(`Expected error message to be in: \n ${expected.join('\n')}\nbut got: \n ${message}`)
     }
-    expect(message).toBeTruthy()
 }
 
 export const getPlatformBySdkName = (name: string, isLocal: boolean) => {
