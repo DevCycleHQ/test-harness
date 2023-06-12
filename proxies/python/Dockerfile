@@ -11,6 +11,9 @@ ENV PYTHON_SDK_VERSION $PYTHON_SDK_VERSION
 
 WORKDIR /app
 
+RUN apk update
+RUN apk add git
+
 COPY requirements.txt ./
 COPY install.sh ./
 
