@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
     yarn remove @devcycle/nodejs-server-sdk
 
