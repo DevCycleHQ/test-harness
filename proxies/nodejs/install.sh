@@ -1,4 +1,6 @@
 if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
+    yarn remove @devcycle/nodejs-server-sdk
+
     git clone https://github.com/DevCycleHQ/js-sdks.git
     cd js-sdks
     git checkout $SDK_GITHUB_SHA
