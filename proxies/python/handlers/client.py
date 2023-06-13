@@ -1,4 +1,4 @@
-from devcycle_python_sdk import DVCCloudClient, DVCCloudOptions
+from devcycle_python_sdk import DevCycleCloudClient, DevCycleCloudOptions
 
 def handle_client(body, data_store):
     client_id, sdk_key, enableCloudBucketing, waitForInitialization, options = [body.get(k, None) for k in ('clientId', 'sdkKey', 'enableCloudBucketing', 'waitForInitialization', 'options')]
@@ -13,8 +13,8 @@ def handle_client(body, data_store):
         return error, 400
 
     if enableCloudBucketing:
-        dvc_options = DVCCloudOptions(enable_edge_db=options.get('enableEdgeDB', False), bucketing_api_uri=options.get('bucketingAPIURI', ''), config_cdn_uri=options.get('configCDNURI', ''), events_api_uri=options.get('eventsAPIURI', ''))
-        dvc_client = DVCCloudClient(sdk_key, dvc_options)
+        dvc_options = DevCycleCloudOptions(enable_edge_db=options.get('enableEdgeDB', False), bucketing_api_uri=options.get('bucketingAPIURI', ''), config_cdn_uri=options.get('configCDNURI', ''), events_api_uri=options.get('eventsAPIURI', ''))
+        dvc_client = DevCycleCloudClient(sdk_key, dvc_options)
     else:
         raise NotImplementedError("Only the Cloud Bucketing SDK is supported at this time")
 
