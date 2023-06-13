@@ -27,7 +27,8 @@ describe('Client Initialize Tests - Cloud', () => {
             const body = await response.json()
             expectErrorMessageToBe(
                 body.exception,
-                'Invalid environment key provided. Please call initialize with a valid server environment key'
+                'Missing environment key! Call initialize with a valid environment key',
+                'Invalid SDK key provided. Call build with a valid server SDK key',
             )
             const createdClientId = response.headers.get('location')
             expect(createdClientId).toBeNull()
@@ -39,7 +40,8 @@ describe('Client Initialize Tests - Cloud', () => {
             const body = await response.json()
             expectErrorMessageToBe(
                 body.exception,
-                'Missing environment key! Call initialize with a valid environment key'
+                'Missing environment key! Call initialize with a valid environment key',
+                'Missing SDK key! Call build with a valid server SDK key',
             )
             const createdClientId = response.headers.get('location')
             expect(createdClientId).toBeNull()

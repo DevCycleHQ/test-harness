@@ -1,7 +1,7 @@
-from devcycle_python_sdk import Configuration, DVCClient, DVCOptions
+from devcycle_python_sdk import DevCycleCloudClient, DevCycleCloudOptions
 
 def handle_client(body, data_store):
-    client_id, sdk_key, options = [body.get(k, None) for k in ('clientId', 'sdkKey', 'options')]
+    client_id, sdk_key, enableCloudBucketing, waitForInitialization, options = [body.get(k, None) for k in ('clientId', 'sdkKey', 'enableCloudBucketing', 'waitForInitialization', 'options')]
 
     options = options if options else {}
 
@@ -12,22 +12,17 @@ def handle_client(body, data_store):
 
         return error, 400
 
-    configuration = Configuration()
-    configuration.api_key['Authorization'] = sdk_key
-
-    # TODO remove this when SDK properly supports passing in this property
-    base_url = options.get('baseURLOverride', None)
-    if base_url:
-        configuration.host = options['baseURLOverride']
-        del options['baseURLOverride']
-
-    # TODO remove this when the option is supported by the SDK
-    if 'enableCloudBucketing' in options:
-        del options['enableCloudBucketing']
-
-    options = DVCOptions(**options)
-
-    dvc_client = DVCClient(configuration, options)
+    if enableCloudBucketing:
+        dvc_options = DevCycleCloudOptions(
+            enable_edge_db=options.get('enableEdgeDB', False),
+            bucketing_api_uri=options.get('bucketingAPIURI', ''),
+            config_cdn_uri=options.get('configCDNURI', ''),
+            events_api_uri=options.get('eventsAPIURI', ''),
+            retry_delay=1, # Override retry delay to make the tests run faster
+        )
+        dvc_client = DevCycleCloudClient(sdk_key, dvc_options)
+    else:
+        raise NotImplementedError("Only the Cloud Bucketing SDK is supported at this time")
 
     data_store['clients'][client_id] = dvc_client
 

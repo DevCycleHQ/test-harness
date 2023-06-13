@@ -75,15 +75,16 @@ const projects = [
             LOCAL_HOST_BINDING: '0.0.0.0'
         },
         runner: 'jest-serial-runner'
-    }
-    // TODO uncomment once Python is ready
-    // {
-    //     ...commonConfig,
-    //     displayName: 'Python',
-    //     globals: {
-    //         JEST_PROJECT_SDK_TO_TEST: 'Python',
-    //     }
-    // },
+    },
+    {
+        ...commonConfig,
+        displayName: 'Python',
+        globals: {
+            JEST_PROJECT_SDK_TO_TEST: 'Python',
+            LOCAL_HOST_BINDING: '0.0.0.0',
+        },
+        runner: 'jest-serial-runner'
+    },
 ]
 const SDKs = getSDKs().map((sdkName) => sdkName.toLowerCase())
 const filteredProjects = projects.filter((project) => SDKs.includes(project.displayName.toLowerCase()))

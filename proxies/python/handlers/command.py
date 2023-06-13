@@ -1,8 +1,13 @@
+import logging
 from re import sub
 from ..helpers.entity_types import get_entity_from_type
 from ..helpers.camelcase import camel_case_dict, snake_case
 from ..helpers.to_dict import to_dict
 
+from devcycle_python_sdk.models.user import User
+from devcycle_python_sdk.models.event import Event
+
+logger = logging.getLogger(__name__)
 
 def get_entity_from_location(location, data_store):
     url_parts = sub(r"^/", '', location).split('/')
@@ -20,7 +25,7 @@ def get_entity_from_location(location, data_store):
 
     return None
 
-def parse_params(params, data_store):
+def parse_params(params:list, data_store, user:dict=None, event:dict=None):
     parsed_params = []
     for element in params:
         if element.get("location", None):
@@ -28,6 +33,12 @@ def parse_params(params, data_store):
             parsed_params.append(entity)
         elif element.get("callbackURL", None):
             parsed_params.append(element["callbackURL"])
+        elif element.get("type", None) == "user":
+            sdk_user = User(**user)
+            parsed_params.append(sdk_user)
+        elif element.get("type", None) == "event":
+            sdk_event = Event(**event)
+            parsed_params.append(sdk_event)
         else:
             parsed_params.append(element["value"])
     return parsed_params
@@ -38,22 +49,19 @@ def invoke_command(subject, command, params):
 
 
 def handle_command(path, body, data_store):
-    entity, command, params, is_async = [body.get(k, None) for k in ('entity', 'command', 'params', 'isAsync')]
+    entity, command, params, is_async, user, event = [body.get(k, None) for k in ('entity', 'command', 'params', 'isAsync', 'user', 'event')]
 
     stored_entity = get_entity_from_location(path, data_store)
-    parsed_params = parse_params(params if params else [], data_store)
+    parsed_params = parse_params(params if params else [], data_store, user=user, event=event)
 
     if not stored_entity:
+        logging.error('Invalid request: missing entity: %r', path)
         return {
             "message": "Invalid request: missing entity"
         }, 404
 
-    if None in parsed_params:
-        return {
-            "message": "Invalid request: missing entity from param"
-        }, 404
-
     if not command:
+        logging.error('Invalid request: missing command')
         return {
             "message": "Invalid request: missing command"
         }, 400
@@ -70,12 +78,6 @@ def handle_command(path, body, data_store):
     data_store['commandResults'][command][command_id] = result
 
     result_data, entity_type = to_dict(result)
-
-    if not isinstance(result, dict) and isinstance(result_data, dict):
-        # if result was not already a plain dict, but the resulting data after dict conversion is a dict, convert
-        # keys to camelcase. This basically means if the result was something like a Variable, which converts to a dict,
-        # then camelcase its keys. But don't do this for calls that already return a dict (like all_features)
-        result_data = camel_case_dict(result_data)
 
     return {
         "entityType": entity_type,

@@ -39,6 +39,8 @@ services:
       context: ./proxies/python
       args:
         - PYTHON_SDK_VERSION=${PYTHON_SDK_VERSION}
+        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+        - SDKS_TO_TEST=${SDKS_TO_TEST}
     container_name: python
     ports:
       - "3000"

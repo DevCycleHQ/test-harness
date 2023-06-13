@@ -94,7 +94,7 @@ describe('Track Tests - Cloud', () => {
                 user_id: 'user1'
             }, { type: 'eventType' },true)
             const res = await response.json()
-            expectErrorMessageToBe(res.asyncError, 'Invalid sdk key')
+            expectErrorMessageToBe(res.asyncError, 'Invalid sdk key', 'Invalid SDK Key')
         })
 
     })

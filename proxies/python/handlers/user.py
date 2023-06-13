@@ -1,8 +1,9 @@
-from devcycle_python_sdk import UserData
+from devcycle_python_sdk.models.user import User
+
 from ..helpers.camelcase import camel_case_dict, snake_case_dict
 
 def handle_user(body, data_store):
-    user = UserData(**snake_case_dict(body))
+    user = User(**snake_case_dict(body))
     user_storage_id = str(len(data_store['users'].values()))
     data_store['users'][user_storage_id] = user
 

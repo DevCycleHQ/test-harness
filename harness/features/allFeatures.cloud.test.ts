@@ -79,7 +79,7 @@ describe('allFeatures Tests - Cloud', () => {
                 user_id: 'user1'
             }, true)
             const res = await response.json()
-            expectErrorMessageToBe(res.asyncError, 'Invalid sdk key')
+            expectErrorMessageToBe(res.asyncError, 'Invalid sdk key', 'Invalid SDK Key')
         })
     })
 })

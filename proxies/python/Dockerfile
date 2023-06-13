@@ -1,14 +1,26 @@
 FROM python:3.10-alpine
+
+ARG SDK_GITHUB_SHA
+ENV SDK_GITHUB_SHA $SDK_GITHUB_SHA
+
+ARG SDKS_TO_TEST
+ENV SDKS_TO_TEST $SDKS_TO_TEST
+
 ARG PYTHON_SDK_VERSION
 ENV PYTHON_SDK_VERSION $PYTHON_SDK_VERSION
 
-COPY ./requirements.txt /app/requirements.txt
-COPY ./install.sh /app/install.sh
-
 WORKDIR /app
+
+RUN apk update
+RUN apk add git
+
+COPY requirements.txt ./
+COPY install.sh ./
 
 RUN pip install -r requirements.txt
 RUN ./install.sh
+
+EXPOSE 3000
 
 COPY . /app
 

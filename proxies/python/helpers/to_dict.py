@@ -10,7 +10,12 @@ def to_dict(result):
         result_data = [to_dict(r)[0] for r in result]
         entity_type = get_entity_from_type(result[0].__class__.__name__)
     else:
-        result_data = result.to_dict() if hasattr(result, "to_dict") else result
+        if hasattr(result, "to_dict"):
+            result_data = result.to_dict()
+        elif hasattr(result, "to_json"):
+            result_data = result.to_json()
+        else:
+            result_data = result
         if isinstance(result_data, dict):
             result_data = {k: to_dict(v)[0] for k, v in result_data.items()}
         entity_type = get_entity_from_type(result.__class__.__name__)
