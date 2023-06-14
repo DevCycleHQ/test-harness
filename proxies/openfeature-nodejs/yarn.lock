@@ -21,7 +21,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:1.11.0, @devcycle/nodejs-server-sdk@npm:^1.11.0":
+"@devcycle/nodejs-server-sdk@npm:1.11.0":
   version: 1.11.0
   resolution: "@devcycle/nodejs-server-sdk@npm:1.11.0"
   dependencies:
@@ -1017,7 +1017,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": ^1.11.0
     "@devcycle/openfeature-nodejs-provider": ^1.0.0
     "@openfeature/js-sdk": ^1.1.1
     "@types/koa": ^2.13.5

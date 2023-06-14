@@ -1,8 +1,8 @@
 #!/bin/bash
 
 if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"of-nodejs"* ]]; then
-    yarn remove @devcycle/openfeature-nodejs-provider
-    yarn remove @devcycle/nodejs-server-sdk
+    #yarn remove @devcycle/openfeature-nodejs-provider
+    #yarn remove @devcycle/nodejs-server-sdk
 
     git clone https://github.com/DevCycleHQ/js-sdks.git
     cd js-sdks
@@ -21,8 +21,15 @@ if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"of-nodejs"* ]]; then
     yarn link js-sdks/dist/sdk/openfeature-nodejs-provider/
     yarn link js-sdks/lib/shared/bucketing-assembly-script/
     yarn link js-sdks/dist/lib/shared/types/
+
+    echo "Installing openfeature-nodejs-provider@$SDK_GITHUB_SHA"
 elif [ -z "$OF_NODEJS_SDK_VERSION" ]; then
-    yarn add @devcycle/nodejs-server-sdk@latest
+    echo "Installing latest version of openfeature-nodejs-provider"
+    yarn add @devcycle/openfeature-nodejs-provider@latest
 else
-    yarn add @devcycle/nodejs-server-sdk@$OF_NODEJS_SDK_VERSION
+    echo "Installing openfeature-nodejs-provider@$OF_NODEJS_SDK_VERSION"
+    yarn add @devcycle/openfeature-nodejs-provider@$OF_NODEJS_SDK_VERSION
 fi
+
+echo "yarn nodejs-server-sdk why: $(yarn why @devcycle/nodejs-server-sdk)"
+echo "yarn openfeature-nodejs-provider why: $(yarn why @devcycle/openfeature-nodejs-provider)"
