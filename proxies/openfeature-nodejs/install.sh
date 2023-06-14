@@ -21,11 +21,10 @@ if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"of-nodejs"* ]]; then
     yarn link js-sdks/dist/sdk/nodejs/
     yarn link js-sdks/dist/sdk/openfeature-nodejs-provider/
 
-    yarn
     echo "Installed openfeature-nodejs-provider@$SDK_GITHUB_SHA"
 elif [ -z "$OF_NODEJS_SDK_VERSION" ]; then
     yarn add @devcycle/openfeature-nodejs-provider@latest
-    echo "Installed latest version of openfeature-nodejs-provider"
+    echo "Installed openfeature-nodejs-provider@latest"
 else
     yarn add @devcycle/openfeature-nodejs-provider@$OF_NODEJS_SDK_VERSION
     echo "Installed openfeature-nodejs-provider@$OF_NODEJS_SDK_VERSION"
