@@ -14,19 +14,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:1.6.7, @devcycle/bucketing-assembly-script@npm:^1.6.7":
-  version: 1.6.7
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.6.7"
-  checksum: 8e0180e738f1aee027cbad72ed9f1b13ddfed6757883dc234420e67e61eac79822063e264ed2f1eb2c252ca26c6872bddd2800f31c6560b66cf08ea50ed036ed
+"@devcycle/bucketing-assembly-script@npm:1.6.10, @devcycle/bucketing-assembly-script@npm:^1.6.10":
+  version: 1.6.10
+  resolution: "@devcycle/bucketing-assembly-script@npm:1.6.10"
+  checksum: 9a6163721bcb423cf63f8c13300ded01803835e3a3d8321abee2b999730e1b5f11bfcdd3c7349af5f10ccc59252b2146a0712cc6fbb5282447cdfa5ca4895b81
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:1.11.0, @devcycle/nodejs-server-sdk@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.11.0"
+"@devcycle/nodejs-server-sdk@npm:1.12.2":
+  version: 1.12.2
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.12.2"
   dependencies:
-    "@devcycle/bucketing-assembly-script": ^1.6.7
-    "@devcycle/types": 1.1.1
+    "@devcycle/bucketing-assembly-script": ^1.6.10
+    "@devcycle/types": 1.1.3
     "@nestjs/class-validator": ^0.13.4
     class-transformer: 0.5.1
     cross-fetch: ^3.1.5
@@ -38,17 +38,17 @@ __metadata:
     protobufjs: ^7.2.2
     reflect-metadata: ^0.1.13
     uuid: ^8.3.2
-  checksum: e5d6d972f4161fc5e2f95b10b0c84457350611ce598c540cc5869762ba543f362245609eb1ff9a2be798101e97fdaca48f51a40bb2993034653f2742855c94d5
+  checksum: 0920569ad0a953cab7b959507be1dbda4ad64cbd4d64935df1f1ca55f2f43061a5366894152fb988c6e7ce3faa7b48727f4eebbd6ce1d932bdb68f92637ac008
   languageName: node
   linkType: hard
 
-"@devcycle/openfeature-nodejs-provider@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@devcycle/openfeature-nodejs-provider@npm:1.0.0"
+"@devcycle/openfeature-nodejs-provider@npm:latest":
+  version: 1.0.3
+  resolution: "@devcycle/openfeature-nodejs-provider@npm:1.0.3"
   dependencies:
-    "@devcycle/bucketing-assembly-script": 1.6.7
-    "@devcycle/nodejs-server-sdk": 1.11.0
-    "@devcycle/types": 1.1.1
+    "@devcycle/bucketing-assembly-script": 1.6.10
+    "@devcycle/nodejs-server-sdk": 1.12.2
+    "@devcycle/types": 1.1.3
     "@nestjs/class-validator": ^0.13.4
     "@openfeature/js-sdk": ^1.1.1
     class-transformer: 0.5.1
@@ -61,13 +61,13 @@ __metadata:
     protobufjs: ^7.2.2
     reflect-metadata: ^0.1.13
     uuid: ^8.3.2
-  checksum: ab3457aca6026274d248ff814346f0ee95c21db26cc1d8bd3bec404e0dcb8e762619883faa1d5ceacd478de0b46584a7c33145eee5eaa3afdc69980a41e70a98
+  checksum: 354ab4cf5585e202cd5541c6bb2f22715dd8e518153d70ec5f4ae1639516be616eb8cb4694965583552f452e7f8153acb0c462ff6295d6cb00eba8ce8bfc9be8
   languageName: node
   linkType: hard
 
-"@devcycle/types@npm:1.1.1":
-  version: 1.1.1
-  resolution: "@devcycle/types@npm:1.1.1"
+"@devcycle/types@npm:1.1.3":
+  version: 1.1.3
+  resolution: "@devcycle/types@npm:1.1.3"
   dependencies:
     "@nestjs/class-validator": ^0.13.4
     "@types/validator": 13.7.6
@@ -75,7 +75,7 @@ __metadata:
     iso-639-1: ^2.1.13
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
-  checksum: d24c08dd595864a1bf2f4032d3adcfe0b39e0be1297bb5107a6f70629b7fee2edec86cbfd7bf5de0a2722bf0917a98309fb365061a8875e89b790eaad3ea2a94
+  checksum: 2680e0bc7f14f98947495f2ca5fa23e94a99dd66959d952c8902557cb7b0cc80706ea14a60f1badd584a322585714ed7f42738d912a3278a0284866e3a98e774
   languageName: node
   linkType: hard
 
@@ -1017,8 +1017,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": ^1.11.0
-    "@devcycle/openfeature-nodejs-provider": ^1.0.0
+    "@devcycle/openfeature-nodejs-provider": latest
     "@openfeature/js-sdk": ^1.1.1
     "@types/koa": ^2.13.5
     "@types/koa-bodyparser": ^4.3.10
