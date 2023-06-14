@@ -30,5 +30,7 @@ else
     echo "Installed openfeature-nodejs-provider@$OF_NODEJS_SDK_VERSION"
 fi
 
-echo "yarn nodejs-server-sdk why: /n$(yarn why @devcycle/nodejs-server-sdk)"
-echo "yarn openfeature-nodejs-provider why: /n$(yarn why @devcycle/openfeature-nodejs-provider)"
+echo "yarn nodejs-server-sdk why:"
+yarn why @devcycle/nodejs-server-sdk
+echo "yarn openfeature-nodejs-provider why:"
+yarn why @devcycle/openfeature-nodejs-provider

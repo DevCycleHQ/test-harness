@@ -27,4 +27,5 @@ else
     echo "Installed nodejs-server-sdk@$NODEJS_SDK_VERSION"
 fi
 
-echo "yarn nodejs-server-sdk why: /n$(yarn why @devcycle/nodejs-server-sdk)"
+echo "yarn nodejs-server-sdk why:"
+yarn why @devcycle/nodejs-server-sdk
