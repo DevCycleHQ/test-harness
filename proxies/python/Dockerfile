@@ -1,4 +1,4 @@
-FROM python:3.10-alpine
+FROM python:3.10
 
 ARG SDK_GITHUB_SHA
 ENV SDK_GITHUB_SHA $SDK_GITHUB_SHA
@@ -11,8 +11,8 @@ ENV PYTHON_SDK_VERSION $PYTHON_SDK_VERSION
 
 WORKDIR /app
 
-RUN apk update
-RUN apk add git
+RUN apt-get update && \
+    apt-get install git
 
 COPY requirements.txt ./
 COPY install.sh ./
