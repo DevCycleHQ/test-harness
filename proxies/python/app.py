@@ -6,6 +6,8 @@ import logging
 import traceback
 import sys
 
+from devcycle_python_sdk.util.version import sdk_version
+
 app = Flask(__name__)
 
 logging.basicConfig()
@@ -27,7 +29,7 @@ def spec():
     logger.info("SPEC REQUEST: %s", request)
     return {
         "name": "Python",
-        "version": "", # TODO add branch name or SDK version here
+        "version": sdk_version(),
         "capabilities": ["EdgeDB", "CloudBucketing"]
     }
 
