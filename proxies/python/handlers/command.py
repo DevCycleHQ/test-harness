@@ -68,6 +68,8 @@ def handle_command(path, body, data_store):
 
     command = snake_case(command)
 
+    logger.info("[COMMAND] " + command + " " + str(parsed_params))
+
     result = invoke_command(stored_entity, command, parsed_params)
 
     if not data_store['commandResults'].get(command, None):

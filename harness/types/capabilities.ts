@@ -18,7 +18,8 @@ export const SDKCapabilities = {
         Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud, Capabilities.variableValue
     ],
     Python: [
-        Capabilities.events, Capabilities.cloud, Capabilities.edgeDB, Capabilities.variableValue
+        Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB,
+        Capabilities.clientCustomData, Capabilities.variableValue
     ],
     DotNet: [
         Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB,
