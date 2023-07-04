@@ -1,11 +1,11 @@
 import logging
 from re import sub
-from ..helpers.entity_types import get_entity_from_type
-from ..helpers.camelcase import camel_case_dict, snake_case
-from ..helpers.to_dict import to_dict
 
-from devcycle_python_sdk.models.user import User
-from devcycle_python_sdk.models.event import Event
+from devcycle_python_sdk.models.event import DevCycleEvent
+from devcycle_python_sdk.models.user import DevCycleUser
+
+from ..helpers.camelcase import snake_case
+from ..helpers.to_dict import to_dict
 
 logger = logging.getLogger(__name__)
 
@@ -34,10 +34,10 @@ def parse_params(params:list, data_store, user:dict=None, event:dict=None):
         elif element.get("callbackURL", None):
             parsed_params.append(element["callbackURL"])
         elif element.get("type", None) == "user":
-            sdk_user = User(**user)
+            sdk_user = DevCycleUser(**user)
             parsed_params.append(sdk_user)
         elif element.get("type", None) == "event":
-            sdk_event = Event(**event)
+            sdk_event = DevCycleEvent(**event)
             parsed_params.append(sdk_event)
         else:
             parsed_params.append(element["value"])
