@@ -1,5 +1,7 @@
 import Koa from 'koa'
-import { DVCClient, DVCCloudClient, DVCOptions, initialize } from '@devcycle/nodejs-server-sdk'
+import {
+    DevCycleClient, DevCycleCloudClient, DevCycleOptions, initializeDevCycle
+} from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
 import DevCycleProvider from '@devcycle/openfeature-nodejs-provider'
 import { OpenFeature } from '@openfeature/js-sdk'
@@ -31,13 +33,13 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
 
     try {
         let asyncError
-        let dvcClient: DVCClient | DVCCloudClient
-        let dvcOptions: DVCOptions
+        let dvcClient: DevCycleClient | DevCycleCloudClient
+        let dvcOptions: DevCycleOptions
 
         if (!enableCloudBucketing) {
             dvcOptions = { ...options }
-            dvcClient = initialize(sdkKey, dvcOptions)
-            if (waitForInitialization && dvcClient instanceof DVCClient) {
+            dvcClient = initializeDevCycle(sdkKey, dvcOptions)
+            if (waitForInitialization && dvcClient instanceof DevCycleClient) {
                 try {
                     await dvcClient.onClientInitialized()
                 } catch (e) {
@@ -46,7 +48,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
             }
 
         } else {
-            dvcClient = initialize(sdkKey, { ...options, enableCloudBucketing: true })
+            dvcClient = initializeDevCycle(sdkKey, { ...options, enableCloudBucketing: true })
         }
 
         OpenFeature.setProvider(new DevCycleProvider(dvcClient, dvcOptions))

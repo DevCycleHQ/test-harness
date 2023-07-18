@@ -1,5 +1,5 @@
 import Koa from 'koa'
-import { DVCClient, DVCCloudClient, initialize } from '@devcycle/nodejs-server-sdk'
+import { DevCycleClient, DevCycleCloudClient, initializeDevCycle } from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
 
 type ClientRequestBody = {
@@ -28,10 +28,10 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
 
     try {
         let asyncError
-        let client: DVCClient | DVCCloudClient
+        let client: DevCycleClient | DevCycleCloudClient
 
         if (!enableCloudBucketing) {
-            client = initialize(sdkKey, { ...options })
+            client = initializeDevCycle(sdkKey, { ...options })
             if (waitForInitialization) {
                 try {
                     await client.onClientInitialized()
@@ -40,7 +40,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
                 }
             }
         } else {
-            client = initialize(sdkKey, { ...options, enableCloudBucketing: true })
+            client = initializeDevCycle(sdkKey, { ...options, enableCloudBucketing: true })
         }
 
         dataStore.clients[clientId] = client
