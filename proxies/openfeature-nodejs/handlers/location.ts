@@ -1,6 +1,6 @@
 import {
-    DVCEvent,
-    DVCUser,
+    DevCycleEvent,
+    DevCycleUser,
     DVCVariable as DVCVariableInterface,
     DVCJSON
 } from '@devcycle/nodejs-server-sdk'
@@ -16,7 +16,7 @@ import { getEntityFromType, DataStore, EntityTypes, DataStoreClient } from '../e
 import { dataStore } from '../app'
 
 type RequestWithEntity = Koa.Request & {
-    entity: DataStoreClient | DVCUser | DVCVariableInterface
+    entity: DataStoreClient | DevCycleUser | DVCVariableInterface
 }
 
 type Param = {
@@ -30,8 +30,8 @@ type Param = {
 type LocationRequestBody = {
     command: string
     params: Param[]
-    user?: DVCUser,
-    event?: DVCEvent,
+    user?: DevCycleUser,
+    event?: DevCycleEvent,
     isAsync: boolean
 }
 
@@ -242,7 +242,7 @@ const dvcVariableFromEvaluationDetails = <T extends FlagValue>(
 }
 
 const invokeCommand = (
-    entity: DataStoreClient | DVCUser | DVCVariable | any,
+    entity: DataStoreClient | DevCycleUser | DVCVariable | any,
     command: string,
     params: ParsedParams,
 ) => {

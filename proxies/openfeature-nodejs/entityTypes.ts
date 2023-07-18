@@ -1,4 +1,4 @@
-import { DVCClient, DVCCloudClient } from '@devcycle/nodejs-server-sdk'
+import { DevCycleClient, DevCycleCloudClient } from '@devcycle/nodejs-server-sdk'
 import { Client as OFClient } from '@openfeature/js-sdk'
 
 export enum EntityTypes {
@@ -11,7 +11,7 @@ export enum EntityTypes {
 }
 
 export type DataStoreClient = {
-    dvcClient: DVCClient | DVCCloudClient,
+    dvcClient: DevCycleClient | DevCycleCloudClient,
     openFeatureClient: OFClient
 }
 
@@ -28,7 +28,7 @@ export const getEntityFromType = (value: string): string => {
             return EntityTypes.variable
         case 'DVCFeature':
             return EntityTypes.feature
-        case 'DVCClient':
+        case 'DevCycleClient':
             return EntityTypes.client
         default:
             return EntityTypes.object

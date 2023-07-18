@@ -1,10 +1,10 @@
-import { DVCClient, DVCEvent, DVCUser, DVCVariable } from '@devcycle/nodejs-server-sdk'
+import { DevCycleClient, DevCycleEvent, DevCycleUser, DVCVariable } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import { getEntityFromType, DataStore, EntityTypes } from '../entityTypes'
 import { dataStore } from '../app'
 
 type RequestWithEntity = Koa.Request & {
-    entity: DVCClient | DVCUser | DVCVariable
+    entity: DevCycleClient | DevCycleUser | DVCVariable
 }
 
 type Param = {
@@ -18,8 +18,8 @@ type Param = {
 type LocationRequestBody = {
     command: string
     params: Param[]
-    user?: DVCUser,
-    event?: DVCEvent,
+    user?: DevCycleUser,
+    event?: DevCycleEvent,
     isAsync: boolean
 }
 
@@ -136,7 +136,7 @@ const parseParams = (body: LocationRequestBody, params: Param[], data: DataStore
 }
 
 const invokeCommand = (
-    entity: DVCClient | DVCUser | DVCVariable | any,
+    entity: DevCycleClient | DevCycleUser | DVCVariable | any,
     command: string,
     params: ParsedParams,
 ) => {

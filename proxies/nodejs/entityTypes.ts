@@ -1,4 +1,4 @@
-import { DVCClient, DVCCloudClient } from '@devcycle/nodejs-server-sdk'
+import { DevCycleClient, DevCycleCloudClient } from '@devcycle/nodejs-server-sdk'
 
 export enum EntityTypes {
     user = 'User',
@@ -10,7 +10,7 @@ export enum EntityTypes {
 }
 
 export type DataStore = {
-    clients: { [key: string]: DVCClient | DVCCloudClient }
+    clients: { [key: string]: DevCycleClient | DevCycleCloudClient }
     commandResults: { [key: string]: any }
 }
 
@@ -22,7 +22,7 @@ export const getEntityFromType = (value: string): string => {
             return EntityTypes.variable
         case 'DVCFeature':
             return EntityTypes.feature
-        case 'DVCClient':
+        case 'DevCycleClient':
             return EntityTypes.client
         default:
             return EntityTypes.object
