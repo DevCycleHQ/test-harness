@@ -1,12 +1,12 @@
 package com.dvc_harness.proxy.models;
 
-import com.devcycle.sdk.server.common.model.User;
+import com.devcycle.sdk.server.common.model.DevCycleUser;
 
 public class UserData extends BaseResponse {
     private final String entityType;
-    private final User data;
+    private final DevCycleUser data;
 
-    public UserData(User user) {
+    public UserData(DevCycleUser user) {
         this.data = user;
         this.entityType = "user";
     }
@@ -15,7 +15,7 @@ public class UserData extends BaseResponse {
         return this.entityType;
     }
 
-    public User getData() {
+    public DevCycleUser getData() {
         return this.data;
     }
 }
