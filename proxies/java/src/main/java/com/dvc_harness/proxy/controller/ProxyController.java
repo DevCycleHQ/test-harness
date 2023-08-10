@@ -1,9 +1,9 @@
 package com.dvc_harness.proxy.controller;
 
-import com.devcycle.sdk.server.cloud.api.DVCCloudClient;
-import com.devcycle.sdk.server.cloud.model.DVCCloudOptions;
-import com.devcycle.sdk.server.local.api.DVCLocalClient;
-import com.devcycle.sdk.server.local.model.DVCLocalOptions;
+import com.devcycle.sdk.server.cloud.api.DevCycleCloudClient;
+import com.devcycle.sdk.server.cloud.model.DevCycleCloudOptions;
+import com.devcycle.sdk.server.local.api.DevCycleLocalClient;
+import com.devcycle.sdk.server.local.model.DevCycleLocalOptions;
 import com.dvc_harness.proxy.data.DataStore;
 import com.dvc_harness.proxy.models.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,16 +36,16 @@ public class ProxyController {
     public BaseResponse client(@RequestBody ClientRequestBody body, HttpServletResponse response) {
         try {
             if (body.enableCloudBucketing != null && body.enableCloudBucketing) {
-                DVCCloudOptions.DVCCloudOptionsBuilder builder = DVCCloudOptions.builder();
+                DevCycleCloudOptions.DevCycleCloudOptionsBuilder builder = DevCycleCloudOptions.builder();
                 if (body.options != null) {
                     builder.enableEdgeDB(body.options.enableEdgeDB);
                     builder.baseURLOverride(body.options.bucketingAPIURI);
                 }
 
-                DVCCloudClient client = new DVCCloudClient(body.sdkKey, builder.build());
+                DevCycleCloudClient client = new DevCycleCloudClient(body.sdkKey, builder.build());
                 DataStore.CloudClients.put(body.clientId, client);
             } else {
-                DVCLocalOptions.DVCLocalOptionsBuilder builder = DVCLocalOptions.builder();
+                DevCycleLocalOptions.DevCycleLocalOptionsBuilder builder = DevCycleLocalOptions.builder();
 
                 if (body.options != null) {
                     if (body.options.configCDNURI != null) {
@@ -65,7 +65,7 @@ public class ProxyController {
                     }
                 }
 
-                DVCLocalClient client = new DVCLocalClient(body.sdkKey, builder.build());
+                DevCycleLocalClient client = new DevCycleLocalClient(body.sdkKey, builder.build());
 
                 if(body.waitForInitialization) {
                     try {

@@ -1,12 +1,12 @@
 package com.dvc_harness.proxy.models;
 
-import com.devcycle.sdk.server.common.model.User;
-import com.devcycle.sdk.server.common.model.Event;
+import com.devcycle.sdk.server.common.model.DevCycleUser;
+import com.devcycle.sdk.server.common.model.DevCycleEvent;
 
 public class LocationRequestBody {
     public String command;
     public LocationParam[] params;
-    public User user;
-    public Event event;
+    public DevCycleUser user;
+    public DevCycleEvent event;
     public boolean isAsync;
 }

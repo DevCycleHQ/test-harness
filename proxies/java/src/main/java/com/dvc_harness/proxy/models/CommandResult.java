@@ -1,12 +1,8 @@
 package com.dvc_harness.proxy.models;
 
-import com.devcycle.sdk.server.common.model.User;
 import com.dvc_harness.proxy.data.DataStore;
-
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CommandResult<T> {
@@ -66,14 +62,14 @@ public class CommandResult<T> {
 
     private EntityTypes getEntityFromType(String value) {
         switch (value) {
-            case "User":
+            case "DevCycleUser":
                 return EntityTypes.User;
             case "Variable":
                 return EntityTypes.Variable;
             case "Feature":
                 return EntityTypes.Feature;
-            case "DVCLocalClient":
-            case "DVCCloudClient":
+            case "DevCycleLocalClient":
+            case "DevCycleCloudClient":
                 return EntityTypes.Client;
             default:
                 return EntityTypes.Object;
