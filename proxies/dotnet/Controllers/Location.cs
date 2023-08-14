@@ -114,7 +114,7 @@ public class LocationController : ControllerBase
 
         foreach (var param in bodyParams) {
             if (param["type"]?.Value<string>() == "user") {
-                var sdkUser = new User(
+                var sdkUser = new DevCycleUser(
                     user.UserId,
                     user.Email,
                     user.Name,
@@ -134,7 +134,7 @@ public class LocationController : ControllerBase
                 );
                 result.Add(sdkUser);
             } else if (param["type"]?.Value<string>() == "event") {
-                var sdkEvent = new Event(
+                var sdkEvent = new DevCycleEvent(
                     reqEvent.Type,
                     reqEvent.Target,
                     reqEvent.Date,
@@ -169,9 +169,9 @@ public class LocationController : ControllerBase
 
         object? result = null;
         if (type == "client") {
-           if (DataStore.CloudClients.TryGetValue(id, out DVCCloudClient? cloudClient)) {
+           if (DataStore.CloudClients.TryGetValue(id, out DevCycleCloudClient? cloudClient)) {
                 result = cloudClient;
-           } else if (DataStore.LocalClients.TryGetValue(id, out DVCLocalClient? localClient)) {
+           } else if (DataStore.LocalClients.TryGetValue(id, out DevCycleLocalClient? localClient)) {
                 result = localClient;
            }
         } else if (type == "command" && DataStore.Commands.TryGetValue(id, out object? command)) {
@@ -185,7 +185,7 @@ public class LocationController : ControllerBase
 
     private async Task<CommandResult> InvokeCommand(object entity, string command, bool isAsync, List<object> parsedParams) {
         var parsedCommand = char.ToUpper(command[0]) + command.Substring(1);
-        parsedCommand = entity is DVCCloudClient ? parsedCommand + "Async" : parsedCommand;
+        parsedCommand = entity is DevCycleCloudClient ? parsedCommand + "Async" : parsedCommand;
 
         if (parsedCommand == "Close")
         {

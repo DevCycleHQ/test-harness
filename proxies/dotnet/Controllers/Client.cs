@@ -8,7 +8,7 @@ using System.Text;
 
 namespace dotnet.Controllers;
 
-public class ClientOptions : DVCLocalOptions
+public class ClientOptions : DevCycleLocalOptions
 {
     [JsonProperty("eventFlushIntervalMS")]
     public int EventFlushIntervalMsOverride { get; set; }
@@ -78,17 +78,17 @@ public class ClientController : ControllerBase
         {
             if (ClientBody.EnableCloudBucketing ?? false)
             {
-                DVCCloudOptions cloudOptions = new DVCCloudOptions();
+                DevCycleCloudOptions cloudOptions = new DevCycleCloudOptions();
 
                 if (ClientBody.Options != null)
-                    cloudOptions = new DVCCloudOptions(enableEdgeDB: ClientBody.Options.EnableEdgeDB ?? false);
+                    cloudOptions = new DevCycleCloudOptions(enableEdgeDB: ClientBody.Options.EnableEdgeDB ?? false);
 
-                var RestOptions = new DevCycle.SDK.Server.Common.API.DVCRestClientOptions();
+                var RestOptions = new DevCycle.SDK.Server.Common.API.DevCycleRestClientOptions();
 
                 if (ClientBody.Options?.BucketingAPIURLOverride != null)
                     RestOptions.BaseUrl = new Uri(ClientBody.Options.BucketingAPIURLOverride);
 
-                DataStore.CloudClients[ClientBody.ClientId] = new DVCCloudClientBuilder()
+                DataStore.CloudClients[ClientBody.ClientId] = new DevCycleCloudClientBuilder()
                     .SetEnvironmentKey(ClientBody.SdkKey)
                     .SetOptions(cloudOptions)
                     .SetLogger(LoggerFactory.Create(builder => builder.AddConsole()))
@@ -114,9 +114,9 @@ public class ClientController : ControllerBase
 
                 if (ClientBody.WaitForInitialization == true) {
                     Task task = new Task(() => {});
-                    DevCycle.SDK.Server.Common.Model.DVCEventArgs? eventArgs = null;
+                    DevCycle.SDK.Server.Common.Model.DevCycleEventArgs? eventArgs = null;
 
-                    DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
+                    DataStore.LocalClients[ClientBody.ClientId] = new DevCycleLocalClientBuilder()
                         .SetEnvironmentKey(ClientBody.SdkKey)
                         .SetInitializedSubscriber((o, e) =>
                         {
@@ -132,7 +132,7 @@ public class ClientController : ControllerBase
                             throw eventArgs.Errors[0];
                         }
                 } else {
-                    DataStore.LocalClients[ClientBody.ClientId] = new DVCLocalClientBuilder()
+                    DataStore.LocalClients[ClientBody.ClientId] = new DevCycleLocalClientBuilder()
                         .SetEnvironmentKey(ClientBody.SdkKey)
                         .SetOptions(ClientBody.Options)
                         .SetLogger(LoggerFactory.Create(builder => builder.AddConsole()))
