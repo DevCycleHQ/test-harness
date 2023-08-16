@@ -22,16 +22,16 @@ to override the version of the dependent packages that will be used to the local
 ```
 
 then:
-1. Run `yarn` inside the `proxies/nodejs` folder
+1. Run `pnpm install` inside the `proxies/nodejs` folder
 3. Set the environment variable `LOCAL_MODE` to `1`
 4. Set the environment variable `SDKS_TO_TEST` to `nodejs`
-5. Run `yarn start:nodejs` in the root of the `test-harness` repository to start the proxy server process
-6. Run `yarn test` in the root of the `test-harness` repository (in a different shell) to run the tests
+5. Run `pnpm start:nodejs` in the root of the `test-harness` repository to start the proxy server process
+6. Run `pnpm test` in the root of the `test-harness` repository (in a different shell) to run the tests
 
 ## OpenFeature NodeJS
 
 follow the same steps as NodeJS above, but set the environment variable `SDKS_TO_TEST` to `of-nodejs`, 
-and use `yarn start:of-nodejs`. Also in the `package.json` file in `proxies/openfeature-nodejs`, 
+and use `pnpm install start:of-nodejs`. Also in the `package.json` file in `proxies/openfeature-nodejs`, 
 change the dependency to point to the local SDK, and set `resolutions`:
 
 ```json

@@ -11,11 +11,11 @@ The tests are written in Jest and run against a series of "proxy servers" writte
 
 ## Running the Tests
 ### Prerequisites
-You must have Docker installed and running on your machine. You must also have a working copy of Node 18+ and Yarn.
+You must have Docker installed and running on your machine. You must also have a working copy of Node 18+ and PNPM.
 
 ### Steps
-- Install dependencies with `yarn`
-- Run test suite with `yarn test`
+- Install dependencies with `pnpm install`
+- Run test suite with `pnpm test`
 
 This will automatically start the proxy servers using `docker-compose` and run the tests against them.
 
@@ -32,13 +32,13 @@ If a test run fails for a particular SDK change, use the environment variables a
 against the version of the SDK causing the issue. It also helps to isolate the test failure by running against
 a particular test file, or using `it.only` to run only a single test within a file.
 
-You can run yarn much faster against a single test file with:
+You can run Jest much faster against a single test file with:
 ```
-yarn test --testPathPattern='variable.local'
+pnpm test --testPathPattern='variable.local'
 ```
 or against a single test in that file (the matching against dynamic test names is tricky, so you might not be able to just run one):
 ```
-yarn test --testPathPattern='variable.local' --testNamePattern='should return a valid unicode string'
+pnpm test --testPathPattern='variable.local' --testNamePattern='should return a valid unicode string'
 ```
 
 It is also typically necessary to run the SDK proxy server locally in order to log / debug what is going on.
@@ -46,26 +46,26 @@ See the section below on running the harness against a local SDK.
 
 If debugging tests against a known version, you can speed up iteration by running with the watch flag:
 ```
-yarn test --watch
+pnpm test --watch
 ```
 That will keep the docker containers running the proxies alive, and pop up a menu in the terminal for re-running tests, failures, etc.
 
 ## Running the harness against a local SDK
 
 You can run the proxy server for the SDK you want to work on using:
-`yarn start:{sdk}` eg. `yarn start:nodejs`
+`pnpm start:{sdk}` eg. `pnpm start:nodejs`
 
 When running proxy tests, use the following environment variables to specify local mode:
 
 ```
-LOCAL_MODE=1 SDKS_TO_TEST=nodejs yarn test
+LOCAL_MODE=1 SDKS_TO_TEST=nodejs pnpm test
 ```
 
 This will point the test harness at a proxy running at http://localhost:3000, and disable all the containers in docker-compose. See [these instructions](docs/LOCAL.md) for details on how to run the proxy for each SDK.
 
 A specific version of docker-compose may be required to support the profiles in the docker-compose.yml config file. 1.29.2 seems to work.
 
-You may still need to run the package manager for the particular proxy (e.g. `yarn`, `go mod tidy` etc.)
+You may still need to run the package manager for the particular proxy (e.g. `pnpm`, `go mod tidy` etc.)
 
 ## Development
 To understand how the system works and write new proxies, see the documentation in the `docs` folder.

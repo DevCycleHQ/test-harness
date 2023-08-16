@@ -10,13 +10,7 @@ if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
     NX_DAEMON=false pnpm nx build nodejs --verbose
     cd ../app
 
-    # convince yarn that these packages arent part of a workspace by writing empty lock files
-#    echo "touch yarn.lock files"
-#    touch js-sdks/dist/lib/shared/types/yarn.lock
-#    touch js-sdks/lib/shared/bucketing-assembly-script/yarn.lock
-#    touch js-sdks/dist/sdk/nodejs/yarn.lock
-
-    echo "Change NODE_ENV so pnpm only installs prod dependencies"
+    # Change NODE_ENV so pnpm only installs prod dependencies
     export NODE_ENV=production
     pnpm link ../js-sdks/dist/lib/shared/types/
     pnpm link ../js-sdks/lib/shared/bucketing-assembly-script/

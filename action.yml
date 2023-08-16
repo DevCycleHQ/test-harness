@@ -18,16 +18,19 @@ runs:
       with:
         repository: DevCycleHQ/test-harness
         token: ${{ inputs.github-token }}
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 8.6.12
     - uses: actions/setup-node@v3
       with:
         node-version: 18
-        cache: 'yarn'
+        cache: 'pnpm'
     - name: Install Dependencies
       shell: bash
-      run: yarn install
+      run: pnpm install
     - name: Run All Tests
       shell: bash
-      run: yarn test:ci
+      run: pnpm test:ci
       env:
         SDK_GITHUB_SHA: ${{ inputs.sdk-github-sha }}
         SDKS_TO_TEST: ${{ inputs.sdks-to-test }}

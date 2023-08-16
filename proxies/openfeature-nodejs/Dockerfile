@@ -14,4 +14,4 @@ COPY . /app
 WORKDIR /app
 RUN pnpm install
 RUN ./install.sh
-ENTRYPOINT yarn ts-node app.ts
+ENTRYPOINT pnpm ts-node app.ts
