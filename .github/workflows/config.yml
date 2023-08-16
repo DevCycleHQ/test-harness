@@ -24,6 +24,9 @@ jobs:
     env:
       DOCKER_HOST_IP: '172.17.0.1'
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v2
         with:
           version: 8.6.12
@@ -31,9 +34,6 @@ jobs:
         with:
           node-version: 18
           cache: 'pnpm'
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Write variables to .env file
         run: |
           if [ ! -f ".env" ]
