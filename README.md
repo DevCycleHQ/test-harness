@@ -34,11 +34,11 @@ a particular test file, or using `it.only` to run only a single test within a fi
 
 You can run Jest much faster against a single test file with:
 ```
-pnpm test --testPathPattern='variable.local'
+pnpm test -- --testPathPattern='variable.local'
 ```
 or against a single test in that file (the matching against dynamic test names is tricky, so you might not be able to just run one):
 ```
-pnpm test --testPathPattern='variable.local' --testNamePattern='should return a valid unicode string'
+pnpm test -- --testPathPattern='variable.local' --testNamePattern='should return a valid unicode string'
 ```
 
 It is also typically necessary to run the SDK proxy server locally in order to log / debug what is going on.
@@ -46,7 +46,7 @@ See the section below on running the harness against a local SDK.
 
 If debugging tests against a known version, you can speed up iteration by running with the watch flag:
 ```
-pnpm test --watch
+pnpm test -- --watch
 ```
 That will keep the docker containers running the proxies alive, and pop up a menu in the terminal for re-running tests, failures, etc.
 

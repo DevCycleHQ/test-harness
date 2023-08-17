@@ -5,7 +5,7 @@
   },
   "scripts": {
     "test": "jest --verbose",
-    "test:ci": "BUILDKIT_PROGRESS=plain pnpm test --setupFiles=./ci-config.ts --reporters=default --reporters=jest-junit",
+    "test:ci": "BUILDKIT_PROGRESS=plain pnpm test -- --setupFiles=./ci-config.ts --reporters=default --reporters=jest-junit",
     "start:nodejs": "cd proxies/nodejs && NODE_PRESERVE_SYMLINKS=1 ts-node app.ts",
     "start:of-nodejs": "cd proxies/openfeature-nodejs && NODE_PRESERVE_SYMLINKS=1 ts-node app.ts",
     "start:go": "cd proxies/go && go run .",
