@@ -613,7 +613,7 @@ export const getPlatformBySdkName = (name: string, isLocal: boolean) => {
     if (name === 'GoWASM') {
         return 'Go'
     }
-    if (name === 'OF-NodeJS') {
+    if (name === 'OF-NodeJS' || name === 'JS-Cloud') {
         return 'NodeJS'
     }
     return name === 'DotNet' ? // TODO use Sdks.dotnet instead of 'DotNet' when enable dotnet

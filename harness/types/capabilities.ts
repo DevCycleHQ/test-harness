@@ -17,6 +17,9 @@ export const SDKCapabilities = {
     'OF-NodeJS': [
         Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud, Capabilities.variableValue
     ],
+    'JS-Cloud': [
+        Capabilities.events, Capabilities.edgeDB, Capabilities.cloud, Capabilities.variableValue
+    ],
     Python: [
         Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB,
         Capabilities.clientCustomData, Capabilities.variableValue
