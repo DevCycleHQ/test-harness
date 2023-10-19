@@ -13,9 +13,9 @@ GEM
     ffi (1.15.5)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
-    nio4r (2.5.8)
+    nio4r (2.5.9)
     oj (3.13.2)
-    puma (5.6.5)
+    puma (5.6.7)
       nio4r (~> 2.0)
     rack (2.2.6.2)
     rack-protection (3.0.5)
@@ -31,9 +31,11 @@ GEM
     typhoeus (1.4.0)
       ethon (>= 0.9.0)
     wasmtime (5.0.0-arm64-darwin)
+    wasmtime (5.0.0-x86_64-linux)
 
 PLATFORMS
   arm64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   devcycle-ruby-server-sdk
