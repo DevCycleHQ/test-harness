@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Write variables to .env file
