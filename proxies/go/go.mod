@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/devcyclehq/go-server-sdk/v2 v2.9.5
-	github.com/gorilla/mux v1.8.0
+	github.com/gorilla/mux v1.8.1
 )
 
 require (
