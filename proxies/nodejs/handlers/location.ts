@@ -4,7 +4,7 @@ import { getEntityFromType, DataStore, EntityTypes } from '../entityTypes'
 import { dataStore } from '../app'
 
 type RequestWithEntity = Koa.Request & {
-    entity: DevCycleClient | DevCycleUser | DVCVariable
+    entity: DevCycleClient | DevCycleUser | DVCVariable<any>
 }
 
 type Param = {
@@ -136,7 +136,7 @@ const parseParams = (body: LocationRequestBody, params: Param[], data: DataStore
 }
 
 const invokeCommand = (
-    entity: DevCycleClient | DevCycleUser | DVCVariable | any,
+    entity: DevCycleClient | DevCycleUser | DVCVariable<any> | any,
     command: string,
     params: ParsedParams,
 ) => {

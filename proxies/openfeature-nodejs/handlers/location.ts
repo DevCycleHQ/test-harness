@@ -16,7 +16,7 @@ import { getEntityFromType, DataStore, EntityTypes, DataStoreClient } from '../e
 import { dataStore } from '../app'
 
 type RequestWithEntity = Koa.Request & {
-    entity: DataStoreClient | DevCycleUser | DVCVariableInterface
+    entity: DataStoreClient | DevCycleUser | DVCVariableInterface<any>
 }
 
 type Param = {
@@ -182,7 +182,7 @@ const getOpenFeatureVariable = async (
 const getOpenFeatureVariableValue = async (
     openFeatureClient: OFClient,
     params: any[]
-): Promise<DVCVariableInterface['value']> => {
+): Promise<DVCVariableInterface<any>['value']> => {
     const [user, key, defaultValue, type] = params
     if (type === 'boolean') {
         return await openFeatureClient.getBooleanValue(key, defaultValue as boolean, user)
@@ -200,13 +200,13 @@ const getOpenFeatureVariableValue = async (
 /**
  * Fake DVCVariable Class so that the variable type reporting works correctly
   */
-class DVCVariable implements DVCVariableInterface {
+class DVCVariable implements DVCVariableInterface<any> {
     constructor(
         public key: string,
-        public value: DVCVariableInterface['value'],
-        public defaultValue: DVCVariableInterface['value'],
-        public isDefaulted: DVCVariableInterface['isDefaulted'],
-        public type: DVCVariableInterface['type']
+        public value: DVCVariableInterface<any>['value'],
+        public defaultValue: DVCVariableInterface<any>['value'],
+        public isDefaulted: DVCVariableInterface<any>['isDefaulted'],
+        public type: DVCVariableInterface<any>['type']
     ) {}
 }
 
