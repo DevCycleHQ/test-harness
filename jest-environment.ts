@@ -1,4 +1,4 @@
-import { TestcontainersEnvironment } from '@trendyol/jest-testcontainers'
+import { TestcontainersEnvironment } from '@eresearchqut/jest-testcontainers'
 import { assertNoUnmatchedRequests, initialize } from './harness/mockServer'
 
 export class TestHarnessEnvironment extends TestcontainersEnvironment {
