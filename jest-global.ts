@@ -1,5 +1,5 @@
 import { getSDKs } from './harness/helpers'
-import testContainersSetup from '@trendyol/jest-testcontainers/dist/setup'
+import testContainersSetup from '@eresearchqut/jest-testcontainers/dist/setup'
 
 async function setup(opts) {
     const sdks = getSDKs()

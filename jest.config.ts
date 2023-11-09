@@ -1,7 +1,7 @@
 import { getSDKs } from './harness/helpers'
 
 const commonConfig = {
-    preset: '@trendyol/jest-testcontainers',
+    preset: '@eresearchqut/jest-testcontainers',
     transform: {
         '^.+\\.tsx?$': ['ts-jest', {}]
     },
