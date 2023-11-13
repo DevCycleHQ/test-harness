@@ -14,7 +14,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v4
       with:
         repository: DevCycleHQ/test-harness
         token: ${{ inputs.github-token }}
