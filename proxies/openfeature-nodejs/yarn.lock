@@ -106,14 +106,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openfeature/js-sdk@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@openfeature/js-sdk@npm:1.1.1"
-  checksum: 43faf7da462b82513638e2fec8baf7beabc2c0048c89b956e1c66d5e0313a870d1b7931a83cde16fcfa0fc5cea2d563a45131d08236ebaae4ff59ead91c5bd71
-  languageName: node
-  linkType: hard
-
-"@openfeature/js-sdk@npm:^1.4.2":
+"@openfeature/js-sdk@npm:^1.4.2, @openfeature/js-sdk@npm:^1.6.1":
   version: 1.6.1
   resolution: "@openfeature/js-sdk@npm:1.6.1"
   checksum: ef4e7c373d16645ed0cc1d1a85e087b28d10bc2ba0c967cf7ac3fad2515dc2fd9a775ced8ab5ae35271b70e8102375950bb4368a17398e898990f50e92d82881
@@ -997,7 +990,7 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     "@devcycle/openfeature-nodejs-provider": "*"
-    "@openfeature/js-sdk": ^1.1.1
+    "@openfeature/js-sdk": ^1.6.1
     "@types/koa": ^2.13.5
     "@types/koa-bodyparser": ^4.3.10
     "@types/koa-router": ^7.4.4
