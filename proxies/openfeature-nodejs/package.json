@@ -2,10 +2,10 @@
   "dependencies": {
     "@devcycle/openfeature-nodejs-provider": "*",
     "@openfeature/js-sdk": "^1.1.1",
-    "@types/koa": "^2.13.5",
+    "@types/koa": "^2.13.11",
     "@types/koa-bodyparser": "^4.3.10",
     "@types/koa-router": "^7.4.4",
-    "koa": "^2.13.4",
+    "koa": "^2.14.2",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^12.0.0",
     "ts-node": "^10.9.1"
