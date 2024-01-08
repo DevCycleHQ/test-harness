@@ -14,50 +14,50 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:^1.10.0":
-  version: 1.10.0
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.10.0"
+"@devcycle/bucketing-assembly-script@npm:^1.11.5":
+  version: 1.11.5
+  resolution: "@devcycle/bucketing-assembly-script@npm:1.11.5"
   dependencies:
     protobufjs: ^7.2.5
-  checksum: 499d92886b480aff8dcf78e2fafe008d040cff3a5910cf1c3542bdd6d9ff86e4ed5d5d810581114f5f6b1e039d4ee7fc512e29cbfe32fd199f7588ff035461c3
+  checksum: 8d094ef6ccd780e3ee0973b236796a548f2a46c325cc2ebcc3cd35547ccb6c74de39ae9f4ba64469da5806ccf8072b181e82def0b5984dbc91c5cd82c1d58ae7
   languageName: node
   linkType: hard
 
-"@devcycle/js-cloud-server-sdk@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@devcycle/js-cloud-server-sdk@npm:1.2.0"
+"@devcycle/js-cloud-server-sdk@npm:^1.3.4":
+  version: 1.3.4
+  resolution: "@devcycle/js-cloud-server-sdk@npm:1.3.4"
   dependencies:
-    "@devcycle/types": ^1.3.0
+    "@devcycle/types": ^1.4.4
     cross-fetch: ^3.1.8
     fetch-retry: ^5.0.3
     lodash: ^4.17.21
-  checksum: 9fba2901a67fb53de3322aa301b520e70351e7791b09d984ce0a437cb3007ec4cd8a32e4a7567baa691305122f5ddda0ebf22af1d47c0e692c67ad0c69685132
+  checksum: 948eb2a063d63992a43136a68b2034926f91f21ecc8f92bc65b3315c6a5f192c2e9abb5476fe795eaac111d0e9cc0dc8a5ad6d9b116382737e9c941485fe0f73
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:^1.17.0":
-  version: 1.17.0
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.17.0"
+"@devcycle/nodejs-server-sdk@npm:*":
+  version: 1.18.5
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.18.5"
   dependencies:
-    "@devcycle/bucketing-assembly-script": ^1.10.0
-    "@devcycle/js-cloud-server-sdk": ^1.2.0
-    "@devcycle/types": ^1.3.0
+    "@devcycle/bucketing-assembly-script": ^1.11.5
+    "@devcycle/js-cloud-server-sdk": ^1.3.4
+    "@devcycle/types": ^1.4.4
     cross-fetch: ^3.1.8
     fetch-retry: ^5.0.3
-  checksum: 6b9c569736647943d64adb952e38bbf6a4a7734f344a0ecb1d5efe984828af7fc81a566486de3815cb23765323ef62e7b5d148d5f12208b7885c5aa18f176e38
+  checksum: 4e830886e4304e554078d1032976e2531553267a80078f0187286c12962980bc28519ef12f88b43320e1d76111bedee97197faa1ce8fa0371eb7372ed916035e
   languageName: node
   linkType: hard
 
-"@devcycle/types@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@devcycle/types@npm:1.3.0"
+"@devcycle/types@npm:^1.4.4":
+  version: 1.4.4
+  resolution: "@devcycle/types@npm:1.4.4"
   dependencies:
     "@nestjs/class-validator": ^0.13.4
     class-transformer: 0.5.1
     iso-639-1: ^2.1.13
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
-  checksum: e98c52939ad11429f0b1d4e825d6d5e36781f418bb00e76df04824520908e5700c80ee3b1c39571f64ddc43cd40a642f80ade52f074515b96a8136c666cb01ac
+  checksum: 101e759d26b20c5353ce292eea7019193f31d95c8bcb08ac0365ee96c9580e4e4e787444d5b0df8051cf2b21a1e61be829069b88e3f63cdd3ea0c710465c5f2a
   languageName: node
   linkType: hard
 
@@ -971,7 +971,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": ^1.17.0
+    "@devcycle/nodejs-server-sdk": "*"
     "@types/koa": ^2.13.5
     "@types/koa-bodyparser": ^4.3.10
     "@types/koa-router": ^7.4.4
