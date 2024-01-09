@@ -106,10 +106,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openfeature/js-sdk@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@openfeature/js-sdk@npm:1.1.1"
-  checksum: 43faf7da462b82513638e2fec8baf7beabc2c0048c89b956e1c66d5e0313a870d1b7931a83cde16fcfa0fc5cea2d563a45131d08236ebaae4ff59ead91c5bd71
+"@openfeature/core@npm:^0.0.22":
+  version: 0.0.22
+  resolution: "@openfeature/core@npm:0.0.22"
+  checksum: e04f64c34000ac691072adf686780f71c34b4f7f53882b511ceb49221501a872ff3ccca3655c9983a01849e40b4398c999ca6098291f6e8d5ec89af4082558bd
   languageName: node
   linkType: hard
 
@@ -117,6 +117,15 @@ __metadata:
   version: 1.6.1
   resolution: "@openfeature/js-sdk@npm:1.6.1"
   checksum: ef4e7c373d16645ed0cc1d1a85e087b28d10bc2ba0c967cf7ac3fad2515dc2fd9a775ced8ab5ae35271b70e8102375950bb4368a17398e898990f50e92d82881
+  languageName: node
+  linkType: hard
+
+"@openfeature/server-sdk@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "@openfeature/server-sdk@npm:1.9.0"
+  peerDependencies:
+    "@openfeature/core": 0.0.22
+  checksum: 578857235a5bdd3068315d3ea397cfa5c75348336229c3c14665b93e7d1ee9892368594b112b390e3ca40102ca405bc5917eccc52e88b136b3e0aeb378e3fe7f
   languageName: node
   linkType: hard
 
@@ -997,7 +1006,8 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     "@devcycle/openfeature-nodejs-provider": "*"
-    "@openfeature/js-sdk": ^1.1.1
+    "@openfeature/core": ^0.0.22
+    "@openfeature/server-sdk": ^1.9.0
     "@types/koa": ^2.13.5
     "@types/koa-bodyparser": ^4.3.10
     "@types/koa-router": ^7.4.4

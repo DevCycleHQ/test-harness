@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 if [ -n "$SDK_GITHUB_SHA" ]; then
     echo "Checking out python SDK at $SDK_GITHUB_SHA"

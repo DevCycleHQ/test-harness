@@ -10,7 +10,7 @@ import {
     StandardResolutionReasons,
     FlagValue,
     JsonValue
-} from '@openfeature/js-sdk'
+} from '@openfeature/server-sdk'
 import Koa from 'koa'
 import { getEntityFromType, DataStore, EntityTypes, DataStoreClient } from '../entityTypes'
 import { dataStore } from '../app'

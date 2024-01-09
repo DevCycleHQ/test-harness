@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"ruby"* ]]; then
   sed -i "s|gem 'devcycle-ruby-server-sdk'|gem 'devcycle-ruby-server-sdk', github: 'DevCycleHQ/ruby-server-sdk', ref: '$SDK_GITHUB_SHA'|g" Gemfile
