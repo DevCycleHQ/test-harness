@@ -1,5 +1,5 @@
 import { DevCycleClient, DevCycleCloudClient } from '@devcycle/nodejs-server-sdk'
-import { Client as OFClient } from '@openfeature/js-sdk'
+import { Client as OFClient } from '@openfeature/server-sdk'
 
 export enum EntityTypes {
     user = 'User',

@@ -4,7 +4,7 @@ import {
 } from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
 import DevCycleProvider from '@devcycle/openfeature-nodejs-provider'
-import { OpenFeature } from '@openfeature/js-sdk'
+import { OpenFeature } from '@openfeature/server-sdk'
 
 type ClientRequestBody = {
     clientId: string
