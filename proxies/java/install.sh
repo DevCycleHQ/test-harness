@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [[ -n "$SDK_GITHUB_SHA" ]]; then
     echo "Checking out SDK at $SDK_GITHUB_SHA"

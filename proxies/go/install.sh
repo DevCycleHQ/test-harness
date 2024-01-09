@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"go"* ]]; then
     go get "github.com/devcyclehq/go-server-sdk/v2@$SDK_GITHUB_SHA"

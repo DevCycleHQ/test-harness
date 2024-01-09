@@ -15,5 +15,6 @@ RUN apk update && apk upgrade && \
 COPY . /app
 WORKDIR /app
 RUN yarn
+RUN echo "Invalidate"
 RUN ./install.sh
 ENTRYPOINT yarn ts-node app.ts
