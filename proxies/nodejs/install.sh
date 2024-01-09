@@ -5,6 +5,9 @@ if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
     cd js-sdks
     git checkout $SDK_GITHUB_SHA
     yarn
+    # run yarn again to fix any native dependencies that weren't built the first time
+    # TODO find out why this is necessary
+    yarn
     NX_DAEMON=false yarn nx build nodejs --verbose
     cd ..
 
