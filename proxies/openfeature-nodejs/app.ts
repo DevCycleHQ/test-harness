@@ -4,6 +4,7 @@ import bodyParser from 'koa-bodyparser'
 import { handleClient } from './handlers/client'
 import { handleLocation, validateLocationReqMiddleware } from './handlers/location'
 import { DataStore } from './entityTypes'
+
 export const dataStore: DataStore = {
     clients: {},
     commandResults: {},
