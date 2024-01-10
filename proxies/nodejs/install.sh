@@ -17,6 +17,7 @@ if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
     touch js-sdks/lib/shared/bucketing-assembly-script/yarn.lock
     touch js-sdks/dist/sdk/nodejs/yarn.lock
 
+    echo "yarn link, yarn version: $(yarn -v)"
     yarn link js-sdks/dist/lib/shared/types/
     yarn link js-sdks/lib/shared/bucketing-assembly-script/
     yarn link js-sdks/dist/sdk/nodejs/
