@@ -3,7 +3,6 @@ import {
     DevCycleClient, DevCycleCloudClient, DevCycleOptions, initializeDevCycle
 } from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
-import DevCycleProvider from '@devcycle/openfeature-nodejs-provider'
 import { OpenFeature } from '@openfeature/server-sdk'
 
 type ClientRequestBody = {
@@ -51,7 +50,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
             dvcClient = initializeDevCycle(sdkKey, { ...options, enableCloudBucketing: true })
         }
 
-        OpenFeature.setProvider(new DevCycleProvider(dvcClient, dvcOptions))
+        await OpenFeature.setProviderAndWait(dvcClient.getOpenFeatureProvider())
         const openFeatureClient = OpenFeature.getClient()
 
         dataStore.clients[clientId] = { dvcClient, openFeatureClient }
