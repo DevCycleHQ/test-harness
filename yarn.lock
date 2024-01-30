@@ -533,7 +533,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@devcycle/test-harness@workspace:."
   dependencies:
-    "@devcycle/types": ^1.1.7
+    "@devcycle/types": ^1.7.0
     "@eresearchqut/jest-testcontainers": ^3.2.0
     "@koa/router": ^12.0.0
     "@types/jest": ^29.2.3
@@ -558,16 +558,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@devcycle/types@npm:^1.1.7":
-  version: 1.1.7
-  resolution: "@devcycle/types@npm:1.1.7"
+"@devcycle/types@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "@devcycle/types@npm:1.7.0"
   dependencies:
-    "@nestjs/class-validator": 0.13.4
+    "@nestjs/class-validator": ^0.13.4
     class-transformer: 0.5.1
-    iso-639-1: 2.1.13
-    lodash: 4.17.21
-    reflect-metadata: 0.1.13
-  checksum: 96785afcce28036ab27098f6998ab58e9a24f88b9e79c9afc05d8bf95733e290e34f877c7e50b06cd7929622aa210bbf4ab810aff7b3b7eb0b34ce50d622c41d
+    iso-639-1: ^2.1.13
+    lodash: ^4.17.21
+    reflect-metadata: ^0.1.13
+  checksum: 66b54da7cda4f80e1824ff8c82658ce6b0b7608bcf09d92168d31334a3afbae0228e21c02baf30e63ac73768ed313052938085798f8e1144bf82ef72527023cd
   languageName: node
   linkType: hard
 
@@ -989,7 +989,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/class-validator@npm:0.13.4":
+"@nestjs/class-validator@npm:^0.13.4":
   version: 0.13.4
   resolution: "@nestjs/class-validator@npm:0.13.4"
   dependencies:
@@ -3687,10 +3687,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iso-639-1@npm:2.1.13":
-  version: 2.1.13
-  resolution: "iso-639-1@npm:2.1.13"
-  checksum: 53c0a76ad742b08dd1a5a525514f95457aa71aee4b9b71ad6bf8d5dc30b5db1cb9ec2dc3919ac6eb9b281c314a3e439b027760777e8c373068d38d003dd6812d
+"iso-639-1@npm:^2.1.13":
+  version: 2.1.15
+  resolution: "iso-639-1@npm:2.1.15"
+  checksum: a201530819d33e9ce077b02c786d67b35be5d823be27b5aacc18d880e580e559e39ec5055f8e2abcdc210f46618a643bf3c74e6fe6e8255fe62059682750e595
   languageName: node
   linkType: hard
 
@@ -4548,7 +4548,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.17.21, lodash@npm:^4.17.21":
+"lodash@npm:^4.17.21":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
@@ -5403,10 +5403,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reflect-metadata@npm:0.1.13":
-  version: 0.1.13
-  resolution: "reflect-metadata@npm:0.1.13"
-  checksum: 798d379a7b6f6455501145419505c97dd11cbc23857a386add2b9ef15963ccf15a48d9d15507afe01d4cd74116df8a213247200bac00320bd7c11ddeaa5e8fb4
+"reflect-metadata@npm:^0.1.13":
+  version: 0.1.14
+  resolution: "reflect-metadata@npm:0.1.14"
+  checksum: 155ad339319cec3c2d9d84719f730f8b6a6cd2a074733ec29dbae6c89d48a2914c7d07a2350212594f3aae160fa4da4f903e6512f27ceaf968443a7c692bcad0
   languageName: node
   linkType: hard
 

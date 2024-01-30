@@ -14,50 +14,52 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:^1.11.6":
-  version: 1.11.6
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.11.6"
+"@devcycle/bucketing-assembly-script@npm:^1.14.0":
+  version: 1.14.0
+  resolution: "@devcycle/bucketing-assembly-script@npm:1.14.0"
   dependencies:
     protobufjs: ^7.2.5
-  checksum: 08c9fde649810c141525c5ad140cec525a41dccd601166a123f1b2d3c9f49e57ec784094df4b3c1450b5fde6c940451b916d8d3be2b04510e0798fe0e24d7b0b
+  checksum: c8bb3a83c26e02c58f6b7cf4415ae00833aa830eed74da284b33c95d8be3db3b1484377b53b941ed6526e313bf169a51881155e3e09524d6ab97172184e70e50
   languageName: node
   linkType: hard
 
-"@devcycle/js-cloud-server-sdk@npm:^1.3.5":
-  version: 1.3.5
-  resolution: "@devcycle/js-cloud-server-sdk@npm:1.3.5"
+"@devcycle/js-cloud-server-sdk@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@devcycle/js-cloud-server-sdk@npm:1.6.0"
   dependencies:
-    "@devcycle/types": ^1.4.5
+    "@devcycle/types": ^1.7.0
     cross-fetch: ^3.1.8
     fetch-retry: ^5.0.3
     lodash: ^4.17.21
-  checksum: 739d82a4f5fd2c51f8183b9d8ace5e699a87ea26634964f3fa1ba85906235da111ef76340931ffa6589b5a4da53da0d4fc60eaf4eca48d7cf04c188edaabdc27
+  checksum: 8fcf5914316f516993e9e9e403fc223dad9d3dedfd83cb4db5d756d73c7199d9a43502ac7a8d6507d21bc7ac0d5bf720181610396b659913c52346c146688a97
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:*":
-  version: 1.18.6
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.18.6"
+"@devcycle/nodejs-server-sdk@npm:^1.21.0":
+  version: 1.21.0
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.21.0"
   dependencies:
-    "@devcycle/bucketing-assembly-script": ^1.11.6
-    "@devcycle/js-cloud-server-sdk": ^1.3.5
-    "@devcycle/types": ^1.4.5
+    "@devcycle/bucketing-assembly-script": ^1.14.0
+    "@devcycle/js-cloud-server-sdk": ^1.6.0
+    "@devcycle/types": ^1.7.0
+    "@openfeature/core": ^0.0.23
+    "@openfeature/server-sdk": ^1.9.1
     cross-fetch: ^3.1.8
     fetch-retry: ^5.0.3
-  checksum: 457e8e37d72dc3ed8803c651a1b5a72c53ff3576e8074e8a010721c8838c63d19c868cd4daaae7edcc4fbe3fa4091102a60fc0f633ea8043dc10f4d7ae1b95eb
+  checksum: b0ab60d1fd300a8d66801bee2e9a664c783f8e1cfce4ec94c491bb9c2a007cabcbf45e83911cfb5f6b0bbdc6298bcbe882b6f645358f3c5bd582e6a4fa3baf38
   languageName: node
   linkType: hard
 
-"@devcycle/types@npm:^1.4.5":
-  version: 1.4.5
-  resolution: "@devcycle/types@npm:1.4.5"
+"@devcycle/types@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "@devcycle/types@npm:1.7.0"
   dependencies:
     "@nestjs/class-validator": ^0.13.4
     class-transformer: 0.5.1
     iso-639-1: ^2.1.13
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
-  checksum: 8acddaeeef82d71ed2c00cf9230304d114dfbcfec7e833a15311be55389000205e9eae174b25294d3f5b560a0f58a9dceb450d2479f2ee71df2a5753a144cc78
+  checksum: 66b54da7cda4f80e1824ff8c82658ce6b0b7608bcf09d92168d31334a3afbae0228e21c02baf30e63ac73768ed313052938085798f8e1144bf82ef72527023cd
   languageName: node
   linkType: hard
 
@@ -92,6 +94,22 @@ __metadata:
     libphonenumber-js: ^1.9.43
     validator: ^13.7.0
   checksum: 375f3a699ff4d4c801613df3968e13aad29bbca40955f085327f332a055777a3b048fa048c4b9813ced21fc8b501faa62e9a5cfaecc1bf2fb7d6aba2e0b821cc
+  languageName: node
+  linkType: hard
+
+"@openfeature/core@npm:^0.0.23":
+  version: 0.0.23
+  resolution: "@openfeature/core@npm:0.0.23"
+  checksum: 348c6abb7a2ff5ecb47c59191520a5f74bae42c7d14c5f2b710fc12973ad76585a651e5606a0ebf4cd2d6f4134c7d600ebf7ebc8c0668a0af8e05621e92664d4
+  languageName: node
+  linkType: hard
+
+"@openfeature/server-sdk@npm:^1.9.1":
+  version: 1.9.1
+  resolution: "@openfeature/server-sdk@npm:1.9.1"
+  peerDependencies:
+    "@openfeature/core": 0.0.23
+  checksum: f445a1a75da8e564102d74586c1fe55467d577202ffb6585f409a1e4f0e64e5962db530730a3d60fbd28ffb4e3ac14c42dac15339222be476c3496ff8e81161d
   languageName: node
   linkType: hard
 
@@ -971,7 +989,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": "*"
+    "@devcycle/nodejs-server-sdk": ^1.21.0
     "@types/koa": ^2.13.5
     "@types/koa-bodyparser": ^4.3.10
     "@types/koa-router": ^7.4.4
