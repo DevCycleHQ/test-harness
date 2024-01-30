@@ -1,7 +1,5 @@
 import Koa from 'koa'
-import {
-    DevCycleClient, DevCycleCloudClient, DevCycleOptions, initializeDevCycle
-} from '@devcycle/nodejs-server-sdk'
+import { initializeDevCycle } from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
 import { OpenFeature } from '@openfeature/server-sdk'
 
@@ -32,25 +30,15 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
 
     try {
         let asyncError
-        let dvcClient: DevCycleClient | DevCycleCloudClient
-        let dvcOptions: DevCycleOptions
+        const dvcClient = initializeDevCycle(sdkKey, {
+            ...options, enableCloudBucketing
+        })
 
-        if (!enableCloudBucketing) {
-            dvcOptions = { ...options }
-            dvcClient = initializeDevCycle(sdkKey, dvcOptions)
-            if (waitForInitialization && dvcClient instanceof DevCycleClient) {
-                try {
-                    await dvcClient.onClientInitialized()
-                } catch (e) {
-                    asyncError = e
-                }
-            }
-
-        } else {
-            dvcClient = initializeDevCycle(sdkKey, { ...options, enableCloudBucketing: true })
+        try {
+            await OpenFeature.setProviderAndWait(dvcClient.getOpenFeatureProvider())
+        } catch (e) {
+            asyncError = e
         }
-
-        await OpenFeature.setProviderAndWait(dvcClient.getOpenFeatureProvider())
         const openFeatureClient = OpenFeature.getClient()
 
         dataStore.clients[clientId] = { dvcClient, openFeatureClient }
