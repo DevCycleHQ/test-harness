@@ -1,6 +1,9 @@
 <?php
 
-require_once(__DIR__ . '/vendor/autoload.php');
+use DevCycle\Model\DevCycleOptions;
+use DevCycle\Model\DevCycleUser;
+include 'vendor/autoload.php';
+
 $pathArgs = [];
 if (getenv("LOCAL_MODE") == "") {
     $pathArgs = explode('/', getenv('REQUEST_URI'));
@@ -11,10 +14,13 @@ if (getenv("LOCAL_MODE") == "") {
     switch ($pathArgs[1]) {
         case "spec":
             handleSpec();
+            break;
         case "client":
             handleCommand($pathArgs, true);
+            break;
         case "command":
             handleCommand($pathArgs, false);
+            break;
         default:
             exit(404);
     }
@@ -89,7 +95,7 @@ function handleCommand(array $pathArgs, bool $isClient): void
                     echo json_encode($resp);
                     exit(200);
                 case "track":
-                    $user = $params[0];
+                    $user = new DevCycleUser($params[0]);
                     $event = $params[1];
                     $response = $client->track($user, $event);
                     echo json_encode($response);
@@ -136,13 +142,11 @@ function handleSpec(): void
 
 function buildClient(string $clientId)
 {
-    $config = DevCycle\Configuration::getDefaultConfiguration()
-        ->setApiKey('Authorization', getenv("LOCAL_MODE") == "" ? "dvc_server_" . $clientId : "dvc_server_test-harness-config")
-        ->setHost(getenv("LOCAL_MODE") == "" ? "http:/" . $clientId . "v1" : "http://localhost:8080")
-        ->setUDSPath(getenv("LOCAL_MODE") == "" ? "/tmp/" . $clientId . ".sock" : "");
-    $options = new DevCycle\Model\DVCOptions(false);
-    return new DevCycle\Api\DVCClient(
-        $config,
+    $options = new DevCycleOptions(
+        bucketingApiHostname: getenv("LOCAL_MODE") == "" ? "http:/" . $clientId . "v1" : "http://localhost:8080",
+        unixSocketPath: getenv("LOCAL_MODE") == "" ? "/tmp/" . $clientId . ".sock" : "");
+    return new DevCycle\Api\DevCycleClient(
+        sdkKey: getenv("LOCAL_MODE") == "" ? "dvc_server_" . $clientId : "dvc_server_test-harness-config",
         dvcOptions: $options
     );
 }
@@ -161,12 +165,12 @@ function parseParams($entityBody): array
             }
         } else {
             if ($type == "user") {
-                $user = new DevCycle\Model\UserData();
+                $user = new DevCycle\Model\DevCycleUser();
                 $user->setUserId($entityBody["user"]["user_id"]);
                 $user->setCustomData($entityBody["user"]["customData"]);
                 $ret[] = $user;
             } elseif ($type == "event") {
-                $event = new DevCycle\Model\Event();
+                $event = new DevCycle\Model\DevCycleEvent();
                 $event->setTarget($entityBody["event"]["target"]);
                 $event->setType($entityBody["event"]["type"]);
                 $event->setValue($entityBody["event"]["value"]);
@@ -179,19 +183,11 @@ function parseParams($entityBody): array
 
 function convertNativeTypes($val): string
 {
-    switch ($val) {
-        case "Number":
-        case "Integer":
-        case "Float":
-            return "Number";
-        case "Object":
-        case "Array":
-            return "JSON";
-        case "String":
-            return "String";
-        case "Boolean":
-            return "Boolean";
-        default:
-            return $val;
-    }
+    return match ($val) {
+        "Number", "Integer", "Float" => "Number",
+        "Object", "Array" => "JSON",
+        "String" => "String",
+        "Boolean" => "Boolean",
+        default => $val,
+    };
 }
