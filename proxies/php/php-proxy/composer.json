@@ -3,7 +3,7 @@
     "description": "Test Harness proxy for PHP",
     "type": "project",
     "require": {
-        "devcycle/php-server-sdk": "dev-main#349f4700d3b779337c9866c45d74116231ff127d",
+        "devcycle/php-server-sdk": "*",
         "open-feature/sdk": "^2.0"
     },
     "license": "MIT",
