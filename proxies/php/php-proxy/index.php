@@ -1,7 +1,11 @@
 <?php
 
+use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleEvent;
 use DevCycle\Model\DevCycleOptions;
 use DevCycle\Model\DevCycleUser;
+use JetBrains\PhpStorm\NoReturn;
+
 include 'vendor/autoload.php';
 
 $pathArgs = [];
@@ -40,7 +44,9 @@ function handleCommand(array $pathArgs, bool $isClient): void
         // user variable
         //$entityBody = json_decode('{"params":[{"type":"user"},{"value":"json-var"},{"value":{}}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"variable"}', true);
         // all variables
-        $entityBody = json_decode('{"params":[{"type":"user"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"allVariables"}', true);
+        //$entityBody = json_decode('{"params":[{"type":"user"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"allVariables"}', true);
+        // event track
+        $entityBody = json_decode('{"params":[{"type":"user"},{"type":"event"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"event":{"target":"user", "type":"customEvent", "value":0},"command":"track"}', true);
     }
 
     if (sizeof($pathArgs) < 3 && !$isClient) {
@@ -69,7 +75,7 @@ function handleCommand(array $pathArgs, bool $isClient): void
                     $variableKey = $params[1];
                     $defaultValue = gettype($params[2]) == "array" && sizeof(array_keys($params[2])) == 0 ? new ArrayObject() : $params[2];
                     $varr = $client->variable($user, $variableKey, $defaultValue);
-                    $isDefaulted = $varr->getIsDefaulted();
+                    $isDefaulted = $varr->isDefaulted();
                     $value = $varr->getValue();
                     $resp = [
                         "data" => [
@@ -95,7 +101,7 @@ function handleCommand(array $pathArgs, bool $isClient): void
                     echo json_encode($resp);
                     exit(200);
                 case "track":
-                    $user = new DevCycleUser($params[0]);
+                    $user = $params[0];
                     $event = $params[1];
                     $response = $client->track($user, $event);
                     echo json_encode($response);
@@ -134,13 +140,16 @@ function handleCommand(array $pathArgs, bool $isClient): void
 //    }
 }
 
-function handleSpec(): void
+/**
+ * @return void
+ */
+#[NoReturn] function handleSpec(): void
 {
     echo json_encode(["name" => "PHP", "version" => "1.0.0", "capabilities" => ["LocalBucketing", "CloudBucketing", "Events"]]);
     exit(200);
 }
 
-function buildClient(string $clientId)
+function buildClient(string $clientId): DevCycleClient
 {
     $options = new DevCycleOptions(
         bucketingApiHostname: getenv("LOCAL_MODE") == "" ? "http:/" . $clientId . "v1" : "http://localhost:8080",
@@ -165,12 +174,12 @@ function parseParams($entityBody): array
             }
         } else {
             if ($type == "user") {
-                $user = new DevCycle\Model\DevCycleUser();
+                $user = new DevCycleUser();
                 $user->setUserId($entityBody["user"]["user_id"]);
                 $user->setCustomData($entityBody["user"]["customData"]);
                 $ret[] = $user;
             } elseif ($type == "event") {
-                $event = new DevCycle\Model\DevCycleEvent();
+                $event = new DevCycleEvent();
                 $event->setTarget($entityBody["event"]["target"]);
                 $event->setType($entityBody["event"]["type"]);
                 $event->setValue($entityBody["event"]["value"]);
