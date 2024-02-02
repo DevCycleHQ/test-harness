@@ -4,6 +4,7 @@ use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleEvent;
 use DevCycle\Model\DevCycleOptions;
 use DevCycle\Model\DevCycleUser;
+use DevCycle\Model\ErrorResponse;
 use JetBrains\PhpStorm\NoReturn;
 
 include 'vendor/autoload.php';
@@ -46,7 +47,9 @@ function handleCommand(array $pathArgs, bool $isClient): void
         // all variables
         //$entityBody = json_decode('{"params":[{"type":"user"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"allVariables"}', true);
         // event track
-        $entityBody = json_decode('{"params":[{"type":"user"},{"type":"event"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"event":{"target":"user", "type":"customEvent", "value":0},"command":"track"}', true);
+        //$entityBody = json_decode('{"params":[{"type":"user"},{"type":"event"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"event":{"target":"user", "type":"customEvent", "value":0},"command":"track"}', true);
+        // event without type
+        $entityBody = json_decode('{"params":[{"type":"user"},{"type":"event"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"event":{"target":"user", "nottype":"customEvent", "value":0},"command":"track"}', true);
     }
 
     if (sizeof($pathArgs) < 3 && !$isClient) {
@@ -104,6 +107,14 @@ function handleCommand(array $pathArgs, bool $isClient): void
                     $user = $params[0];
                     $event = $params[1];
                     $response = $client->track($user, $event);
+                    if($response instanceof ErrorResponse) {
+                        $exception = [
+                            "exception" => $response->getMessage(),
+                            "statusCode" => 400
+                        ];
+                        echo json_encode($exception);
+                        exit(200);
+                    }
                     echo json_encode($response);
                     exit(200);
             }
@@ -174,15 +185,20 @@ function parseParams($entityBody): array
             }
         } else {
             if ($type == "user") {
-                $user = new DevCycleUser();
-                $user->setUserId($entityBody["user"]["user_id"]);
-                $user->setCustomData($entityBody["user"]["customData"]);
+                $user = new DevCycleUser(
+                    [
+                        "custom_data" => $entityBody["user"]["customData"],
+                        "user_id" => $entityBody["user"]["user_id"]
+                    ]);
                 $ret[] = $user;
             } elseif ($type == "event") {
-                $event = new DevCycleEvent();
-                $event->setTarget($entityBody["event"]["target"]);
-                $event->setType($entityBody["event"]["type"]);
-                $event->setValue($entityBody["event"]["value"]);
+                $event = new DevCycleEvent(
+                    [
+                        "target" => $entityBody["event"]["target"] ?? null,
+                        "type" => $entityBody["event"]["type"] ?? null,
+                        "value" => $entityBody["event"]["value"] ?? null
+                    ]);
+
                 $ret[] = $event;
             }
         }
