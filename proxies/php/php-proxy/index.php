@@ -1,6 +1,14 @@
 <?php
 
-require_once(__DIR__ . '/vendor/autoload.php');
+use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleEvent;
+use DevCycle\Model\DevCycleOptions;
+use DevCycle\Model\DevCycleUser;
+use DevCycle\Model\ErrorResponse;
+use JetBrains\PhpStorm\NoReturn;
+
+include 'vendor/autoload.php';
+
 $pathArgs = [];
 if (getenv("LOCAL_MODE") == "") {
     $pathArgs = explode('/', getenv('REQUEST_URI'));
@@ -11,10 +19,13 @@ if (getenv("LOCAL_MODE") == "") {
     switch ($pathArgs[1]) {
         case "spec":
             handleSpec();
+            break;
         case "client":
             handleCommand($pathArgs, true);
+            break;
         case "command":
             handleCommand($pathArgs, false);
+            break;
         default:
             exit(404);
     }
@@ -34,7 +45,11 @@ function handleCommand(array $pathArgs, bool $isClient): void
         // user variable
         //$entityBody = json_decode('{"params":[{"type":"user"},{"value":"json-var"},{"value":{}}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"variable"}', true);
         // all variables
-        $entityBody = json_decode('{"params":[{"type":"user"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"allVariables"}', true);
+        //$entityBody = json_decode('{"params":[{"type":"user"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"command":"allVariables"}', true);
+        // event track
+        //$entityBody = json_decode('{"params":[{"type":"user"},{"type":"event"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"event":{"target":"user", "type":"customEvent", "value":0},"command":"track"}', true);
+        // event without type
+        $entityBody = json_decode('{"params":[{"type":"user"},{"type":"event"}],"user":{"user_id":"user", "customData":{"should-bucket":true}},"event":{"target":"user", "nottype":"customEvent", "value":0},"command":"track"}', true);
     }
 
     if (sizeof($pathArgs) < 3 && !$isClient) {
@@ -63,7 +78,7 @@ function handleCommand(array $pathArgs, bool $isClient): void
                     $variableKey = $params[1];
                     $defaultValue = gettype($params[2]) == "array" && sizeof(array_keys($params[2])) == 0 ? new ArrayObject() : $params[2];
                     $varr = $client->variable($user, $variableKey, $defaultValue);
-                    $isDefaulted = $varr->getIsDefaulted();
+                    $isDefaulted = $varr->isDefaulted();
                     $value = $varr->getValue();
                     $resp = [
                         "data" => [
@@ -92,6 +107,14 @@ function handleCommand(array $pathArgs, bool $isClient): void
                     $user = $params[0];
                     $event = $params[1];
                     $response = $client->track($user, $event);
+                    if($response instanceof ErrorResponse) {
+                        $exception = [
+                            "exception" => $response->getMessage(),
+                            "statusCode" => 400
+                        ];
+                        echo json_encode($exception);
+                        exit(200);
+                    }
                     echo json_encode($response);
                     exit(200);
             }
@@ -128,21 +151,22 @@ function handleCommand(array $pathArgs, bool $isClient): void
 //    }
 }
 
-function handleSpec(): void
+/**
+ * @return void
+ */
+#[NoReturn] function handleSpec(): void
 {
     echo json_encode(["name" => "PHP", "version" => "1.0.0", "capabilities" => ["LocalBucketing", "CloudBucketing", "Events"]]);
     exit(200);
 }
 
-function buildClient(string $clientId)
+function buildClient(string $clientId): DevCycleClient
 {
-    $config = DevCycle\Configuration::getDefaultConfiguration()
-        ->setApiKey('Authorization', getenv("LOCAL_MODE") == "" ? "dvc_server_" . $clientId : "dvc_server_test-harness-config")
-        ->setHost(getenv("LOCAL_MODE") == "" ? "http:/" . $clientId . "v1" : "http://localhost:8080")
-        ->setUDSPath(getenv("LOCAL_MODE") == "" ? "/tmp/" . $clientId . ".sock" : "");
-    $options = new DevCycle\Model\DVCOptions(false);
-    return new DevCycle\Api\DVCClient(
-        $config,
+    $options = new DevCycleOptions(
+        bucketingApiHostname: getenv("LOCAL_MODE") == "" ? "http:/" . $clientId . "v1" : "http://localhost:8080",
+        unixSocketPath: getenv("LOCAL_MODE") == "" ? "/tmp/" . $clientId . ".sock" : "");
+    return new DevCycle\Api\DevCycleClient(
+        sdkKey: getenv("LOCAL_MODE") == "" ? "dvc_server_" . $clientId : "dvc_server_test-harness-config",
         dvcOptions: $options
     );
 }
@@ -161,15 +185,20 @@ function parseParams($entityBody): array
             }
         } else {
             if ($type == "user") {
-                $user = new DevCycle\Model\UserData();
-                $user->setUserId($entityBody["user"]["user_id"]);
-                $user->setCustomData($entityBody["user"]["customData"]);
+                $user = new DevCycleUser(
+                    [
+                        "custom_data" => $entityBody["user"]["customData"],
+                        "user_id" => $entityBody["user"]["user_id"]
+                    ]);
                 $ret[] = $user;
             } elseif ($type == "event") {
-                $event = new DevCycle\Model\Event();
-                $event->setTarget($entityBody["event"]["target"]);
-                $event->setType($entityBody["event"]["type"]);
-                $event->setValue($entityBody["event"]["value"]);
+                $event = new DevCycleEvent(
+                    [
+                        "target" => $entityBody["event"]["target"] ?? null,
+                        "type" => $entityBody["event"]["type"] ?? null,
+                        "value" => $entityBody["event"]["value"] ?? null
+                    ]);
+
                 $ret[] = $event;
             }
         }
@@ -179,19 +208,11 @@ function parseParams($entityBody): array
 
 function convertNativeTypes($val): string
 {
-    switch ($val) {
-        case "Number":
-        case "Integer":
-        case "Float":
-            return "Number";
-        case "Object":
-        case "Array":
-            return "JSON";
-        case "String":
-            return "String";
-        case "Boolean":
-            return "Boolean";
-        default:
-            return $val;
-    }
+    return match ($val) {
+        "Number", "Integer", "Float" => "Number",
+        "Object", "Array" => "JSON",
+        "String" => "String",
+        "Boolean" => "Boolean",
+        default => $val,
+    };
 }
