@@ -8,6 +8,7 @@
     "test:ci": "BUILDKIT_PROGRESS=plain yarn test --setupFiles=./ci-config.ts --reporters=default --reporters=jest-junit",
     "start:nodejs": "cd proxies/nodejs && NODE_PRESERVE_SYMLINKS=1 ts-node app.ts",
     "start:of-nodejs": "cd proxies/openfeature-nodejs && NODE_PRESERVE_SYMLINKS=1 ts-node app.ts",
+    "start:js-cloud": "cd proxies/js-cloud && NODE_PRESERVE_SYMLINKS=1 ts-node app.ts",
     "start:go": "cd proxies/go && go run .",
     "start:dotnet": "cd proxies/dotnet && dotnet run",
     "start:java": "cd proxies/java && ./gradlew bootRun",

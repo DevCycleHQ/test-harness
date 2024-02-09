@@ -29,6 +29,15 @@ const projects = [
     },
     {
         ...commonConfig,
+        displayName: 'JS-Cloud',
+        globals: {
+            JEST_PROJECT_SDK_TO_TEST: 'JS-Cloud',
+            LOCAL_HOST_BINDING: '0.0.0.0'
+        },
+        runner: 'jest-serial-runner'
+    },
+    {
+        ...commonConfig,
         displayName: 'DotNet',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'DotNet',
