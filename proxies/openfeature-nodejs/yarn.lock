@@ -14,52 +14,52 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:^1.14.0":
-  version: 1.14.0
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.14.0"
+"@devcycle/bucketing-assembly-script@npm:^1.16.0":
+  version: 1.16.0
+  resolution: "@devcycle/bucketing-assembly-script@npm:1.16.0"
   dependencies:
     protobufjs: ^7.2.5
-  checksum: c8bb3a83c26e02c58f6b7cf4415ae00833aa830eed74da284b33c95d8be3db3b1484377b53b941ed6526e313bf169a51881155e3e09524d6ab97172184e70e50
+  checksum: 7e4571d73491f412a5752a9c7d02d605be1223cec6d2d8d24abed3c0764b0a306a60a29df9761fcdc602198c0ff7c9eb72458aed07a51c6c4f3d0e9d1ab79c18
   languageName: node
   linkType: hard
 
-"@devcycle/js-cloud-server-sdk@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "@devcycle/js-cloud-server-sdk@npm:1.6.0"
+"@devcycle/js-cloud-server-sdk@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "@devcycle/js-cloud-server-sdk@npm:1.8.0"
   dependencies:
-    "@devcycle/types": ^1.7.0
+    "@devcycle/types": ^1.9.0
     cross-fetch: ^3.1.8
     fetch-retry: ^5.0.3
     lodash: ^4.17.21
-  checksum: 8fcf5914316f516993e9e9e403fc223dad9d3dedfd83cb4db5d756d73c7199d9a43502ac7a8d6507d21bc7ac0d5bf720181610396b659913c52346c146688a97
+  checksum: 395f97d8e5132acac4d29274cae05d3a693180f8b88c73ae500f9afa78461cb042809b0667618ec29b5e066fecbe8db114631ce99bfe3b4ab0e774779be9316f
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:^1.21.0":
-  version: 1.21.0
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.21.0"
+"@devcycle/nodejs-server-sdk@npm:^1.23.0":
+  version: 1.23.0
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.23.0"
   dependencies:
-    "@devcycle/bucketing-assembly-script": ^1.14.0
-    "@devcycle/js-cloud-server-sdk": ^1.6.0
-    "@devcycle/types": ^1.7.0
-    "@openfeature/core": ^0.0.23
-    "@openfeature/server-sdk": ^1.9.1
+    "@devcycle/bucketing-assembly-script": ^1.16.0
+    "@devcycle/js-cloud-server-sdk": ^1.8.0
+    "@devcycle/types": ^1.9.0
     cross-fetch: ^3.1.8
     fetch-retry: ^5.0.3
-  checksum: b0ab60d1fd300a8d66801bee2e9a664c783f8e1cfce4ec94c491bb9c2a007cabcbf45e83911cfb5f6b0bbdc6298bcbe882b6f645358f3c5bd582e6a4fa3baf38
+  peerDependencies:
+    "@openfeature/server-sdk": ^1.11.0
+  checksum: e1f0c4c888eeff60d6c019aabc3da3d87c2b6b3b3283f936bffe67192d5486dd01564d7179376a0d571691d46d443d8415d97c14585bca54460b9d8410f5ee1f
   languageName: node
   linkType: hard
 
-"@devcycle/types@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "@devcycle/types@npm:1.7.0"
+"@devcycle/types@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "@devcycle/types@npm:1.9.0"
   dependencies:
-    "@nestjs/class-validator": ^0.13.4
     class-transformer: 0.5.1
+    class-validator: 0.14.1
     iso-639-1: ^2.1.13
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
-  checksum: 66b54da7cda4f80e1824ff8c82658ce6b0b7608bcf09d92168d31334a3afbae0228e21c02baf30e63ac73768ed313052938085798f8e1144bf82ef72527023cd
+  checksum: c4491b8dc320bdde73df169896edc0922802e293392248aefb39263b2bf2ead2322a0eb976bb50d3d8be45539670ea367db680ed412fb2ed72696a05c4be9270
   languageName: node
   linkType: hard
 
@@ -87,29 +87,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/class-validator@npm:^0.13.4":
-  version: 0.13.4
-  resolution: "@nestjs/class-validator@npm:0.13.4"
-  dependencies:
-    libphonenumber-js: ^1.9.43
-    validator: ^13.7.0
-  checksum: 375f3a699ff4d4c801613df3968e13aad29bbca40955f085327f332a055777a3b048fa048c4b9813ced21fc8b501faa62e9a5cfaecc1bf2fb7d6aba2e0b821cc
+"@openfeature/core@npm:^0.0.25":
+  version: 0.0.25
+  resolution: "@openfeature/core@npm:0.0.25"
+  checksum: f5d09d0b1b24d997a3a3e5d11c08b655dbe16457e683963678d646b91814c40d4969efc2e1a9466a1ecb27ab00ca5df94634185e2252fcd9ab7c1e1691a09888
   languageName: node
   linkType: hard
 
-"@openfeature/core@npm:0.0.23, @openfeature/core@npm:^0.0.23":
-  version: 0.0.23
-  resolution: "@openfeature/core@npm:0.0.23"
-  checksum: 348c6abb7a2ff5ecb47c59191520a5f74bae42c7d14c5f2b710fc12973ad76585a651e5606a0ebf4cd2d6f4134c7d600ebf7ebc8c0668a0af8e05621e92664d4
-  languageName: node
-  linkType: hard
-
-"@openfeature/server-sdk@npm:1.9.1, @openfeature/server-sdk@npm:^1.9.1":
-  version: 1.9.1
-  resolution: "@openfeature/server-sdk@npm:1.9.1"
+"@openfeature/server-sdk@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@openfeature/server-sdk@npm:1.11.0"
   peerDependencies:
-    "@openfeature/core": 0.0.23
-  checksum: f445a1a75da8e564102d74586c1fe55467d577202ffb6585f409a1e4f0e64e5962db530730a3d60fbd28ffb4e3ac14c42dac15339222be476c3496ff8e81161d
+    "@openfeature/core": 0.0.25
+  checksum: cd5558f0a16340a0121e5ac004547c9629f59fba8ef8fe5e1e30e805a9a2171ba3b0f39cc475bfb8b6a88a0233331c136402b13277e0a82f6f8bcdda9106cf9b
   languageName: node
   linkType: hard
 
@@ -393,6 +383,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/validator@npm:^13.11.8":
+  version: 13.11.9
+  resolution: "@types/validator@npm:13.11.9"
+  checksum: c8d53c9e45479328ed72136d13ac80f13e8bb72ab0a6ae2e82802a55b6d84e045473267d8bf66546961f96ed0bbd0f310f317592dccc9fd11a2a81025c3571ce
+  languageName: node
+  linkType: hard
+
 "accepts@npm:^1.3.5":
   version: 1.3.8
   resolution: "accepts@npm:1.3.8"
@@ -457,6 +454,17 @@ __metadata:
   version: 0.5.1
   resolution: "class-transformer@npm:0.5.1"
   checksum: f191c8b4cc4239990f5efdd790cabdd852c243ed66248e39f6616a349c910c6eed2d9fd1fbf7ee6ea89f69b4f1d0b493b27347fe0cd0ae26b47c3745a805b6d3
+  languageName: node
+  linkType: hard
+
+"class-validator@npm:0.14.1":
+  version: 0.14.1
+  resolution: "class-validator@npm:0.14.1"
+  dependencies:
+    "@types/validator": ^13.11.8
+    libphonenumber-js: ^1.10.53
+    validator: ^13.9.0
+  checksum: bea808145c81ba3b185e1174d92f97a2d6ffef0558261217042552e9027222eadb9a9731a4418a07eaaa72ac334347df7a1079ff48eaadaa3ee6848a6a88995c
   languageName: node
   linkType: hard
 
@@ -814,10 +822,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libphonenumber-js@npm:^1.9.43":
-  version: 1.10.21
-  resolution: "libphonenumber-js@npm:1.10.21"
-  checksum: 0ffac0db4552eb1d39f8da8ee57cba20b1ad76a268f0e633c2dfcfe7db97d498cc6631c1ec4c1fc608944b866509d5b8e5039af878debec00b3a526946edebac
+"libphonenumber-js@npm:^1.10.53":
+  version: 1.10.55
+  resolution: "libphonenumber-js@npm:1.10.55"
+  checksum: 77439b07a80cc99ffc2a770d5238df8352a1404e3d4bb88b25daa1977ff77cce3cda67113170ba0cb97054463fed950947668f3f8076785c710a4d31c34e57ba
   languageName: node
   linkType: hard
 
@@ -989,9 +997,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": ^1.21.0
-    "@openfeature/core": 0.0.23
-    "@openfeature/server-sdk": 1.9.1
+    "@devcycle/nodejs-server-sdk": ^1.23.0
+    "@openfeature/core": ^0.0.25
+    "@openfeature/server-sdk": ^1.11.0
     "@types/koa": ^2.13.5
     "@types/koa-bodyparser": ^4.3.10
     "@types/koa-router": ^7.4.4
@@ -1152,10 +1160,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"validator@npm:^13.7.0":
-  version: 13.9.0
-  resolution: "validator@npm:13.9.0"
-  checksum: e2c936f041f61faa42bafd17c6faddf939498666cd82e88d733621c286893730b008959f4cb12ab3e236148a4f3805c30b85e3dcf5e0efd8b0cbcd36c02bfc0c
+"validator@npm:^13.9.0":
+  version: 13.11.0
+  resolution: "validator@npm:13.11.0"
+  checksum: d1e0c27022681420756da25bc03eb08d5f0c66fb008f8ff02ebc95812b77c6be6e03d3bd05cf80ca702e23eeb73dadd66b4b3683173ea2a0bc7cc72820bee131
   languageName: node
   linkType: hard
 

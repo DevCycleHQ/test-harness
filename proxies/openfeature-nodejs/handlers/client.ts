@@ -16,7 +16,6 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         clientId,
         sdkKey,
         enableCloudBucketing,
-        waitForInitialization,
         options
     } = <ClientRequestBody>ctx.request.body
 
@@ -35,7 +34,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         })
 
         try {
-            await OpenFeature.setProviderAndWait(dvcClient.getOpenFeatureProvider())
+            await OpenFeature.setProviderAndWait(await dvcClient.getOpenFeatureProvider())
         } catch (e) {
             asyncError = e
         }
