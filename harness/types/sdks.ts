@@ -3,7 +3,6 @@ export const Sdks = {
     'of-nodejs': 'OF-NodeJS',
     dotnet: 'DotNet',
     go: 'Go',
-    gowasm: 'GoWASM',
     ruby: 'Ruby',
     php: 'PHP',
     java: 'Java',

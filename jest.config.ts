@@ -45,14 +45,6 @@ const projects = [
     },
     {
         ...commonConfig,
-        displayName: 'GoWASM',
-        globals: {
-            JEST_PROJECT_SDK_TO_TEST: 'GoWASM',
-            LOCAL_HOST_BINDING: '0.0.0.0'
-        }
-    },
-    {
-        ...commonConfig,
         displayName: 'Ruby',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'Ruby',
