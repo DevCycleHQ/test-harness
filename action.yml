@@ -27,7 +27,7 @@ runs:
         SDK_GITHUB_SHA: ${{ inputs.sdk-github-sha }}
         SDKS_TO_TEST: ${{ inputs.sdks-to-test }}
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
         name: test-results
