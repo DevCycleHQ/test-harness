@@ -38,6 +38,7 @@ jobs:
         run: yarn add @devcycle/nodejs-server-sdk @openfeature/server-sdk @openfeature/core
 
       - name: Check for changes to package.json
+        shell: bash
         run: |
           IS_UPDATED=$(git diff --name-only origin/main package.json proxies/nodejs/package.json proxies/openfeature-nodejs/package.json | wc -l)
           if [ "$IS_UPDATED" -gt "0" ]; then
