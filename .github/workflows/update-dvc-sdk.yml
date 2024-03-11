@@ -30,16 +30,12 @@ jobs:
         run: yarn add @devcycle/types
 
       - name: Update node proxy SDK to latest
-        run: |
-          cd proxies/nodejs
-          yarn add @devcycle/nodejs-server-sdk
-          cd ../..
+        working-directory: proxies/nodejs
+        run: yarn add @devcycle/nodejs-server-sdk
 
       - name: update OF node proxy SDKs to latest
-        run: |
-          cd proxies/openfeature-nodejs/
-          yarn add @devcycle/nodejs-server-sdk @openfeature/server-sdk @openfeature/core
-          cd ../..
+        working-directory: proxies/openfeature-nodejs
+        run: yarn add @devcycle/nodejs-server-sdk @openfeature/server-sdk @openfeature/core
 
       - name: Check for changes to package.json
         run: |
