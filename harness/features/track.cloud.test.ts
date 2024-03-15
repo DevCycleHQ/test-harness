@@ -12,7 +12,7 @@ describe('Track Tests - Cloud', () => {
     const { sdkName, scope } = getSDKScope()
     const validUserId = 'user1'
 
-    const expectedPlatform = getPlatformBySdkName(sdkName, false)
+    const expectedPlatform = getPlatformBySdkName(sdkName)
 
     let client: CloudTestClient
 
