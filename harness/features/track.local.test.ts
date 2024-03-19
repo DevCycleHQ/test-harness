@@ -16,7 +16,7 @@ describe('Track Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
     const validUserId = 'user1'
 
-    const expectedPlatform = getPlatformBySdkName(sdkName, true)
+    const expectedPlatform = getPlatformBySdkName(sdkName)
 
     let url: string
     const eventFlushIntervalMS = 1000

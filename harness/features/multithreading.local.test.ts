@@ -27,7 +27,7 @@ const bucketedEventMetadata = {
 describe('Multithreading Tests', () => {
     const { sdkName, scope } = getSDKScope()
 
-    const expectedPlatform = getPlatformBySdkName(sdkName, true)
+    const expectedPlatform = getPlatformBySdkName(sdkName)
 
     describeCapability(sdkName, Capabilities.multithreading)(sdkName, () => {
         let testClient: LocalTestClient

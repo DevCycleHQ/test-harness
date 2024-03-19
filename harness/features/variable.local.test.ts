@@ -53,7 +53,7 @@ describe('Variable Tests - Local', () => {
     // it also returns our proxy scope that is used to mock endpoints that are called in the SDK.
     const { sdkName, scope } = getSDKScope()
 
-    const expectedPlatform = getPlatformBySdkName(sdkName, true)
+    const expectedPlatform = getPlatformBySdkName(sdkName)
 
     // This describeCapability only runs if the SDK has the "local" capability.
     // Capabilities are located under harness/types/capabilities and follow the same
