@@ -533,7 +533,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@devcycle/test-harness@workspace:."
   dependencies:
-    "@devcycle/types": ^1.9.1
+    "@devcycle/types": ^1.9.2
     "@eresearchqut/jest-testcontainers": ^3.2.0
     "@koa/router": ^12.0.0
     "@types/jest": ^29.2.3
@@ -558,16 +558,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@devcycle/types@npm:^1.9.1":
-  version: 1.9.1
-  resolution: "@devcycle/types@npm:1.9.1"
+"@devcycle/types@npm:^1.9.2":
+  version: 1.9.2
+  resolution: "@devcycle/types@npm:1.9.2"
   dependencies:
     class-transformer: 0.5.1
     class-validator: 0.14.1
     iso-639-1: ^2.1.13
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
-  checksum: 29d67e8556763296445f17a14f10d55175f3cf7db29e09b560e7699ceaf84f9609eb563e94470de43fdd528c6a34b39dafefdbe05aaf514609dc8f5762d90233
+  checksum: 84ebd37a2b347376696c47caaeb957960581c04016b56254a87b277ef8a26d8332edfae9e45cb1f879407f9f58f3850e96a571eec68af64891069aeb63aff688
   languageName: node
   linkType: hard
 
