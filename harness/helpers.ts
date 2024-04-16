@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 const oldFetch = fetch
 
+Object.defineProperty(global, 'fetch', { writable: true })
 global.fetch = async (url, ...args) => {
     try {
         return await oldFetch(url, ...args)
