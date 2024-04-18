@@ -1,6 +1,6 @@
 import { Interceptor, Scope } from 'nock'
-import { SDKCapabilities, Sdks } from './types'
-import { getServerScope, resetServerScope } from './nock'
+import { SDKCapabilities, Sdks } from '../types'
+import { getServerScope, resetServerScope } from '../nock'
 import { v4 as uuidv4 } from 'uuid'
 
 const oldFetch = fetch

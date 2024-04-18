@@ -6,6 +6,7 @@ export const Capabilities = {
     sse: 'SSE',
     clientCustomData: 'ClientCustomData',
     multithreading: 'Multithreading',
+    defaultReason: 'DefaultReason',
     variableValue: 'VariableValue',
     cloudProxy: 'CloudProxy',
 }
@@ -31,7 +32,7 @@ export const SDKCapabilities = {
     ],
     Go: [
         Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData,
-        Capabilities.multithreading, Capabilities.variableValue
+        Capabilities.multithreading, Capabilities.variableValue, Capabilities.defaultReason
     ],
     Ruby: [
         Capabilities.events, Capabilities.local, Capabilities.clientCustomData, Capabilities.variableValue

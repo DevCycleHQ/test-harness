@@ -4,7 +4,7 @@ import {
     describeCapability,
     waitForRequest,
     getSDKScope
-} from '../helpers'
+} from '../helpers/helpers'
 import { Capabilities } from '../types'
 import { config, variables } from '../mockData'
 import { Interceptor } from 'nock'

@@ -1,4 +1,4 @@
-import { getSDKs } from './harness/helpers'
+import { getSDKs } from './harness/helpers/helpers'
 
 const commonConfig = {
     preset: '@eresearchqut/jest-testcontainers',

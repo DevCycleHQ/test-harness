@@ -4,11 +4,11 @@ import {
     getSDKScope,
     LocalTestClient,
     waitForRequest
-} from '../helpers'
+} from '../helpers/helpers'
 import { Capabilities } from '../types'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
-import { optionalEventFields, optionalUserEventFields } from '../mockData/events'
+import { expectAggregateDefaultEvent, expectAggregateEvaluationEvent } from '../helpers'
 
 const expectedVariable = {
     key: 'string-var',
@@ -89,7 +89,7 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends an "aggVariableEvaluated" event
                 // for the variable call
-                expectEventBody(eventBody, key, 'aggVariableEvaluated')
+                expectAggregateEvaluationEvent(eventBody, key, bucketedEventMetadata._feature, bucketedEventMetadata._variation)
             })
 
             it('should aggregate events across threads', async () => {
@@ -137,7 +137,7 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
-                expectEventBody(eventBodies[0], key, 'aggVariableEvaluated', 4)
+                expectAggregateEvaluationEvent(eventBodies[0], key, bucketedEventMetadata._feature, bucketedEventMetadata._variation, 4)
             })
 
             it('should retry events across threads', async () => {
@@ -187,7 +187,7 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
-                expectEventBody(eventBodies[0], key, 'aggVariableEvaluated', 4)
+                expectAggregateEvaluationEvent(eventBodies[0], key, bucketedEventMetadata._feature, bucketedEventMetadata._variation, 4)
             })
 
             describeCapability(sdkName, Capabilities.clientCustomData)(sdkName, () => {
@@ -267,41 +267,10 @@ describe('Multithreading Tests', () => {
                 expectDefaultValue(key, variable, defaultValue, variableType)
 
                 await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-                expectEventBody(eventBody, key, 'aggVariableDefaulted', 1)
+                expectAggregateDefaultEvent(eventBody, key, 'CONFIG_MISSING', 1)
             })
         })
     })
-
-    const expectEventBody = (
-        body: Record<string, unknown>,
-        variableId: string,
-        eventType: string,
-        value?: number
-    ) => {
-        expect(body).toEqual({
-            batch: [{
-                user: {
-                    ...optionalUserEventFields,
-                    user_id: expect.any(String),
-                    platform: expectedPlatform,
-                    sdkType: 'server'
-                },
-                events: [
-                    {
-                        ...optionalEventFields,
-                        user_id: expect.any(String),
-                        type: eventType,
-                        target: variableId,
-                        metaData: eventType === 'aggVariableEvaluated' ? bucketedEventMetadata : expect.toBeNil(),
-                        // featureVars is always empty for aggregated evaluation events
-                        featureVars: {},
-                        value: value !== undefined ? value : 1,
-                        customType: expect.toBeNil()
-                    }
-                ]
-            }]
-        })
-    }
 
     type ValueTypes = string | boolean | number | JSON
 

@@ -4,7 +4,7 @@ import {
     describeCapability,
     expectErrorMessageToBe,
     getSDKScope
-} from '../helpers'
+} from '../helpers/helpers'
 import { Capabilities } from '../types'
 import { variables } from '../mockData'
 

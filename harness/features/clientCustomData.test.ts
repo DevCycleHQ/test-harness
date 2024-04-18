@@ -5,7 +5,7 @@ import {
     hasCapability,
     waitForRequest,
     getSDKScope
-} from '../helpers'
+} from '../helpers/helpers'
 import { Capabilities } from '../types'
 import { config } from '../mockData'
 

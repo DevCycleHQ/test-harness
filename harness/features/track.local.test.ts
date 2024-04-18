@@ -7,7 +7,7 @@ import {
     expectErrorMessageToBe,
     getPlatformBySdkName,
     getSDKScope,
-} from '../helpers'
+} from '../helpers/helpers'
 import { Capabilities } from '../types'
 import { config } from '../mockData'
 import { optionalEventFields, optionalUserEventFields } from '../mockData/events'
