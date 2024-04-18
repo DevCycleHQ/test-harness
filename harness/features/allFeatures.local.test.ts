@@ -2,7 +2,7 @@ import {
     LocalTestClient,
     describeCapability,
     getSDKScope
-} from '../helpers/helpers'
+} from '../helpers'
 import { Capabilities } from '../types'
 import { config, expectedFeaturesVariationOn } from '../mockData/config'
 

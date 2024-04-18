@@ -5,7 +5,7 @@ import {
     expectErrorMessageToBe,
     getPlatformBySdkName,
     getSDKScope,
-} from '../helpers/helpers'
+} from '../helpers'
 import { Capabilities } from '../types'
 
 describe('Track Tests - Cloud', () => {

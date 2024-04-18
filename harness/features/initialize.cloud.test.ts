@@ -4,7 +4,7 @@ import {
     describeCapability,
     expectErrorMessageToBe,
     getSDKScope
-} from '../helpers/helpers'
+} from '../helpers'
 import { Capabilities } from '../types'
 
 describe('Client Initialize Tests - Cloud', () => {

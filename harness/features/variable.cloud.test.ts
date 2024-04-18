@@ -6,7 +6,7 @@ import {
     expectErrorMessageToBe,
     getSDKScope,
     cleanupCurrentClient
-} from '../helpers/helpers'
+} from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 
 describe('Variable Tests - Cloud', () => {

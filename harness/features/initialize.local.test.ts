@@ -5,7 +5,7 @@ import {
     expectErrorMessageToBe,
     hasCapability,
     getSDKScope
-} from '../helpers/helpers'
+} from '../helpers'
 import { Capabilities } from '../types'
 import { config, shouldBucketUser } from '../mockData'
 

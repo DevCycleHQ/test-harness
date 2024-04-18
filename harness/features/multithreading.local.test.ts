@@ -4,7 +4,7 @@ import {
     getSDKScope,
     LocalTestClient,
     waitForRequest
-} from '../helpers/helpers'
+} from '../helpers'
 import { Capabilities } from '../types'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'

@@ -6,7 +6,7 @@ import {
     hasCapability,
     LocalTestClient,
     waitForRequest
-} from '../helpers/helpers'
+} from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'

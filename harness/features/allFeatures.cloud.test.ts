@@ -3,7 +3,7 @@ import {
     describeCapability,
     expectErrorMessageToBe,
     getSDKScope,
-} from '../helpers/helpers'
+} from '../helpers'
 import { Capabilities } from '../types'
 import { expectedFeaturesVariationOn } from '../mockData'
 
