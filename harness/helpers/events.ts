@@ -1,5 +1,5 @@
 import { optionalEventFields, optionalUserEventFields } from '../mockData/events'
-import { getPlatformBySdkName, getSDKScope, hasCapability } from './helpers'
+import { getPlatformBySdkName, getSDKName, hasCapability } from './helpers'
 import { Capabilities } from '../types'
 
 export const expectAggregateEvaluationEvent = (
@@ -9,7 +9,7 @@ export const expectAggregateEvaluationEvent = (
     variationId: string,
     value?: number
 ) => {
-    const { sdkName,  } = getSDKScope()
+    const sdkName = getSDKName()
     const expectedPlatform = getPlatformBySdkName(sdkName)
 
     expect(body).toEqual({
@@ -46,7 +46,7 @@ export const expectAggregateDefaultEvent = (
     defaultReason: string,
 value?: number,
 ) => {
-    const { sdkName,  } = getSDKScope()
+    const sdkName = getSDKName()
     const expectedPlatform = getPlatformBySdkName(sdkName)
 
     expect(body).toEqual({

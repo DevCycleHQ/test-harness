@@ -63,6 +63,8 @@ export const getSDKs = () => {
     }
 }
 
+export const getSDKName = () => global.JEST_PROJECT_SDK_TO_TEST
+
 /**
  * This is used within the jest tests to fetch the running SDK environment for the current jest project.
  * See `jest.config.ts` for more details on all projects. We also use this function to get the current nock server scope
