@@ -19,10 +19,8 @@ const expectedVariable = {
 
 const variableType = VariableType.string
 
-const bucketedEventMetadata = {
-    _feature: '638680d6fcb67b96878d90e6',
-    _variation: '638680d6fcb67b96878d90ec'
-}
+const featureId = '638680d6fcb67b96878d90e6'
+const variationId = '638680d6fcb67b96878d90ec'
 
 describe('Multithreading Tests', () => {
     const { sdkName, scope } = getSDKScope()
@@ -89,7 +87,7 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends an "aggVariableEvaluated" event
                 // for the variable call
-                expectAggregateEvaluationEvent(eventBody, key, bucketedEventMetadata._feature, bucketedEventMetadata._variation)
+                expectAggregateEvaluationEvent(eventBody, key, featureId, variationId)
             })
 
             it('should aggregate events across threads', async () => {
@@ -137,7 +135,7 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
-                expectAggregateEvaluationEvent(eventBodies[0], key, bucketedEventMetadata._feature, bucketedEventMetadata._variation, 4)
+                expectAggregateEvaluationEvent(eventBodies[0], key, featureId, variationId, 4)
             })
 
             it('should retry events across threads', async () => {
@@ -187,7 +185,7 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
-                expectAggregateEvaluationEvent(eventBodies[0], key, bucketedEventMetadata._feature, bucketedEventMetadata._variation, 4)
+                expectAggregateEvaluationEvent(eventBodies[0], key, featureId, variationId, 4)
             })
 
             describeCapability(sdkName, Capabilities.clientCustomData)(sdkName, () => {

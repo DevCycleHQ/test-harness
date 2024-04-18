@@ -43,10 +43,8 @@ const expectedVariablesByType = {
     }
 }
 
-const bucketedEventMetadata = {
-    _feature: '638680d6fcb67b96878d90e6',
-    _variation: '638680d6fcb67b96878d90ec'
-}
+const featureId = '638680d6fcb67b96878d90e6'
+const variationId = '638680d6fcb67b96878d90ec'
 
 describe('Variable Tests - Local', () => {
     // This helper method fetches the current SDK we are testing for the current jest project (see jest.config.js).
@@ -144,7 +142,7 @@ describe('Variable Tests - Local', () => {
 
                         // Expect that the SDK sends an "aggVariableEvaluated" event
                         // for the variable call
-                        expectAggregateEvaluationEvent(eventResult.body, key, bucketedEventMetadata._feature, bucketedEventMetadata._variation)
+                        expectAggregateEvaluationEvent(eventResult.body, key, featureId, variationId)
                     }
                 )
 
@@ -184,7 +182,7 @@ describe('Variable Tests - Local', () => {
                     if (!hasCapability(sdkName, Capabilities.cloudProxy)) {
                         expectAggregateDefaultEvent(eventResult.body, key, 'USER_NOT_TARGETED')
                     } else {
-                        expectAggregateEvaluationEvent(eventResult.body, key, bucketedEventMetadata._feature, bucketedEventMetadata._variation)
+                        expectAggregateEvaluationEvent(eventResult.body, key, featureId, variationId)
                     }
                 })
 
@@ -285,7 +283,7 @@ describe('Variable Tests - Local', () => {
                         return
                     }
                     await eventResult.wait()
-                    expectAggregateEvaluationEvent(eventResult.body, key, bucketedEventMetadata._feature, bucketedEventMetadata._variation, 2)
+                    expectAggregateEvaluationEvent(eventResult.body, key, featureId, variationId, 2)
 
                 })
             })
@@ -320,7 +318,7 @@ describe('Variable Tests - Local', () => {
                 }
 
                 await eventResult.wait()
-                expectAggregateEvaluationEvent(eventResult.body, 'unicode-var', bucketedEventMetadata._feature, bucketedEventMetadata._variation, 1)
+                expectAggregateEvaluationEvent(eventResult.body, 'unicode-var', featureId, variationId, 1)
             })
         })
 
