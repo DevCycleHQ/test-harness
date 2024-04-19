@@ -178,7 +178,7 @@ describe('Variable Tests - Local', () => {
                     // Expects that the SDK sends an "aggVariableDefaulted" event for the
                     // defaulted variable
                     if (!hasCapability(sdkName, Capabilities.cloudProxy)) {
-                        expectAggregateDefaultEvent(eventResult.body, key, 'USER_NOT_TARGETED')
+                        expectAggregateDefaultEvent(eventResult.body, key, 'INVALID_VARIABLE_TYPE')
                     } else {
                         expectAggregateEvaluationEvent(eventResult.body, key, featureId, variationId)
                     }
@@ -229,7 +229,7 @@ describe('Variable Tests - Local', () => {
 
                         await eventResult.wait()
 
-                        expectAggregateDefaultEvent(eventResult.body, 'nonexistent', 'VARIABLE_MISSING')
+                        expectAggregateDefaultEvent(eventResult.body, 'nonexistent', 'MISSING_VARIABLE')
                     }
                 )
 
@@ -256,7 +256,7 @@ describe('Variable Tests - Local', () => {
                     }
 
                     await eventResult.wait()
-                    expectAggregateDefaultEvent(eventResult.body, 'nonexistent', 'VARIABLE_MISSING', 2)
+                    expectAggregateDefaultEvent(eventResult.body, 'nonexistent', 'MISSING_VARIABLE', 2)
                 })
 
                 it.each(callVariableMethods)('should aggregate aggVariableEvaluated events for %s', async (method) => {
