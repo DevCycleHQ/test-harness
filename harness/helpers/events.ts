@@ -60,7 +60,7 @@ export const expectAggregateDefaultEvent = ({body, variableKey, defaultReason, v
     const expectedPlatform = getPlatformBySdkName(sdkName)
     const metadata: Record<string, unknown> = hasCapability(sdkName, Capabilities.defaultReason) ? { defaultReason } : {}
     if (hasCapability(sdkName, Capabilities.etagReporting)) {
-        if (etag) {
+        if (etag != null) {
             metadata.configEtag = etag
         }
         metadata.clientUUID = expect.any(String)
