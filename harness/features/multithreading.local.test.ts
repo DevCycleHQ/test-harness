@@ -37,7 +37,7 @@ describe('Multithreading Tests', () => {
 
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                    .reply(200, config)
+                    .reply(200, config, {ETag: 'multithreading-etag'})
 
                 await testClient.createClient(true, {
                     configPollingIntervalMS: 100000,
@@ -87,7 +87,7 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends an "aggVariableEvaluated" event
                 // for the variable call
-                expectAggregateEvaluationEvent(eventBody, key, featureId, variationId)
+                expectAggregateEvaluationEvent({body: eventBody, variableKey: key, featureId, variationId, etag: 'multithreading-etag'})
             })
 
             it('should aggregate events across threads', async () => {
@@ -135,7 +135,7 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
-                expectAggregateEvaluationEvent(eventBodies[0], key, featureId, variationId, 4)
+                expectAggregateEvaluationEvent({body: eventBodies[0], variableKey: key, featureId, variationId, value: 4, etag: 'multithreading-etag'})
             })
 
             it('should retry events across threads', async () => {
@@ -185,7 +185,7 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
-                expectAggregateEvaluationEvent(eventBodies[0], key, featureId, variationId, 4)
+                expectAggregateEvaluationEvent({body: eventBodies[0], variableKey: key, featureId, variationId, value: 4, etag: 'multithreading-etag'})
             })
 
             describeCapability(sdkName, Capabilities.clientCustomData)(sdkName, () => {
@@ -265,7 +265,7 @@ describe('Multithreading Tests', () => {
                 expectDefaultValue(key, variable, defaultValue, variableType)
 
                 await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-                expectAggregateDefaultEvent(eventBody, key, 'MISSING_CONFIG', 1)
+                expectAggregateDefaultEvent({body: eventBody, variableKey: key, defaultReason: 'MISSING_CONFIG', etag: null})
             })
         })
     })

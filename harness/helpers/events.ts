@@ -2,16 +2,28 @@ import { optionalEventFields, optionalUserEventFields } from '../mockData/events
 import { getPlatformBySdkName, getSDKName, hasCapability } from './helpers'
 import { Capabilities } from '../types'
 
-export const expectAggregateEvaluationEvent = (
-    body: Record<string, unknown>,
-    variableId: string,
-    featureId: string,
-    variationId: string,
-    value?: number
-) => {
+export const expectAggregateEvaluationEvent = ({
+    body,
+    variableKey,
+    variationId,
+    featureId,
+    value,
+    etag
+}: {
+   body: Record<string, unknown>,
+   variableKey: string,
+   featureId: string,
+   variationId: string,
+   etag: string,
+   value?: number
+}) => {
     const sdkName = getSDKName()
     const expectedPlatform = getPlatformBySdkName(sdkName)
-
+    const metadata: Record<string, unknown> = {_feature: featureId, _variation: variationId}
+    if (hasCapability(sdkName, Capabilities.etagReporting)) {
+        metadata.configEtag = etag
+        metadata.clientUUID = expect.any(String)
+    }
     expect(body).toEqual({
         batch: [{
             user: {
@@ -25,11 +37,8 @@ export const expectAggregateEvaluationEvent = (
                     ...optionalEventFields,
                     user_id: expect.any(String),
                     type: 'aggVariableEvaluated',
-                    target: variableId,
-                    metaData: {
-                        _feature: featureId,
-                        _variation: variationId
-                    },
+                    target: variableKey,
+                    metaData: metadata,
                     // featureVars is always empty for aggregated evaluation events
                     featureVars: {},
                     value: value !== undefined ? value : 1,
@@ -40,14 +49,22 @@ export const expectAggregateEvaluationEvent = (
     })
 }
 
-export const expectAggregateDefaultEvent = (
+export const expectAggregateDefaultEvent = ({body, variableKey, defaultReason, value, etag}: {
     body: Record<string, unknown>,
-    variableId: string,
+    variableKey: string,
     defaultReason: string,
-value?: number,
-) => {
+    etag: string | null,
+    value?: number,
+}) => {
     const sdkName = getSDKName()
     const expectedPlatform = getPlatformBySdkName(sdkName)
+    const metadata: Record<string, unknown> = hasCapability(sdkName, Capabilities.defaultReason) ? { defaultReason } : {}
+    if (hasCapability(sdkName, Capabilities.etagReporting)) {
+        if (etag != null) {
+            metadata.configEtag = etag
+        }
+        metadata.clientUUID = expect.any(String)
+    }
 
     expect(body).toEqual({
         batch: [{
@@ -62,8 +79,8 @@ value?: number,
                     ...optionalEventFields,
                     user_id: expect.any(String),
                     type: 'aggVariableDefaulted',
-                    target: variableId,
-                    metaData: hasCapability(sdkName, Capabilities.defaultReason) ? { defaultReason } : expect.toBeNil(),
+                    target: variableKey,
+                    metaData: Object.keys(metadata).length ? metadata : expect.toBeNil(),
                     // featureVars is always empty for aggregated evaluation events
                     featureVars: {},
                     value: value !== undefined ? value : 1,
