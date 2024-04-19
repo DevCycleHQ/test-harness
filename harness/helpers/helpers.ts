@@ -1,6 +1,6 @@
 import { Interceptor, Scope } from 'nock'
-import { SDKCapabilities, Sdks } from './types'
-import { getServerScope, resetServerScope } from './nock'
+import { SDKCapabilities, Sdks } from '../types'
+import { getServerScope, resetServerScope } from '../nock'
 import { v4 as uuidv4 } from 'uuid'
 
 const oldFetch = fetch
@@ -62,6 +62,8 @@ export const getSDKs = () => {
         }
     }
 }
+
+export const getSDKName = () => global.JEST_PROJECT_SDK_TO_TEST
 
 /**
  * This is used within the jest tests to fetch the running SDK environment for the current jest project.

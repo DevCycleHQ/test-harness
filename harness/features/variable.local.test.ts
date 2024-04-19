@@ -11,6 +11,7 @@ import { Capabilities, SDKCapabilities } from '../types'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
 import { optionalEventFields, optionalUserEventFields } from '../mockData/events'
+import { expectAggregateDefaultEvent, expectAggregateEvaluationEvent } from '../helpers'
 
 const expectedVariablesByType = {
     // these should match the config in mockData
@@ -42,18 +43,14 @@ const expectedVariablesByType = {
     }
 }
 
-const bucketedEventMetadata = {
-    _feature: '638680d6fcb67b96878d90e6',
-    _variation: '638680d6fcb67b96878d90ec'
-}
+const featureId = '638680d6fcb67b96878d90e6'
+const variationId = '638680d6fcb67b96878d90ec'
 
 describe('Variable Tests - Local', () => {
     // This helper method fetches the current SDK we are testing for the current jest project (see jest.config.js).
     // All supported SDKs can be found under harness/types/sdks.ts
     // it also returns our proxy scope that is used to mock endpoints that are called in the SDK.
     const { sdkName, scope } = getSDKScope()
-
-    const expectedPlatform = getPlatformBySdkName(sdkName)
 
     // This describeCapability only runs if the SDK has the "local" capability.
     // Capabilities are located under harness/types/capabilities and follow the same
@@ -143,7 +140,7 @@ describe('Variable Tests - Local', () => {
 
                         // Expect that the SDK sends an "aggVariableEvaluated" event
                         // for the variable call
-                        expectEventBody(eventResult.body, key, 'aggVariableEvaluated')
+                        expectAggregateEvaluationEvent(eventResult.body, key, featureId, variationId)
                     }
                 )
 
@@ -181,9 +178,9 @@ describe('Variable Tests - Local', () => {
                     // Expects that the SDK sends an "aggVariableDefaulted" event for the
                     // defaulted variable
                     if (!hasCapability(sdkName, Capabilities.cloudProxy)) {
-                        expectEventBody(eventResult.body, key, 'aggVariableDefaulted')
+                        expectAggregateDefaultEvent(eventResult.body, key, 'USER_NOT_TARGETED')
                     } else {
-                        expectEventBody(eventResult.body, key, 'aggVariableEvaluated')
+                        expectAggregateEvaluationEvent(eventResult.body, key, featureId, variationId)
                     }
                 })
 
@@ -207,7 +204,7 @@ describe('Variable Tests - Local', () => {
 
                         await eventResult.wait()
 
-                        expectEventBody(eventResult.body, key, 'aggVariableDefaulted')
+                        expectAggregateDefaultEvent(eventResult.body, key, 'USER_NOT_TARGETED')
                     }
                 )
 
@@ -232,7 +229,7 @@ describe('Variable Tests - Local', () => {
 
                         await eventResult.wait()
 
-                        expectEventBody(eventResult.body, 'nonexistent', 'aggVariableDefaulted')
+                        expectAggregateDefaultEvent(eventResult.body, 'nonexistent', 'VARIABLE_MISSING')
                     }
                 )
 
@@ -259,7 +256,7 @@ describe('Variable Tests - Local', () => {
                     }
 
                     await eventResult.wait()
-                    expectEventBody(eventResult.body, 'nonexistent', 'aggVariableDefaulted', 2)
+                    expectAggregateDefaultEvent(eventResult.body, 'nonexistent', 'VARIABLE_MISSING', 2)
                 })
 
                 it.each(callVariableMethods)('should aggregate aggVariableEvaluated events for %s', async (method) => {
@@ -284,7 +281,8 @@ describe('Variable Tests - Local', () => {
                         return
                     }
                     await eventResult.wait()
-                    expectEventBody(eventResult.body, key, 'aggVariableEvaluated', 2)
+                    expectAggregateEvaluationEvent(eventResult.body, key, featureId, variationId, 2)
+
                 })
             })
 
@@ -318,7 +316,7 @@ describe('Variable Tests - Local', () => {
                 }
 
                 await eventResult.wait()
-                expectEventBody(eventResult.body, 'unicode-var', 'aggVariableEvaluated', 1)
+                expectAggregateEvaluationEvent(eventResult.body, 'unicode-var', featureId, variationId, 1)
             })
         })
 
@@ -366,7 +364,7 @@ describe('Variable Tests - Local', () => {
                         }
 
                         await eventResult.wait()
-                        expectEventBody(eventResult.body, key, 'aggVariableDefaulted', 1)
+                        expectAggregateDefaultEvent(eventResult.body, key, 'CONFIG_MISSING', 1)
                     }
                 )
 
@@ -408,42 +406,11 @@ describe('Variable Tests - Local', () => {
                         }
 
                         await eventResult.wait()
-                        expectEventBody(eventResult.body, key, 'aggVariableDefaulted', 1)
+                        expectAggregateDefaultEvent(eventResult.body, key, "CONFIG_MISSING", 1)
                     }
                 )
             })
         })
-
-        const expectEventBody = (
-            body: Record<string, unknown>,
-            variableId: string,
-            eventType: string,
-            value?: number
-        ) => {
-            expect(body).toEqual({
-                batch: [{
-                    user: {
-                        ...optionalUserEventFields,
-                        user_id: expect.any(String),
-                        platform: expectedPlatform,
-                        sdkType: 'server'
-                    },
-                    events: [
-                        {
-                            ...optionalEventFields,
-                            user_id: expect.any(String),
-                            type: eventType,
-                            target: variableId,
-                            metaData: eventType === 'aggVariableEvaluated' ? bucketedEventMetadata : expect.toBeNil(),
-                            // featureVars is always empty for aggregated evaluation events
-                            featureVars: {},
-                            value: value !== undefined ? value : 1,
-                            customType: expect.toBeNil()
-                        }
-                    ]
-                }]
-            })
-        }
     })
 
     type ValueTypes = string | boolean | number | JSON
