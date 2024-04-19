@@ -265,7 +265,7 @@ describe('Multithreading Tests', () => {
                 expectDefaultValue(key, variable, defaultValue, variableType)
 
                 await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-                expectAggregateDefaultEvent(eventBody, key, 'CONFIG_MISSING', 1)
+                expectAggregateDefaultEvent(eventBody, key, 'MISSING_CONFIG', 1)
             })
         })
     })
