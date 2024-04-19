@@ -364,7 +364,7 @@ describe('Variable Tests - Local', () => {
                         }
 
                         await eventResult.wait()
-                        expectAggregateDefaultEvent(eventResult.body, key, 'CONFIG_MISSING', 1)
+                        expectAggregateDefaultEvent(eventResult.body, key, 'MISSING_CONFIG', 1)
                     }
                 )
 
@@ -406,7 +406,7 @@ describe('Variable Tests - Local', () => {
                         }
 
                         await eventResult.wait()
-                        expectAggregateDefaultEvent(eventResult.body, key, "CONFIG_MISSING", 1)
+                        expectAggregateDefaultEvent(eventResult.body, key, "MISSING_CONFIG", 1)
                     }
                 )
             })
