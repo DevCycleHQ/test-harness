@@ -87,7 +87,13 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends an "aggVariableEvaluated" event
                 // for the variable call
-                expectAggregateEvaluationEvent({body: eventBody, variableKey: key, featureId, variationId, etag: 'multithreading-etag'})
+                expectAggregateEvaluationEvent({
+                    body: eventBody,
+                    variableKey: key,
+                    featureId,
+                    variationId,
+                    etag: 'multithreading-etag'
+                })
             })
 
             it('should aggregate events across threads', async () => {
@@ -135,7 +141,14 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
-                expectAggregateEvaluationEvent({body: eventBodies[0], variableKey: key, featureId, variationId, value: 4, etag: 'multithreading-etag'})
+                expectAggregateEvaluationEvent({
+                    body: eventBodies[0],
+                    variableKey: key,
+                    featureId,
+                    variationId,
+                    value: 4,
+                    etag: 'multithreading-etag'
+                })
             })
 
             it('should retry events across threads', async () => {
@@ -185,7 +198,14 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
-                expectAggregateEvaluationEvent({body: eventBodies[0], variableKey: key, featureId, variationId, value: 4, etag: 'multithreading-etag'})
+                expectAggregateEvaluationEvent({
+                    body: eventBodies[0],
+                    variableKey: key,
+                    featureId,
+                    variationId,
+                    value: 4,
+                    etag: 'multithreading-etag'
+                })
             })
 
             describeCapability(sdkName, Capabilities.clientCustomData)(sdkName, () => {
@@ -265,7 +285,12 @@ describe('Multithreading Tests', () => {
                 expectDefaultValue(key, variable, defaultValue, variableType)
 
                 await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-                expectAggregateDefaultEvent({body: eventBody, variableKey: key, defaultReason: 'MISSING_CONFIG', etag: null})
+                expectAggregateDefaultEvent({
+                    body: eventBody,
+                    variableKey: key,
+                    defaultReason: 'MISSING_CONFIG',
+                    etag: ''
+                })
             })
         })
     })
