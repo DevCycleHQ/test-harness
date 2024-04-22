@@ -35,13 +35,24 @@ export function initialize() {
     router.all('/(.*)', async (ctx) => {
         const { headers, request } = ctx
         try {
-            const response = await axios[request.method.toLowerCase()](`https://myfakenockurl${ctx.request.url}`,
-                request.body,
-                {
-                    headers
-                })
+            let response: any
+            if (request.method.toLowerCase() === 'get') {
+                response = await axios.get(`https://myfakenockurl${ctx.request.url}`,
+                    {
+                        headers
+                    })
+            } else {
+                response = await axios[request.method.toLowerCase()](`https://myfakenockurl${ctx.request.url}`,
+                    request.body,
+                    {
+                        headers
+                    })
+            }
             ctx.body = response.data
             ctx.status = response.status
+            for (const header in response.headers) {
+                ctx.set(header, response.headers[header])
+            }
         } catch (error) {
             if (error.response) {
                 ctx.body = error.response.data

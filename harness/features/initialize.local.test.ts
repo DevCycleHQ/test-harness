@@ -4,7 +4,7 @@ import {
     describeCapability,
     expectErrorMessageToBe,
     hasCapability,
-    getSDKScope
+    getSDKScope, interceptEvents, expectAggregateEvaluationEvent, expectAggregateDefaultEvent
 } from '../helpers'
 import { Capabilities } from '../types'
 import { config, shouldBucketUser } from '../mockData'
@@ -105,13 +105,11 @@ describe('Initialize Tests - Local', () => {
             const testClient = new LocalTestClient(sdkName)
             scope
                 .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                .reply(200, config)
+                .reply(200, config, {ETag: 'test-etag'})
 
             scope
                 .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                .matchHeader('If-None-Match', (value) => {
-                    return true
-                })
+                .matchHeader('If-None-Match', 'test-etag')
                 .reply(304, {})
 
             await testClient.createClient(true, { configPollingIntervalMS: 1000 })
@@ -201,6 +199,61 @@ describe('Initialize Tests - Local', () => {
             }
             const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
             expect((await variable.json()).data.value).toEqual(1)
+        })
+
+        it('uses the new config when etag changes, and flushes existing events', async () => {
+            const testClient = new LocalTestClient(sdkName)
+            scope
+                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .times(1)
+                .reply(200, config, {ETag: 'first-etag'})
+
+            scope
+                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .times(1)
+                .matchHeader('If-None-Match', (value) => {
+                    return value === 'first-etag'
+                })
+                .reply(200, {...config, features: []}, {ETag: 'second-etag'})
+
+            scope
+                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .matchHeader('If-None-Match', (value) => {
+                    return value === 'second-etag'
+                })
+                .reply(304, {})
+
+            const eventResult = interceptEvents(scope, sdkName, `/client/${testClient.clientId}/v1/events/batch`)
+            const secondEventResult = interceptEvents(scope, sdkName, `/client/${testClient.clientId}/v1/events/batch`)
+
+            await testClient.createClient(true, {
+                configPollingIntervalMS: 1000,
+                eventFlushIntervalMS: 500
+            })
+
+            // make sure the original config is in use (expected variable value is 1)
+            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
+            expect((await variable.json()).data.value).toEqual(1)
+
+            expect(scope.pendingMocks().length).toEqual(2)
+
+            // wait for the next config polling request
+            await wait(1200)
+            // make sure the new config is in use (new config should not bucket the user because features are blank)
+            const variable2 = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
+            expect((await variable2.json()).data.value).toEqual(0)
+            await wait(1000)
+
+            await eventResult.wait()
+            await secondEventResult.wait()
+            expect(scope.pendingMocks().length).toEqual(0)
+
+            if (hasCapability(sdkName, Capabilities.etagReporting)) {
+                expectAggregateEvaluationEvent({body: eventResult.body,
+                    variableKey: 'number-var', featureId: config.features[0]._id,
+                    variationId: config.features[0].variations[0]._id, etag: 'first-etag'})
+                expectAggregateDefaultEvent({body: secondEventResult.body, variableKey: 'number-var', defaultReason: 'MISSING_FEATURE', etag: 'second-etag'})
+            }
         })
     })
 })

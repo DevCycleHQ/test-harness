@@ -1,6 +1,7 @@
 import { optionalEventFields, optionalUserEventFields } from '../mockData/events'
-import { getPlatformBySdkName, getSDKName, hasCapability } from './helpers'
+import { getPlatformBySdkName, getSDKName, hasCapability, waitForRequest } from './helpers'
 import { Capabilities } from '../types'
+import { Scope } from 'nock'
 
 export const expectAggregateEvaluationEvent = ({
     body,
@@ -89,4 +90,25 @@ export const expectAggregateDefaultEvent = ({body, variableKey, defaultReason, v
             ]
         }]
     })
+}
+
+export const interceptEvents = (scope: Scope, sdkName: string, eventsUrl: string) => {
+    if (!hasCapability(sdkName, Capabilities.events)) {
+        return
+    }
+    // The interceptor instance is used to wait on events that are triggered when calling
+    // methods so that we can verify events being sent out and mock out responses from the
+    // event server
+    const interceptor = scope.post(eventsUrl)
+
+    const eventResult = {
+        body: {},
+        wait: () => waitForRequest(scope, interceptor, 600, 'Event callback timed out')
+    }
+
+    interceptor.reply((uri, body) => {
+        eventResult.body = body
+        return [201, { message:'Successfully received events.' }]
+    })
+    return eventResult
 }
