@@ -3,14 +3,13 @@ import {
     forEachVariableType,
     getPlatformBySdkName,
     getSDKScope,
-    hasCapability,
+    hasCapability, interceptEvents,
     LocalTestClient,
     waitForRequest
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
-import { optionalEventFields, optionalUserEventFields } from '../mockData/events'
 import { expectAggregateDefaultEvent, expectAggregateEvaluationEvent } from '../helpers'
 
 const expectedVariablesByType = {
@@ -106,7 +105,7 @@ describe('Variable Tests - Local', () => {
 
                 it.each(callVariableMethods)('should return %s if mock server returns object matching default type',
                     async (method) => {
-                        const eventResult = interceptEvents(sdkName, eventsUrl)
+                        const eventResult = interceptEvents(scope, sdkName, eventsUrl)
 
                         const variableResponse = await callVariableMethod(method)(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -148,7 +147,7 @@ describe('Variable Tests - Local', () => {
                     ? it.skip.each(callVariableMethods)
                     : it.each(callVariableMethods)
                 testFn('should return default value if default type doesn\'t match %s type',  async (method) => {
-                    const eventResult = interceptEvents(sdkName, eventsUrl)
+                    const eventResult = interceptEvents(scope, sdkName, eventsUrl)
 
                     const wrongTypeDefault = type === 'number' ? '1' : 1
                     const variableResponse = await callVariableMethod(method)(
@@ -186,7 +185,7 @@ describe('Variable Tests - Local', () => {
 
                 it.each(callVariableMethods)('should return default value if user is not bucketed into %s',
                     async (method) => {
-                        const eventResult = interceptEvents(sdkName, eventsUrl)
+                        const eventResult = interceptEvents(scope, sdkName, eventsUrl)
                         const variableResponse = await callVariableMethod(method)(
                             { user_id: 'user3' },
                             sdkName,
@@ -209,7 +208,7 @@ describe('Variable Tests - Local', () => {
 
                 it.each(callVariableMethods)('should return default value if %s doesn\'t exist',
                     async (method) => {
-                        const eventResult = interceptEvents(sdkName, eventsUrl)
+                        const eventResult = interceptEvents(scope, sdkName, eventsUrl)
 
                         const variableResponse = await callVariableMethod(method)(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -232,7 +231,7 @@ describe('Variable Tests - Local', () => {
                 )
 
                 it.each(callVariableMethods)('should aggregate aggVariableDefaulted events for %s', async (method) => {
-                    const eventResult = interceptEvents(sdkName, eventsUrl)
+                    const eventResult = interceptEvents(scope, sdkName, eventsUrl)
 
                     await callVariableMethod(method)(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -257,7 +256,7 @@ describe('Variable Tests - Local', () => {
                     expectAggregateDefaultEvent({body: eventResult.body, variableKey: 'nonexistent', defaultReason: 'MISSING_VARIABLE', value: 2, etag: 'local-var-etag'})                })
 
                 it.each(callVariableMethods)('should aggregate aggVariableEvaluated events for %s', async (method) => {
-                    const eventResult = interceptEvents(sdkName, eventsUrl)
+                    const eventResult = interceptEvents(scope, sdkName, eventsUrl)
 
                     await callVariableMethod(method)(
                         { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -283,7 +282,7 @@ describe('Variable Tests - Local', () => {
             })
 
             it.each(callVariableMethods)('should return a valid unicode string for %s',  async (method) => {
-                const eventResult = interceptEvents(sdkName, eventsUrl)
+                const eventResult = interceptEvents(scope, sdkName, eventsUrl)
 
                 const variableResponse = await callVariableMethod(method)(
                     { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -343,7 +342,7 @@ describe('Variable Tests - Local', () => {
                             eventFlushIntervalMS: 500
                         })
 
-                        const eventResult = interceptEvents(sdkName, eventsUrl)
+                        const eventResult = interceptEvents(scope, sdkName, eventsUrl)
 
                         const variableResponse = await callVariableMethod(method)(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -385,7 +384,7 @@ describe('Variable Tests - Local', () => {
                             eventFlushIntervalMS: 500
                         })
 
-                        const eventResult = interceptEvents(sdkName, eventsUrl)
+                        const eventResult = interceptEvents(scope, sdkName, eventsUrl)
 
                         const variableResponse = await callVariableMethod(method)(
                             { user_id: 'user1', customData: { 'should-bucket': true } },
@@ -447,26 +446,5 @@ describe('Variable Tests - Local', () => {
             },
             logs: []
         })
-    }
-
-    const interceptEvents = (sdkName: string, eventsUrl: string) => {
-        if (!hasCapability(sdkName, Capabilities.events)) {
-            return
-        }
-        // The interceptor instance is used to wait on events that are triggered when calling
-        // methods so that we can verify events being sent out and mock out responses from the
-        // event server
-        const interceptor = scope.post(eventsUrl)
-
-        const eventResult = {
-            body: {},
-            wait: () => waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-        }
-
-        interceptor.reply((uri, body) => {
-            eventResult.body = body
-            return [201, { message:'Successfully received events.' }]
-        })
-        return eventResult
     }
 })
