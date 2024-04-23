@@ -201,7 +201,7 @@ describe('Initialize Tests - Local', () => {
             expect((await variable.json()).data.value).toEqual(1)
         })
 
-        it.only('uses the new config when etag changes, and flushes existing events', async () => {
+        it('uses the new config when etag changes, and flushes existing events', async () => {
             const testClient = new LocalTestClient(sdkName)
             scope
                 .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
