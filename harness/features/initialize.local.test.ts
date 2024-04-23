@@ -206,7 +206,7 @@ describe('Initialize Tests - Local', () => {
             scope
                 .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                 .times(1)
-                .reply(200, config, {ETag: 'first-etag'})
+                .reply(200, config, {ETag: 'first-etag', 'Cf-Ray': 'first-ray'})
 
             scope
                 .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
@@ -214,7 +214,7 @@ describe('Initialize Tests - Local', () => {
                 .matchHeader('If-None-Match', (value) => {
                     return value === 'first-etag'
                 })
-                .reply(200, {...config, features: []}, {ETag: 'second-etag'})
+                .reply(200, {...config, features: []}, {ETag: 'second-etag', 'Cf-Ray': 'second-ray'})
 
             scope
                 .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
@@ -251,8 +251,8 @@ describe('Initialize Tests - Local', () => {
             if (hasCapability(sdkName, Capabilities.etagReporting)) {
                 expectAggregateEvaluationEvent({body: eventResult.body,
                     variableKey: 'number-var', featureId: config.features[0]._id,
-                    variationId: config.features[0].variations[0]._id, etag: 'first-etag'})
-                expectAggregateDefaultEvent({body: secondEventResult.body, variableKey: 'number-var', defaultReason: 'MISSING_FEATURE', etag: 'second-etag'})
+                    variationId: config.features[0].variations[0]._id, etag: 'first-etag', rayId: 'first-ray'})
+                expectAggregateDefaultEvent({body: secondEventResult.body, variableKey: 'number-var', defaultReason: 'MISSING_FEATURE', etag: 'second-etag', rayId: 'second-ray'})
             }
         })
     })

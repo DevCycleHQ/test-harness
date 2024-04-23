@@ -9,13 +9,15 @@ export const expectAggregateEvaluationEvent = ({
     variationId,
     featureId,
     value,
-    etag
+    etag,
+    rayId
 }: {
    body: Record<string, unknown>,
    variableKey: string,
    featureId: string,
    variationId: string,
    etag: string,
+    rayId: string,
    value?: number
 }) => {
     const sdkName = getSDKName()
@@ -23,6 +25,7 @@ export const expectAggregateEvaluationEvent = ({
     const metadata: Record<string, unknown> = {_feature: featureId, _variation: variationId}
     if (hasCapability(sdkName, Capabilities.etagReporting)) {
         metadata.configEtag = etag
+        metadata.configRayId = rayId
         metadata.clientUUID = expect.any(String)
     }
     expect(body).toEqual({
@@ -50,11 +53,12 @@ export const expectAggregateEvaluationEvent = ({
     })
 }
 
-export const expectAggregateDefaultEvent = ({body, variableKey, defaultReason, value, etag}: {
+export const expectAggregateDefaultEvent = ({body, variableKey, defaultReason, value, etag, rayId}: {
     body: Record<string, unknown>,
     variableKey: string,
     defaultReason: string,
     etag: string | null,
+    rayId: string,
     value?: number,
 }) => {
     const sdkName = getSDKName()
@@ -63,6 +67,9 @@ export const expectAggregateDefaultEvent = ({body, variableKey, defaultReason, v
     if (hasCapability(sdkName, Capabilities.etagReporting)) {
         if (etag != null) {
             metadata.configEtag = etag
+        }
+        if (rayId != null) {
+            metadata.configRayId = rayId
         }
         metadata.clientUUID = expect.any(String)
     }
