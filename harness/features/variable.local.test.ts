@@ -359,7 +359,7 @@ describe('Variable Tests - Local', () => {
                         }
 
                         await eventResult.wait()
-                        expectAggregateDefaultEvent({body: eventResult.body, variableKey: key, defaultReason: 'MISSING_CONFIG', value: 1, etag: null, rayId: 'local-ray-id'})
+                        expectAggregateDefaultEvent({body: eventResult.body, variableKey: key, defaultReason: 'MISSING_CONFIG', value: 1, etag: null, rayId: null})
                     }
                 )
 
@@ -401,7 +401,7 @@ describe('Variable Tests - Local', () => {
                         }
 
                         await eventResult.wait()
-                        expectAggregateDefaultEvent({body: eventResult.body, variableKey: key, defaultReason: 'MISSING_CONFIG', value: 1, etag: null, rayId: 'local-ray-id'})
+                        expectAggregateDefaultEvent({body: eventResult.body, variableKey: key, defaultReason: 'MISSING_CONFIG', value: 1, etag: null, rayId: null})
                     }
                 )
             })

@@ -68,7 +68,9 @@ export const expectAggregateDefaultEvent = ({body, variableKey, defaultReason, v
         if (etag != null) {
             metadata.configEtag = etag
         }
-        metadata.configRayId = rayId
+        if (rayId != null) {
+            metadata.configRayId = rayId
+        }
         metadata.clientUUID = expect.any(String)
     }
 
