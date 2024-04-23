@@ -58,9 +58,9 @@ python3 -m flask --app app run --host=0.0.0.0 -p 3000
 
 If you are using an IDE like PyCharm you will need to setup the project to run the proxy inside of the IDE and use debugging
 
-- Add the dependencies in `requirements.txt` to the project via the IDE's package manager. In PyCharm it is called **Python Packages**
-- Create a new Run/Debug configuration in the IDE
-- Choose a Flask Server template
-- Set the target type to Script Path
-- Set the target to the `app.py` file
-- Set host and port as additional options (or cmd line args): `--host=0.0.0.0 -p 3000`
+-   Add the dependencies in `requirements.txt` to the project via the IDE's package manager. In PyCharm it is called **Python Packages**
+-   Create a new Run/Debug configuration in the IDE
+-   Choose a Flask Server template
+-   Set the target type to Script Path
+-   Set the target to the `app.py` file
+-   Set host and port as additional options (or cmd line args): `--host=0.0.0.0 -p 3000`

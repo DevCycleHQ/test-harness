@@ -31,11 +31,11 @@ _Create a DVC client instance_
 
 ```json
 {
-  "clientId": "string",
-  "sdkKey": "string",
-  "options": {},
-  "enableCloudBucketing": true,
-  "waitForInitialization": true
+    "clientId": "string",
+    "sdkKey": "string",
+    "options": {},
+    "enableCloudBucketing": true,
+    "waitForInitialization": true
 }
 ```
 
@@ -55,7 +55,7 @@ _Create a DVC client instance_
 
 ```json
 {
-  "exception": "Missing environment key! Call initialize with a valid environment key"
+    "exception": "Missing environment key! Call initialize with a valid environment key"
 }
 ```
 
@@ -63,7 +63,7 @@ _Create a DVC client instance_
 
 ```json
 {
-  "message": "Success"
+    "message": "Success"
 }
 ```
 
@@ -71,7 +71,7 @@ _Create a DVC client instance_
 
 ```json
 {
-  "message": "Invalid request: missing clientId"
+    "message": "Invalid request: missing clientId"
 }
 ```
 
@@ -123,24 +123,24 @@ _Invoke a method on a previously created instance_
 
 ```json
 {
-  "command": "variable",
-  "user": {
-    "user_id": "test",
-    "email": "test@test.com",
-    "name": "test"
-  },
-  "isAsync": true,
-  "params": [
-    {
-      "type": "user"
+    "command": "variable",
+    "user": {
+        "user_id": "test",
+        "email": "test@test.com",
+        "name": "test"
     },
-    {
-      "value": "string-key"
-    },
-    {
-      "value": "string-key-default"
-    }
-  ]
+    "isAsync": true,
+    "params": [
+        {
+            "type": "user"
+        },
+        {
+            "value": "string-key"
+        },
+        {
+            "value": "string-key-default"
+        }
+    ]
 }
 ```
 
@@ -179,7 +179,7 @@ _Invoke a method on a previously created instance_
 
 ```json
 {
-  "exception": "Must have a user_id set on the user"
+    "exception": "Must have a user_id set on the user"
 }
 ```
 
@@ -187,7 +187,7 @@ _Invoke a method on a previously created instance_
 
 ```json
 {
-  "asyncError": "Must have a user_id set on the user"
+    "asyncError": "Must have a user_id set on the user"
 }
 ```
 
@@ -195,35 +195,35 @@ _Invoke a method on a previously created instance_
 
 ```json
 {
-  "entityType": "Variable",
-  "data": {
-    "_id": "638681f059f1b81cc9e6c7fa",
-    "key": "bool-var",
-    "type": "Boolean",
-    "value": true
-  },
-  "logs": []
+    "entityType": "Variable",
+    "data": {
+        "_id": "638681f059f1b81cc9e6c7fa",
+        "key": "bool-var",
+        "type": "Boolean",
+        "value": true
+    },
+    "logs": []
 }
 ```
 
 ```json
 {
-  "entityType": "Object",
-  "data": {
-    "string-var": {
-      "_id": "638681f059f1b81cc9e6c7fb",
-      "key": "string-var",
-      "type": "VariableType.string",
-      "value": "string"
+    "entityType": "Object",
+    "data": {
+        "string-var": {
+            "_id": "638681f059f1b81cc9e6c7fb",
+            "key": "string-var",
+            "type": "VariableType.string",
+            "value": "string"
+        },
+        "number-var": {
+            "_id": "638681f059f1b81cc9e6c7fc",
+            "key": "number-var",
+            "type": "VariableType.number",
+            "value": 1
+        }
     },
-    "number-var": {
-      "_id": "638681f059f1b81cc9e6c7fc",
-      "key": "number-var",
-      "type": "VariableType.number",
-      "value": 1
-    }
-  },
-  "logs": []
+    "logs": []
 }
 ```
 
@@ -231,7 +231,7 @@ _Invoke a method on a previously created instance_
 
 ```json
 {
-  "message": "string"
+    "message": "string"
 }
 ```
 
@@ -280,15 +280,15 @@ Status Code **404**
 
 ```json
 {
-  "user_id": "string",
-  "email": "string",
-  "name": "string",
-  "language": "string",
-  "country": "string",
-  "appVersion": "string",
-  "appBuild": "string",
-  "customData": {},
-  "privateCustomData": {}
+    "user_id": "string",
+    "email": "string",
+    "name": "string",
+    "language": "string",
+    "country": "string",
+    "appVersion": "string",
+    "appBuild": "string",
+    "customData": {},
+    "privateCustomData": {}
 }
 ```
 
@@ -317,11 +317,11 @@ An object that the proxy will turn into a user instance.
 
 ```json
 {
-  "type": "string",
-  "date": 0,
-  "target": "string",
-  "value": 0,
-  "metaData": {}
+    "type": "string",
+    "date": 0,
+    "target": "string",
+    "value": 0,
+    "metaData": {}
 }
 ```
 
@@ -346,7 +346,7 @@ An object that the proxy will turn into an event instance.
 
 ```json
 {
-  "type": "string"
+    "type": "string"
 }
 ```
 
@@ -367,7 +367,7 @@ An argument to an SDK method
 
 ```json
 {
-  "value": "string"
+    "value": "string"
 }
 ```
 

@@ -1,2 +1,2 @@
-export * from "./capabilities";
-export * from "./sdks";
+export * from './capabilities'
+export * from './sdks'

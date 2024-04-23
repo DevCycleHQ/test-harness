@@ -1,6 +1,6 @@
 {
-  "user_templates": "widdershins/templates",
-  "omitBody": true,
-  "omitHeader": true,
-  "codeSamples": false
+    "user_templates": "widdershins/templates",
+    "omitBody": true,
+    "omitHeader": true,
+    "codeSamples": false
 }

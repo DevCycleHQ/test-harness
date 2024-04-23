@@ -16,15 +16,15 @@ it is recommended you do it in **Local Mode** and not use the Docker image direc
 
 For further reference, please consider the following sections:
 
-- [Official Gradle documentation](https://docs.gradle.org)
-- [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/3.0.0/gradle-plugin/reference/html/)
-- [Create an OCI image](https://docs.spring.io/spring-boot/docs/3.1.0/gradle-plugin/reference/html/#build-image)
+-   [Official Gradle documentation](https://docs.gradle.org)
+-   [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/3.0.0/gradle-plugin/reference/html/)
+-   [Create an OCI image](https://docs.spring.io/spring-boot/docs/3.1.0/gradle-plugin/reference/html/#build-image)
 
 ### Additional Links
 
 These additional references should also help you:
 
-- [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
+-   [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
 
 ## Local Project Setup in IntelliJ
 
@@ -34,12 +34,12 @@ use a JVM that is 64-bit and x86 compatible. Both the IDE and Gradle need to use
 
 ### Set Project SDK
 
-- `File > Project Structure > Project Settings > Project > SDK`
+-   `File > Project Structure > Project Settings > Project > SDK`
 
 ### Set Gradle VM
 
-- You need to do this if you want to run inside the IDE and do debugging
-- `Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM`
+-   You need to do this if you want to run inside the IDE and do debugging
+-   `Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM`
 
 ## Running the Proxy Server
 

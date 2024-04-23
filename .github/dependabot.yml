@@ -36,11 +36,11 @@ updates:
       - "devcyclehq/engineering"
 
   - package-ecosystem: gomod
-    directory: "/proxies/go"
+    directory: '/proxies/go'
     schedule:
-      interval: "daily"
+        interval: 'daily'
     reviewers:
-      - "devcyclehq/engineering"
+        - 'devcyclehq/engineering'
 
   - package-ecosystem: nuget
     directory: "/proxies/dotnet"

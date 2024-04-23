@@ -1,109 +1,109 @@
-version: "3.7"
+version: '3.7'
 
 services:
-  # Dummy service to keep docker-compose happy when running in local mode
-  local:
-    profiles:
-      - local
-    container_name: busybox
-    command: sleep 1000000000
-    image: busybox
-  nodejs:
-    profiles:
-      - nodejs
-    build:
-      context: ./proxies/nodejs
-      args:
-        - NODEJS_SDK_VERSION=${NODEJS_SDK_VERSION}
-        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-        - SDKS_TO_TEST=${SDKS_TO_TEST}
-    container_name: nodejs
-    ports:
-      - "3000"
-  of-nodejs:
-    profiles:
-      - of-nodejs
-    build:
-      context: ./proxies/openfeature-nodejs
-      args:
-        - NODEJS_SDK_VERSION=${OF_NODEJS_SDK_VERSION}
-        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-        - SDKS_TO_TEST=${SDKS_TO_TEST}
-    container_name: of-nodejs
-    ports:
-      - "3000"
-  python:
-    profiles:
-      - python
-    build:
-      context: ./proxies/python
-      args:
-        - PYTHON_SDK_VERSION=${PYTHON_SDK_VERSION}
-        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-        - SDKS_TO_TEST=${SDKS_TO_TEST}
-    container_name: python
-    ports:
-      - "3000"
-  dotnet:
-    profiles:
-      - dotnet
-    build:
-      context: ./proxies/dotnet
-      args:
-        - DOTNET_CLOUD_SDK_VERSION=${DOTNET_CLOUD_SDK_VERSION}
-        - DOTNET_LOCAL_SDK_VERSION=${DOTNET_LOCAL_SDK_VERSION}
-        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-        - SDKS_TO_TEST=${SDKS_TO_TEST}
-    container_name: dotnet
-    ports:
-      - "3000"
-  java:
-    profiles:
-      - java
-    build:
-      context: ./proxies/java
-      args:
-        - JAVA_SDK_VERSION=${JAVA_SDK_VERSION}
-        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-        - SDKS_TO_TEST=${SDKS_TO_TEST}
-    container_name: java
-    ports:
-      - "3000"
-  go:
-    profiles:
-      - go
-    build:
-      context: ./proxies/go
-      args:
-        - GO_SDK_VERSION=${GO_SDK_VERSION}
-        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-        - SDKS_TO_TEST=${SDKS_TO_TEST}
-    container_name: go
-    ports:
-      - "3000"
-  ruby:
-    profiles:
-      - ruby
-    build:
-      context: ./proxies/ruby
-      args:
-        - RUBY_SDK_VERSION=${RUBY_SDK_VERSION}
-        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-        - SDKS_TO_TEST=${SDKS_TO_TEST}
-    container_name: ruby
-    ports:
-      - "3000"
-  php:
-    profiles:
-      - php
-    build:
-      context: ./proxies/php
-      args:
-        - PHP_SDK_VERSION=${PHP_SDK_VERSION}
-        - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
-        - SDKS_TO_TEST=${SDKS_TO_TEST}
-    container_name: php
-    healthcheck:
-      disable: true
-    ports:
-      - "3000"
+    # Dummy service to keep docker-compose happy when running in local mode
+    local:
+        profiles:
+            - local
+        container_name: busybox
+        command: sleep 1000000000
+        image: busybox
+    nodejs:
+        profiles:
+            - nodejs
+        build:
+            context: ./proxies/nodejs
+            args:
+                - NODEJS_SDK_VERSION=${NODEJS_SDK_VERSION}
+                - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+                - SDKS_TO_TEST=${SDKS_TO_TEST}
+        container_name: nodejs
+        ports:
+            - '3000'
+    of-nodejs:
+        profiles:
+            - of-nodejs
+        build:
+            context: ./proxies/openfeature-nodejs
+            args:
+                - NODEJS_SDK_VERSION=${OF_NODEJS_SDK_VERSION}
+                - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+                - SDKS_TO_TEST=${SDKS_TO_TEST}
+        container_name: of-nodejs
+        ports:
+            - '3000'
+    python:
+        profiles:
+            - python
+        build:
+            context: ./proxies/python
+            args:
+                - PYTHON_SDK_VERSION=${PYTHON_SDK_VERSION}
+                - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+                - SDKS_TO_TEST=${SDKS_TO_TEST}
+        container_name: python
+        ports:
+            - '3000'
+    dotnet:
+        profiles:
+            - dotnet
+        build:
+            context: ./proxies/dotnet
+            args:
+                - DOTNET_CLOUD_SDK_VERSION=${DOTNET_CLOUD_SDK_VERSION}
+                - DOTNET_LOCAL_SDK_VERSION=${DOTNET_LOCAL_SDK_VERSION}
+                - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+                - SDKS_TO_TEST=${SDKS_TO_TEST}
+        container_name: dotnet
+        ports:
+            - '3000'
+    java:
+        profiles:
+            - java
+        build:
+            context: ./proxies/java
+            args:
+                - JAVA_SDK_VERSION=${JAVA_SDK_VERSION}
+                - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+                - SDKS_TO_TEST=${SDKS_TO_TEST}
+        container_name: java
+        ports:
+            - '3000'
+    go:
+        profiles:
+            - go
+        build:
+            context: ./proxies/go
+            args:
+                - GO_SDK_VERSION=${GO_SDK_VERSION}
+                - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+                - SDKS_TO_TEST=${SDKS_TO_TEST}
+        container_name: go
+        ports:
+            - '3000'
+    ruby:
+        profiles:
+            - ruby
+        build:
+            context: ./proxies/ruby
+            args:
+                - RUBY_SDK_VERSION=${RUBY_SDK_VERSION}
+                - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+                - SDKS_TO_TEST=${SDKS_TO_TEST}
+        container_name: ruby
+        ports:
+            - '3000'
+    php:
+        profiles:
+            - php
+        build:
+            context: ./proxies/php
+            args:
+                - PHP_SDK_VERSION=${PHP_SDK_VERSION}
+                - SDK_GITHUB_SHA=${SDK_GITHUB_SHA}
+                - SDKS_TO_TEST=${SDKS_TO_TEST}
+        container_name: php
+        healthcheck:
+            disable: true
+        ports:
+            - '3000'

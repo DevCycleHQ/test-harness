@@ -19,8 +19,8 @@ You must have Docker installed and running on your machine. You must also have a
 
 ### Steps
 
-- Install dependencies with `yarn`
-- Run test suite with `yarn test`
+-   Install dependencies with `yarn`
+-   Run test suite with `yarn test`
 
 This will automatically start the proxy servers using `docker-compose` and run the tests against them.
 
@@ -29,10 +29,10 @@ This will automatically start the proxy servers using `docker-compose` and run t
 There are environment variables which can be used to control which SDK to run the tests for, and which version
 They are:
 
-- `SDKS_TO_TEST` - The name of the SDK to run the tests for. Possible values include `nodejs`, `go` etc.
-- `{SDK NAME}_SDK_VERSION` - The version of the given SDK to run the tests for. eg. `NODEJS_SDK_VERSION=1.2.3`
-- `SDK_GITHUB_SHA` - The sha of an unreleased commit of the SDK to run the tests against. This version will be checked
-  out directly from Github.
+-   `SDKS_TO_TEST` - The name of the SDK to run the tests for. Possible values include `nodejs`, `go` etc.
+-   `{SDK NAME}_SDK_VERSION` - The version of the given SDK to run the tests for. eg. `NODEJS_SDK_VERSION=1.2.3`
+-   `SDK_GITHUB_SHA` - The sha of an unreleased commit of the SDK to run the tests against. This version will be checked
+    out directly from Github.
 
 ## Debugging a failing test
 
