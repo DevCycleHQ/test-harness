@@ -1,0 +1,3 @@
+proxies/dotnet/**/*.json
+proxies/php/**/*.json
+proxies/php/**/*.lock
