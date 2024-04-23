@@ -2,7 +2,7 @@ name: Run Harness Tests
 run-name: ${{ github.event.inputs.title }}
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
       sdk:
@@ -15,14 +15,13 @@ on:
         type: string
         description: The title of the PR that triggered this test harness run
 
-
 jobs:
   run-tests:
     runs-on:
       labels: ubuntu-latest-4-core
     name: Run Tests
     env:
-      DOCKER_HOST_IP: '172.17.0.1'
+      DOCKER_HOST_IP: "172.17.0.1"
     steps:
       - uses: actions/setup-node@v3
         with:
@@ -43,8 +42,8 @@ jobs:
         run: yarn test:ci
       - name: Test Report
         uses: dorny/test-reporter@v1
-        if: success() || failure()   # run this step even if previous step failed
+        if: success() || failure() # run this step even if previous step failed
         with:
-          name: Test Report          # Name of the check run which will be created
-          path: jest-*.xml           # Path to test results
-          reporter: jest-junit       # Format of test results
+          name: Test Report # Name of the check run which will be created
+          path: jest-*.xml # Path to test results
+          reporter: jest-junit # Format of test results

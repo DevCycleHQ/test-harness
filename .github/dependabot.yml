@@ -6,7 +6,7 @@ updates:
       interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
-    
+
   - package-ecosystem: npm
     directory: "/"
     schedule:
