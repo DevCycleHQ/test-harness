@@ -3,35 +3,35 @@ updates:
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
     
   - package-ecosystem: npm
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
 
   - package-ecosystem: composer
     directory: "/proxies/php/php-proxy"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
 
   - package-ecosystem: npm
     directory: "/proxies/nodejs"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
 
   - package-ecosystem: pip
     directory: "/proxies/python"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
 
@@ -45,27 +45,27 @@ updates:
   - package-ecosystem: nuget
     directory: "/proxies/dotnet"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
 
   - package-ecosystem: gradle
     directory: "/proxies/java"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
 
   - package-ecosystem: npm
     directory: "/proxies/openfeature-nodejs"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
 
   - package-ecosystem: bundler
     directory: "/proxies/ruby"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
