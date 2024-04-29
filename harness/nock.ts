@@ -33,7 +33,7 @@ const scopeProxy = new Proxy(scope, {
 export const getServerScope = (): Scope => scopeProxy
 
 export const resetServerScope = () => {
-    for (let i of interceptors) {
+    for (const i of interceptors) {
         nock.removeInterceptor(i)
     }
     interceptors = []

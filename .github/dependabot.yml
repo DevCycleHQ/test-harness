@@ -1,71 +1,71 @@
 version: 2
 updates:
-  - package-ecosystem: github-actions
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "devcyclehq/engineering"
+    - package-ecosystem: github-actions
+      directory: '/'
+      schedule:
+          interval: 'weekly'
+      reviewers:
+          - 'devcyclehq/engineering'
 
-  - package-ecosystem: npm
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "devcyclehq/engineering"
+    - package-ecosystem: npm
+      directory: '/'
+      schedule:
+          interval: 'weekly'
+      reviewers:
+          - 'devcyclehq/engineering'
 
-  - package-ecosystem: composer
-    directory: "/proxies/php/php-proxy"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "devcyclehq/engineering"
+    - package-ecosystem: composer
+      directory: '/proxies/php/php-proxy'
+      schedule:
+          interval: 'weekly'
+      reviewers:
+          - 'devcyclehq/engineering'
 
-  - package-ecosystem: npm
-    directory: "/proxies/nodejs"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "devcyclehq/engineering"
+    - package-ecosystem: npm
+      directory: '/proxies/nodejs'
+      schedule:
+          interval: 'weekly'
+      reviewers:
+          - 'devcyclehq/engineering'
 
-  - package-ecosystem: pip
-    directory: "/proxies/python"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "devcyclehq/engineering"
+    - package-ecosystem: pip
+      directory: '/proxies/python'
+      schedule:
+          interval: 'weekly'
+      reviewers:
+          - 'devcyclehq/engineering'
 
-  - package-ecosystem: gomod
-    directory: '/proxies/go'
-    schedule:
-        interval: 'daily'
-    reviewers:
-        - 'devcyclehq/engineering'
+    - package-ecosystem: gomod
+      directory: '/proxies/go'
+      schedule:
+          interval: 'daily'
+      reviewers:
+          - 'devcyclehq/engineering'
 
-  - package-ecosystem: nuget
-    directory: "/proxies/dotnet"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "devcyclehq/engineering"
+    - package-ecosystem: nuget
+      directory: '/proxies/dotnet'
+      schedule:
+          interval: 'weekly'
+      reviewers:
+          - 'devcyclehq/engineering'
 
-  - package-ecosystem: gradle
-    directory: "/proxies/java"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "devcyclehq/engineering"
+    - package-ecosystem: gradle
+      directory: '/proxies/java'
+      schedule:
+          interval: 'weekly'
+      reviewers:
+          - 'devcyclehq/engineering'
 
-  - package-ecosystem: npm
-    directory: "/proxies/openfeature-nodejs"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "devcyclehq/engineering"
+    - package-ecosystem: npm
+      directory: '/proxies/openfeature-nodejs'
+      schedule:
+          interval: 'weekly'
+      reviewers:
+          - 'devcyclehq/engineering'
 
-  - package-ecosystem: bundler
-    directory: "/proxies/ruby"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "devcyclehq/engineering"
+    - package-ecosystem: bundler
+      directory: '/proxies/ruby'
+      schedule:
+          interval: 'weekly'
+      reviewers:
+          - 'devcyclehq/engineering'
