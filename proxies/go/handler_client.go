@@ -50,7 +50,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		onInitializedChannel = make(chan bool)
 	}
 
-	options := devcycle.DVCOptions{
+	options := devcycle.Options{
 		ConfigCDNURI:            reqBody.Options.ConfigCDNURI,
 		EventsAPIURI:            reqBody.Options.EventsAPIURI,
 		BucketingAPIURI:         reqBody.Options.BucketingAPIURI,
@@ -59,10 +59,12 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
 		EnableCloudBucketing:    reqBody.EnableCloudBucketing,
 		OnInitializedChannel:    onInitializedChannel,
+		// TODO: Properly implement SSE tests. Currently the init delay on config pull breaks tests.
+		DisableServerSentEvents: true,
 	}
 
 	var res clientResponseBody
-	client, err := devcycle.NewDVCClient(reqBody.SdkKey, &options)
+	client, err := devcycle.NewClient(reqBody.SdkKey, &options)
 
 	if err != nil {
 		res.Exception = err.Error()
