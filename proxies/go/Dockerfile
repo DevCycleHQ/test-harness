@@ -1,6 +1,6 @@
 # reference https://github.com/docker-library/golang/issues/209#issuecomment-530591780
 
-FROM golang:1.19 as builder
+FROM golang:1.22.2 as builder
 
 ARG GO_SDK_VERSION
 ENV GO_SDK_VERSION $GO_SDK_VERSION
