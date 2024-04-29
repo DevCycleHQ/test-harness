@@ -3,7 +3,7 @@ module github.com/devcyclehq/test-harness/proxies/go
 go 1.19
 
 require (
-	github.com/devcyclehq/go-server-sdk/v2 v2.13.1-0.20240429135854-e299e6ccb33a
+	github.com/devcyclehq/go-server-sdk/v2 v2.13.1-0.20240429160156-cf52c5e25b5b
 	github.com/gorilla/mux v1.8.0
 )
 

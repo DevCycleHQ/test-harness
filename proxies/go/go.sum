@@ -8,6 +8,8 @@ github.com/devcyclehq/go-server-sdk/v2 v2.9.5 h1:dAhsdtMXPe3iAfFV4eT29tmLrFF1wcr
 github.com/devcyclehq/go-server-sdk/v2 v2.9.5/go.mod h1:bIUmiZMp/crMNPX6Iz+vCMABoGAGW641jXIm87/uJRc=
 github.com/devcyclehq/go-server-sdk/v2 v2.13.1-0.20240429135854-e299e6ccb33a h1:yMA5WFTyaBAkYjuzXf+k2rIVAk6j3kuhKzMUz+dsLSs=
 github.com/devcyclehq/go-server-sdk/v2 v2.13.1-0.20240429135854-e299e6ccb33a/go.mod h1:STKHHYehURPELKRPux5BsMfR1Ey4WaP59wOo7u/Aogc=
+github.com/devcyclehq/go-server-sdk/v2 v2.13.1-0.20240429160156-cf52c5e25b5b h1:BahXppTqLte1RmtKgU3tgNzP2zoSqD96oAlYPHvzOe0=
+github.com/devcyclehq/go-server-sdk/v2 v2.13.1-0.20240429160156-cf52c5e25b5b/go.mod h1:STKHHYehURPELKRPux5BsMfR1Ey4WaP59wOo7u/Aogc=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
 github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=
