@@ -1,11 +1,9 @@
 import {
     describeCapability,
     forEachVariableType,
-    getPlatformBySdkName,
     getSDKScope,
     hasCapability, interceptEvents,
     LocalTestClient,
-    waitForRequest
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { config } from '../mockData'
@@ -44,6 +42,7 @@ const expectedVariablesByType = {
 
 const featureId = '638680d6fcb67b96878d90e6'
 const variationId = '638680d6fcb67b96878d90ec'
+const lastModifiedDate = new Date()
 
 describe('Variable Tests - Local', () => {
     // This helper method fetches the current SDK we are testing for the current jest project (see jest.config.js).
@@ -77,7 +76,11 @@ describe('Variable Tests - Local', () => {
                 // conflicting. This one is used to mock the config that the local client is going to use
                 // locally in all of its methods.
                 scope.get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                    .reply(200, config, {ETag: 'local-var-etag', 'Cf-Ray': 'local-ray-id'})
+                    .reply(200, config, {
+                        ETag: 'local-var-etag',
+                        'Cf-Ray': 'local-ray-id',
+                        'Last-Modified': lastModifiedDate.toUTCString()
+                    })
 
                 // Creating a client will pass to the proxy server by default:
                 // - sdk key based on the client id created when creating the client
@@ -139,7 +142,14 @@ describe('Variable Tests - Local', () => {
 
                         // Expect that the SDK sends an "aggVariableEvaluated" event
                         // for the variable call
-                        expectAggregateEvaluationEvent({body: eventResult.body, variableKey: key, featureId, variationId, etag: 'local-var-etag', rayId: 'local-ray-id'})
+                        expectAggregateEvaluationEvent({
+                            body: eventResult.body,
+                            variableKey: key,
+                            featureId,
+                            variationId,
+                            etag: 'local-var-etag',
+                            rayId: 'local-ray-id'
+                        })
                     }
                 )
 
@@ -177,9 +187,22 @@ describe('Variable Tests - Local', () => {
                     // Expects that the SDK sends an "aggVariableDefaulted" event for the
                     // defaulted variable
                     if (!hasCapability(sdkName, Capabilities.cloudProxy)) {
-                        expectAggregateDefaultEvent({body: eventResult.body, variableKey: key, defaultReason: 'INVALID_VARIABLE_TYPE', etag: 'local-var-etag', rayId: 'local-ray-id'})
+                        expectAggregateDefaultEvent({
+                            body: eventResult.body,
+                            variableKey: key,
+                            defaultReason: 'INVALID_VARIABLE_TYPE',
+                            etag: 'local-var-etag',
+                            rayId: 'local-ray-id'
+                        })
                     } else {
-                        expectAggregateEvaluationEvent({body: eventResult.body, variableKey: key, featureId, variationId, etag: 'local-var-etag', rayId: 'local-ray-id'})
+                        expectAggregateEvaluationEvent({
+                            body: eventResult.body,
+                            variableKey: key,
+                            featureId,
+                            variationId,
+                            etag: 'local-var-etag',
+                            rayId: 'local-ray-id'
+                        })
                     }
                 })
 
@@ -203,7 +226,14 @@ describe('Variable Tests - Local', () => {
 
                         await eventResult.wait()
 
-                        expectAggregateDefaultEvent({body: eventResult.body, variableKey: key, defaultReason: 'USER_NOT_TARGETED', etag: 'local-var-etag', rayId: 'local-ray-id'})                    }
+                        expectAggregateDefaultEvent({
+                            body: eventResult.body,
+                            variableKey: key,
+                            defaultReason: 'USER_NOT_TARGETED',
+                            etag: 'local-var-etag',
+                            rayId: 'local-ray-id'
+                        })
+                    }
                 )
 
                 it.each(callVariableMethods)('should return default value if %s doesn\'t exist',
@@ -227,7 +257,14 @@ describe('Variable Tests - Local', () => {
 
                         await eventResult.wait()
 
-                        expectAggregateDefaultEvent({body: eventResult.body, variableKey: 'nonexistent', defaultReason: 'MISSING_VARIABLE', etag: 'local-var-etag', rayId: 'local-ray-id'})                    }
+                        expectAggregateDefaultEvent({
+                            body: eventResult.body,
+                            variableKey: 'nonexistent',
+                            defaultReason: 'MISSING_VARIABLE',
+                            etag: 'local-var-etag',
+                            rayId: 'local-ray-id'
+                        })
+                    }
                 )
 
                 it.each(callVariableMethods)('should aggregate aggVariableDefaulted events for %s', async (method) => {
@@ -253,7 +290,15 @@ describe('Variable Tests - Local', () => {
                     }
 
                     await eventResult.wait()
-                    expectAggregateDefaultEvent({body: eventResult.body, variableKey: 'nonexistent', defaultReason: 'MISSING_VARIABLE', value: 2, etag: 'local-var-etag', rayId: 'local-ray-id'})                })
+                    expectAggregateDefaultEvent({
+                        body: eventResult.body,
+                        variableKey: 'nonexistent',
+                        defaultReason: 'MISSING_VARIABLE',
+                        value: 2,
+                        etag: 'local-var-etag',
+                        rayId: 'local-ray-id'
+                    })
+                })
 
                 it.each(callVariableMethods)('should aggregate aggVariableEvaluated events for %s', async (method) => {
                     const eventResult = interceptEvents(scope, sdkName, eventsUrl)
@@ -277,7 +322,15 @@ describe('Variable Tests - Local', () => {
                         return
                     }
                     await eventResult.wait()
-                    expectAggregateEvaluationEvent({body: eventResult.body, variableKey: key, featureId, variationId, value: 2, etag: 'local-var-etag', rayId: 'local-ray-id'})
+                    expectAggregateEvaluationEvent({
+                        body: eventResult.body,
+                        variableKey: key,
+                        featureId,
+                        variationId,
+                        value: 2,
+                        etag: 'local-var-etag',
+                        rayId: 'local-ray-id'
+                    })
                 })
             })
 
@@ -311,7 +364,14 @@ describe('Variable Tests - Local', () => {
                 }
 
                 await eventResult.wait()
-                expectAggregateEvaluationEvent({body: eventResult.body, variableKey: 'unicode-var', featureId, variationId, etag: 'local-var-etag', rayId: 'local-ray-id'})
+                expectAggregateEvaluationEvent({
+                    body: eventResult.body,
+                    variableKey: 'unicode-var',
+                    featureId,
+                    variationId,
+                    etag: 'local-var-etag',
+                    rayId: 'local-ray-id'
+                })
             })
         })
 
@@ -359,7 +419,14 @@ describe('Variable Tests - Local', () => {
                         }
 
                         await eventResult.wait()
-                        expectAggregateDefaultEvent({body: eventResult.body, variableKey: key, defaultReason: 'MISSING_CONFIG', value: 1, etag: null, rayId: null})
+                        expectAggregateDefaultEvent({
+                            body: eventResult.body,
+                            variableKey: key,
+                            defaultReason: 'MISSING_CONFIG',
+                            value: 1,
+                            etag: null,
+                            rayId: null
+                        })
                     }
                 )
 
@@ -401,7 +468,14 @@ describe('Variable Tests - Local', () => {
                         }
 
                         await eventResult.wait()
-                        expectAggregateDefaultEvent({body: eventResult.body, variableKey: key, defaultReason: 'MISSING_CONFIG', value: 1, etag: null, rayId: null})
+                        expectAggregateDefaultEvent({
+                            body: eventResult.body,
+                            variableKey: key,
+                            defaultReason: 'MISSING_CONFIG',
+                            value: 1,
+                            etag: null,
+                            rayId: null
+                        })
                     }
                 )
             })

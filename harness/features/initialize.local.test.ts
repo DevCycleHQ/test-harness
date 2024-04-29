@@ -9,6 +9,8 @@ import {
 import { Capabilities } from '../types'
 import { config, shouldBucketUser } from '../mockData'
 
+const lastModifiedDate = new Date()
+
 describe('Initialize Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
 
@@ -105,12 +107,20 @@ describe('Initialize Tests - Local', () => {
             const testClient = new LocalTestClient(sdkName)
             scope
                 .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                .reply(200, config, {ETag: 'test-etag'})
+                .reply(200, config, { ETag: 'test-etag', 'Last-Modified': lastModifiedDate.toUTCString() })
 
-            scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                .matchHeader('If-None-Match', 'test-etag')
-                .reply(304, {})
+            if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .matchHeader('If-None-Match', 'test-etag')
+                    .matchHeader('If-Modified-Since', lastModifiedDate.toUTCString())
+                    .reply(304, {})
+            } else {
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .matchHeader('If-None-Match', 'test-etag')
+                    .reply(304, {})
+            }
 
             await testClient.createClient(true, { configPollingIntervalMS: 1000 })
 
@@ -206,22 +216,54 @@ describe('Initialize Tests - Local', () => {
             scope
                 .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                 .times(1)
-                .reply(200, config, {ETag: 'first-etag', 'Cf-Ray': 'first-ray'})
-
-            scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                .times(1)
-                .matchHeader('If-None-Match', (value) => {
-                    return value === 'first-etag'
+                .reply(200, config, {
+                    ETag: 'first-etag',
+                    'Cf-Ray': 'first-ray',
+                    'Last-Modified': lastModifiedDate.toUTCString()
                 })
-                .reply(200, {...config, features: []}, {ETag: 'second-etag', 'Cf-Ray': 'second-ray'})
 
-            scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                .matchHeader('If-None-Match', (value) => {
-                    return value === 'second-etag'
-                })
-                .reply(304, {})
+            if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
+                const secondLastModifiedDate = new Date()
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .times(1)
+                    .matchHeader('If-None-Match', (value) => {
+                        return value === 'first-etag'
+                    })
+                    .matchHeader('If-Modified-Since', (value) => {
+                        return value === lastModifiedDate.toUTCString()
+                    })
+                    .reply(200, { ...config, features: [] }, {
+                        ETag: 'second-etag',
+                        'Cf-Ray': 'second-ray',
+                        'Last-Modified': secondLastModifiedDate.toUTCString()
+                    })
+
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .matchHeader('If-None-Match', (value) => {
+                        return value === 'second-etag'
+                    })
+                    .matchHeader('If-Modified-Since', (value) => {
+                        return value === secondLastModifiedDate.toUTCString()
+                    })
+                    .reply(304, {})
+            } else {
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .times(1)
+                    .matchHeader('If-None-Match', (value) => {
+                        return value === 'first-etag'
+                    })
+                    .reply(200, { ...config, features: [] }, { ETag: 'second-etag', 'Cf-Ray': 'second-ray' })
+
+                scope
+                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .matchHeader('If-None-Match', (value) => {
+                        return value === 'second-etag'
+                    })
+                    .reply(304, {})
+            }
 
             const eventResult = interceptEvents(scope, sdkName, `/client/${testClient.clientId}/v1/events/batch`)
             const secondEventResult = interceptEvents(scope, sdkName, `/client/${testClient.clientId}/v1/events/batch`)
@@ -249,10 +291,21 @@ describe('Initialize Tests - Local', () => {
             expect(scope.pendingMocks().length).toEqual(0)
 
             if (hasCapability(sdkName, Capabilities.etagReporting)) {
-                expectAggregateEvaluationEvent({body: eventResult.body,
-                    variableKey: 'number-var', featureId: config.features[0]._id,
-                    variationId: config.features[0].variations[0]._id, etag: 'first-etag', rayId: 'first-ray'})
-                expectAggregateDefaultEvent({body: secondEventResult.body, variableKey: 'number-var', defaultReason: 'MISSING_FEATURE', etag: 'second-etag', rayId: 'second-ray'})
+                expectAggregateEvaluationEvent({
+                    body: eventResult.body,
+                    variableKey: 'number-var',
+                    featureId: config.features[0]._id,
+                    variationId: config.features[0].variations[0]._id,
+                    etag: 'first-etag',
+                    rayId: 'first-ray'
+                })
+                expectAggregateDefaultEvent({
+                    body: secondEventResult.body,
+                    variableKey: 'number-var',
+                    defaultReason: 'MISSING_FEATURE',
+                    etag: 'second-etag',
+                    rayId: 'second-ray'
+                })
             }
         })
     })
