@@ -60,7 +60,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		EnableCloudBucketing:    reqBody.EnableCloudBucketing,
 		OnInitializedChannel:    onInitializedChannel,
 		// TODO: Properly implement SSE tests. Currently the init delay on config pull breaks tests.
-		DisableRealtimeUpdates: true,
+		//DisableRealtimeUpdates: true,
 	}
 
 	var res clientResponseBody
