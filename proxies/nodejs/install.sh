@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
+echo "Installing nodejs-server-sdk"
+
 if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
+    echo "Installing nodejs-server-sdk@$SDK_GITHUB_SHA"
+
     git clone https://github.com/DevCycleHQ/js-sdks.git
     cd js-sdks
     git checkout $SDK_GITHUB_SHA
@@ -24,9 +28,13 @@ if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"nodejs"* ]]; then
 
     echo "Installed nodejs-server-sdk@$SDK_GITHUB_SHA"
 elif [ -z "$NODEJS_SDK_VERSION" ]; then
+    echo "Installing nodejs-server-sdk@latest"
+
     yarn add @devcycle/nodejs-server-sdk@latest
     echo "Installed nodejs-server-sdk@latest"
 else
+    echo "Installing nodejs-server-sdk@$NODEJS_SDK_VERSION"
+
     yarn add @devcycle/nodejs-server-sdk@$NODEJS_SDK_VERSION
     echo "Installed nodejs-server-sdk@$NODEJS_SDK_VERSION"
 fi

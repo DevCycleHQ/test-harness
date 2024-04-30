@@ -17,6 +17,11 @@ RUN ln -sf python3 /usr/bin/python
 
 COPY . /app
 WORKDIR /app
+
+RUN echo "Docker: yarn"
 RUN yarn
+
+RUN echo "Docker: install.sh"
 RUN ./install.sh
+
 ENTRYPOINT yarn ts-node app.ts
