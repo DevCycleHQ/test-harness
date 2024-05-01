@@ -28,7 +28,7 @@ export const expectAggregateEvaluationEvent = ({
     if (hasCapability(sdkName, Capabilities.etagReporting)) {
         metadata.configEtag = etag
         metadata.configRayId = rayId
-        metadata.lastModified = lastModified
+        metadata.configLastModified = lastModified
         metadata.clientUUID = expect.any(String)
     }
     expect(body).toEqual({
@@ -84,7 +84,7 @@ export const expectAggregateDefaultEvent = ({
             metadata.configRayId = rayId
         }
         if (lastModified) {
-            metadata.lastModified = lastModified
+            metadata.configLastModified = lastModified
         }
         metadata.clientUUID = expect.any(String)
     }
