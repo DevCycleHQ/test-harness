@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+
 if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"of-nodejs"* ]]; then
     git clone https://github.com/DevCycleHQ/js-sdks.git
     cd js-sdks
