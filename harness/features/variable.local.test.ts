@@ -431,7 +431,10 @@ describe('Variable Tests - Local', () => {
                             body: eventResult.body,
                             variableKey: key,
                             defaultReason: 'MISSING_CONFIG',
-                            value: 1
+                            value: 1,
+                            etag: null,
+                            rayId: null,
+                            lastModified: null
                         })
                     }
                 )
@@ -478,7 +481,10 @@ describe('Variable Tests - Local', () => {
                             body: eventResult.body,
                             variableKey: key,
                             defaultReason: 'MISSING_CONFIG',
-                            value: 1
+                            value: 1,
+                            etag: null,
+                            rayId: null,
+                            lastModified: null
                         })
                     }
                 )

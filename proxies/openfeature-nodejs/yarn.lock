@@ -35,9 +35,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:^1.24.6":
+"@devcycle/nodejs-server-sdk@file:../../../js-sdks/dist/sdk/nodejs::locator=root-workspace-0b6124%40workspace%3A.":
   version: 1.24.6
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.24.6"
+  resolution: "@devcycle/nodejs-server-sdk@file:../../../js-sdks/dist/sdk/nodejs#../../../js-sdks/dist/sdk/nodejs::hash=0ab27a&locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
     "@devcycle/bucketing-assembly-script": "npm:^1.17.5"
     "@devcycle/js-cloud-server-sdk": "npm:^1.9.6"
@@ -46,7 +46,7 @@ __metadata:
     fetch-retry: "npm:^5.0.6"
   peerDependencies:
     "@openfeature/server-sdk": ^1.11.0
-  checksum: 10/b92d7f54c57b31f4039383b11f3204191f8ff1514450db4fd4dfabd53e291cf600615b9f0700850874aa5b56725407f29182978e0aa3eaa214d7253fd0612358
+  checksum: 10/40d28395a01abc4b52adcc7ce0f5460b53061396edbb8c4dec4d75587992e2582c0dabc0f1806b83150ee053a5aa3911b50182608001d7ba1434ce604ad7527a
   languageName: node
   linkType: hard
 
@@ -997,7 +997,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": "npm:^1.24.6"
+    "@devcycle/nodejs-server-sdk": ../../../js-sdks/dist/sdk/nodejs
     "@openfeature/core": "npm:^1.1.0"
     "@openfeature/server-sdk": "npm:^1.13.5"
     "@types/koa": "npm:^2.13.5"
