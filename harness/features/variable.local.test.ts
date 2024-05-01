@@ -148,7 +148,8 @@ describe('Variable Tests - Local', () => {
                             featureId,
                             variationId,
                             etag: 'local-var-etag',
-                            rayId: 'local-ray-id'
+                            rayId: 'local-ray-id',
+                            lastModified: lastModifiedDate.toUTCString()
                         })
                     }
                 )
@@ -192,7 +193,8 @@ describe('Variable Tests - Local', () => {
                             variableKey: key,
                             defaultReason: 'INVALID_VARIABLE_TYPE',
                             etag: 'local-var-etag',
-                            rayId: 'local-ray-id'
+                            rayId: 'local-ray-id',
+                            lastModified: lastModifiedDate.toUTCString()
                         })
                     } else {
                         expectAggregateEvaluationEvent({
@@ -201,7 +203,8 @@ describe('Variable Tests - Local', () => {
                             featureId,
                             variationId,
                             etag: 'local-var-etag',
-                            rayId: 'local-ray-id'
+                            rayId: 'local-ray-id',
+                            lastModified: lastModifiedDate.toUTCString()
                         })
                     }
                 })
@@ -231,7 +234,8 @@ describe('Variable Tests - Local', () => {
                             variableKey: key,
                             defaultReason: 'USER_NOT_TARGETED',
                             etag: 'local-var-etag',
-                            rayId: 'local-ray-id'
+                            rayId: 'local-ray-id',
+                            lastModified: lastModifiedDate.toUTCString()
                         })
                     }
                 )
@@ -262,7 +266,8 @@ describe('Variable Tests - Local', () => {
                             variableKey: 'nonexistent',
                             defaultReason: 'MISSING_VARIABLE',
                             etag: 'local-var-etag',
-                            rayId: 'local-ray-id'
+                            rayId: 'local-ray-id',
+                            lastModified: lastModifiedDate.toUTCString()
                         })
                     }
                 )
@@ -296,7 +301,8 @@ describe('Variable Tests - Local', () => {
                         defaultReason: 'MISSING_VARIABLE',
                         value: 2,
                         etag: 'local-var-etag',
-                        rayId: 'local-ray-id'
+                        rayId: 'local-ray-id',
+                        lastModified: lastModifiedDate.toUTCString()
                     })
                 })
 
@@ -329,7 +335,8 @@ describe('Variable Tests - Local', () => {
                         variationId,
                         value: 2,
                         etag: 'local-var-etag',
-                        rayId: 'local-ray-id'
+                        rayId: 'local-ray-id',
+                        lastModified: lastModifiedDate.toUTCString()
                     })
                 })
             })
@@ -370,7 +377,8 @@ describe('Variable Tests - Local', () => {
                     featureId,
                     variationId,
                     etag: 'local-var-etag',
-                    rayId: 'local-ray-id'
+                    rayId: 'local-ray-id',
+                    lastModified: lastModifiedDate.toUTCString()
                 })
             })
         })
@@ -423,9 +431,7 @@ describe('Variable Tests - Local', () => {
                             body: eventResult.body,
                             variableKey: key,
                             defaultReason: 'MISSING_CONFIG',
-                            value: 1,
-                            etag: null,
-                            rayId: null
+                            value: 1
                         })
                     }
                 )
@@ -472,9 +478,7 @@ describe('Variable Tests - Local', () => {
                             body: eventResult.body,
                             variableKey: key,
                             defaultReason: 'MISSING_CONFIG',
-                            value: 1,
-                            etag: null,
-                            rayId: null
+                            value: 1
                         })
                     }
                 )

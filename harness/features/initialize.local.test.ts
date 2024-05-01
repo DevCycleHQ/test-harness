@@ -222,8 +222,8 @@ describe('Initialize Tests - Local', () => {
                     'Last-Modified': lastModifiedDate.toUTCString()
                 })
 
+            const secondLastModifiedDate = new Date()
             if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
-                const secondLastModifiedDate = new Date()
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
                     .times(1)
@@ -297,14 +297,16 @@ describe('Initialize Tests - Local', () => {
                     featureId: config.features[0]._id,
                     variationId: config.features[0].variations[0]._id,
                     etag: 'first-etag',
-                    rayId: 'first-ray'
+                    rayId: 'first-ray',
+                    lastModified: lastModifiedDate.toUTCString()
                 })
                 expectAggregateDefaultEvent({
                     body: secondEventResult.body,
                     variableKey: 'number-var',
                     defaultReason: 'MISSING_FEATURE',
                     etag: 'second-etag',
-                    rayId: 'second-ray'
+                    rayId: 'second-ray',
+                    lastModified: secondLastModifiedDate.toUTCString()
                 })
             }
         })

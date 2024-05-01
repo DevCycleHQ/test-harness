@@ -21,11 +21,10 @@ const variableType = VariableType.string
 
 const featureId = '638680d6fcb67b96878d90e6'
 const variationId = '638680d6fcb67b96878d90ec'
+const lastModifiedDate = new Date()
 
 describe('Multithreading Tests', () => {
     const { sdkName, scope } = getSDKScope()
-
-    const expectedPlatform = getPlatformBySdkName(sdkName)
 
     describeCapability(sdkName, Capabilities.multithreading)(sdkName, () => {
         let testClient: LocalTestClient
@@ -37,7 +36,11 @@ describe('Multithreading Tests', () => {
 
                 scope
                     .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                    .reply(200, config, {ETag: 'multithreading-etag', 'Cf-Ray': 'multithreading-rayid'})
+                    .reply(200, config, {
+                        ETag: 'multithreading-etag',
+                        'Cf-Ray': 'multithreading-rayid',
+                        'Last-Modified': lastModifiedDate.toUTCString()
+                    })
 
                 await testClient.createClient(true, {
                     configPollingIntervalMS: 100000,
@@ -87,7 +90,15 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends an "aggVariableEvaluated" event
                 // for the variable call
-                expectAggregateEvaluationEvent({body: eventBody, variableKey: key, featureId, variationId, etag: 'multithreading-etag', rayId: 'multithreading-rayid'})
+                expectAggregateEvaluationEvent({
+                    body: eventBody,
+                    variableKey: key,
+                    featureId,
+                    variationId,
+                    etag: 'multithreading-etag',
+                    rayId: 'multithreading-rayid',
+                    lastModified: lastModifiedDate.toUTCString()
+                })
             })
 
             it('should aggregate events across threads', async () => {
@@ -135,7 +146,16 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
-                expectAggregateEvaluationEvent({body: eventBodies[0], variableKey: key, featureId, variationId, value: 4, etag: 'multithreading-etag', rayId: 'multithreading-rayid'})
+                expectAggregateEvaluationEvent({
+                    body: eventBodies[0],
+                    variableKey: key,
+                    featureId,
+                    variationId,
+                    value: 4,
+                    etag: 'multithreading-etag',
+                    rayId: 'multithreading-rayid',
+                    lastModified: lastModifiedDate.toUTCString()
+                })
             })
 
             it('should retry events across threads', async () => {
@@ -185,7 +205,16 @@ describe('Multithreading Tests', () => {
 
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
-                expectAggregateEvaluationEvent({body: eventBodies[0], variableKey: key, featureId, variationId, value: 4, etag: 'multithreading-etag', rayId: 'multithreading-rayid'})
+                expectAggregateEvaluationEvent({
+                    body: eventBodies[0],
+                    variableKey: key,
+                    featureId,
+                    variationId,
+                    value: 4,
+                    etag: 'multithreading-etag',
+                    rayId: 'multithreading-rayid',
+                    lastModified: lastModifiedDate.toUTCString()
+                })
             })
 
             describeCapability(sdkName, Capabilities.clientCustomData)(sdkName, () => {
@@ -265,7 +294,11 @@ describe('Multithreading Tests', () => {
                 expectDefaultValue(key, variable, defaultValue, variableType)
 
                 await waitForRequest(scope, interceptor, 600, 'Event callback timed out')
-                expectAggregateDefaultEvent({body: eventBody, variableKey: key, defaultReason: 'MISSING_CONFIG', etag: null, rayId: null})
+                expectAggregateDefaultEvent({
+                    body: eventBody,
+                    variableKey: key,
+                    defaultReason: 'MISSING_CONFIG'
+                })
             })
         })
     })
