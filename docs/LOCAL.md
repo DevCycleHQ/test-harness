@@ -13,11 +13,12 @@ to override the version of the dependent packages that will be used to the local
 
 ```json
 "dependencies": {
-  ...
-  "@devcycle/bucketing-assembly-script": "portal:../../../js-sdks/lib/shared/bucketing-assembly-script",
+  "@devcycle/nodejs-server-sdk": "portal:../../../js-sdks/dist/sdk/nodejs",
+  "@devcycle/js-client-sdk": "portal:../../../js-sdks/dist/sdk/js",
+...
 },
 "resolutions": {
-  "@devcycle/nodejs-server-sdk": "portal:../../../js-sdks/dist/sdk/nodejs",
+  "@devcycle/bucketing-assembly-script": "portal:../../../js-sdks/lib/shared/bucketing-assembly-script",
   "@devcycle/types": "portal:../../../js-sdks/dist/lib/shared/types",
 }
 ```
