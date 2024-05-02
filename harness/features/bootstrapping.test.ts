@@ -44,11 +44,14 @@ describe('Bootstrapping Tests', () => {
                     .reply(200, config)
 
                 // create a different config clientside so we can make sure the bootstrapping method is using the right one
-                const clientsideConfig = immutable.set(
-                    config,
-                    'features.0.variations.0.variables.1.value',
-                    'new string',
-                )
+                const clientsideConfig = {
+                    ...immutable.set(
+                        config,
+                        'features.0.variations.0.variables.1.value',
+                        'new string',
+                    ),
+                    sdkKey: 'client-key',
+                }
 
                 scope
                     .get(
@@ -80,6 +83,7 @@ describe('Bootstrapping Tests', () => {
                 expect(configResult.data.variables['string-var'].value).toEqual(
                     'new string',
                 )
+                expect(configResult.data.sdkKey).toEqual('client-key')
 
                 expect(configResult).toMatchSnapshot()
             })
