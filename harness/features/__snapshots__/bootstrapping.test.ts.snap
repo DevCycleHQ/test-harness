@@ -46,6 +46,7 @@ exports[`Bootstrapping Tests NodeJS initialized client should return a client bo
         },
       },
     },
+    "sdkKey": "client-key",
     "variableVariationMap": {
       "bool-var": {
         "_feature": "638680d6fcb67b96878d90e6",
