@@ -10,14 +10,17 @@ export const Capabilities = {
     etagReporting: 'EtagReporting',
     variableValue: 'VariableValue',
     cloudProxy: 'CloudProxy',
+    lastModifiedHeader: 'LastModifiedHeader',
 }
 
 export const SDKCapabilities = {
     NodeJS: [
-        Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud, Capabilities.variableValue
+        Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud, Capabilities.variableValue,
+        Capabilities.lastModifiedHeader
     ],
     'OF-NodeJS': [
-        Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud, Capabilities.variableValue
+        Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud, Capabilities.variableValue,
+        Capabilities.lastModifiedHeader
     ],
     Python: [
         Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB,
@@ -33,7 +36,8 @@ export const SDKCapabilities = {
     ],
     Go: [
         Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData,
-        Capabilities.multithreading, Capabilities.variableValue, Capabilities.defaultReason, Capabilities.etagReporting
+        Capabilities.multithreading, Capabilities.variableValue, Capabilities.defaultReason, Capabilities.etagReporting,
+        Capabilities.lastModifiedHeader
     ],
     Ruby: [
         Capabilities.events, Capabilities.local, Capabilities.clientCustomData, Capabilities.variableValue

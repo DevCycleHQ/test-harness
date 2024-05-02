@@ -10,14 +10,16 @@ export const expectAggregateEvaluationEvent = ({
     featureId,
     value,
     etag,
-    rayId
+    rayId,
+    lastModified
 }: {
    body: Record<string, unknown>,
    variableKey: string,
    featureId: string,
    variationId: string,
    etag: string,
-    rayId: string,
+   rayId: string,
+   lastModified: string,
    value?: number
 }) => {
     const sdkName = getSDKName()
@@ -26,6 +28,7 @@ export const expectAggregateEvaluationEvent = ({
     if (hasCapability(sdkName, Capabilities.etagReporting)) {
         metadata.configEtag = etag
         metadata.configRayId = rayId
+        metadata.configLastModified = lastModified
         metadata.clientUUID = expect.any(String)
     }
     expect(body).toEqual({
@@ -53,23 +56,35 @@ export const expectAggregateEvaluationEvent = ({
     })
 }
 
-export const expectAggregateDefaultEvent = ({body, variableKey, defaultReason, value, etag, rayId}: {
+export const expectAggregateDefaultEvent = ({
+    body,
+    variableKey,
+    defaultReason,
+    value,
+    etag,
+    rayId,
+    lastModified
+}: {
     body: Record<string, unknown>,
     variableKey: string,
     defaultReason: string,
-    etag: string | null,
-    rayId: string,
+    etag?: string,
+    rayId?: string,
+    lastModified?: string,
     value?: number,
 }) => {
     const sdkName = getSDKName()
     const expectedPlatform = getPlatformBySdkName(sdkName)
     const metadata: Record<string, unknown> = hasCapability(sdkName, Capabilities.defaultReason) ? { defaultReason } : {}
     if (hasCapability(sdkName, Capabilities.etagReporting)) {
-        if (etag != null) {
+        if (etag) {
             metadata.configEtag = etag
         }
-        if (rayId != null) {
+        if (rayId) {
             metadata.configRayId = rayId
+        }
+        if (lastModified) {
+            metadata.configLastModified = lastModified
         }
         metadata.clientUUID = expect.any(String)
     }
