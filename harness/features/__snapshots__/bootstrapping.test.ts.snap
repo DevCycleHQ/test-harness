@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bootstrapping Tests NodeJS initialized client should return a client bootstrapped config 1`] = `
+{
+  "data": {
+    "environment": {
+      "_id": "638680c459f1b81cc9e6c559",
+      "key": "development",
+    },
+    "featureVariationMap": {
+      "638680d6fcb67b96878d90e6": "638680d6fcb67b96878d90ec",
+      "6386813a59f1b81cc9e6c68d": "6386813a59f1b81cc9e6c693",
+    },
+    "features": {
+      "schedule-feature": {
+        "_id": "6386813a59f1b81cc9e6c68d",
+        "_variation": "6386813a59f1b81cc9e6c693",
+        "key": "schedule-feature",
+        "type": "release",
+        "variationKey": "variation-on",
+        "variationName": "Variation On",
+      },
+      "test-harness": {
+        "_id": "638680d6fcb67b96878d90e6",
+        "_variation": "638680d6fcb67b96878d90ec",
+        "key": "test-harness",
+        "type": "release",
+        "variationKey": "variation-on",
+        "variationName": "Variation On",
+      },
+    },
+    "project": {
+      "_id": "638680c459f1b81cc9e6c557",
+      "a0_organization": "org_fakeorg",
+      "key": "test-harness-data",
+      "settings": {
+        "edgeDB": {
+          "enabled": false,
+        },
+        "optIn": {
+          "colors": {
+            "primary": "#000000",
+            "secondary": "#000000",
+          },
+          "enabled": false,
+        },
+      },
+    },
+    "variableVariationMap": {
+      "bool-var": {
+        "_feature": "638680d6fcb67b96878d90e6",
+        "_variation": "638680d6fcb67b96878d90ec",
+      },
+      "json-var": {
+        "_feature": "638680d6fcb67b96878d90e6",
+        "_variation": "638680d6fcb67b96878d90ec",
+      },
+      "number-var": {
+        "_feature": "638680d6fcb67b96878d90e6",
+        "_variation": "638680d6fcb67b96878d90ec",
+      },
+      "schedule-feature": {
+        "_feature": "6386813a59f1b81cc9e6c68d",
+        "_variation": "6386813a59f1b81cc9e6c693",
+      },
+      "string-var": {
+        "_feature": "638680d6fcb67b96878d90e6",
+        "_variation": "638680d6fcb67b96878d90ec",
+      },
+      "unicode-var": {
+        "_feature": "638680d6fcb67b96878d90e6",
+        "_variation": "638680d6fcb67b96878d90ec",
+      },
+    },
+    "variables": {
+      "bool-var": {
+        "_id": "638681f059f1b81cc9e6c7fa",
+        "key": "bool-var",
+        "type": "Boolean",
+        "value": true,
+      },
+      "json-var": {
+        "_id": "638681f059f1b81cc9e6c7fd",
+        "key": "json-var",
+        "type": "JSON",
+        "value": {
+          "facts": true,
+        },
+      },
+      "number-var": {
+        "_id": "638681f059f1b81cc9e6c7fc",
+        "key": "number-var",
+        "type": "Number",
+        "value": 1,
+      },
+      "schedule-feature": {
+        "_id": "6386813a59f1b81cc9e6c68f",
+        "key": "schedule-feature",
+        "type": "Boolean",
+        "value": true,
+      },
+      "string-var": {
+        "_id": "638681f059f1b81cc9e6c7fb",
+        "key": "string-var",
+        "type": "String",
+        "value": "new string",
+      },
+      "unicode-var": {
+        "_id": "638681f059f1b81cc9e6c7fe",
+        "key": "unicode-var",
+        "type": "String",
+        "value": "↑↑↓↓←→←→BA 🤖",
+      },
+    },
+  },
+  "entityType": "Object",
+  "logs": [],
+}
+`;

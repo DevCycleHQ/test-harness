@@ -551,6 +551,7 @@ __metadata:
     koa-bodyparser: "npm:^4.3.0"
     lint-staged: "npm:^15.0.2"
     nock: "npm:^13.2.9"
+    object-path-immutable: "npm:^4.1.2"
     prettier: "npm:^3.2.5"
     ts-jest: "npm:^29.0.3"
     ts-node: "npm:^10.9.1"
@@ -3661,6 +3662,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-plain-object@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "is-plain-object@npm:5.0.0"
+  checksum: 10/e32d27061eef62c0847d303125440a38660517e586f2f3db7c9d179ae5b6674ab0f469d519b2e25c147a1a3bc87156d0d5f4d8821e0ce4a9ee7fe1fcf11ce45c
+  languageName: node
+  linkType: hard
+
 "is-stream@npm:^2.0.0":
   version: 2.0.1
   resolution: "is-stream@npm:2.0.1"
@@ -4986,6 +4994,23 @@ __metadata:
   version: 1.12.2
   resolution: "object-inspect@npm:1.12.2"
   checksum: 10/aa11100d45fa919b36448347d4f7c8a78b0247886881db56a2026b512c4042a9749e64894519b00a4db8c6e2b713a965b5ceaa3b59324aeb3da007c54a33bc58
+  languageName: node
+  linkType: hard
+
+"object-path-immutable@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "object-path-immutable@npm:4.1.2"
+  dependencies:
+    is-plain-object: "npm:^5.0.0"
+    object-path: "npm:^0.11.8"
+  checksum: 10/493a67ee96cd5378b108fd66beffa0cb22e6f4019f51dc9f2a29c477a68aa1ac048435b2fd659158438c01d2c1e2abb9e568ff01b839f682b9d6c1a057948b35
+  languageName: node
+  linkType: hard
+
+"object-path@npm:^0.11.8":
+  version: 0.11.8
+  resolution: "object-path@npm:0.11.8"
+  checksum: 10/cbc41515ff97aa7515bd93a3d93d5b7307c95413345d83c66c60b7618429cfc935ff4049192c96701eeeb33a78678b15ee97b5fe0857e9eca4fcd7507dfafd36
   languageName: node
   linkType: hard
 

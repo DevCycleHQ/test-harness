@@ -11,6 +11,7 @@ export const Capabilities = {
     variableValue: 'VariableValue',
     cloudProxy: 'CloudProxy',
     lastModifiedHeader: 'LastModifiedHeader',
+    bootstrapping: 'Bootstrapping',
 }
 
 export const SDKCapabilities = {
@@ -21,6 +22,7 @@ export const SDKCapabilities = {
         Capabilities.cloud,
         Capabilities.variableValue,
         Capabilities.lastModifiedHeader,
+        Capabilities.bootstrapping,
     ],
     'OF-NodeJS': [
         Capabilities.events,
