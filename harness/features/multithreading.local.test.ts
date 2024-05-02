@@ -297,7 +297,10 @@ describe('Multithreading Tests', () => {
                 expectAggregateDefaultEvent({
                     body: eventBody,
                     variableKey: key,
-                    defaultReason: 'MISSING_CONFIG'
+                    defaultReason: 'MISSING_CONFIG',
+                    etag: null,
+                    rayId: null,
+                    lastModified: null
                 })
             })
         })
