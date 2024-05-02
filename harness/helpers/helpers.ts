@@ -70,10 +70,12 @@ export const getSDKName = () => global.JEST_PROJECT_SDK_TO_TEST
  * See `jest.config.ts` for more details on all projects. We also use this function to get the current nock server scope
  * and add an `afterEach()` method to cleanup the client.
  */
-export const getSDKScope = (): { sdkName: string, scope: Scope } => {
+export const getSDKScope = (): { sdkName: string; scope: Scope } => {
     const sdkName = global.JEST_PROJECT_SDK_TO_TEST
     if (!sdkName) {
-        throw new Error('No SDK specified to test using global.JEST_PROJECT_SDK_TO_TEST in jest.config.ts')
+        throw new Error(
+            'No SDK specified to test using global.JEST_PROJECT_SDK_TO_TEST in jest.config.ts',
+        )
     }
     const scope = getServerScope()
 
@@ -91,20 +93,33 @@ export const cleanupCurrentClient = async (scope) => {
     if (!scope.isDone()) {
         const pendingMocks = scope.pendingMocks()
         resetServerScope()
-        throw new Error('Requests were expected but not received: ' + pendingMocks)
+        throw new Error(
+            'Requests were expected but not received: ' + pendingMocks,
+        )
     }
 
     resetServerScope()
     if (currentClient) {
-        await global.assertNoUnmatchedRequests(currentClient.clientId, clientTestNameMap)
+        await global.assertNoUnmatchedRequests(
+            currentClient.clientId,
+            clientTestNameMap,
+        )
         currentClient = null
     }
 }
 
-export const describeIf = (condition: boolean) => condition ? describe : describe.skip
+export const describeIf = (condition: boolean) =>
+    condition ? describe : describe.skip
 
-export const describeCapability = (sdkName: string, ...capabilities: string[]) => {
-    return describeIf(capabilities.every((capability) => SDKCapabilities[sdkName].includes(capability)))
+export const describeCapability = (
+    sdkName: string,
+    ...capabilities: string[]
+) => {
+    return describeIf(
+        capabilities.every((capability) =>
+            SDKCapabilities[sdkName].includes(capability),
+        ),
+    )
 }
 
 export const hasCapability = (sdkName: string, capability: string) => {
@@ -122,29 +137,29 @@ export const variablesForTypes = {
         value: 'value1',
         type: 'String',
         defaultValue: 'default_value',
-        isDefaulted: false
+        isDefaulted: false,
     },
     number: {
         key: 'var_key',
         type: 'Number',
         value: 1,
         defaultValue: 0,
-        isDefaulted: false
+        isDefaulted: false,
     },
     boolean: {
         key: 'var_key',
         type: 'Boolean',
         value: true,
         defaultValue: false,
-        isDefaulted: false
+        isDefaulted: false,
     },
     JSON: {
         key: 'var_key',
         type: 'JSON',
-        value: { 'key': 'value1' },
+        value: { key: 'value1' },
         defaultValue: {},
-        isDefaulted: false
-    }
+        isDefaulted: false,
+    },
 }
 
 const createClient = async (
@@ -153,28 +168,28 @@ const createClient = async (
     waitForInitialization: boolean,
     clientId: string,
     sdkKey?: string | null,
-    options?: object
+    options?: object,
 ) => {
     return await fetch(`${url}/client`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             clientId,
             sdkKey,
             enableCloudBucketing,
             waitForInitialization,
-            options
-        })
+            options,
+        }),
     })
 }
 
 type CommandBody = {
-    command: string,
-    isAsync?: boolean,
-    params: ({ value: unknown } | { type: 'user' | 'event' })[],
-    user?: Record<string, unknown>,
+    command: string
+    isAsync?: boolean
+    params: ({ value: unknown } | { type: 'user' | 'event' })[]
+    user?: Record<string, unknown>
     event?: Record<string, unknown>
 }
 
@@ -182,15 +197,15 @@ export const sendCommand = async (url: string, body: CommandBody) => {
     return await fetch(url, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             command: body.command,
             isAsync: body.isAsync,
             params: body.params,
             user: body.user,
-            event: body.event
-        })
+            event: body.event,
+        }),
     })
 }
 
@@ -203,7 +218,16 @@ const callVariableValue = async (
     variableType?: string,
     defaultValue?: any,
 ) => {
-    return await performCallVariable(url, user, sdkName, isAsync, key, variableType, defaultValue, 'variableValue')
+    return await performCallVariable(
+        url,
+        user,
+        sdkName,
+        isAsync,
+        key,
+        variableType,
+        defaultValue,
+        'variableValue',
+    )
 }
 
 const callVariable = async (
@@ -215,7 +239,16 @@ const callVariable = async (
     variableType?: string,
     defaultValue?: any,
 ) => {
-    return await performCallVariable(url, user, sdkName, isAsync, key, variableType, defaultValue, 'variable')
+    return await performCallVariable(
+        url,
+        user,
+        sdkName,
+        isAsync,
+        key,
+        variableType,
+        defaultValue,
+        'variable',
+    )
 }
 
 const performCallVariable = async (
@@ -226,12 +259,12 @@ const performCallVariable = async (
     key?: string,
     variableType?: string,
     defaultValue?: any,
-    command = 'variable'
+    command = 'variable',
 ) => {
     const params: CommandBody['params'] = [
         { type: 'user' },
         { value: key },
-        { value: defaultValue }
+        { value: defaultValue },
     ]
     // Need to pass in the variable type into the OpenFeature provider as it doesn't have a generic variable interface
     if (sdkName === 'OF-NodeJS') {
@@ -241,7 +274,7 @@ const performCallVariable = async (
         command,
         user,
         params,
-        isAsync
+        isAsync,
     })
 }
 
@@ -253,12 +286,16 @@ export const wait = (ms: number) => {
     })
 }
 
-const callAllVariables = async (url: string, user: Record<string, unknown>, isAsync: boolean) => {
+const callAllVariables = async (
+    url: string,
+    user: Record<string, unknown>,
+    isAsync: boolean,
+) => {
     return await sendCommand(url, {
         command: 'allVariables',
         user,
         params: [{ type: 'user' }],
-        isAsync
+        isAsync,
     })
 }
 
@@ -266,23 +303,27 @@ const callTrack = async (
     url: string,
     user: Record<string, unknown>,
     event: Record<string, unknown>,
-    isAsync: boolean
+    isAsync: boolean,
 ) => {
     return await sendCommand(url, {
         command: 'track',
         user,
         event,
         params: [{ type: 'user' }, { type: 'event' }],
-        isAsync
+        isAsync,
     })
 }
 
-const callAllFeatures = async (url: string, user: Record<string, unknown>, isAsync: boolean) => {
+const callAllFeatures = async (
+    url: string,
+    user: Record<string, unknown>,
+    isAsync: boolean,
+) => {
     return await sendCommand(url, {
         command: 'allFeatures',
         user,
         params: [{ type: 'user' }],
-        isAsync
+        isAsync,
     })
 }
 
@@ -290,7 +331,7 @@ export const waitForRequest = async (
     scope: Scope,
     interceptor: Interceptor,
     timeout: number,
-    timeoutMessage: string
+    timeoutMessage: string,
 ) => {
     if (scope.isDone()) {
         return
@@ -315,7 +356,7 @@ export const waitForRequest = async (
             }
             scope.on('request', callback)
         }),
-        timeoutPromise
+        timeoutPromise,
     ]).finally(() => {
         scope.off('request', callback)
     })
@@ -324,7 +365,9 @@ export const waitForRequest = async (
 const checkFailed = async (response: Response, shouldFail: boolean) => {
     if (!shouldFail) {
         if (!response.ok) {
-            throw new Error(`Request to ${response.url} failed with status ${response.status}, ${await response.text()}`)
+            throw new Error(
+                `Request to ${response.url} failed with status ${response.status}, ${await response.text()}`,
+            )
         }
         const result = await response.clone().json()
         if (result.exception) {
@@ -357,18 +400,22 @@ class BaseTestClient {
         currentClient = this
         const currentTestName = expect.getState().currentTestName
         if (!currentTestName) {
-            throw new Error('Clients can only be created inside individual test cases!')
+            throw new Error(
+                'Clients can only be created inside individual test cases!',
+            )
         }
         clientTestNameMap[this.clientId] = expect.getState().currentTestName
         this.sdkKey = `dvc_server_${this.clientId}`
     }
 
     protected getClientUrl() {
-        return (new URL(this.clientLocation ?? '', getConnectionStringForProxy(this.sdkName))).href
+        return new URL(
+            this.clientLocation ?? '',
+            getConnectionStringForProxy(this.sdkName),
+        ).href
     }
 
-    async close() {
-    }
+    async close() {}
 }
 
 export class LocalTestClient extends BaseTestClient {
@@ -378,7 +425,7 @@ export class LocalTestClient extends BaseTestClient {
         waitForInitialization: boolean,
         options: Record<string, unknown> = {},
         sdkKey?: string | null,
-        shouldFail = false
+        shouldFail = false,
     ) {
         this.shouldFailInit = shouldFail
         if (sdkKey !== undefined) {
@@ -396,8 +443,8 @@ export class LocalTestClient extends BaseTestClient {
                 eventsAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
                 configCDNURI: `${getMockServerUrl()}/client/${this.clientId}`,
                 bucketingAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
-                ...options
-            }
+                ...options,
+            },
         )
 
         await checkFailed(response, shouldFail)
@@ -412,7 +459,7 @@ export class LocalTestClient extends BaseTestClient {
         key?: string,
         variableType?: string,
         defaultValue?: any,
-        shouldFail = false
+        shouldFail = false,
     ) {
         const result = await callVariableValue(
             this.getClientUrl(),
@@ -434,7 +481,7 @@ export class LocalTestClient extends BaseTestClient {
         key?: string,
         variableType?: string,
         defaultValue?: any,
-        shouldFail = false
+        shouldFail = false,
     ) {
         const result = await callVariable(
             this.getClientUrl(),
@@ -450,10 +497,7 @@ export class LocalTestClient extends BaseTestClient {
         return result
     }
 
-    async callAllVariables(
-        user: Record<string, unknown>,
-        shouldFail = false
-    ) {
+    async callAllVariables(user: Record<string, unknown>, shouldFail = false) {
         const result = await callAllVariables(this.getClientUrl(), user, false)
 
         await checkFailed(result, shouldFail)
@@ -465,21 +509,24 @@ export class LocalTestClient extends BaseTestClient {
             return
         }
         const result = await sendCommand(this.getClientUrl(), {
-            command: 'close', params: [], isAsync: true
+            command: 'close',
+            params: [],
+            isAsync: true,
         })
         await checkFailed(result, false)
     }
 
-    async callAllFeatures(
-        user: Record<string, unknown>,
-        shouldFail = false
-    ) {
+    async callAllFeatures(user: Record<string, unknown>, shouldFail = false) {
         const result = await callAllFeatures(this.getClientUrl(), user, false)
         await checkFailed(result, shouldFail)
         return result
     }
 
-    async callTrack(user: Record<string, unknown>, event: Record<string, unknown>, shouldFail = false) {
+    async callTrack(
+        user: Record<string, unknown>,
+        event: Record<string, unknown>,
+        shouldFail = false,
+    ) {
         const result = await callTrack(this.getClientUrl(), user, event, false)
 
         await checkFailed(result, shouldFail)
@@ -487,11 +534,14 @@ export class LocalTestClient extends BaseTestClient {
         return result
     }
 
-    async callSetClientCustomData(data: Record<string, unknown>, shouldFail = false) {
+    async callSetClientCustomData(
+        data: Record<string, unknown>,
+        shouldFail = false,
+    ) {
         const result = await sendCommand(this.getClientUrl(), {
             command: 'setClientCustomData',
             params: [{ value: data }],
-            isAsync: false
+            isAsync: false,
         })
 
         await checkFailed(result, shouldFail)
@@ -501,7 +551,11 @@ export class LocalTestClient extends BaseTestClient {
 }
 
 export class CloudTestClient extends BaseTestClient {
-    async createClient(options: Record<string, unknown> = {}, sdkKey?: string | null, shouldFail = false) {
+    async createClient(
+        options: Record<string, unknown> = {},
+        sdkKey?: string | null,
+        shouldFail = false,
+    ) {
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
         } else if (process.env.TEST_HARNESS_SDK_KEY) {
@@ -517,8 +571,8 @@ export class CloudTestClient extends BaseTestClient {
                 eventsAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
                 configCDNURI: `${getMockServerUrl()}/client/${this.clientId}`,
                 bucketingAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
-                ...options
-            }
+                ...options,
+            },
         )
 
         await checkFailed(response, shouldFail)
@@ -533,7 +587,7 @@ export class CloudTestClient extends BaseTestClient {
         key?: string,
         variableType?: string,
         defaultValue?: any,
-        shouldFail = false
+        shouldFail = false,
     ) {
         const result = await callVariable(
             this.getClientUrl(),
@@ -554,7 +608,7 @@ export class CloudTestClient extends BaseTestClient {
         key?: string,
         variableType?: string,
         defaultValue?: any,
-        shouldFail = false
+        shouldFail = false,
     ) {
         const result = await callVariableValue(
             this.getClientUrl(),
@@ -568,25 +622,23 @@ export class CloudTestClient extends BaseTestClient {
         await checkFailed(result, shouldFail)
         return result
     }
-    async callAllVariables(
-        user: Record<string, unknown>,
-        shouldFail = false
-    ) {
+    async callAllVariables(user: Record<string, unknown>, shouldFail = false) {
         const result = await callAllVariables(this.getClientUrl(), user, true)
         await checkFailed(result, shouldFail)
         return result
     }
 
-    async callAllFeatures(
-        user: Record<string, unknown>,
-        shouldFail = false
-    ) {
+    async callAllFeatures(user: Record<string, unknown>, shouldFail = false) {
         const result = await callAllFeatures(this.getClientUrl(), user, true)
         await checkFailed(result, shouldFail)
         return result
     }
 
-    async callTrack(user: Record<string, unknown>, event: Record<string, unknown>, shouldFail = false) {
+    async callTrack(
+        user: Record<string, unknown>,
+        event: Record<string, unknown>,
+        shouldFail = false,
+    ) {
         const result = await callTrack(this.getClientUrl(), user, event, true)
 
         await checkFailed(result, shouldFail)
@@ -595,7 +647,10 @@ export class CloudTestClient extends BaseTestClient {
     }
 }
 
-export const expectErrorMessageToBe = (message: string, ...expected: string[]) => {
+export const expectErrorMessageToBe = (
+    message: string,
+    ...expected: string[]
+) => {
     expect(message).toBeTruthy()
     let found = false
     for (const expectedMessage of expected) {
@@ -607,7 +662,9 @@ export const expectErrorMessageToBe = (message: string, ...expected: string[]) =
     // when we consolidate error messages to be uniform, change this to actually compare
     // the exception and the expected exception message
     if (!found) {
-        console.warn(`Expected error message to be in: \n ${expected.join('\n')}\nbut got: \n ${message}`)
+        console.warn(
+            `Expected error message to be in: \n ${expected.join('\n')}\nbut got: \n ${message}`,
+        )
     }
 }
 

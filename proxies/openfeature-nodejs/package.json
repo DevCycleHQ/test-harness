@@ -1,18 +1,18 @@
 {
-  "dependencies": {
-    "@devcycle/nodejs-server-sdk": "^1.25.1",
-    "@openfeature/core": "^1.1.0",
-    "@openfeature/server-sdk": "^1.13.5",
-    "@types/koa": "^2.13.5",
-    "@types/koa-bodyparser": "^4.3.10",
-    "@types/koa-router": "^7.4.4",
-    "koa": "^2.13.4",
-    "koa-bodyparser": "^4.3.0",
-    "koa-router": "^12.0.0",
-    "ts-node": "^10.9.1"
-  },
-  "devDependencies": {
-    "typescript": "^4.9.3"
-  },
-  "packageManager": "yarn@4.1.1"
+    "dependencies": {
+        "@devcycle/nodejs-server-sdk": "^1.25.1",
+        "@openfeature/core": "^1.1.0",
+        "@openfeature/server-sdk": "^1.13.5",
+        "@types/koa": "^2.13.5",
+        "@types/koa-bodyparser": "^4.3.10",
+        "@types/koa-router": "^7.4.4",
+        "koa": "^2.13.4",
+        "koa-bodyparser": "^4.3.0",
+        "koa-router": "^12.0.0",
+        "ts-node": "^10.9.1"
+    },
+    "devDependencies": {
+        "typescript": "^4.9.3"
+    },
+    "packageManager": "yarn@4.1.1"
 }

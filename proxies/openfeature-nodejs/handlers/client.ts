@@ -12,17 +12,14 @@ type ClientRequestBody = {
 }
 
 export const handleClient = async (ctx: Koa.ParameterizedContext) => {
-    const {
-        clientId,
-        sdkKey,
-        enableCloudBucketing,
-        options
-    } = <ClientRequestBody>ctx.request.body
+    const { clientId, sdkKey, enableCloudBucketing, options } = <
+        ClientRequestBody
+    >ctx.request.body
 
     if (clientId === undefined) {
         ctx.status = 400
         ctx.body = {
-            message: 'Invalid request: missing clientId'
+            message: 'Invalid request: missing clientId',
         }
         return ctx
     }
@@ -30,11 +27,14 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
     try {
         let asyncError
         const dvcClient = initializeDevCycle(sdkKey, {
-            ...options, enableCloudBucketing
+            ...options,
+            enableCloudBucketing,
         })
 
         try {
-            await OpenFeature.setProviderAndWait(await dvcClient.getOpenFeatureProvider())
+            await OpenFeature.setProviderAndWait(
+                await dvcClient.getOpenFeatureProvider(),
+            )
         } catch (e) {
             asyncError = e
         }

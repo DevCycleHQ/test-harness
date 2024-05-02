@@ -1,358 +1,354 @@
 openapi: 3.0.2
 info:
-  version: '1.0.0'
-  title: DevCycle Test Harness - Proxy
-  description: |
-    # Overview
-    The SDK proxy server is responsible for wrapping the SDK under test with an HTTP interface that can be used to call any of its public-facing methods with an arbitrary set of arguments,
-    and returning the response to the caller (which will be the harness server). It will also allow configuration options to be passed which override the base API URL the SDK makes requests to.
-    Setting that URL to the test harness server’s address allows the harness to mock the backend APIs to return data back (or to trigger errors).
+    version: '1.0.0'
+    title: DevCycle Test Harness - Proxy
+    description: |
+        # Overview
+        The SDK proxy server is responsible for wrapping the SDK under test with an HTTP interface that can be used to call any of its public-facing methods with an arbitrary set of arguments,
+        and returning the response to the caller (which will be the harness server). It will also allow configuration options to be passed which override the base API URL the SDK makes requests to.
+        Setting that URL to the test harness server’s address allows the harness to mock the backend APIs to return data back (or to trigger errors).
 
-    ### About `entityType`
-    To check that the SDK methods are returning a correct type of an instance, they will all contain an `entityType` in their response. `enityType` can be one of four values:
-    `Variable`, `User`, `Feature`, `Object`, `Void`, `Client`
+        ### About `entityType`
+        To check that the SDK methods are returning a correct type of an instance, they will all contain an `entityType` in their response. `enityType` can be one of four values:
+        `Variable`, `User`, `Feature`, `Object`, `Void`, `Client`
 
-    ### How to use
-    Before calling any SDK methods, you must first create an instance of the SDK client. This is done by calling the `/client` endpoint with the `POST` method.
+        ### How to use
+        Before calling any SDK methods, you must first create an instance of the SDK client. This is done by calling the `/client` endpoint with the `POST` method.
 
-    Once you have a client instance, you can invoke any SDK method by calling the `/{location}/command` endpoint with the `POST` method.
+        Once you have a client instance, you can invoke any SDK method by calling the `/{location}/command` endpoint with the `POST` method.
 
 tags:
-  - name: Client
-    description: SDK Client
-  - name: Location
-    description: A general endpoint to call a method on previously created object instances, such as SDK clients or DVC variables.
+    - name: Client
+      description: SDK Client
+    - name: Location
+      description: A general endpoint to call a method on previously created object instances, such as SDK clients or DVC variables.
 servers:
-  - url: 'http://proxyServerUrl'
+    - url: 'http://proxyServerUrl'
 
 paths:
-  '/client':
-    post:
-      tags:
-        - Client
-      summary: Create a DVC client instance
-      operationId: createClient
-      security: []
-      requestBody:
-        $ref: '#/components/requestBodies/ClientRequestBody'
-      responses:
-        '201':
-          description: Created
-          headers:
-            Location:
-              description: 'Location of the Client instance on the proxy server'
-              schema:
-                type: string
-              example:
-                Location: 'client/464bb685-fd58-41b6-afa0-6df49e38c705'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: 'A message indicating the result of initializing an SDK client'
-                required:
-                  - message
-              example:
-                message: 'Success'
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  exception:
-                    type: string
-                    description: 'An error from the SDK indicating an exception was thrown during initialization'
-              example:
-                exception: 'Missing environment key! Call initialize with a valid environment key'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: 'An error message indicating what went wrong with the request'
-                required:
-                  -  message
-              example:
-                message: 'Invalid request: missing clientId'
+    '/client':
+        post:
+            tags:
+                - Client
+            summary: Create a DVC client instance
+            operationId: createClient
+            security: []
+            requestBody:
+                $ref: '#/components/requestBodies/ClientRequestBody'
+            responses:
+                '201':
+                    description: Created
+                    headers:
+                        Location:
+                            description: 'Location of the Client instance on the proxy server'
+                            schema:
+                                type: string
+                            example:
+                                Location: 'client/464bb685-fd58-41b6-afa0-6df49e38c705'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                                        description: 'A message indicating the result of initializing an SDK client'
+                                required:
+                                    - message
+                            example:
+                                message: 'Success'
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    exception:
+                                        type: string
+                                        description: 'An error from the SDK indicating an exception was thrown during initialization'
+                            example:
+                                exception: 'Missing environment key! Call initialize with a valid environment key'
+                '400':
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                                        description: 'An error message indicating what went wrong with the request'
+                                required:
+                                    - message
+                            example:
+                                message: 'Invalid request: missing clientId'
 
-  '/{location}/command':
-    parameters:
-      - name: location
-        in: path
-        required: true
-        description: 'Location of the instance that the method is being called on. For example, `client/464bb685-fd58-41b6-afa0-6df49e38c705` or `variable/3'
-        schema:
-          type: string
-    post:
-      tags:
-        -  Location
-      summary: Invoke a method on a previously created instance
-      operationId: command
-      security: []
-      requestBody:
-        $ref: '#/components/requestBodies/ClientCommandRequestBody'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
+    '/{location}/command':
+        parameters:
+            - name: location
+              in: path
+              required: true
+              description: 'Location of the instance that the method is being called on. For example, `client/464bb685-fd58-41b6-afa0-6df49e38c705` or `variable/3'
               schema:
-                properties:
-                  message:
-                    type:
-                      string
-                    description: 'A message indicating a certain action occurred when a method was invoked'
-                  exception:
-                    type:
-                      string
-                    description: 'A message of what exception was thrown during the method invocation'
-                  asyncError:
-                    type: string
-                    description: 'A messsage indicating that an error occurred during an asynchronous method invocation'
-              examples:
-                exception:
-                  description: 'The `.variable` local bucketing SDK method is called with an invalid user so the response should contain `exception`'
-                  value:
-                    exception: 'Must have a user_id set on the user'
-                asyncError:
-                  description: 'The `.variable` cloud bucketing SDK method is called with an invalid user so the response should contain `asyncError`'
-                  value:
-                    asyncError: 'Must have a user_id set on the user'
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                properties:
-                  entityType:
-                    type: string
-                    description: 'Type of entity returned. One of `Variable`, `User`, `Feature`, `Object` or `Void`'
-                  data:
-                    type: object
-                    description: 'Value returned by the method'
-                  logs:
-                    type: array
-                    description: 'Logs generated during the method invocation'
-                    items:
-                      type: string
-                  exception:
-                    type: string
-                    description: 'An message of what exception was thrown during the method invocation'
-                  asyncError:
-                    type: string
-                    description: 'A messsage indicating that an error occurred during an asynchronous method invocation'
-              examples:
-                variable:
-                  value:
-                    entityType: 'Variable'
-                    data: {
-                      _id: '638681f059f1b81cc9e6c7fa',
-                      key: 'bool-var',
-                      type: 'Boolean',
-                      value: true
-                    }
-                    logs: []
-                allVariables:
-                  value:
-                    entityType: 'Object'
-                    data: {
-                      "string-var": {
-                        "_id": "638681f059f1b81cc9e6c7fb",
-                        "key": "string-var",
-                        "type": VariableType.string,
-                        "value": "string"
-                      },
-                      "number-var": {
-                        "_id": "638681f059f1b81cc9e6c7fc",
-                        "key": "number-var",
-                        "type": VariableType.number,
-                        "value": 1
-                      }
-                    }
-                    logs: []
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                properties:
-                  message:
-                    type: string
-                    description: 'An error message indicating what went wrong with the request'
-                required:
-                  -  message
+                  type: string
+        post:
+            tags:
+                - Location
+            summary: Invoke a method on a previously created instance
+            operationId: command
+            security: []
+            requestBody:
+                $ref: '#/components/requestBodies/ClientCommandRequestBody'
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    message:
+                                        type: string
+                                        description: 'A message indicating a certain action occurred when a method was invoked'
+                                    exception:
+                                        type: string
+                                        description: 'A message of what exception was thrown during the method invocation'
+                                    asyncError:
+                                        type: string
+                                        description: 'A messsage indicating that an error occurred during an asynchronous method invocation'
+                            examples:
+                                exception:
+                                    description: 'The `.variable` local bucketing SDK method is called with an invalid user so the response should contain `exception`'
+                                    value:
+                                        exception: 'Must have a user_id set on the user'
+                                asyncError:
+                                    description: 'The `.variable` cloud bucketing SDK method is called with an invalid user so the response should contain `asyncError`'
+                                    value:
+                                        asyncError: 'Must have a user_id set on the user'
+                '201':
+                    description: Created
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    entityType:
+                                        type: string
+                                        description: 'Type of entity returned. One of `Variable`, `User`, `Feature`, `Object` or `Void`'
+                                    data:
+                                        type: object
+                                        description: 'Value returned by the method'
+                                    logs:
+                                        type: array
+                                        description: 'Logs generated during the method invocation'
+                                        items:
+                                            type: string
+                                    exception:
+                                        type: string
+                                        description: 'An message of what exception was thrown during the method invocation'
+                                    asyncError:
+                                        type: string
+                                        description: 'A messsage indicating that an error occurred during an asynchronous method invocation'
+                            examples:
+                                variable:
+                                    value:
+                                        entityType: 'Variable'
+                                        data:
+                                            {
+                                                _id: '638681f059f1b81cc9e6c7fa',
+                                                key: 'bool-var',
+                                                type: 'Boolean',
+                                                value: true,
+                                            }
+                                        logs: []
+                                allVariables:
+                                    value:
+                                        entityType: 'Object'
+                                        data:
+                                            {
+                                                'string-var':
+                                                    {
+                                                        '_id': '638681f059f1b81cc9e6c7fb',
+                                                        'key': 'string-var',
+                                                        'type': VariableType.string,
+                                                        'value': 'string',
+                                                    },
+                                                'number-var':
+                                                    {
+                                                        '_id': '638681f059f1b81cc9e6c7fc',
+                                                        'key': 'number-var',
+                                                        'type': VariableType.number,
+                                                        'value': 1,
+                                                    },
+                                            }
+                                        logs: []
+                '404':
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    message:
+                                        type: string
+                                        description: 'An error message indicating what went wrong with the request'
+                                required:
+                                    - message
 
 components:
-  requestBodies:
-    ClientRequestBody:
-      content:
-        application/json:
-          schema:
+    requestBodies:
+        ClientRequestBody:
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            clientId:
+                                type: string
+                                description: 'A unique ID that will be used to reference the client once it has been created'
+                            sdkKey:
+                                type: string
+                                description: 'A unique key used to initialize the DVC SDK'
+                            options:
+                                type: object
+                                description: 'An object of launch parameters. See [DevCycle Docs](https://docs.devcycle.com/docs/sdk/server-side-sdks/node#initialization-options) for a full list of options'
+                            enableCloudBucketing:
+                                type: boolean
+                                description: 'An option to use the cloud bucketing version of the SDK'
+                            waitForInitialization:
+                                type: boolean
+                                description: 'An option to wait for the client to be initialized before responding to the request.'
+                        required:
+                            - clientId
+                    example:
+                        clientId: '464bb685-fd58-41b6-afa0-6df49e38c705'
+                        sdkKey: 'dvc_server_key'
+                        options:
+                            baseURLOverride: 'http://localhost:4000/client/464bb685-fd58-41b6-afa0-6df49e38c705'
+                            logLevel: 'info'
+                        enableCloudBucketing: true
+
+        ClientCommandRequestBody:
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            command:
+                                type: string
+                                description: 'The name of the SDK method to invoke'
+                            user:
+                                $ref: '#/components/schemas/User'
+                            event:
+                                $ref: '#/components/schemas/Event'
+                            isAsync:
+                                type: boolean
+                                description: 'Tells the proxy weather to wait on the SDK method or not'
+                            params:
+                                type: array
+                                description: 'Arguments to the SDK method. They should appear in the order they are passed to the SDK method'
+                                items:
+                                    type: object
+                                    anyOf:
+                                        - $ref: '#/components/schemas/ValueParam'
+                                        - $ref: '#/components/schemas/TypeParam'
+                    examples:
+                        variable:
+                            value:
+                                command: 'variable'
+                                user:
+                                    {
+                                        user_id: 'test',
+                                        email: 'test@test.com',
+                                        name: 'test',
+                                    }
+                                isAsync: true
+                                params:
+                                    [
+                                        { type: 'user' },
+                                        { value: 'string-key' },
+                                        { value: 'string-key-default' },
+                                    ]
+                        allVariables:
+                            value:
+                                command: 'allVarables'
+                                user:
+                                    {
+                                        user_id: 'test',
+                                        email: 'test@test.com',
+                                        name: 'test',
+                                    }
+                                isAsync: false
+                                params: [{ type: 'user' }]
+
+        UserRequestBody:
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/User'
+
+    schemas:
+        User:
             type: object
+            description: 'An object that the proxy will turn into a user instance.'
             properties:
-              clientId:
-                type: string
-                description: 'A unique ID that will be used to reference the client once it has been created'
-              sdkKey:
-                type: string
-                description: 'A unique key used to initialize the DVC SDK'
-              options:
-                type: object
-                description: 'An object of launch parameters. See [DevCycle Docs](https://docs.devcycle.com/docs/sdk/server-side-sdks/node#initialization-options) for a full list of options'
-              enableCloudBucketing:
-                type: boolean
-                description: 'An option to use the cloud bucketing version of the SDK'
-              waitForInitialization:
-                type: boolean
-                description: 'An option to wait for the client to be initialized before responding to the request.'
-            required:
-              - clientId
-          example:
-            clientId: '464bb685-fd58-41b6-afa0-6df49e38c705'
-            sdkKey: 'dvc_server_key'
-            options:
-              baseURLOverride: 'http://localhost:4000/client/464bb685-fd58-41b6-afa0-6df49e38c705'
-              logLevel: 'info'
-            enableCloudBucketing: true
-
-    ClientCommandRequestBody:
-      content:
-        application/json:
-          schema:
+                user_id:
+                    type: string
+                    description: 'Identifies the current user on a client instance'
+                email:
+                    type: string
+                    description: 'Email used for identifying a user, or used for audience segmentation'
+                name:
+                    type: string
+                    description: 'Name of the user which can be used for identifying a user, or used for audience segmentation'
+                language:
+                    type: string
+                    description: 'ISO 639-1 two-letter codes, or ISO 639-2 three-letter codes'
+                country:
+                    type: string
+                    description: 'ISO 3166 two or three-letter codes'
+                appVersion:
+                    type: string
+                    description: 'Application Version, can be used for audience segmentation'
+                appBuild:
+                    type: string
+                    description: 'Application Build, can be used for audience segmentation'
+                customData:
+                    type: object
+                    description: 'Custom JSON data used for audience segmentation'
+                privateCustomData:
+                    type: object
+                    description: 'Private Custom JSON data used for audience segmentation'
+        Event:
             type: object
+            description: 'An object that the proxy will turn into an event instance.'
             properties:
-              command:
-                type: string
-                description: 'The name of the SDK method to invoke'
-              user:
-                $ref: '#/components/schemas/User'
-              event:
-                $ref: '#/components/schemas/Event'
-              isAsync:
-                type: boolean
-                description: 'Tells the proxy weather to wait on the SDK method or not'
-              params:
-                type: array
-                description: 'Arguments to the SDK method. They should appear in the order they are passed to the SDK method'
-                items:
-                  type: object
-                  anyOf:
-                    - $ref: '#/components/schemas/ValueParam'
-                    - $ref: '#/components/schemas/TypeParam'
-          examples:
-            variable:
-              value:
-                command: 'variable'
-                user: {
-                  user_id: 'test',
-                  email: 'test@test.com',
-                  name: 'test'
-                }
-                isAsync: true
-                params: [
-                  {
-                    type: 'user'
-                  },
-                  {
-                    value: 'string-key'
-                  },
-                  {
-                    value: 'string-key-default'
-                  }
-                ]
-            allVariables:
-              value:
-                command: 'allVarables'
-                user: {
-                  user_id: 'test',
-                  email: 'test@test.com',
-                  name: 'test'
-                }
-                isAsync: false
-                params: [
-                  {
-                    type: 'user'
-                  }
-                ]
-
-    UserRequestBody:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/User'
-
-  schemas:
-    User:
-      type: object
-      description: "An object that the proxy will turn into a user instance."
-      properties:
-        user_id:
-          type: string
-          description: 'Identifies the current user on a client instance'
-        email:
-          type: string
-          description: 'Email used for identifying a user, or used for audience segmentation'
-        name:
-          type: string
-          description: 'Name of the user which can be used for identifying a user, or used for audience segmentation'
-        language:
-          type: string
-          description: 'ISO 639-1 two-letter codes, or ISO 639-2 three-letter codes'
-        country:
-          type: string
-          description: 'ISO 3166 two or three-letter codes'
-        appVersion:
-          type: string
-          description: 'Application Version, can be used for audience segmentation'
-        appBuild:
-          type: string
-          description: 'Application Build, can be used for audience segmentation'
-        customData:
-          type: object
-          description: 'Custom JSON data used for audience segmentation'
-        privateCustomData:
-          type: object
-          description: 'Private Custom JSON data used for audience segmentation'
-    Event:
-      type: object
-      description: "An object that the proxy will turn into an event instance."
-      properties:
-        type:
-          type: string
-          description: 'The main identifier for an event.'
-        date:
-          type: number
-          description: 'Date stamp at which the event was generated'
-        target:
-          type: string
-          description: 'Subject of the event. Contextual to event type.'
-        value:
-          type: number
-          description: 'Numerical value of the event. Contextual to event type.'
-        metaData:
-          type: object
-          description: 'Any additional data about the event.'
-    TypeParam:
-      type: object
-      description: 'An argument to an SDK method'
-      properties:
-        type:
-          type: string
-          description: 'Used to indicate that the user/event which was provided in the request body
-            should be passed in to the SDK method as a param. Value must be `user` or `event`.'
-    ValueParam:
-      type: object
-      description: 'An argument to an SDK method'
-      properties:
-        value:
-          type: string
-          description: 'Used to pass a value to the method. For example, if you wish to call the `.variable` method of the SDK, the params array should contain `{ value: ''my-key'' }`, `{ value: ''default-value''}`'
+                type:
+                    type: string
+                    description: 'The main identifier for an event.'
+                date:
+                    type: number
+                    description: 'Date stamp at which the event was generated'
+                target:
+                    type: string
+                    description: 'Subject of the event. Contextual to event type.'
+                value:
+                    type: number
+                    description: 'Numerical value of the event. Contextual to event type.'
+                metaData:
+                    type: object
+                    description: 'Any additional data about the event.'
+        TypeParam:
+            type: object
+            description: 'An argument to an SDK method'
+            properties:
+                type:
+                    type: string
+                    description:
+                        'Used to indicate that the user/event which was provided in the request body
+                        should be passed in to the SDK method as a param. Value must be `user` or `event`.'
+        ValueParam:
+            type: object
+            description: 'An argument to an SDK method'
+            properties:
+                value:
+                    type: string
+                    description: "Used to pass a value to the method. For example, if you wish to call the `.variable` method of the SDK, the params array should contain `{ value: 'my-key' }`, `{ value: 'default-value'}`"

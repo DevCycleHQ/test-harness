@@ -27,7 +27,11 @@ describe('Track Tests - Cloud', () => {
 
     describeCapability(sdkName, Capabilities.cloud)(sdkName, () => {
         it('should complain if event type not set', async () => {
-            const trackResponse = await client.callTrack({ user_id: validUserId }, { target: 1 }, true)
+            const trackResponse = await client.callTrack(
+                { user_id: validUserId },
+                { target: 1 },
+                true,
+            )
             const res = await trackResponse.json()
             expectErrorMessageToBe(res.asyncError, 'Invalid Event')
         })
@@ -38,8 +42,9 @@ describe('Track Tests - Cloud', () => {
             const variableId = 'string-var'
             const value = 1
 
-            const interceptor = scope
-                .post(`/client/${client.clientId}/v1/track`)
+            const interceptor = scope.post(
+                `/client/${client.clientId}/v1/track`,
+            )
 
             interceptor.matchHeader('Content-Type', 'application/json')
             interceptor.reply((uri, body) => {
@@ -47,10 +52,17 @@ describe('Track Tests - Cloud', () => {
                 return [201, { success: true }]
             })
 
-            await client.callTrack({ user_id: validUserId },
-                { type: eventType, target: variableId, value })
+            await client.callTrack(
+                { user_id: validUserId },
+                { type: eventType, target: variableId, value },
+            )
 
-            await waitForRequest(scope, interceptor, 550, 'Event callback timed out')
+            await waitForRequest(
+                scope,
+                interceptor,
+                550,
+                'Event callback timed out',
+            )
 
             expectEventBody(eventBody, variableId, eventType, value)
         })
@@ -67,20 +79,28 @@ describe('Track Tests - Cloud', () => {
                 .matchHeader('Content-Type', 'application/json')
                 .reply(519, {})
 
-            const interceptor = scope
-                .post(`/client/${client.clientId}/v1/track`)
+            const interceptor = scope.post(
+                `/client/${client.clientId}/v1/track`,
+            )
             interceptor.matchHeader('Content-Type', 'application/json')
             interceptor.reply((uri, body) => {
                 eventBody = body
                 return [201, { success: true }]
             })
 
-            const trackResponse = await client.callTrack({ user_id: validUserId },
-                { type: eventType, target: variableId, value })
+            const trackResponse = await client.callTrack(
+                { user_id: validUserId },
+                { type: eventType, target: variableId, value },
+            )
 
             await trackResponse.json()
 
-            await waitForRequest(scope, interceptor, 550, 'Event callback timed out')
+            await waitForRequest(
+                scope,
+                interceptor,
+                550,
+                'Event callback timed out',
+            )
 
             expectEventBody(eventBody, variableId, eventType, value)
         })
@@ -90,13 +110,20 @@ describe('Track Tests - Cloud', () => {
                 .post(`/client/${client.clientId}/v1/track`)
                 .reply(401, { message: 'Invalid sdk key' })
 
-            const response = await client.callTrack({
-                user_id: 'user1'
-            }, { type: 'eventType' },true)
+            const response = await client.callTrack(
+                {
+                    user_id: 'user1',
+                },
+                { type: 'eventType' },
+                true,
+            )
             const res = await response.json()
-            expectErrorMessageToBe(res.asyncError, 'Invalid sdk key', 'Invalid SDK Key')
+            expectErrorMessageToBe(
+                res.asyncError,
+                'Invalid sdk key',
+                'Invalid SDK Key',
+            )
         })
-
     })
 
     const expectEventBody = (
@@ -116,8 +143,8 @@ describe('Track Tests - Cloud', () => {
                     type: eventType,
                     target: variableId,
                     value: value !== undefined ? value : 1,
-                })
-            ]
+                }),
+            ],
         })
     }
 })

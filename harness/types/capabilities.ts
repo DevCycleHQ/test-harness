@@ -15,35 +15,62 @@ export const Capabilities = {
 
 export const SDKCapabilities = {
     NodeJS: [
-        Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud, Capabilities.variableValue,
-        Capabilities.lastModifiedHeader
+        Capabilities.events,
+        Capabilities.edgeDB,
+        Capabilities.local,
+        Capabilities.cloud,
+        Capabilities.variableValue,
+        Capabilities.lastModifiedHeader,
     ],
     'OF-NodeJS': [
-        Capabilities.events, Capabilities.edgeDB, Capabilities.local, Capabilities.cloud, Capabilities.variableValue,
-        Capabilities.lastModifiedHeader
+        Capabilities.events,
+        Capabilities.edgeDB,
+        Capabilities.local,
+        Capabilities.cloud,
+        Capabilities.variableValue,
+        Capabilities.lastModifiedHeader,
     ],
     Python: [
-        Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB,
-        Capabilities.clientCustomData, Capabilities.variableValue
+        Capabilities.events,
+        Capabilities.cloud,
+        Capabilities.local,
+        Capabilities.edgeDB,
+        Capabilities.clientCustomData,
+        Capabilities.variableValue,
     ],
     DotNet: [
-        Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB,
-        Capabilities.clientCustomData, Capabilities.variableValue
+        Capabilities.events,
+        Capabilities.cloud,
+        Capabilities.local,
+        Capabilities.edgeDB,
+        Capabilities.clientCustomData,
+        Capabilities.variableValue,
     ],
     Java: [
-        Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB,
-        Capabilities.clientCustomData, Capabilities.variableValue
+        Capabilities.events,
+        Capabilities.cloud,
+        Capabilities.local,
+        Capabilities.edgeDB,
+        Capabilities.clientCustomData,
+        Capabilities.variableValue,
     ],
     Go: [
-        Capabilities.events, Capabilities.cloud, Capabilities.local, Capabilities.edgeDB, Capabilities.clientCustomData,
-        Capabilities.multithreading, Capabilities.variableValue, Capabilities.defaultReason, Capabilities.etagReporting,
-        Capabilities.lastModifiedHeader
+        Capabilities.events,
+        Capabilities.cloud,
+        Capabilities.local,
+        Capabilities.edgeDB,
+        Capabilities.clientCustomData,
+        Capabilities.multithreading,
+        Capabilities.variableValue,
+        Capabilities.defaultReason,
+        Capabilities.etagReporting,
+        Capabilities.lastModifiedHeader,
     ],
     Ruby: [
-        Capabilities.events, Capabilities.local, Capabilities.clientCustomData, Capabilities.variableValue
+        Capabilities.events,
+        Capabilities.local,
+        Capabilities.clientCustomData,
+        Capabilities.variableValue,
     ],
-    PHP: [
-        Capabilities.events, Capabilities.local, Capabilities.cloudProxy
-    ],
-
+    PHP: [Capabilities.events, Capabilities.local, Capabilities.cloudProxy],
 }

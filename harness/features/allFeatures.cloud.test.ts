@@ -21,7 +21,10 @@ describe('allFeatures Tests - Cloud', () => {
     describeCapability(sdkName, Capabilities.cloud)(sdkName, () => {
         it('should return all features without edgeDB', async () => {
             scope
-                .post(`/client/${testClient.clientId}/v1/features`, (body) => body.user_id === 'user1')
+                .post(
+                    `/client/${testClient.clientId}/v1/features`,
+                    (body) => body.user_id === 'user1',
+                )
                 .matchHeader('Content-Type', 'application/json')
                 .matchHeader('authorization', testClient.sdkKey)
                 .query((queryObj) => {
@@ -30,14 +33,14 @@ describe('allFeatures Tests - Cloud', () => {
                 .reply(200, expectedFeaturesVariationOn)
             const featuresResponse = await testClient.callAllFeatures({
                 user_id: 'user1',
-                customData: { 'should-bucket': true }
+                customData: { 'should-bucket': true },
             })
 
             const features = await featuresResponse.json()
             expect(features).toMatchObject({
                 entityType: 'Object',
                 data: expectedFeaturesVariationOn,
-                logs: []
+                logs: [],
             })
         })
 
@@ -59,13 +62,13 @@ describe('allFeatures Tests - Cloud', () => {
 
             const featuresResponse = await edgeDBTestClient.callAllFeatures({
                 user_id: 'user1',
-                customData: { 'should-bucket': true }
+                customData: { 'should-bucket': true },
             })
             const features = await featuresResponse.json()
             expect(features).toMatchObject({
                 entityType: 'Object',
                 data: expectedFeaturesVariationOn,
-                logs: []
+                logs: [],
             })
         })
 
@@ -75,12 +78,18 @@ describe('allFeatures Tests - Cloud', () => {
                 .post(`/client/${testClient.clientId}/v1/features`)
                 .reply(401, { message: 'Invalid sdk key' })
 
-            const response = await testClient.callAllFeatures({
-                user_id: 'user1'
-            }, true)
+            const response = await testClient.callAllFeatures(
+                {
+                    user_id: 'user1',
+                },
+                true,
+            )
             const res = await response.json()
-            expectErrorMessageToBe(res.asyncError, 'Invalid sdk key', 'Invalid SDK Key')
+            expectErrorMessageToBe(
+                res.asyncError,
+                'Invalid sdk key',
+                'Invalid SDK Key',
+            )
         })
     })
 })
-

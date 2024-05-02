@@ -1,5 +1,9 @@
 import Koa from 'koa'
-import { DevCycleClient, DevCycleCloudClient, initializeDevCycle } from '@devcycle/nodejs-server-sdk'
+import {
+    DevCycleClient,
+    DevCycleCloudClient,
+    initializeDevCycle,
+} from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
 
 type ClientRequestBody = {
@@ -16,12 +20,12 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         sdkKey,
         enableCloudBucketing,
         waitForInitialization,
-        options
+        options,
     } = <ClientRequestBody>ctx.request.body
     if (clientId === undefined) {
         ctx.status = 400
         ctx.body = {
-            message: 'Invalid request: missing clientId'
+            message: 'Invalid request: missing clientId',
         }
         return ctx
     }
@@ -40,7 +44,10 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
                 }
             }
         } else {
-            client = initializeDevCycle(sdkKey, { ...options, enableCloudBucketing: true })
+            client = initializeDevCycle(sdkKey, {
+                ...options,
+                enableCloudBucketing: true,
+            })
         }
 
         dataStore.clients[clientId] = client

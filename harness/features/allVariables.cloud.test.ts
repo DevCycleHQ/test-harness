@@ -3,7 +3,7 @@ import {
     CloudTestClient,
     describeCapability,
     expectErrorMessageToBe,
-    getSDKScope
+    getSDKScope,
 } from '../helpers'
 import { Capabilities } from '../types'
 import { variables } from '../mockData'
@@ -31,7 +31,7 @@ describe('allVariables Tests - Cloud', () => {
 
             const response = await client.callAllVariables({
                 user_id: 'test_user',
-                email: 'user@gmail.com'
+                email: 'user@gmail.com',
             })
             const { data: variablesMap } = await response.json()
 
@@ -43,12 +43,19 @@ describe('allVariables Tests - Cloud', () => {
                 .post(`/client/${client.clientId}/v1/variables`)
                 .reply(401, { message: 'Invalid sdk token' })
 
-            const response = await client.callAllVariables({
-                user_id: 'test_user',
-                email: 'user@gmail.com'
-            }, true)
+            const response = await client.callAllVariables(
+                {
+                    user_id: 'test_user',
+                    email: 'user@gmail.com',
+                },
+                true,
+            )
             const res = await response.json()
-            expectErrorMessageToBe(res.asyncError, 'Invalid sdk token', 'Invalid SDK Key')
+            expectErrorMessageToBe(
+                res.asyncError,
+                'Invalid sdk token',
+                'Invalid SDK Key',
+            )
         })
 
         it('should return a variable map', async () => {
@@ -89,7 +96,7 @@ describe('allVariables Tests - Cloud', () => {
                 .reply(200, variables)
 
             await client.createClient({
-                enableEdgeDB: true
+                enableEdgeDB: true,
             })
 
             await client.callAllVariables({

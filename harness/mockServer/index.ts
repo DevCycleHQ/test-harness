@@ -10,7 +10,10 @@ import bodyParser from 'koa-bodyparser'
 
 let unmatchedRequests = []
 
-export const assertNoUnmatchedRequests = async (currentClientId, testNameMap) => {
+export const assertNoUnmatchedRequests = async (
+    currentClientId,
+    testNameMap,
+) => {
     if (unmatchedRequests.length > 0) {
         const currentUnmatchedRequests = unmatchedRequests
         unmatchedRequests = []
@@ -19,11 +22,19 @@ export const assertNoUnmatchedRequests = async (currentClientId, testNameMap) =>
 
         if (url.includes(currentClientId)) {
             console.error('Unmatched requests: ' + currentUnmatchedRequests)
-            throw new Error('Unexpected requests received: ' + currentUnmatchedRequests)
+            throw new Error(
+                'Unexpected requests received: ' + currentUnmatchedRequests,
+            )
         } else {
             const testName = testNameMap[clientId]
-            console.error(`Unmatched requests from test case ${testName} ` + currentUnmatchedRequests)
-            throw new Error(`Unexpected requests received from test case ${testName} ` + currentUnmatchedRequests)
+            console.error(
+                `Unmatched requests from test case ${testName} ` +
+                    currentUnmatchedRequests,
+            )
+            throw new Error(
+                `Unexpected requests received from test case ${testName} ` +
+                    currentUnmatchedRequests,
+            )
         }
     }
 }
@@ -37,16 +48,20 @@ export function initialize() {
         try {
             let response: any
             if (request.method.toLowerCase() === 'get') {
-                response = await axios.get(`https://myfakenockurl${ctx.request.url}`,
+                response = await axios.get(
+                    `https://myfakenockurl${ctx.request.url}`,
                     {
-                        headers
-                    })
+                        headers,
+                    },
+                )
             } else {
-                response = await axios[request.method.toLowerCase()](`https://myfakenockurl${ctx.request.url}`,
+                response = await axios[request.method.toLowerCase()](
+                    `https://myfakenockurl${ctx.request.url}`,
                     request.body,
                     {
-                        headers
-                    })
+                        headers,
+                    },
+                )
             }
             ctx.body = response.data
             ctx.status = response.status
@@ -58,16 +73,16 @@ export function initialize() {
                 ctx.body = error.response.data
                 ctx.status = error.response.status
             } else {
-                console.log('Error Forwarding Request to Nock Server: ', error.message)
+                console.log(
+                    'Error Forwarding Request to Nock Server: ',
+                    error.message,
+                )
                 unmatchedRequests.push(error)
             }
         }
     })
 
-    app
-        .use(bodyParser())
-        .use(router.routes())
-        .use(router.allowedMethods())
+    app.use(bodyParser()).use(router.routes()).use(router.allowedMethods())
 
     return app.listen(0)
 }

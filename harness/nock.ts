@@ -10,9 +10,15 @@ let interceptors: nock.Interceptor[] = []
  * implement a proxy wrapper for nock scope
  */
 const scopeProxy = new Proxy(scope, {
-    get: function(target, prop: keyof Scope, receiver) {
-        const result = Reflect.get(target, prop, receiver);
-        if (prop === "get" || prop === "post" || prop === "put" || prop === "head" || prop === "patch") {
+    get: function (target, prop: keyof Scope, receiver) {
+        const result = Reflect.get(target, prop, receiver)
+        if (
+            prop === 'get' ||
+            prop === 'post' ||
+            prop === 'put' ||
+            prop === 'head' ||
+            prop === 'patch'
+        ) {
             const original = result as Scope['get']
             return (...args: ScopeArgs) => {
                 const interceptor = original.call(target, ...args)
@@ -27,7 +33,7 @@ const scopeProxy = new Proxy(scope, {
 export const getServerScope = (): Scope => scopeProxy
 
 export const resetServerScope = () => {
-    for (let i of interceptors) {
+    for (const i of interceptors) {
         nock.removeInterceptor(i)
     }
     interceptors = []

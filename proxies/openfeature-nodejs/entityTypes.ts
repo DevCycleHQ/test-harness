@@ -1,4 +1,7 @@
-import { DevCycleClient, DevCycleCloudClient } from '@devcycle/nodejs-server-sdk'
+import {
+    DevCycleClient,
+    DevCycleCloudClient,
+} from '@devcycle/nodejs-server-sdk'
 import { Client as OFClient } from '@openfeature/server-sdk'
 
 export enum EntityTypes {
@@ -7,11 +10,11 @@ export enum EntityTypes {
     feature = 'Feature',
     object = 'Object',
     client = 'Client',
-    void = 'Void'
+    void = 'Void',
 }
 
 export type DataStoreClient = {
-    dvcClient: DevCycleClient | DevCycleCloudClient,
+    dvcClient: DevCycleClient | DevCycleCloudClient
     openFeatureClient: OFClient
 }
 

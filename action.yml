@@ -1,43 +1,43 @@
 name: 'DevCycle Test Harness'
 description: 'Run test harness tests against given SDKs'
 inputs:
-  sdks-to-test:
-    description: 'Which SDKs to test'
-    required: true
-  sdk-github-sha:
-    description: 'The SHA ref of the SDK to test - used in PRs. If not specified; sdk-version is used'
-    required: false
+    sdks-to-test:
+        description: 'Which SDKs to test'
+        required: true
+    sdk-github-sha:
+        description: 'The SHA ref of the SDK to test - used in PRs. If not specified; sdk-version is used'
+        required: false
 runs:
-  using: "composite"
-  steps:
-    - uses: actions/checkout@v3.3.0
-      with:
-        repository: DevCycleHQ/test-harness
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 20
-        cache: 'yarn'
-    - name: Install Dependencies
-      shell: bash
-      run: yarn install
-    - name: Run All Tests
-      shell: bash
-      run: yarn test:ci
-      env:
-        SDK_GITHUB_SHA: ${{ inputs.sdk-github-sha }}
-        SDKS_TO_TEST: ${{ inputs.sdks-to-test }}
+    using: 'composite'
+    steps:
+        - uses: actions/checkout@v3.3.0
+          with:
+              repository: DevCycleHQ/test-harness
+        - uses: actions/setup-node@v3
+          with:
+              node-version: 20
+              cache: 'yarn'
+        - name: Install Dependencies
+          shell: bash
+          run: yarn install
+        - name: Run All Tests
+          shell: bash
+          run: yarn test:ci
+          env:
+              SDK_GITHUB_SHA: ${{ inputs.sdk-github-sha }}
+              SDKS_TO_TEST: ${{ inputs.sdks-to-test }}
 
-    - uses: actions/upload-artifact@v4
-      if: success() || failure()
-      with:
-        name: test-results
-        path: jest-*.xml
+        - uses: actions/upload-artifact@v4
+          if: success() || failure()
+          with:
+              name: test-results
+              path: jest-*.xml
 
-    - name: Test Report
-      uses: dorny/test-reporter@v1
-      if: ${{ github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name }} && (success() || failure())
-      with:
-        name: Test Report          # Name of the check run which will be created
-        path: jest-*.xml           # Path to test results
-        reporter: jest-junit       # Format of test results
+        - name: Test Report
+          uses: dorny/test-reporter@v1
+          if: ${{ github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name }} && (success() || failure())
+          with:
+              name: Test Report # Name of the check run which will be created
+              path: jest-*.xml # Path to test results
+              reporter: jest-junit # Format of test results
 

@@ -3,7 +3,7 @@ import {
     CloudTestClient,
     describeCapability,
     expectErrorMessageToBe,
-    getSDKScope
+    getSDKScope,
 } from '../helpers'
 import { Capabilities } from '../types'
 
@@ -55,4 +55,3 @@ describe('Client Initialize Tests - Cloud', () => {
         })
     })
 })
-

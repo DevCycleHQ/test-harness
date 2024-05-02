@@ -1,4 +1,9 @@
-import { DevCycleClient, DevCycleEvent, DevCycleUser, DVCVariable } from '@devcycle/nodejs-server-sdk'
+import {
+    DevCycleClient,
+    DevCycleEvent,
+    DevCycleUser,
+    DVCVariable,
+} from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
 import { getEntityFromType, DataStore, EntityTypes } from '../entityTypes'
 import { dataStore } from '../app'
@@ -18,25 +23,19 @@ type Param = {
 type LocationRequestBody = {
     command: string
     params: Param[]
-    user?: DevCycleUser,
-    event?: DevCycleEvent,
+    user?: DevCycleUser
+    event?: DevCycleEvent
     isAsync: boolean
 }
 
 type ParsedParams = any[]
 
-export const handleLocation = async (
-    ctx: Koa.ParameterizedContext
-) => {
+export const handleLocation = async (ctx: Koa.ParameterizedContext) => {
     const body = ctx.request.body as LocationRequestBody
     const { command, params, isAsync } = body
     const entity = (ctx.request as RequestWithEntity).entity
     try {
-        const parsedParams: ParsedParams = parseParams(
-            body,
-            params,
-            dataStore
-        )
+        const parsedParams: ParsedParams = parseParams(body, params, dataStore)
         if (parsedParams.includes(undefined)) {
             ctx.status = 404
             ctx.body = {
@@ -47,24 +46,19 @@ export const handleLocation = async (
 
         let result
         if (isAsync) {
-            result = await invokeCommand(
-                entity,
-                command,
-                parsedParams
-            )
+            result = await invokeCommand(entity, command, parsedParams)
         } else {
-            result = invokeCommand(
-                entity,
-                command,
-                parsedParams
-            )
+            result = invokeCommand(entity, command, parsedParams)
         }
 
-        const entityType = result ? getEntityFromType(result.constructor.name) : EntityTypes.void
+        const entityType = result
+            ? getEntityFromType(result.constructor.name)
+            : EntityTypes.void
 
-        const commandId = dataStore.commandResults[command] !== undefined ?
-            Object.keys(dataStore.commandResults[command]).length :
-            0
+        const commandId =
+            dataStore.commandResults[command] !== undefined
+                ? Object.keys(dataStore.commandResults[command]).length
+                : 0
 
         if (dataStore.commandResults[command] === undefined) {
             dataStore.commandResults[command] = {}
@@ -78,20 +72,19 @@ export const handleLocation = async (
             data: entityType === EntityTypes.client ? {} : result,
             logs: [], // TODO add logs
         }
-
     } catch (error) {
         console.error(error)
         if (isAsync) {
             ctx.status = 200
             ctx.body = {
                 asyncError: error.message,
-                stack: error.stack
+                stack: error.stack,
             }
         } else {
             ctx.status = 200
             ctx.body = {
                 exception: error.message,
-                stack: error.stack
+                stack: error.stack,
             }
         }
     }
@@ -112,7 +105,10 @@ const getEntityFromLocation = (location: string, data: DataStore) => {
     return undefined
 }
 
-const getEntityFromParamType = (type: 'user' | 'event', body: LocationRequestBody) => {
+const getEntityFromParamType = (
+    type: 'user' | 'event',
+    body: LocationRequestBody,
+) => {
     if (type === 'user') {
         return body.user
     } else if (type === 'event') {
@@ -121,7 +117,11 @@ const getEntityFromParamType = (type: 'user' | 'event', body: LocationRequestBod
     return undefined
 }
 
-const parseParams = (body: LocationRequestBody, params: Param[], data: DataStore): ParsedParams => {
+const parseParams = (
+    body: LocationRequestBody,
+    params: Param[],
+    data: DataStore,
+): ParsedParams => {
     const parsedParams: ParsedParams = []
     params.forEach((element) => {
         if (element.callbackURL) {
@@ -143,7 +143,10 @@ const invokeCommand = (
     return entity[command](...params)
 }
 
-export const validateLocationReqMiddleware = async (ctx: Koa.ParameterizedContext, next) => {
+export const validateLocationReqMiddleware = async (
+    ctx: Koa.ParameterizedContext,
+    next,
+) => {
     const entity = getEntityFromLocation(ctx.request.url, dataStore)
     const body = ctx.request.body as LocationRequestBody
 
@@ -161,6 +164,6 @@ export const validateLocationReqMiddleware = async (ctx: Koa.ParameterizedContex
         }
         return ctx
     }
-    (ctx.request as RequestWithEntity).entity = entity
+    ;(ctx.request as RequestWithEntity).entity = entity
     await next()
 }

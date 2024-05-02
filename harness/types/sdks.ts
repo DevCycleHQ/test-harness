@@ -6,5 +6,5 @@ export const Sdks = {
     ruby: 'Ruby',
     php: 'PHP',
     java: 'Java',
-    python: 'Python'
+    python: 'Python',
 }

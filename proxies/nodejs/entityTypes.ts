@@ -1,4 +1,7 @@
-import { DevCycleClient, DevCycleCloudClient } from '@devcycle/nodejs-server-sdk'
+import {
+    DevCycleClient,
+    DevCycleCloudClient,
+} from '@devcycle/nodejs-server-sdk'
 
 export enum EntityTypes {
     user = 'User',
@@ -6,7 +9,7 @@ export enum EntityTypes {
     feature = 'Feature',
     object = 'Object',
     client = 'Client',
-    void = 'Void'
+    void = 'Void',
 }
 
 export type DataStore = {

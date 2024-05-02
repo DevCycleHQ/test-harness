@@ -7,7 +7,9 @@ async function setup(opts) {
     console.log(`Setting up test containers for SDKs: ${sdks.join(', ')}`)
 
     // COMPOSE_PROFILES controls which docker-compose services are run via their profiles setting in docker-compose.yml
-    process.env.COMPOSE_PROFILES = sdks.map((sdkName: string) => sdkName.toLowerCase()).join(',')
+    process.env.COMPOSE_PROFILES = sdks
+        .map((sdkName: string) => sdkName.toLowerCase())
+        .join(',')
 
     if (process.env.LOCAL_MODE === '1') {
         // Effectively disable all docker containers by setting a profile that none of them use

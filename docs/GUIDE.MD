@@ -14,10 +14,10 @@ Tests are divided into separate features that are present in each SDK tested by 
 `harness/features/`. There are also helper methods located under `harness/helpers.ts` that can be used to create SDK clients, call certain
 features on the proxy server and return the response, etc.
 
-An important helper method is the `getSDKScope` helper method, which returns the currently running SDK name for the current jest project. 
+An important helper method is the `getSDKScope` helper method, which returns the currently running SDK name for the current jest project.
 You can see all the jest projects in `jest.config.js`. All SDK types are defined in: `harness/types/sdks.ts`.
 
-Another useful method is to wrap tests with a `describeCapability` function, passing in a capability listed under `harness/types/capabilities.ts`. 
+Another useful method is to wrap tests with a `describeCapability` function, passing in a capability listed under `harness/types/capabilities.ts`.
 This is used to segment different SDKs with different tests that are present on some SDKs but not all, e.g. Python not having a local bucketing capability.
 
 Lastly, we use `nock` to mock out server responses sent from the SDK. This allows to stub out certain methods on different URLs and return data objects.
@@ -43,7 +43,8 @@ scope
     })
 ```
 
-We can then use our helper methods to call the `variable` method on our proxy servers: 
+We can then use our helper methods to call the `variable` method on our proxy servers:
+
 ```
 const variableResponse = await testClient.callVariable(
     { user_id: 'user1' },

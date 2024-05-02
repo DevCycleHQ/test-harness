@@ -3,7 +3,7 @@ import {
     LocalTestClient,
     describeCapability,
     waitForRequest,
-    getSDKScope
+    getSDKScope,
 } from '../helpers'
 import { Capabilities } from '../types'
 import { config, variables } from '../mockData'
@@ -17,13 +17,14 @@ describe('allVariables Tests - Local', () => {
 
     beforeEach(async () => {
         client = new LocalTestClient(sdkName)
-        configInterceptor = scope
-            .get(`/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`)
+        configInterceptor = scope.get(
+            `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`,
+        )
         configInterceptor.reply(200, config)
 
         url = getConnectionStringForProxy(sdkName)
         await client.createClient(true, {
-            configPollingIntervalMS: 60000
+            configPollingIntervalMS: 60000,
         })
     })
 
@@ -32,30 +33,36 @@ describe('allVariables Tests - Local', () => {
             const delayClient = new LocalTestClient(sdkName)
 
             const interceptor = scope
-                .get(`/client/${delayClient.clientId}/config/v1/server/${delayClient.sdkKey}.json`)
+                .get(
+                    `/client/${delayClient.clientId}/config/v1/server/${delayClient.sdkKey}.json`,
+                )
                 .delay(2000)
 
-            interceptor
-                .reply(200, config)
+            interceptor.reply(200, config)
 
             await delayClient.createClient(false)
 
             const response = await delayClient.callAllVariables({
                 user_id: 'test_user',
                 email: 'user@gmail.com',
-                customData: { 'should-bucket': true }
+                customData: { 'should-bucket': true },
             })
             const { data: variablesMap } = await response.json()
 
             expect(variablesMap).toMatchObject({})
-            await waitForRequest(scope, interceptor, 1000, 'Config request never received!')
+            await waitForRequest(
+                scope,
+                interceptor,
+                1000,
+                'Config request never received!',
+            )
         })
 
         it('should return a variable map for a bucketed user', async () => {
             const response = await client.callAllVariables({
                 user_id: 'test_user',
                 email: 'user@gmail.com',
-                customData: { 'should-bucket': true }
+                customData: { 'should-bucket': true },
             })
             const { data: variablesMap, entityType } = await response.json()
 

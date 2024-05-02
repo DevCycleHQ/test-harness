@@ -4,7 +4,10 @@ import {
     describeCapability,
     expectErrorMessageToBe,
     hasCapability,
-    getSDKScope, interceptEvents, expectAggregateEvaluationEvent, expectAggregateDefaultEvent
+    getSDKScope,
+    interceptEvents,
+    expectAggregateEvaluationEvent,
+    expectAggregateDefaultEvent,
 } from '../helpers'
 import { Capabilities } from '../types'
 import { config, shouldBucketUser } from '../mockData'
@@ -22,28 +25,37 @@ describe('Initialize Tests - Local', () => {
 
             expectErrorMessageToBe(
                 exception,
-                'Missing SDK key! Call initialize with a valid SDK key'
+                'Missing SDK key! Call initialize with a valid SDK key',
             )
         })
 
         it('should error when SDK key is invalid', async () => {
             const testClient = new LocalTestClient(sdkName)
-            const response = await testClient.createClient(true, {}, 'invalid key', true)
+            const response = await testClient.createClient(
+                true,
+                {},
+                'invalid key',
+                true,
+            )
             const { exception } = await response.json()
 
             expectErrorMessageToBe(
                 exception,
-                'Invalid SDK key provided. Please call initialize with a valid server SDK key'
+                'Invalid SDK key provided. Please call initialize with a valid server SDK key',
             )
         })
 
         it('initializes correctly on valid data', async () => {
             const testClient = new LocalTestClient(sdkName)
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
                 .reply(200, config)
 
-            const response = await testClient.createClient(true, { configPollingIntervalMS: 10000 })
+            const response = await testClient.createClient(true, {
+                configPollingIntervalMS: 10000,
+            })
             const { message } = await response.json()
 
             expect(message).toEqual('success')
@@ -52,51 +64,71 @@ describe('Initialize Tests - Local', () => {
         it('calls initialize promise/callback when config is successfully retrieved', async () => {
             const testClient = new LocalTestClient(sdkName)
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
                 .reply(200, config)
 
-            await testClient.createClient(true, { configPollingIntervalMS: 10000 })
+            await testClient.createClient(true, {
+                configPollingIntervalMS: 10000,
+            })
         })
 
         it('calls initialize promise/callback when config fails to be retrieved', async () => {
             const testClient = new LocalTestClient(sdkName)
 
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
                 .times(2)
                 .reply(500)
 
-            await testClient.createClient(true, { configPollingIntervalMS: 10000 })
+            await testClient.createClient(true, {
+                configPollingIntervalMS: 10000,
+            })
         })
 
         // TODO DVC-6016 investigate why these were failing on the nodeJS SDK
-        it.skip('stops the polling interval when the sdk key is invalid and cdn responds 403,' +
-            ' throws error', async () => {
-            const testClient = new LocalTestClient(sdkName)
+        it.skip(
+            'stops the polling interval when the sdk key is invalid and cdn responds 403,' +
+                ' throws error',
+            async () => {
+                const testClient = new LocalTestClient(sdkName)
 
-            scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                .reply(403)
+                scope
+                    .get(
+                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                    )
+                    .reply(403)
 
-            const response =
-                await testClient.createClient(true, { configPollingIntervalMS: 1000 }, testClient.sdkKey, true)
-            const { exception } = await response.json()
+                const response = await testClient.createClient(
+                    true,
+                    { configPollingIntervalMS: 1000 },
+                    testClient.sdkKey,
+                    true,
+                )
+                const { exception } = await response.json()
 
-            expectErrorMessageToBe(
-                exception,
-                'Invalid environment key provided. Please call initialize with a valid server environment key'
-            )
-
-        })
+                expectErrorMessageToBe(
+                    exception,
+                    'Invalid environment key provided. Please call initialize with a valid server environment key',
+                )
+            },
+        )
 
         it('fetches config again after 3 seconds when config polling interval is overriden', async () => {
             const testClient = new LocalTestClient(sdkName)
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
                 .times(2)
                 .reply(200, config)
 
-            await testClient.createClient(true, { configPollingIntervalMS: 3000 })
+            await testClient.createClient(true, {
+                configPollingIntervalMS: 3000,
+            })
 
             expect(scope.pendingMocks().length).toEqual(1)
 
@@ -106,23 +138,37 @@ describe('Initialize Tests - Local', () => {
         it('uses the same config if the etag matches', async () => {
             const testClient = new LocalTestClient(sdkName)
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                .reply(200, config, { ETag: 'test-etag', 'Last-Modified': lastModifiedDate.toUTCString() })
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
+                .reply(200, config, {
+                    ETag: 'test-etag',
+                    'Last-Modified': lastModifiedDate.toUTCString(),
+                })
 
             if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
                 scope
-                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .get(
+                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                    )
                     .matchHeader('If-None-Match', 'test-etag')
-                    .matchHeader('If-Modified-Since', lastModifiedDate.toUTCString())
+                    .matchHeader(
+                        'If-Modified-Since',
+                        lastModifiedDate.toUTCString(),
+                    )
                     .reply(304, {})
             } else {
                 scope
-                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .get(
+                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                    )
                     .matchHeader('If-None-Match', 'test-etag')
                     .reply(304, {})
             }
 
-            await testClient.createClient(true, { configPollingIntervalMS: 1000 })
+            await testClient.createClient(true, {
+                configPollingIntervalMS: 1000,
+            })
 
             expect(scope.pendingMocks().length).toEqual(1)
 
@@ -130,26 +176,40 @@ describe('Initialize Tests - Local', () => {
             expect(scope.pendingMocks().length).toEqual(0)
 
             if (hasCapability(sdkName, Capabilities.events)) {
-                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                scope
+                    .post(`/client/${testClient.clientId}/v1/events/batch`)
+                    .reply(201)
             }
 
             // make sure the original config is still in use
-            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
+            const variable = await testClient.callVariable(
+                shouldBucketUser,
+                sdkName,
+                'number-var',
+                'number',
+                0,
+            )
             expect((await variable.json()).data.value).toEqual(1)
         })
 
         it('uses the same config if the refetch fails, after retrying once', async () => {
             const testClient = new LocalTestClient(sdkName)
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
                 .reply(200, config)
 
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
                 .times(2)
                 .reply(503, {})
 
-            await testClient.createClient(true, { configPollingIntervalMS: 1000 })
+            await testClient.createClient(true, {
+                configPollingIntervalMS: 1000,
+            })
 
             expect(scope.pendingMocks().length).toEqual(1)
 
@@ -157,23 +217,37 @@ describe('Initialize Tests - Local', () => {
             expect(scope.pendingMocks().length).toEqual(0)
             // make sure the original config is still in use
             if (hasCapability(sdkName, Capabilities.events)) {
-                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                scope
+                    .post(`/client/${testClient.clientId}/v1/events/batch`)
+                    .reply(201)
             }
-            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
+            const variable = await testClient.callVariable(
+                shouldBucketUser,
+                sdkName,
+                'number-var',
+                'number',
+                0,
+            )
             expect((await variable.json()).data.value).toEqual(1)
         })
 
         it('uses the same config if the response is invalid JSON', async () => {
             const testClient = new LocalTestClient(sdkName)
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
                 .reply(200, config)
 
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
-                .reply(200, 'I\'m not JSON!')
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
+                .reply(200, "I'm not JSON!")
 
-            await testClient.createClient(true, { configPollingIntervalMS: 1000 })
+            await testClient.createClient(true, {
+                configPollingIntervalMS: 1000,
+            })
 
             expect(scope.pendingMocks().length).toEqual(1)
 
@@ -181,23 +255,37 @@ describe('Initialize Tests - Local', () => {
             expect(scope.pendingMocks().length).toEqual(0)
             // make sure the original config is still in use
             if (hasCapability(sdkName, Capabilities.events)) {
-                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                scope
+                    .post(`/client/${testClient.clientId}/v1/events/batch`)
+                    .reply(201)
             }
-            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
+            const variable = await testClient.callVariable(
+                shouldBucketUser,
+                sdkName,
+                'number-var',
+                'number',
+                0,
+            )
             expect((await variable.json()).data.value).toEqual(1)
         })
 
         it('uses the same config if the response is valid JSON but invalid data', async () => {
             const testClient = new LocalTestClient(sdkName)
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
                 .reply(200, config)
 
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
                 .reply(200, '{"snatch_movie_quote": "d\'ya like dags?"}')
 
-            await testClient.createClient(true, { configPollingIntervalMS: 1000 })
+            await testClient.createClient(true, {
+                configPollingIntervalMS: 1000,
+            })
 
             expect(scope.pendingMocks().length).toEqual(1)
 
@@ -205,27 +293,39 @@ describe('Initialize Tests - Local', () => {
             expect(scope.pendingMocks().length).toEqual(0)
             // make sure the original config is still in use
             if (hasCapability(sdkName, Capabilities.events)) {
-                scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
+                scope
+                    .post(`/client/${testClient.clientId}/v1/events/batch`)
+                    .reply(201)
             }
-            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
+            const variable = await testClient.callVariable(
+                shouldBucketUser,
+                sdkName,
+                'number-var',
+                'number',
+                0,
+            )
             expect((await variable.json()).data.value).toEqual(1)
         })
 
         it('uses the new config when etag changes, and flushes existing events', async () => {
             const testClient = new LocalTestClient(sdkName)
             scope
-                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .get(
+                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                )
                 .times(1)
                 .reply(200, config, {
                     ETag: 'first-etag',
                     'Cf-Ray': 'first-ray',
-                    'Last-Modified': lastModifiedDate.toUTCString()
+                    'Last-Modified': lastModifiedDate.toUTCString(),
                 })
 
             const secondLastModifiedDate = new Date()
             if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
                 scope
-                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .get(
+                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                    )
                     .times(1)
                     .matchHeader('If-None-Match', (value) => {
                         return value === 'first-etag'
@@ -233,14 +333,21 @@ describe('Initialize Tests - Local', () => {
                     .matchHeader('If-Modified-Since', (value) => {
                         return value === lastModifiedDate.toUTCString()
                     })
-                    .reply(200, { ...config, features: [] }, {
-                        ETag: 'second-etag',
-                        'Cf-Ray': 'second-ray',
-                        'Last-Modified': secondLastModifiedDate.toUTCString()
-                    })
+                    .reply(
+                        200,
+                        { ...config, features: [] },
+                        {
+                            ETag: 'second-etag',
+                            'Cf-Ray': 'second-ray',
+                            'Last-Modified':
+                                secondLastModifiedDate.toUTCString(),
+                        },
+                    )
 
                 scope
-                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .get(
+                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                    )
                     .matchHeader('If-None-Match', (value) => {
                         return value === 'second-etag'
                     })
@@ -250,31 +357,53 @@ describe('Initialize Tests - Local', () => {
                     .reply(304, {})
             } else {
                 scope
-                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .get(
+                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                    )
                     .times(1)
                     .matchHeader('If-None-Match', (value) => {
                         return value === 'first-etag'
                     })
-                    .reply(200, { ...config, features: [] }, { ETag: 'second-etag', 'Cf-Ray': 'second-ray' })
+                    .reply(
+                        200,
+                        { ...config, features: [] },
+                        { ETag: 'second-etag', 'Cf-Ray': 'second-ray' },
+                    )
 
                 scope
-                    .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                    .get(
+                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                    )
                     .matchHeader('If-None-Match', (value) => {
                         return value === 'second-etag'
                     })
                     .reply(304, {})
             }
 
-            const eventResult = interceptEvents(scope, sdkName, `/client/${testClient.clientId}/v1/events/batch`)
-            const secondEventResult = interceptEvents(scope, sdkName, `/client/${testClient.clientId}/v1/events/batch`)
+            const eventResult = interceptEvents(
+                scope,
+                sdkName,
+                `/client/${testClient.clientId}/v1/events/batch`,
+            )
+            const secondEventResult = interceptEvents(
+                scope,
+                sdkName,
+                `/client/${testClient.clientId}/v1/events/batch`,
+            )
 
             await testClient.createClient(true, {
                 configPollingIntervalMS: 1000,
-                eventFlushIntervalMS: 500
+                eventFlushIntervalMS: 500,
             })
 
             // make sure the original config is in use (expected variable value is 1)
-            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
+            const variable = await testClient.callVariable(
+                shouldBucketUser,
+                sdkName,
+                'number-var',
+                'number',
+                0,
+            )
             expect((await variable.json()).data.value).toEqual(1)
 
             expect(scope.pendingMocks().length).toEqual(2)
@@ -282,7 +411,13 @@ describe('Initialize Tests - Local', () => {
             // wait for the next config polling request
             await wait(1200)
             // make sure the new config is in use (new config should not bucket the user because features are blank)
-            const variable2 = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
+            const variable2 = await testClient.callVariable(
+                shouldBucketUser,
+                sdkName,
+                'number-var',
+                'number',
+                0,
+            )
             expect((await variable2.json()).data.value).toEqual(0)
             await wait(1000)
 
@@ -298,7 +433,7 @@ describe('Initialize Tests - Local', () => {
                     variationId: config.features[0].variations[0]._id,
                     etag: 'first-etag',
                     rayId: 'first-ray',
-                    lastModified: lastModifiedDate.toUTCString()
+                    lastModified: lastModifiedDate.toUTCString(),
                 })
                 expectAggregateDefaultEvent({
                     body: secondEventResult.body,
@@ -306,7 +441,7 @@ describe('Initialize Tests - Local', () => {
                     defaultReason: 'MISSING_FEATURE',
                     etag: 'second-etag',
                     rayId: 'second-ray',
-                    lastModified: secondLastModifiedDate.toUTCString()
+                    lastModified: secondLastModifiedDate.toUTCString(),
                 })
             }
         })

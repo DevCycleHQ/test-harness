@@ -1,50 +1,49 @@
 name: Run Harness Tests
 run-name: ${{ github.event.inputs.title }}
 on:
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
-    inputs:
-      sdk:
-        type: string
-        description: The SDK to run the test harness against
-      sha:
-        type: string
-        description: The SHA that triggered this test harness run
-      title:
-        type: string
-        description: The title of the PR that triggered this test harness run
-
+    pull_request:
+        branches: [main]
+    workflow_dispatch:
+        inputs:
+            sdk:
+                type: string
+                description: The SDK to run the test harness against
+            sha:
+                type: string
+                description: The SHA that triggered this test harness run
+            title:
+                type: string
+                description: The title of the PR that triggered this test harness run
 
 jobs:
-  run-tests:
-    runs-on:
-      labels: ubuntu-latest-4-core
-    name: Run Tests
-    env:
-      DOCKER_HOST_IP: '172.17.0.1'
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Write variables to .env file
-        run: |
-          if [ ! -f ".env" ]
-          then 
-              echo "SDK_GITHUB_SHA='${{ github.event.inputs.sha }}'" >> ".env"
-              echo "SDKS_TO_TEST='${{ github.event.inputs.sdk }}'" >> ".env"
-          fi
-      - name: Install Dependencies
-        run: yarn
-      - name: Run All Tests
-        run: yarn test:ci
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()   # run this step even if previous step failed
-        with:
-          name: Test Report          # Name of the check run which will be created
-          path: jest-*.xml           # Path to test results
-          reporter: jest-junit       # Format of test results
+    run-tests:
+        runs-on:
+            labels: ubuntu-latest-4-core
+        name: Run Tests
+        env:
+            DOCKER_HOST_IP: '172.17.0.1'
+        steps:
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 20
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - name: Write variables to .env file
+              run: |
+                  if [ ! -f ".env" ]
+                  then 
+                      echo "SDK_GITHUB_SHA='${{ github.event.inputs.sha }}'" >> ".env"
+                      echo "SDKS_TO_TEST='${{ github.event.inputs.sdk }}'" >> ".env"
+                  fi
+            - name: Install Dependencies
+              run: yarn
+            - name: Run All Tests
+              run: yarn test:ci
+            - name: Test Report
+              uses: dorny/test-reporter@v1
+              if: success() || failure() # run this step even if previous step failed
+              with:
+                  name: Test Report # Name of the check run which will be created
+                  path: jest-*.xml # Path to test results
+                  reporter: jest-junit # Format of test results
