@@ -2,13 +2,17 @@ import {
     describeCapability,
     forEachVariableType,
     getSDKScope,
-    hasCapability, interceptEvents,
+    hasCapability,
+    interceptEvents,
     LocalTestClient,
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
-import { expectAggregateDefaultEvent, expectAggregateEvaluationEvent } from '../helpers'
+import {
+    expectAggregateDefaultEvent,
+    expectAggregateEvaluationEvent,
+} from '../helpers'
 
 const expectedVariablesByType = {
     // these should match the config in mockData
@@ -34,10 +38,10 @@ const expectedVariablesByType = {
         key: 'json-var',
         defaultValue: {},
         variationOn: {
-            'facts': true
+            facts: true,
         },
         variableType: 'JSON',
-    }
+    },
 }
 
 const featureId = '638680d6fcb67b96878d90e6'
@@ -57,8 +61,12 @@ describe('Variable Tests - Local', () => {
         let testClient: LocalTestClient
         let eventsUrl: string
 
-        const hasVariableValue = SDKCapabilities[sdkName].includes(Capabilities.variableValue)
-        const callVariableMethods = hasVariableValue ? ['variable', 'variableValue'] : ['variable']
+        const hasVariableValue = SDKCapabilities[sdkName].includes(
+            Capabilities.variableValue,
+        )
+        const callVariableMethods = hasVariableValue
+            ? ['variable', 'variableValue']
+            : ['variable']
 
         function callVariableMethod(method: string) {
             if (method === 'variableValue') {
@@ -75,11 +83,14 @@ describe('Variable Tests - Local', () => {
                 // allowing us to have multiple clients serving different clients without
                 // conflicting. This one is used to mock the config that the local client is going to use
                 // locally in all of its methods.
-                scope.get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                scope
+                    .get(
+                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
+                    )
                     .reply(200, config, {
                         ETag: 'local-var-etag',
                         'Cf-Ray': 'local-ray-id',
-                        'Last-Modified': lastModifiedDate.toUTCString()
+                        'Last-Modified': lastModifiedDate.toUTCString(),
                     })
 
                 // Creating a client will pass to the proxy server by default:
@@ -104,18 +115,29 @@ describe('Variable Tests - Local', () => {
             // this function enumerates each type and runs all tests encapsulated within it
             // to condense repeated tests.
             forEachVariableType((type) => {
-                const { key, defaultValue, variationOn, variableType } = expectedVariablesByType[type]
+                const { key, defaultValue, variationOn, variableType } =
+                    expectedVariablesByType[type]
 
-                it.each(callVariableMethods)('should return %s if mock server returns object matching default type',
+                it.each(callVariableMethods)(
+                    'should return %s if mock server returns object matching default type',
                     async (method) => {
-                        const eventResult = interceptEvents(scope, sdkName, eventsUrl)
+                        const eventResult = interceptEvents(
+                            scope,
+                            sdkName,
+                            eventsUrl,
+                        )
 
-                        const variableResponse = await callVariableMethod(method)(
-                            { user_id: 'user1', customData: { 'should-bucket': true } },
+                        const variableResponse = await callVariableMethod(
+                            method,
+                        )(
+                            {
+                                user_id: 'user1',
+                                customData: { 'should-bucket': true },
+                            },
                             sdkName,
                             key,
                             type,
-                            defaultValue
+                            defaultValue,
                         )
                         const variable = await variableResponse.json()
 
@@ -129,8 +151,8 @@ describe('Variable Tests - Local', () => {
                                 key,
                                 defaultValue: defaultValue,
                                 value: variationOn,
-                                evalReason: expect.toBeNil()
-                            }
+                                evalReason: expect.toBeNil(),
+                            },
                         })
 
                         if (!hasCapability(sdkName, Capabilities.events)) {
@@ -149,79 +171,107 @@ describe('Variable Tests - Local', () => {
                             variationId,
                             etag: 'local-var-etag',
                             rayId: 'local-ray-id',
-                            lastModified: lastModifiedDate.toUTCString()
+                            lastModified: lastModifiedDate.toUTCString(),
                         })
-                    }
+                    },
                 )
 
-                const testFn = sdkName === 'OF-NodeJS'
-                    ? it.skip.each(callVariableMethods)
-                    : it.each(callVariableMethods)
-                testFn('should return default value if default type doesn\'t match %s type',  async (method) => {
-                    const eventResult = interceptEvents(scope, sdkName, eventsUrl)
-
-                    const wrongTypeDefault = type === 'number' ? '1' : 1
-                    const variableResponse = await callVariableMethod(method)(
-                        { user_id: 'user1', customData: { 'should-bucket': true } },
-                        sdkName,
-                        key,
-                        type,
-                        wrongTypeDefault
-                    )
-                    const variable = await variableResponse.json()
-
-                    // Expect that the test returns a defaulted variable
-                    expectDefaultValue(
-                        key,
-                        variable,
-                        method,
-                        wrongTypeDefault,
-                        wrongTypeDefault === '1' ? VariableType.string : VariableType.number
-                    )
-
-                    if (!hasCapability(sdkName, Capabilities.events)) {
-                        return
-                    }
-
-                    await eventResult.wait()
-
-                    // Expects that the SDK sends an "aggVariableDefaulted" event for the
-                    // defaulted variable
-                    if (!hasCapability(sdkName, Capabilities.cloudProxy)) {
-                        expectAggregateDefaultEvent({
-                            body: eventResult.body,
-                            variableKey: key,
-                            defaultReason: 'INVALID_VARIABLE_TYPE',
-                            etag: 'local-var-etag',
-                            rayId: 'local-ray-id',
-                            lastModified: lastModifiedDate.toUTCString()
-                        })
-                    } else {
-                        expectAggregateEvaluationEvent({
-                            body: eventResult.body,
-                            variableKey: key,
-                            featureId,
-                            variationId,
-                            etag: 'local-var-etag',
-                            rayId: 'local-ray-id',
-                            lastModified: lastModifiedDate.toUTCString()
-                        })
-                    }
-                })
-
-                it.each(callVariableMethods)('should return default value if user is not bucketed into %s',
+                const testFn =
+                    sdkName === 'OF-NodeJS'
+                        ? it.skip.each(callVariableMethods)
+                        : it.each(callVariableMethods)
+                testFn(
+                    "should return default value if default type doesn't match %s type",
                     async (method) => {
-                        const eventResult = interceptEvents(scope, sdkName, eventsUrl)
-                        const variableResponse = await callVariableMethod(method)(
+                        const eventResult = interceptEvents(
+                            scope,
+                            sdkName,
+                            eventsUrl,
+                        )
+
+                        const wrongTypeDefault = type === 'number' ? '1' : 1
+                        const variableResponse = await callVariableMethod(
+                            method,
+                        )(
+                            {
+                                user_id: 'user1',
+                                customData: { 'should-bucket': true },
+                            },
+                            sdkName,
+                            key,
+                            type,
+                            wrongTypeDefault,
+                        )
+                        const variable = await variableResponse.json()
+
+                        // Expect that the test returns a defaulted variable
+                        expectDefaultValue(
+                            key,
+                            variable,
+                            method,
+                            wrongTypeDefault,
+                            wrongTypeDefault === '1'
+                                ? VariableType.string
+                                : VariableType.number,
+                        )
+
+                        if (!hasCapability(sdkName, Capabilities.events)) {
+                            return
+                        }
+
+                        await eventResult.wait()
+
+                        // Expects that the SDK sends an "aggVariableDefaulted" event for the
+                        // defaulted variable
+                        if (!hasCapability(sdkName, Capabilities.cloudProxy)) {
+                            expectAggregateDefaultEvent({
+                                body: eventResult.body,
+                                variableKey: key,
+                                defaultReason: 'INVALID_VARIABLE_TYPE',
+                                etag: 'local-var-etag',
+                                rayId: 'local-ray-id',
+                                lastModified: lastModifiedDate.toUTCString(),
+                            })
+                        } else {
+                            expectAggregateEvaluationEvent({
+                                body: eventResult.body,
+                                variableKey: key,
+                                featureId,
+                                variationId,
+                                etag: 'local-var-etag',
+                                rayId: 'local-ray-id',
+                                lastModified: lastModifiedDate.toUTCString(),
+                            })
+                        }
+                    },
+                )
+
+                it.each(callVariableMethods)(
+                    'should return default value if user is not bucketed into %s',
+                    async (method) => {
+                        const eventResult = interceptEvents(
+                            scope,
+                            sdkName,
+                            eventsUrl,
+                        )
+                        const variableResponse = await callVariableMethod(
+                            method,
+                        )(
                             { user_id: 'user3' },
                             sdkName,
                             key,
                             type,
-                            defaultValue
+                            defaultValue,
                         )
                         const variable = await variableResponse.json()
 
-                        expectDefaultValue(key, variable, method, defaultValue, variableType)
+                        expectDefaultValue(
+                            key,
+                            variable,
+                            method,
+                            defaultValue,
+                            variableType,
+                        )
 
                         if (!hasCapability(sdkName, Capabilities.events)) {
                             return
@@ -235,25 +285,41 @@ describe('Variable Tests - Local', () => {
                             defaultReason: 'USER_NOT_TARGETED',
                             etag: 'local-var-etag',
                             rayId: 'local-ray-id',
-                            lastModified: lastModifiedDate.toUTCString()
+                            lastModified: lastModifiedDate.toUTCString(),
                         })
-                    }
+                    },
                 )
 
-                it.each(callVariableMethods)('should return default value if %s doesn\'t exist',
+                it.each(callVariableMethods)(
+                    "should return default value if %s doesn't exist",
                     async (method) => {
-                        const eventResult = interceptEvents(scope, sdkName, eventsUrl)
+                        const eventResult = interceptEvents(
+                            scope,
+                            sdkName,
+                            eventsUrl,
+                        )
 
-                        const variableResponse = await callVariableMethod(method)(
-                            { user_id: 'user1', customData: { 'should-bucket': true } },
+                        const variableResponse = await callVariableMethod(
+                            method,
+                        )(
+                            {
+                                user_id: 'user1',
+                                customData: { 'should-bucket': true },
+                            },
                             sdkName,
                             'nonexistent',
                             type,
-                            defaultValue
+                            defaultValue,
                         )
                         const variable = await variableResponse.json()
 
-                        expectDefaultValue('nonexistent', variable, method, defaultValue, variableType)
+                        expectDefaultValue(
+                            'nonexistent',
+                            variable,
+                            method,
+                            defaultValue,
+                            variableType,
+                        )
 
                         if (!hasCapability(sdkName, Capabilities.events)) {
                             return
@@ -267,139 +333,173 @@ describe('Variable Tests - Local', () => {
                             defaultReason: 'MISSING_VARIABLE',
                             etag: 'local-var-etag',
                             rayId: 'local-ray-id',
-                            lastModified: lastModifiedDate.toUTCString()
+                            lastModified: lastModifiedDate.toUTCString(),
                         })
-                    }
+                    },
                 )
 
-                it.each(callVariableMethods)('should aggregate aggVariableDefaulted events for %s', async (method) => {
-                    const eventResult = interceptEvents(scope, sdkName, eventsUrl)
+                it.each(callVariableMethods)(
+                    'should aggregate aggVariableDefaulted events for %s',
+                    async (method) => {
+                        const eventResult = interceptEvents(
+                            scope,
+                            sdkName,
+                            eventsUrl,
+                        )
 
-                    await callVariableMethod(method)(
-                        { user_id: 'user1', customData: { 'should-bucket': true } },
+                        await callVariableMethod(method)(
+                            {
+                                user_id: 'user1',
+                                customData: { 'should-bucket': true },
+                            },
+                            sdkName,
+                            'nonexistent',
+                            type,
+                            defaultValue,
+                        )
+                        await callVariableMethod(method)(
+                            {
+                                user_id: 'user1',
+                                customData: { 'should-bucket': true },
+                            },
+                            sdkName,
+                            'nonexistent',
+                            type,
+                            defaultValue,
+                        )
+
+                        if (!hasCapability(sdkName, Capabilities.events)) {
+                            return
+                        }
+
+                        await eventResult.wait()
+                        expectAggregateDefaultEvent({
+                            body: eventResult.body,
+                            variableKey: 'nonexistent',
+                            defaultReason: 'MISSING_VARIABLE',
+                            value: 2,
+                            etag: 'local-var-etag',
+                            rayId: 'local-ray-id',
+                            lastModified: lastModifiedDate.toUTCString(),
+                        })
+                    },
+                )
+
+                it.each(callVariableMethods)(
+                    'should aggregate aggVariableEvaluated events for %s',
+                    async (method) => {
+                        const eventResult = interceptEvents(
+                            scope,
+                            sdkName,
+                            eventsUrl,
+                        )
+
+                        await callVariableMethod(method)(
+                            {
+                                user_id: 'user1',
+                                customData: { 'should-bucket': true },
+                            },
+                            sdkName,
+                            key,
+                            type,
+                            defaultValue,
+                        )
+                        await callVariableMethod(method)(
+                            {
+                                user_id: 'user1',
+                                customData: { 'should-bucket': true },
+                            },
+                            sdkName,
+                            key,
+                            type,
+                            defaultValue,
+                        )
+
+                        if (!hasCapability(sdkName, Capabilities.events)) {
+                            return
+                        }
+                        await eventResult.wait()
+                        expectAggregateEvaluationEvent({
+                            body: eventResult.body,
+                            variableKey: key,
+                            featureId,
+                            variationId,
+                            value: 2,
+                            etag: 'local-var-etag',
+                            rayId: 'local-ray-id',
+                            lastModified: lastModifiedDate.toUTCString(),
+                        })
+                    },
+                )
+            })
+
+            it.each(callVariableMethods)(
+                'should return a valid unicode string for %s',
+                async (method) => {
+                    const eventResult = interceptEvents(
+                        scope,
                         sdkName,
-                        'nonexistent',
-                        type,
-                        defaultValue
+                        eventsUrl,
                     )
-                    await callVariableMethod(method)(
-                        { user_id: 'user1', customData: { 'should-bucket': true } },
+
+                    const variableResponse = await callVariableMethod(method)(
+                        {
+                            user_id: 'user1',
+                            customData: { 'should-bucket': true },
+                        },
                         sdkName,
-                        'nonexistent',
-                        type,
-                        defaultValue
+                        'unicode-var',
+                        'string',
+                        'default',
                     )
+                    const variable = await variableResponse.json()
 
-                    if (!hasCapability(sdkName, Capabilities.events)) {
-                        return
-                    }
-
-                    await eventResult.wait()
-                    expectAggregateDefaultEvent({
-                        body: eventResult.body,
-                        variableKey: 'nonexistent',
-                        defaultReason: 'MISSING_VARIABLE',
-                        value: 2,
-                        etag: 'local-var-etag',
-                        rayId: 'local-ray-id',
-                        lastModified: lastModifiedDate.toUTCString()
+                    expectVariableResponse(variable, method, {
+                        entityType: 'Variable',
+                        data: {
+                            type: VariableType.string,
+                            isDefaulted: false,
+                            key: 'unicode-var',
+                            defaultValue: 'default',
+                            value: '↑↑↓↓←→←→BA 🤖',
+                            evalReason: expect.toBeNil(),
+                        },
+                        logs: [],
                     })
-                })
-
-                it.each(callVariableMethods)('should aggregate aggVariableEvaluated events for %s', async (method) => {
-                    const eventResult = interceptEvents(scope, sdkName, eventsUrl)
-
-                    await callVariableMethod(method)(
-                        { user_id: 'user1', customData: { 'should-bucket': true } },
-                        sdkName,
-                        key,
-                        type,
-                        defaultValue
-                    )
-                    await callVariableMethod(method)(
-                        { user_id: 'user1', customData: { 'should-bucket': true } },
-                        sdkName,
-                        key,
-                        type,
-                        defaultValue
-                    )
 
                     if (!hasCapability(sdkName, Capabilities.events)) {
                         return
                     }
+
                     await eventResult.wait()
                     expectAggregateEvaluationEvent({
                         body: eventResult.body,
-                        variableKey: key,
+                        variableKey: 'unicode-var',
                         featureId,
                         variationId,
-                        value: 2,
                         etag: 'local-var-etag',
                         rayId: 'local-ray-id',
-                        lastModified: lastModifiedDate.toUTCString()
+                        lastModified: lastModifiedDate.toUTCString(),
                     })
-                })
-            })
-
-            it.each(callVariableMethods)('should return a valid unicode string for %s',  async (method) => {
-                const eventResult = interceptEvents(scope, sdkName, eventsUrl)
-
-                const variableResponse = await callVariableMethod(method)(
-                    { user_id: 'user1', customData: { 'should-bucket': true } },
-                    sdkName,
-                    'unicode-var',
-                    'string',
-                    'default'
-                )
-                const variable = await variableResponse.json()
-
-                expectVariableResponse(variable, method, {
-                    entityType: 'Variable',
-                    data: {
-                        type: VariableType.string,
-                        isDefaulted: false,
-                        key: 'unicode-var',
-                        defaultValue: 'default',
-                        value: '↑↑↓↓←→←→BA 🤖',
-                        evalReason: expect.toBeNil()
-                    },
-                    logs: []
-                })
-
-                if (!hasCapability(sdkName, Capabilities.events)) {
-                    return
-                }
-
-                await eventResult.wait()
-                expectAggregateEvaluationEvent({
-                    body: eventResult.body,
-                    variableKey: 'unicode-var',
-                    featureId,
-                    variationId,
-                    etag: 'local-var-etag',
-                    rayId: 'local-ray-id',
-                    lastModified: lastModifiedDate.toUTCString()
-                })
-            })
+                },
+            )
         })
 
         describe('uninitialized client', () => {
-
             forEachVariableType((type) => {
-                const { key, defaultValue, variableType } = expectedVariablesByType[type]
+                const { key, defaultValue, variableType } =
+                    expectedVariablesByType[type]
 
                 const testFn = hasCapability(sdkName, Capabilities.cloudProxy)
                     ? it.skip.each(callVariableMethods)
                     : it.each(callVariableMethods)
-                testFn('should return %s default value if client is uninitialized, log event',
+                testFn(
+                    'should return %s default value if client is uninitialized, log event',
                     async (method) => {
                         testClient = new LocalTestClient(sdkName)
-                        const configRequestUrl =
-                            `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
+                        const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
 
-                        scope.get(configRequestUrl)
-                            .delay(2000)
-                            .reply(200)
+                        scope.get(configRequestUrl).delay(2000).reply(200)
 
                         eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
 
@@ -407,20 +507,35 @@ describe('Variable Tests - Local', () => {
                         // for the client to have a config for the purposes of this uninitialized test suite
                         // (The call to the proxy server is still awaited)
                         await testClient.createClient(false, {
-                            eventFlushIntervalMS: 500
+                            eventFlushIntervalMS: 500,
                         })
 
-                        const eventResult = interceptEvents(scope, sdkName, eventsUrl)
+                        const eventResult = interceptEvents(
+                            scope,
+                            sdkName,
+                            eventsUrl,
+                        )
 
-                        const variableResponse = await callVariableMethod(method)(
-                            { user_id: 'user1', customData: { 'should-bucket': true } },
+                        const variableResponse = await callVariableMethod(
+                            method,
+                        )(
+                            {
+                                user_id: 'user1',
+                                customData: { 'should-bucket': true },
+                            },
                             sdkName,
                             key,
                             type,
-                            defaultValue
+                            defaultValue,
                         )
                         const variable = await variableResponse.json()
-                        expectDefaultValue(key, variable, method, defaultValue, variableType)
+                        expectDefaultValue(
+                            key,
+                            variable,
+                            method,
+                            defaultValue,
+                            variableType,
+                        )
 
                         if (!hasCapability(sdkName, Capabilities.events)) {
                             return
@@ -434,19 +549,19 @@ describe('Variable Tests - Local', () => {
                             value: 1,
                             etag: null,
                             rayId: null,
-                            lastModified: null
+                            lastModified: null,
                         })
-                    }
+                    },
                 )
 
-                it.each(callVariableMethods)('should return default value for %s if client config failed, log event',
+                it.each(callVariableMethods)(
+                    'should return default value for %s if client config failed, log event',
                     async (method) => {
-
                         testClient = new LocalTestClient(sdkName)
-                        const configRequestUrl =
-                            `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
+                        const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
 
-                        scope.get(configRequestUrl)
+                        scope
+                            .get(configRequestUrl)
                             // account for the immediate retry of the request
                             .times(2)
                             .reply(500)
@@ -457,20 +572,35 @@ describe('Variable Tests - Local', () => {
                         // for the client to have a config for the purposes of this uninitialized test suite
                         // (The call to the proxy server is still awaited)
                         await testClient.createClient(false, {
-                            eventFlushIntervalMS: 500
+                            eventFlushIntervalMS: 500,
                         })
 
-                        const eventResult = interceptEvents(scope, sdkName, eventsUrl)
+                        const eventResult = interceptEvents(
+                            scope,
+                            sdkName,
+                            eventsUrl,
+                        )
 
-                        const variableResponse = await callVariableMethod(method)(
-                            { user_id: 'user1', customData: { 'should-bucket': true } },
+                        const variableResponse = await callVariableMethod(
+                            method,
+                        )(
+                            {
+                                user_id: 'user1',
+                                customData: { 'should-bucket': true },
+                            },
                             sdkName,
                             key,
                             type,
-                            defaultValue
+                            defaultValue,
                         )
                         const variable = await variableResponse.json()
-                        expectDefaultValue(key, variable, method, defaultValue, variableType)
+                        expectDefaultValue(
+                            key,
+                            variable,
+                            method,
+                            defaultValue,
+                            variableType,
+                        )
 
                         if (!hasCapability(sdkName, Capabilities.events)) {
                             return
@@ -484,9 +614,9 @@ describe('Variable Tests - Local', () => {
                             value: 1,
                             etag: null,
                             rayId: null,
-                            lastModified: null
+                            lastModified: null,
                         })
-                    }
+                    },
                 )
             })
         })
@@ -495,21 +625,25 @@ describe('Variable Tests - Local', () => {
     type ValueTypes = string | boolean | number | JSON
 
     type VariableResponse = {
-        entityType: string,
+        entityType: string
         data: {
-            value: ValueTypes,
-            isDefaulted: boolean,
-            type: string,
+            value: ValueTypes
+            isDefaulted: boolean
+            type: string
             defaultValue: ValueTypes
         }
     }
 
     const expectVariableResponse = (variable, method, expectObj) => {
-        expect(variable).toEqual(expect.objectContaining(
-            method === 'variable' ? expectObj : {
-                data: expectObj.data?.value
-            }
-        ))
+        expect(variable).toEqual(
+            expect.objectContaining(
+                method === 'variable'
+                    ? expectObj
+                    : {
+                          data: expectObj.data?.value,
+                      },
+            ),
+        )
     }
 
     const expectDefaultValue = (
@@ -517,7 +651,8 @@ describe('Variable Tests - Local', () => {
         variable: VariableResponse,
         method: string,
         defaultValue: ValueTypes,
-        type: VariableType) => {
+        type: VariableType,
+    ) => {
         expectVariableResponse(variable, method, {
             entityType: 'Variable',
             data: {
@@ -526,9 +661,9 @@ describe('Variable Tests - Local', () => {
                 value: defaultValue,
                 key: key,
                 type,
-                evalReason: expect.toBeNil()
+                evalReason: expect.toBeNil(),
             },
-            logs: []
+            logs: [],
         })
     }
 })
