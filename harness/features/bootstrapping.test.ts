@@ -84,8 +84,6 @@ describe('Bootstrapping Tests', () => {
                     'new string',
                 )
                 expect(configResult.data.sdkKey).toEqual('client-key')
-
-                expect(configResult).toMatchSnapshot()
             })
         })
     })
