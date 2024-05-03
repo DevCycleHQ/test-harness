@@ -50,7 +50,7 @@ describe('Bootstrapping Tests', () => {
                         'features.0.variations.0.variables.1.value',
                         'new string',
                     ),
-                    sdkKey: 'client-key',
+                    clientSDKKey: 'client-key',
                 }
 
                 scope
@@ -83,7 +83,7 @@ describe('Bootstrapping Tests', () => {
                 expect(configResult.data.variables['string-var'].value).toEqual(
                     'new string',
                 )
-                expect(configResult.data.sdkKey).toEqual('client-key')
+                expect(configResult.data.clientSDKKey).toEqual('client-key')
             })
         })
     })
