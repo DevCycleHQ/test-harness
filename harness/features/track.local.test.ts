@@ -1,5 +1,4 @@
 import {
-    getConnectionStringForProxy,
     wait,
     waitForRequest,
     LocalTestClient,
@@ -7,6 +6,7 @@ import {
     expectErrorMessageToBe,
     getPlatformBySdkName,
     getSDKScope,
+    hasCapability,
 } from '../helpers'
 import { Capabilities } from '../types'
 import { config } from '../mockData'
@@ -21,7 +21,6 @@ describe('Track Tests - Local', () => {
 
     const expectedPlatform = getPlatformBySdkName(sdkName)
 
-    let url: string
     const eventFlushIntervalMS = 1000
 
     describeCapability(
@@ -30,26 +29,65 @@ describe('Track Tests - Local', () => {
         Capabilities.events,
     )(sdkName, () => {
         let client: LocalTestClient
+        let sdkConfigEventBatch
 
         beforeEach(async () => {
             client = new LocalTestClient(sdkName)
-            url = getConnectionStringForProxy(sdkName)
 
-            scope
-                .get(
-                    `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`,
-                )
-                .reply(200, config)
+            const configPath = `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`
+            scope.get(configPath).reply(200, config)
 
             await client.createClient(true, {
                 eventFlushIntervalMS: eventFlushIntervalMS,
                 logLevel: 'debug',
                 configPollingIntervalMS: 1000 * 60,
             })
+
+            sdkConfigEventBatch = {
+                user: {
+                    ...optionalUserEventFields,
+                    platform: expectedPlatform,
+                    sdkType: 'server',
+                    user_id: expect.any(String),
+                },
+                events: [
+                    {
+                        ...optionalEventFields,
+                        user_id: expect.any(String),
+                        type: 'sdkConfig',
+                        target: expect.stringContaining(configPath),
+                        value: expect.any(Number),
+                        featureVars: {
+                            '6386813a59f1b81cc9e6c68d':
+                                '6386813a59f1b81cc9e6c693',
+                        },
+                        metaData: expect.objectContaining({
+                            clientUUID: expect.any(String),
+                            resStatus: 200,
+                        }),
+                    },
+                ],
+            }
         })
 
         describe('Expect no events sent', () => {
             it('should not send an event if the event type not set', async () => {
+                let eventBody = {}
+                let interceptor
+
+                if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
+                    interceptor = scope.post(
+                        `/client/${client.clientId}/v1/events/batch`,
+                    )
+                    interceptor.reply((uri, body) => {
+                        eventBody = body
+                        return [
+                            201,
+                            { message: 'Successfully received events.' },
+                        ]
+                    })
+                }
+
                 const trackResponse = await client.callTrack(
                     { user_id: validUserId },
                     {},
@@ -59,9 +97,22 @@ describe('Track Tests - Local', () => {
                 const res = await trackResponse.json()
                 expectErrorMessageToBe(res.exception, 'Missing parameter: type')
 
-                // wait for 2 event flush to ensure no flush happens, if it fails it will get caught by
-                // the global assertNoUnmatchedRequests and fail this testcase
-                await wait(eventFlushIntervalMS * 2)
+                if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
+                    await waitForRequest(
+                        scope,
+                        interceptor,
+                        eventFlushIntervalMS * 2,
+                        'Event callback timed out',
+                    )
+
+                    expect(eventBody).toEqual({
+                        batch: [sdkConfigEventBatch],
+                    })
+                } else {
+                    // wait for 2 event flush to ensure no flush happens, if it fails it will get caught by
+                    // the global assertNoUnmatchedRequests and fail this testcase
+                    await wait(eventFlushIntervalMS * 2)
+                }
             })
         })
 
@@ -95,6 +146,9 @@ describe('Track Tests - Local', () => {
 
                 expect(eventBody).toEqual({
                     batch: [
+                        ...(hasCapability(sdkName, Capabilities.sdkConfigEvent)
+                            ? [sdkConfigEventBatch]
+                            : []),
                         {
                             user: {
                                 ...optionalUserEventFields,
@@ -160,6 +214,9 @@ describe('Track Tests - Local', () => {
 
                 expect(eventBody).toEqual({
                     batch: [
+                        ...(hasCapability(sdkName, Capabilities.sdkConfigEvent)
+                            ? [sdkConfigEventBatch]
+                            : []),
                         {
                             user: {
                                 ...optionalUserEventFields,
@@ -262,6 +319,9 @@ describe('Track Tests - Local', () => {
 
                 expect(eventBody).toEqual({
                     batch: [
+                        ...(hasCapability(sdkName, Capabilities.sdkConfigEvent)
+                            ? [sdkConfigEventBatch]
+                            : []),
                         {
                             user: {
                                 ...optionalUserEventFields,

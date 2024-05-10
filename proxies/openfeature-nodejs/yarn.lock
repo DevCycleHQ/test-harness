@@ -14,52 +14,52 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:^1.18.1":
-  version: 1.18.1
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.18.1"
+"@devcycle/bucketing-assembly-script@npm:^1.20.1":
+  version: 1.20.1
+  resolution: "@devcycle/bucketing-assembly-script@npm:1.20.1"
   dependencies:
     protobufjs: "npm:^7.2.5"
-  checksum: 10/8122622fed9e1005dca7a95e7e145494a3f83a5f84bcc6b3cfe4612fe43d47b336fc3f145497a76d7b13a3e2fd84744a35caa0253aa48968b3aa2a68e53582dc
+  checksum: 10/2045f818f85f53241cf8928d5676797d2b95193f850daa15fd74e1ca6478d712d106d84a07522685961bc0eb1e4e76bdecfcf70a659b11f1467f86ab1c731627
   languageName: node
   linkType: hard
 
-"@devcycle/js-cloud-server-sdk@npm:^1.10.1":
-  version: 1.10.1
-  resolution: "@devcycle/js-cloud-server-sdk@npm:1.10.1"
+"@devcycle/js-cloud-server-sdk@npm:^1.11.2":
+  version: 1.11.2
+  resolution: "@devcycle/js-cloud-server-sdk@npm:1.11.2"
   dependencies:
-    "@devcycle/types": "npm:^1.11.1"
+    "@devcycle/types": "npm:^1.12.2"
     cross-fetch: "npm:^4.0.0"
     fetch-retry: "npm:^5.0.6"
     lodash: "npm:^4.17.21"
-  checksum: 10/9c0fb38754471347c7a3ecf004d0d9abae8d9cac54658bba6d8c96fae50a5aa578bb42ca1210ed3ba43163d2b9f3a811e04604702baa785bca04abff8a38346c
+  checksum: 10/063f3d41ed41cb69c3e2636fbbcf576d089116e19546f9cef0182cc2ccde2ce1b45c072fb99a6f43ae8235350be7542c73edf2200423baf98f95661f0590008e
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:^1.25.1":
-  version: 1.25.1
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.25.1"
+"@devcycle/nodejs-server-sdk@npm:^1.28.1":
+  version: 1.28.1
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.28.1"
   dependencies:
-    "@devcycle/bucketing-assembly-script": "npm:^1.18.1"
-    "@devcycle/js-cloud-server-sdk": "npm:^1.10.1"
-    "@devcycle/types": "npm:^1.11.1"
+    "@devcycle/bucketing-assembly-script": "npm:^1.20.1"
+    "@devcycle/js-cloud-server-sdk": "npm:^1.11.2"
+    "@devcycle/types": "npm:^1.12.2"
     cross-fetch: "npm:^4.0.0"
     fetch-retry: "npm:^5.0.6"
   peerDependencies:
     "@openfeature/server-sdk": ^1.13.5
-  checksum: 10/2cc52b5a84f31fe24ecc1566ba2ef0a99f37a80d925bcd9f8bda2eb66614c68fc366b2955415cf0475a3765a91b195cfc1de4c16fe0420368c04c3e0276e2d24
+  checksum: 10/135555a655d3515b0345e04c041fd4812f7af538ff251b7878e020450eef85d6c312b7ec0b241a0ca5b05ea5a72fb948dfb4d98b85a5d5ad1418a90d4b43bbff
   languageName: node
   linkType: hard
 
-"@devcycle/types@npm:^1.11.1":
-  version: 1.11.1
-  resolution: "@devcycle/types@npm:1.11.1"
+"@devcycle/types@npm:^1.12.2":
+  version: 1.12.2
+  resolution: "@devcycle/types@npm:1.12.2"
   dependencies:
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.1"
     iso-639-1: "npm:^2.1.13"
     lodash: "npm:^4.17.21"
     reflect-metadata: "npm:^0.1.13"
-  checksum: 10/c02ab43ab5d5e418414393848d0db2da80df4c242b4c436474944620cb5241349472e97e6d04f81a2bce2fa47d9a643155ea658e62f6bb9cc444a52da0838fce
+  checksum: 10/d7fd998d9a3f30007429f6568de863b608653833710cb538f5f9bf7b7d21820d1327b7081097c83311ff6b6fd931c5c42ba9f9c4bb42172c4b06aca3a04729a2
   languageName: node
   linkType: hard
 
@@ -997,7 +997,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": "npm:^1.25.1"
+    "@devcycle/nodejs-server-sdk": "npm:^1.28.1"
     "@openfeature/core": "npm:^1.1.0"
     "@openfeature/server-sdk": "npm:^1.13.5"
     "@types/koa": "npm:^2.13.5"

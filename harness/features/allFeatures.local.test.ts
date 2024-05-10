@@ -1,4 +1,9 @@
-import { LocalTestClient, describeCapability, getSDKScope } from '../helpers'
+import {
+    LocalTestClient,
+    describeCapability,
+    getSDKScope,
+    hasCapability
+} from '../helpers'
 import { Capabilities } from '../types'
 import { config, expectedFeaturesVariationOn } from '../mockData/config'
 
@@ -38,6 +43,13 @@ describe('allFeatures Tests - Local', () => {
                         `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
                     )
                     .reply(200, config)
+
+                if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
+                    scope
+                        .post(`/client/${testClient.clientId}/v1/events/batch`)
+                        .reply(201, {message: 'Successfully received events.'})
+                }
+
                 await testClient.createClient(true, {
                     configPollingIntervalMS: 60000,
                 })

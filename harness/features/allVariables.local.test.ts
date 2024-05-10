@@ -1,46 +1,40 @@
 import {
-    getConnectionStringForProxy,
     LocalTestClient,
     describeCapability,
     waitForRequest,
     getSDKScope,
+    hasCapability,
 } from '../helpers'
 import { Capabilities } from '../types'
 import { config, variables } from '../mockData'
-import { Interceptor } from 'nock'
 
 describe('allVariables Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
-    let configInterceptor: Interceptor
-    let url: string
-    let client: LocalTestClient
-
-    beforeEach(async () => {
-        client = new LocalTestClient(sdkName)
-        configInterceptor = scope.get(
-            `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`,
-        )
-        configInterceptor.reply(200, config)
-
-        url = getConnectionStringForProxy(sdkName)
-        await client.createClient(true, {
-            configPollingIntervalMS: 60000,
-        })
-    })
 
     describeCapability(sdkName, Capabilities.local)(sdkName, () => {
         it('should return an empty object if client is not initialized', async () => {
             const delayClient = new LocalTestClient(sdkName)
 
-            const interceptor = scope
+            let interceptor = scope
                 .get(
                     `/client/${delayClient.clientId}/config/v1/server/${delayClient.sdkKey}.json`,
                 )
                 .delay(2000)
-
             interceptor.reply(200, config)
 
-            await delayClient.createClient(false)
+            if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
+                interceptor = scope.post(
+                    `/client/${delayClient.clientId}/v1/events/batch`,
+                )
+                interceptor.reply(201, {
+                    message: 'Successfully received events.',
+                })
+            }
+
+            await delayClient.createClient(false, {
+                eventFlushIntervalMS: 500,
+                logLevel: 'debug',
+            })
 
             const response = await delayClient.callAllVariables({
                 user_id: 'test_user',
@@ -53,12 +47,30 @@ describe('allVariables Tests - Local', () => {
             await waitForRequest(
                 scope,
                 interceptor,
-                1000,
+                3000,
                 'Config request never received!',
             )
         })
 
         it('should return a variable map for a bucketed user', async () => {
+            const client = new LocalTestClient(sdkName)
+            scope
+                .get(
+                    `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`,
+                )
+                .reply(200, config)
+
+            if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
+                scope
+                    .post(`/client/${client.clientId}/v1/events/batch`)
+                    .reply(201, { message: 'Successfully received events.' })
+            }
+
+            await client.createClient(true, {
+                configPollingIntervalMS: 60000,
+                eventFlushIntervalMS: 500,
+            })
+
             const response = await client.callAllVariables({
                 user_id: 'test_user',
                 email: 'user@gmail.com',

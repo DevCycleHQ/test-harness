@@ -45,6 +45,15 @@ export function initialize() {
 
     router.all('/(.*)', async (ctx) => {
         const { headers, request } = ctx
+
+        if (process.env.LOG_LEVEL === 'debug') {
+            console.log(
+                'Forwarding Request to Nock Server: ',
+                request.method,
+                ctx.request.url,
+            )
+        }
+
         try {
             let response: any
             if (request.method.toLowerCase() === 'get') {

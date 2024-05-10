@@ -550,6 +550,7 @@ describe('Variable Tests - Local', () => {
                             etag: null,
                             rayId: null,
                             lastModified: null,
+                            skipSDKConfigEvent: true,
                         })
                     },
                 )
@@ -615,6 +616,7 @@ describe('Variable Tests - Local', () => {
                             etag: null,
                             rayId: null,
                             lastModified: null,
+                            skipSDKConfigEvent: true,
                         })
                     },
                 )

@@ -17,6 +17,22 @@ const lastModifiedDate = new Date()
 describe('Initialize Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
 
+    const addClientSDKRequestMock = (client: LocalTestClient) => {
+        return scope
+            .get(
+                `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`,
+            )
+            .reply(200, config)
+    }
+
+    const addEventsBatchMock = (client: LocalTestClient) => {
+        if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
+            return scope
+                .post(`/client/${client.clientId}/v1/events/batch`)
+                .reply(201)
+        }
+    }
+
     describeCapability(sdkName, Capabilities.local)(sdkName, () => {
         it('should error when SDK key is missing', async () => {
             const testClient = new LocalTestClient(sdkName)
@@ -47,11 +63,8 @@ describe('Initialize Tests - Local', () => {
 
         it('initializes correctly on valid data', async () => {
             const testClient = new LocalTestClient(sdkName)
-            scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
-                .reply(200, config)
+            addClientSDKRequestMock(testClient)
+            addEventsBatchMock(testClient)
 
             const response = await testClient.createClient(true, {
                 configPollingIntervalMS: 10000,
@@ -63,11 +76,8 @@ describe('Initialize Tests - Local', () => {
 
         it('calls initialize promise/callback when config is successfully retrieved', async () => {
             const testClient = new LocalTestClient(sdkName)
-            scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
-                .reply(200, config)
+            addClientSDKRequestMock(testClient)
+            addEventsBatchMock(testClient)
 
             await testClient.createClient(true, {
                 configPollingIntervalMS: 10000,
@@ -125,12 +135,15 @@ describe('Initialize Tests - Local', () => {
                 )
                 .times(2)
                 .reply(200, config)
+            addEventsBatchMock(testClient)
 
             await testClient.createClient(true, {
                 configPollingIntervalMS: 3000,
             })
 
-            expect(scope.pendingMocks().length).toEqual(1)
+            expect(scope.pendingMocks().length).toEqual(
+                hasCapability(sdkName, Capabilities.sdkConfigEvent) ? 2 : 1,
+            )
 
             await wait(3100)
         }, 5000)
@@ -145,6 +158,7 @@ describe('Initialize Tests - Local', () => {
                     ETag: 'test-etag',
                     'Last-Modified': lastModifiedDate.toUTCString(),
                 })
+            addEventsBatchMock(testClient)
 
             if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
                 scope
@@ -168,9 +182,12 @@ describe('Initialize Tests - Local', () => {
 
             await testClient.createClient(true, {
                 configPollingIntervalMS: 1000,
+                eventFlushIntervalMS: 500,
             })
 
-            expect(scope.pendingMocks().length).toEqual(1)
+            expect(scope.pendingMocks().length).toEqual(
+                hasCapability(sdkName, Capabilities.sdkConfigEvent) ? 2 : 1,
+            )
 
             await wait(1100)
             expect(scope.pendingMocks().length).toEqual(0)
@@ -194,6 +211,7 @@ describe('Initialize Tests - Local', () => {
 
         it('uses the same config if the refetch fails, after retrying once', async () => {
             const testClient = new LocalTestClient(sdkName)
+
             scope
                 .get(
                     `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
@@ -271,6 +289,7 @@ describe('Initialize Tests - Local', () => {
 
         it('uses the same config if the response is valid JSON but invalid data', async () => {
             const testClient = new LocalTestClient(sdkName)
+            addEventsBatchMock(testClient)
             scope
                 .get(
                     `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
@@ -285,9 +304,12 @@ describe('Initialize Tests - Local', () => {
 
             await testClient.createClient(true, {
                 configPollingIntervalMS: 1000,
+                eventFlushIntervalMS: 500,
             })
 
-            expect(scope.pendingMocks().length).toEqual(1)
+            expect(scope.pendingMocks().length).toEqual(
+                hasCapability(sdkName, Capabilities.sdkConfigEvent) ? 2 : 1,
+            )
 
             await wait(1200)
             expect(scope.pendingMocks().length).toEqual(0)
