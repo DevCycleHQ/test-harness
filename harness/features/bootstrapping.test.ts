@@ -1,4 +1,4 @@
-import { describeCapability, getSDKScope, LocalTestClient } from '../helpers'
+import {describeCapability, getSDKScope, hasCapability, LocalTestClient} from '../helpers'
 import { Capabilities } from '../types'
 import { config } from '../mockData'
 import immutable from 'object-path-immutable'
@@ -18,11 +18,18 @@ describe('Bootstrapping Tests', () => {
                     )
                     .reply(200, config)
 
+                if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
+                    scope
+                        .post(`/client/${testClient.clientId}/v1/events/batch`)
+                        .reply(201, {message: 'Successfully received events.'})
+                }
+
                 await testClient.createClient(true, {
                     configPollingIntervalMS: 100000,
                     eventFlushIntervalMS: 500,
                 })
             })
+
             it('throws an error when trying to get bootstrap config if not enabled', async () => {
                 await testClient.callGetClientBootstrapConfig(
                     {
@@ -42,6 +49,12 @@ describe('Bootstrapping Tests', () => {
                         `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
                     )
                     .reply(200, config)
+
+                if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
+                    scope
+                        .post(`/client/${testClient.clientId}/v1/events/batch`)
+                        .reply(201, {message: 'Successfully received events.'})
+                }
 
                 // create a different config clientside so we can make sure the bootstrapping method is using the right one
                 const clientsideConfig = {

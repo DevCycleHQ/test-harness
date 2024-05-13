@@ -34,6 +34,12 @@ export const handleLocation = async (ctx: Koa.ParameterizedContext) => {
     const body = ctx.request.body as LocationRequestBody
     const { command, params, isAsync } = body
     const entity = (ctx.request as RequestWithEntity).entity
+
+    if (process.env.LOG_LEVEL === 'debug') {
+        console.log(`handleLocation request body, for command: ${command}`)
+        console.dir(body)
+    }
+
     try {
         const parsedParams: ParsedParams = parseParams(body, params, dataStore)
         if (parsedParams.includes(undefined)) {
@@ -71,6 +77,11 @@ export const handleLocation = async (ctx: Koa.ParameterizedContext) => {
             entityType: entityType,
             data: entityType === EntityTypes.client ? {} : result,
             logs: [], // TODO add logs
+        }
+
+        if (process.env.LOG_LEVEL === 'debug') {
+            console.log(`handleLocation response body, for command: ${command}`)
+            console.dir(ctx.body)
         }
     } catch (error) {
         console.error(error)

@@ -1,6 +1,5 @@
 import {
     describeCapability,
-    getPlatformBySdkName,
     getSDKScope,
     LocalTestClient,
     waitForRequest,

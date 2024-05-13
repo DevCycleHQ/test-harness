@@ -1,5 +1,4 @@
 import {
-    getConnectionStringForProxy,
     LocalTestClient,
     describeCapability,
     hasCapability,
@@ -11,11 +10,6 @@ import { config } from '../mockData'
 
 describe('Client Custom Data Tests', () => {
     const { sdkName, scope } = getSDKScope()
-
-    let url: string
-    beforeAll(async () => {
-        url = getConnectionStringForProxy(sdkName)
-    })
 
     describeCapability(sdkName, Capabilities.clientCustomData)(sdkName, () => {
         it('should set client custom data and use it for segmentation', async () => {

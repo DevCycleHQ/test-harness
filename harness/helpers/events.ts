@@ -11,6 +11,38 @@ import {
 import { Capabilities } from '../types'
 import { Scope } from 'nock'
 
+const addSDKConfigEventBatch = (sdkName: string, expectedPlatform: string) => {
+    return hasCapability(sdkName, Capabilities.sdkConfigEvent)
+        ? [
+              {
+                  user: {
+                      ...optionalUserEventFields,
+                      platform: expectedPlatform,
+                      sdkType: 'server',
+                      user_id: expect.any(String),
+                  },
+                  events: [
+                      {
+                          ...optionalEventFields,
+                          user_id: expect.any(String),
+                          type: 'sdkConfig',
+                          target: expect.any(String),
+                          value: expect.any(Number),
+                          featureVars: {
+                              '6386813a59f1b81cc9e6c68d':
+                                  '6386813a59f1b81cc9e6c693',
+                          },
+                          metaData: expect.objectContaining({
+                              clientUUID: expect.any(String),
+                              resStatus: 200,
+                          }),
+                      },
+                  ],
+              },
+          ]
+        : []
+}
+
 export const expectAggregateEvaluationEvent = ({
     body,
     variableKey,
@@ -20,6 +52,7 @@ export const expectAggregateEvaluationEvent = ({
     etag,
     rayId,
     lastModified,
+    skipSDKConfigEvent,
 }: {
     body: Record<string, unknown>
     variableKey: string
@@ -29,6 +62,7 @@ export const expectAggregateEvaluationEvent = ({
     rayId: string
     lastModified: string
     value?: number
+    skipSDKConfigEvent?: boolean
 }) => {
     const sdkName = getSDKName()
     const expectedPlatform = getPlatformBySdkName(sdkName)
@@ -36,14 +70,19 @@ export const expectAggregateEvaluationEvent = ({
         _feature: featureId,
         _variation: variationId,
     }
+
     if (hasCapability(sdkName, Capabilities.etagReporting)) {
         metadata.configEtag = etag
         metadata.configRayId = rayId
         metadata.configLastModified = lastModified
         metadata.clientUUID = expect.any(String)
     }
+
     expect(body).toEqual({
         batch: [
+            ...(skipSDKConfigEvent
+                ? []
+                : addSDKConfigEventBatch(sdkName, expectedPlatform)),
             {
                 user: {
                     ...optionalUserEventFields,
@@ -77,6 +116,7 @@ export const expectAggregateDefaultEvent = ({
     etag,
     rayId,
     lastModified,
+    skipSDKConfigEvent,
 }: {
     body: Record<string, unknown>
     variableKey: string
@@ -85,6 +125,7 @@ export const expectAggregateDefaultEvent = ({
     rayId?: string
     lastModified?: string
     value?: number
+    skipSDKConfigEvent?: boolean
 }) => {
     const sdkName = getSDKName()
     const expectedPlatform = getPlatformBySdkName(sdkName)
@@ -109,6 +150,9 @@ export const expectAggregateDefaultEvent = ({
 
     expect(body).toEqual({
         batch: [
+            ...(skipSDKConfigEvent
+                ? []
+                : addSDKConfigEventBatch(sdkName, expectedPlatform)),
             {
                 user: {
                     ...optionalUserEventFields,
