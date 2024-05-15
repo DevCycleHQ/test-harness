@@ -78,11 +78,26 @@ export const expectAggregateEvaluationEvent = ({
         metadata.clientUUID = expect.any(String)
     }
 
+    let optionalSDKConfigNewUser = []
+    let optionalSDKConfigNewEvent = []
+    if (!skipSDKConfigEvent) {
+        if (hasCapability(sdkName, Capabilities.clientUUID)) {
+            // user_id of sdkConfig and agg* events will be the same
+            optionalSDKConfigNewEvent = addSDKConfigEventBatch(
+                sdkName,
+                expectedPlatform,
+            )[0].events
+        } else {
+            optionalSDKConfigNewUser = addSDKConfigEventBatch(
+                sdkName,
+                expectedPlatform,
+            )
+        }
+    }
+
     expect(body).toEqual({
         batch: [
-            ...(skipSDKConfigEvent
-                ? []
-                : addSDKConfigEventBatch(sdkName, expectedPlatform)),
+            ...optionalSDKConfigNewUser,
             {
                 user: {
                     ...optionalUserEventFields,
@@ -91,6 +106,7 @@ export const expectAggregateEvaluationEvent = ({
                     sdkType: 'server',
                 },
                 events: [
+                    ...optionalSDKConfigNewEvent,
                     {
                         ...optionalEventFields,
                         user_id: expect.any(String),
@@ -148,11 +164,26 @@ export const expectAggregateDefaultEvent = ({
         metadata.clientUUID = expect.any(String)
     }
 
+    let optionalSDKConfigNewUser = []
+    let optionalSDKConfigNewEvent = []
+    if (!skipSDKConfigEvent) {
+        if (hasCapability(sdkName, Capabilities.clientUUID)) {
+            // user_id of sdkConfig and agg* events will be the same
+            optionalSDKConfigNewEvent = addSDKConfigEventBatch(
+                sdkName,
+                expectedPlatform,
+            )[0].events
+        } else {
+            optionalSDKConfigNewUser = addSDKConfigEventBatch(
+                sdkName,
+                expectedPlatform,
+            )
+        }
+    }
+
     expect(body).toEqual({
         batch: [
-            ...(skipSDKConfigEvent
-                ? []
-                : addSDKConfigEventBatch(sdkName, expectedPlatform)),
+            ...optionalSDKConfigNewUser,
             {
                 user: {
                     ...optionalUserEventFields,
@@ -161,6 +192,7 @@ export const expectAggregateDefaultEvent = ({
                     sdkType: 'server',
                 },
                 events: [
+                    ...optionalSDKConfigNewEvent,
                     {
                         ...optionalEventFields,
                         user_id: expect.any(String),
