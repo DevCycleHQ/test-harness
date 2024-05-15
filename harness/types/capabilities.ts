@@ -24,7 +24,6 @@ export const SDKCapabilities = {
         Capabilities.variableValue,
         Capabilities.lastModifiedHeader,
         Capabilities.bootstrapping,
-        Capabilities.sdkConfigEvent
     ],
     'OF-NodeJS': [
         Capabilities.events,
@@ -33,7 +32,6 @@ export const SDKCapabilities = {
         Capabilities.cloud,
         Capabilities.variableValue,
         Capabilities.lastModifiedHeader,
-        Capabilities.sdkConfigEvent
     ],
     Python: [
         Capabilities.events,
