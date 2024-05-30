@@ -99,6 +99,29 @@ describe('Initialize Tests - Local', () => {
             })
         })
 
+        it('defaults variable when config fails to be retrieved, and then recovers', async () => {
+            const testClient = new LocalTestClient(sdkName)
+
+            scope
+                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .times(2)
+                .reply(500)
+            if (hasCapability(sdkName, Capabilities.events)) {
+                scope
+                    .post(`/client/${testClient.clientId}/v1/events/batch`)
+                    .reply(201)
+            }
+            await testClient.createClient(true, { configPollingIntervalMS: 3000 })
+            scope
+                .get(`/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`)
+                .reply(200, config)
+            const variable = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
+            expect((await variable.json()).data.value).toEqual(0)
+            await wait(3100)
+            const variable2 = await testClient.callVariable(shouldBucketUser, sdkName, 'number-var', 'number', 0)
+            expect((await variable2.json()).data.value).toEqual(1)
+        })
+
         // TODO DVC-6016 investigate why these were failing on the nodeJS SDK
         it.skip(
             'stops the polling interval when the sdk key is invalid and cdn responds 403,' +
