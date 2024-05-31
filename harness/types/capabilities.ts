@@ -1,6 +1,5 @@
 export const Capabilities = {
     edgeDB: 'EdgeDB',
-    local: 'LocalBucketing',
     cloud: 'CloudBucketing',
     sse: 'SSE',
     clientCustomData: 'ClientCustomData',
@@ -18,7 +17,6 @@ export const Capabilities = {
 export const SDKCapabilities = {
     NodeJS: [
         Capabilities.edgeDB,
-        Capabilities.local,
         Capabilities.cloud,
         Capabilities.variableValue,
         Capabilities.lastModifiedHeader,
@@ -28,7 +26,6 @@ export const SDKCapabilities = {
     ],
     'OF-NodeJS': [
         Capabilities.edgeDB,
-        Capabilities.local,
         Capabilities.cloud,
         Capabilities.variableValue,
         Capabilities.lastModifiedHeader,
@@ -37,28 +34,24 @@ export const SDKCapabilities = {
     ],
     Python: [
         Capabilities.cloud,
-        Capabilities.local,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.variableValue,
     ],
     DotNet: [
         Capabilities.cloud,
-        Capabilities.local,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.variableValue,
     ],
     Java: [
         Capabilities.cloud,
-        Capabilities.local,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.variableValue,
     ],
     Go: [
         Capabilities.cloud,
-        Capabilities.local,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.multithreading,
@@ -67,10 +60,6 @@ export const SDKCapabilities = {
         Capabilities.etagReporting,
         Capabilities.lastModifiedHeader,
     ],
-    Ruby: [
-        Capabilities.local,
-        Capabilities.clientCustomData,
-        Capabilities.variableValue,
-    ],
-    PHP: [Capabilities.local, Capabilities.cloudProxy],
+    Ruby: [Capabilities.clientCustomData, Capabilities.variableValue],
+    PHP: [Capabilities.cloudProxy],
 }
