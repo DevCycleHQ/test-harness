@@ -2,7 +2,6 @@ name: Run Harness Tests
 run-name: ${{ github.event.inputs.title }}
 on:
     pull_request:
-        branches: [main]
     workflow_dispatch:
         inputs:
             sdk:
