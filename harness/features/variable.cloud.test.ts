@@ -54,6 +54,8 @@ describe('Variable Tests - Cloud', () => {
     // Capabilities are located under harness/types/capabilities and follow the same
     // name mapping from the sdks.ts file under harness/types/sdks.ts
     describeCapability(sdkName, Capabilities.cloud)(sdkName, () => {
+        const callVariableMethods = ['variable', 'variableValue']
+
         // Skip variableValue tests that expect an error to be thrown, as OpenFeature doesn't throw exceptions.
         const ofTestSkip =
             sdkName === 'OF-NodeJS'
