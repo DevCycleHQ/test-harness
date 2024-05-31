@@ -1,3 +1,5 @@
+import { getCapabilities, getSDKs } from '../helpers'
+
 export const Capabilities = {
     edgeDB: 'EdgeDB',
     cloud: 'CloudBucketing',
@@ -13,7 +15,7 @@ export const Capabilities = {
     clientUUID: 'ClientUUID',
 }
 
-export const SDKCapabilities = {
+let sdkCapabilities: { [key: string]: string[] } = {
     NodeJS: [
         Capabilities.edgeDB,
         Capabilities.cloud,
@@ -56,3 +58,14 @@ export const SDKCapabilities = {
     Ruby: [Capabilities.clientCustomData],
     PHP: [Capabilities.cloudProxy],
 }
+
+if (process.env.SDK_CAPABILITIES && process.env.SDKS_TO_TEST) {
+    const sdks: string[] = getSDKs()
+    const capabilities: string[] = getCapabilities()
+    sdkCapabilities = sdks.reduce((acc, sdk) => {
+        acc[sdk] = capabilities
+        return acc
+    }, {})
+}
+
+export const SDKCapabilities = sdkCapabilities

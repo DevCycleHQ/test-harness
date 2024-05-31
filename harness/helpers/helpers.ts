@@ -1,5 +1,5 @@
 import { Interceptor, Scope } from 'nock'
-import { SDKCapabilities, Sdks } from '../types'
+import { Capabilities, SDKCapabilities, Sdks } from '../types'
 import { getServerScope, resetServerScope } from '../nock'
 import { v4 as uuidv4 } from 'uuid'
 import {
@@ -68,6 +68,29 @@ export const getSDKs = () => {
         } else {
             console.warn('No specified SDKs to test, running all tests')
             return Object.values(Sdks)
+        }
+    }
+}
+
+export const getCapabilities = () => {
+    const SDK_CAPABILITIES = process.env.SDK_CAPABILITIES
+
+    try {
+        return JSON.parse(SDK_CAPABILITIES ?? '').map(
+            (sdk) => Capabilities[sdk],
+        )
+    } catch (e) {
+        if (SDK_CAPABILITIES && Capabilities[SDK_CAPABILITIES]) {
+            return [Capabilities[SDK_CAPABILITIES]]
+        } else if (SDK_CAPABILITIES) {
+            return SDK_CAPABILITIES.split(',')
+                .map((capability) => Capabilities[capability])
+                .filter((capability) => capability !== undefined)
+        } else {
+            console.warn(
+                'No specified SDK Capabilities to test, running all tests',
+            )
+            return Object.values(Capabilities)
         }
     }
 }
