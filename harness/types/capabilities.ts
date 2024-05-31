@@ -6,7 +6,6 @@ export const Capabilities = {
     multithreading: 'Multithreading',
     defaultReason: 'DefaultReason',
     etagReporting: 'EtagReporting',
-    variableValue: 'VariableValue',
     cloudProxy: 'CloudProxy',
     lastModifiedHeader: 'LastModifiedHeader',
     bootstrapping: 'Bootstrapping',

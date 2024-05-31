@@ -56,12 +56,7 @@ describe('Variable Tests - Local', () => {
     let testClient: LocalTestClient
     let eventsUrl: string
 
-    const hasVariableValue = SDKCapabilities[sdkName].includes(
-        Capabilities.variableValue,
-    )
-    const callVariableMethods = hasVariableValue
-        ? ['variable', 'variableValue']
-        : ['variable']
+    const callVariableMethods = ['variable', 'variableValue']
 
     function callVariableMethod(method: string) {
         if (method === 'variableValue') {
