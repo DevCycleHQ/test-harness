@@ -61,5 +61,5 @@ export const SDKCapabilities = {
         Capabilities.lastModifiedHeader,
     ],
     Ruby: [Capabilities.clientCustomData, Capabilities.variableValue],
-    PHP: [Capabilities.cloudProxy],
+    PHP: [Capabilities.cloudProxy, Capabilities.variableValue],
 }

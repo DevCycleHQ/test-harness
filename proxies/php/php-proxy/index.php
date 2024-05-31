@@ -94,6 +94,19 @@ function handleCommand(array $pathArgs, bool $isClient): void
                     ];
                     echo json_encode($resp);
                     exit(200);
+
+                case "variableValue":
+                    $user = $params[0];
+                    $variableKey = $params[1];
+                    $defaultValue = gettype($params[2]) == "array" && sizeof(array_keys($params[2])) == 0 ? new ArrayObject() : $params[2];
+                    $value= $client->variableValue($user, $variableKey, $defaultValue);
+                    $resp = [
+                        "data" => $value,
+                        "entityType" => "Variable",
+                        "logs" => []
+                    ];
+                    echo json_encode($resp);
+                    exit(200);
                 case "allVariables":
                     $user = $params[0];
                     $resp = [
