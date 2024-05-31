@@ -21,11 +21,7 @@ describe('Client Custom Data Tests', () => {
                 )
                 .reply(200, config)
 
-            if (hasCapability(sdkName, Capabilities.events)) {
-                scope
-                    .post(`/client/${client.clientId}/v1/events/batch`)
-                    .reply(201)
-            }
+            scope.post(`/client/${client.clientId}/v1/events/batch`).reply(201)
 
             const customData = { 'should-bucket': true }
             await client.createClient(true)
@@ -71,11 +67,7 @@ describe('Client Custom Data Tests', () => {
                 'Config request timed out',
             )
 
-            if (hasCapability(sdkName, Capabilities.events)) {
-                scope
-                    .post(`/client/${client.clientId}/v1/events/batch`)
-                    .reply(201)
-            }
+            scope.post(`/client/${client.clientId}/v1/events/batch`).reply(201)
 
             const response = await client.callVariable(
                 { user_id: 'user-id' },

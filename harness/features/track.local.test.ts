@@ -23,11 +23,7 @@ describe('Track Tests - Local', () => {
 
     const eventFlushIntervalMS = 1000
 
-    describeCapability(
-        sdkName,
-        Capabilities.local,
-        Capabilities.events,
-    )(sdkName, () => {
+    describeCapability(sdkName, Capabilities.local)(sdkName, () => {
         let client: LocalTestClient
         let sdkConfigEventBatch
 

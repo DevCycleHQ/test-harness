@@ -155,10 +155,6 @@ describe('Variable Tests - Local', () => {
                             },
                         })
 
-                        if (!hasCapability(sdkName, Capabilities.events)) {
-                            return
-                        }
-
                         // waits for the request to the events API
                         await eventResult.wait()
 
@@ -215,10 +211,6 @@ describe('Variable Tests - Local', () => {
                                 : VariableType.number,
                         )
 
-                        if (!hasCapability(sdkName, Capabilities.events)) {
-                            return
-                        }
-
                         await eventResult.wait()
 
                         // Expects that the SDK sends an "aggVariableDefaulted" event for the
@@ -273,10 +265,6 @@ describe('Variable Tests - Local', () => {
                             variableType,
                         )
 
-                        if (!hasCapability(sdkName, Capabilities.events)) {
-                            return
-                        }
-
                         await eventResult.wait()
 
                         expectAggregateDefaultEvent({
@@ -321,10 +309,6 @@ describe('Variable Tests - Local', () => {
                             variableType,
                         )
 
-                        if (!hasCapability(sdkName, Capabilities.events)) {
-                            return
-                        }
-
                         await eventResult.wait()
 
                         expectAggregateDefaultEvent({
@@ -367,10 +351,6 @@ describe('Variable Tests - Local', () => {
                             type,
                             defaultValue,
                         )
-
-                        if (!hasCapability(sdkName, Capabilities.events)) {
-                            return
-                        }
 
                         await eventResult.wait()
                         expectAggregateDefaultEvent({
@@ -415,9 +395,6 @@ describe('Variable Tests - Local', () => {
                             defaultValue,
                         )
 
-                        if (!hasCapability(sdkName, Capabilities.events)) {
-                            return
-                        }
                         await eventResult.wait()
                         expectAggregateEvaluationEvent({
                             body: eventResult.body,
@@ -466,10 +443,6 @@ describe('Variable Tests - Local', () => {
                         },
                         logs: [],
                     })
-
-                    if (!hasCapability(sdkName, Capabilities.events)) {
-                        return
-                    }
 
                     await eventResult.wait()
                     expectAggregateEvaluationEvent({
@@ -537,10 +510,6 @@ describe('Variable Tests - Local', () => {
                             variableType,
                         )
 
-                        if (!hasCapability(sdkName, Capabilities.events)) {
-                            return
-                        }
-
                         await eventResult.wait()
                         expectAggregateDefaultEvent({
                             body: eventResult.body,
@@ -602,10 +571,6 @@ describe('Variable Tests - Local', () => {
                             defaultValue,
                             variableType,
                         )
-
-                        if (!hasCapability(sdkName, Capabilities.events)) {
-                            return
-                        }
 
                         await eventResult.wait()
                         expectAggregateDefaultEvent({

@@ -217,9 +217,6 @@ export const interceptEvents = (
     sdkName: string,
     eventsUrl: string,
 ) => {
-    if (!hasCapability(sdkName, Capabilities.events)) {
-        return
-    }
     // The interceptor instance is used to wait on events that are triggered when calling
     // methods so that we can verify events being sent out and mock out responses from the
     // event server

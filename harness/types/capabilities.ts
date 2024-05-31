@@ -1,6 +1,5 @@
 export const Capabilities = {
     edgeDB: 'EdgeDB',
-    events: 'Events',
     local: 'LocalBucketing',
     cloud: 'CloudBucketing',
     sse: 'SSE',
@@ -18,7 +17,6 @@ export const Capabilities = {
 
 export const SDKCapabilities = {
     NodeJS: [
-        Capabilities.events,
         Capabilities.edgeDB,
         Capabilities.local,
         Capabilities.cloud,
@@ -29,7 +27,6 @@ export const SDKCapabilities = {
         Capabilities.clientUUID,
     ],
     'OF-NodeJS': [
-        Capabilities.events,
         Capabilities.edgeDB,
         Capabilities.local,
         Capabilities.cloud,
@@ -39,7 +36,6 @@ export const SDKCapabilities = {
         Capabilities.clientUUID,
     ],
     Python: [
-        Capabilities.events,
         Capabilities.cloud,
         Capabilities.local,
         Capabilities.edgeDB,
@@ -47,7 +43,6 @@ export const SDKCapabilities = {
         Capabilities.variableValue,
     ],
     DotNet: [
-        Capabilities.events,
         Capabilities.cloud,
         Capabilities.local,
         Capabilities.edgeDB,
@@ -55,7 +50,6 @@ export const SDKCapabilities = {
         Capabilities.variableValue,
     ],
     Java: [
-        Capabilities.events,
         Capabilities.cloud,
         Capabilities.local,
         Capabilities.edgeDB,
@@ -63,7 +57,6 @@ export const SDKCapabilities = {
         Capabilities.variableValue,
     ],
     Go: [
-        Capabilities.events,
         Capabilities.cloud,
         Capabilities.local,
         Capabilities.edgeDB,
@@ -75,10 +68,9 @@ export const SDKCapabilities = {
         Capabilities.lastModifiedHeader,
     ],
     Ruby: [
-        Capabilities.events,
         Capabilities.local,
         Capabilities.clientCustomData,
         Capabilities.variableValue,
     ],
-    PHP: [Capabilities.events, Capabilities.local, Capabilities.cloudProxy],
+    PHP: [Capabilities.local, Capabilities.cloudProxy],
 }
