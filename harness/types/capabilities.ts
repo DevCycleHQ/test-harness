@@ -18,7 +18,6 @@ export const SDKCapabilities = {
     NodeJS: [
         Capabilities.edgeDB,
         Capabilities.cloud,
-        Capabilities.variableValue,
         Capabilities.lastModifiedHeader,
         Capabilities.bootstrapping,
         Capabilities.sdkConfigEvent,
@@ -27,7 +26,6 @@ export const SDKCapabilities = {
     'OF-NodeJS': [
         Capabilities.edgeDB,
         Capabilities.cloud,
-        Capabilities.variableValue,
         Capabilities.lastModifiedHeader,
         Capabilities.sdkConfigEvent,
         Capabilities.clientUUID,
@@ -36,30 +34,26 @@ export const SDKCapabilities = {
         Capabilities.cloud,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
-        Capabilities.variableValue,
     ],
     DotNet: [
         Capabilities.cloud,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
-        Capabilities.variableValue,
     ],
     Java: [
         Capabilities.cloud,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
-        Capabilities.variableValue,
     ],
     Go: [
         Capabilities.cloud,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.multithreading,
-        Capabilities.variableValue,
         Capabilities.defaultReason,
         Capabilities.etagReporting,
         Capabilities.lastModifiedHeader,
     ],
-    Ruby: [Capabilities.clientCustomData, Capabilities.variableValue],
-    PHP: [Capabilities.cloudProxy, Capabilities.variableValue],
+    Ruby: [Capabilities.clientCustomData],
+    PHP: [Capabilities.cloudProxy],
 }
