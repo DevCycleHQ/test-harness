@@ -101,10 +101,8 @@ function handleCommand(array $pathArgs, bool $isClient): void
                     $defaultValue = gettype($params[2]) == "array" && sizeof(array_keys($params[2])) == 0 ? new ArrayObject() : $params[2];
                     $value= $client->variableValue($user, $variableKey, $defaultValue);
                     $resp = [
-                        "data" => [
-                            "value" => $value
-                        ],
-                        "entityType" => "VariableValue",
+                        "data" => $value,
+                        "entityType" => "Variable",
                         "logs" => []
                     ];
                     echo json_encode($resp);
