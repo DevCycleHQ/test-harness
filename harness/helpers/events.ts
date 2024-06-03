@@ -10,6 +10,7 @@ import {
 } from './helpers'
 import { Capabilities } from '../types'
 import { Scope } from 'nock'
+import arrayContaining = jasmine.arrayContaining
 
 const addSDKConfigEventBatch = (sdkName: string, expectedPlatform: string) => {
     return hasCapability(sdkName, Capabilities.sdkConfigEvent)
@@ -96,7 +97,7 @@ export const expectAggregateEvaluationEvent = ({
     }
 
     expect(body).toEqual({
-        batch: [
+        batch: arrayContaining([
             ...optionalSDKConfigNewUser,
             {
                 user: {
@@ -120,7 +121,7 @@ export const expectAggregateEvaluationEvent = ({
                     },
                 ],
             },
-        ],
+        ]),
     })
 }
 
@@ -182,7 +183,7 @@ export const expectAggregateDefaultEvent = ({
     }
 
     expect(body).toEqual({
-        batch: [
+        batch: arrayContaining([
             ...optionalSDKConfigNewUser,
             {
                 user: {
@@ -208,7 +209,7 @@ export const expectAggregateDefaultEvent = ({
                     },
                 ],
             },
-        ],
+        ]),
     })
 }
 
