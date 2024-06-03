@@ -52,6 +52,7 @@ export const SDKCapabilities = {
         Capabilities.defaultReason,
         Capabilities.etagReporting,
         Capabilities.lastModifiedHeader,
+        Capabilities.sdkConfigEvent,
     ],
     Ruby: [Capabilities.clientCustomData],
     PHP: [Capabilities.cloudProxy],
