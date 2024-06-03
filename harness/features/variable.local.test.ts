@@ -5,7 +5,7 @@ import {
     interceptEvents,
     LocalTestClient,
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
 import {

@@ -1,4 +1,4 @@
-import { getSDKs } from './harness/helpers/helpers'
+import { getSDKs } from './harness/types'
 import testContainersSetup from '@eresearchqut/jest-testcontainers/dist/setup'
 
 async function setup(opts) {
