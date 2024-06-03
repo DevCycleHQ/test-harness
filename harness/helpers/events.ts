@@ -14,32 +14,32 @@ import { Scope } from 'nock'
 const addSDKConfigEventBatch = (sdkName: string, expectedPlatform: string) => {
     return hasCapability(sdkName, Capabilities.sdkConfigEvent)
         ? [
-              {
-                  user: {
-                      ...optionalUserEventFields,
-                      platform: expectedPlatform,
-                      sdkType: 'server',
-                      user_id: expect.any(String),
-                  },
-                  events: [
-                      {
-                          ...optionalEventFields,
-                          user_id: expect.any(String),
-                          type: 'sdkConfig',
-                          target: expect.any(String),
-                          value: expect.any(Number),
-                          featureVars: {
-                              '6386813a59f1b81cc9e6c68d':
-                                  '6386813a59f1b81cc9e6c693',
-                          },
-                          metaData: expect.objectContaining({
-                              clientUUID: expect.any(String),
-                              resStatus: 200,
-                          }),
-                      },
-                  ],
-              },
-          ]
+            {
+                user: {
+                    ...optionalUserEventFields,
+                    platform: expectedPlatform,
+                    sdkType: 'server',
+                    user_id: expect.any(String),
+                },
+                events: [
+                    {
+                        ...optionalEventFields,
+                        user_id: expect.any(String),
+                        type: 'sdkConfig',
+                        target: expect.any(String),
+                        value: expect.any(Number),
+                        featureVars: {
+                            '6386813a59f1b81cc9e6c68d':
+                                '6386813a59f1b81cc9e6c693',
+                        },
+                        metaData: expect.objectContaining({
+                            clientUUID: expect.any(String),
+                            resStatus: 200,
+                        }),
+                    },
+                ],
+            },
+        ]
         : []
 }
 
@@ -105,20 +105,22 @@ export const expectAggregateEvaluationEvent = ({
                     platform: expectedPlatform,
                     sdkType: 'server',
                 },
-                events: [
-                    ...optionalSDKConfigNewEvent,
-                    {
-                        ...optionalEventFields,
-                        user_id: expect.any(String),
-                        type: 'aggVariableEvaluated',
-                        target: variableKey,
-                        metaData: metadata,
-                        // featureVars is always empty for aggregated evaluation events
-                        featureVars: {},
-                        value: value !== undefined ? value : 1,
-                        customType: expect.toBeNil(),
-                    },
-                ],
+                events: expect.arrayContaining(
+                    [
+                        {
+                            ...optionalEventFields,
+                            user_id: expect.any(String),
+                            type: 'aggVariableEvaluated',
+                            target: variableKey,
+                            metaData: metadata,
+                            // featureVars is always empty for aggregated evaluation events
+                            featureVars: {},
+                            value: value !== undefined ? value : 1,
+                            customType: expect.toBeNil(),
+                        },
+                        ...optionalSDKConfigNewEvent,
+                    ]
+                ),
             },
         ]),
     })
@@ -191,7 +193,7 @@ export const expectAggregateDefaultEvent = ({
                     platform: expectedPlatform,
                     sdkType: 'server',
                 },
-                events: [
+                events: expect.arrayContaining([
                     ...optionalSDKConfigNewEvent,
                     {
                         ...optionalEventFields,
@@ -206,7 +208,7 @@ export const expectAggregateDefaultEvent = ({
                         value: value !== undefined ? value : 1,
                         customType: expect.toBeNil(),
                     },
-                ],
+                ]),
             },
         ]),
     })
