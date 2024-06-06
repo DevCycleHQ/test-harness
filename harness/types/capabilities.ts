@@ -54,7 +54,6 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.defaultReason,
         Capabilities.etagReporting,
         Capabilities.lastModifiedHeader,
-        Capabilities.sdkConfigEvent,
     ],
     Ruby: [Capabilities.clientCustomData],
     PHP: [Capabilities.cloudProxy],
