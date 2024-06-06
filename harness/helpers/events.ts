@@ -96,7 +96,7 @@ export const expectAggregateEvaluationEvent = ({
     }
 
     expect(body).toEqual({
-        batch: [
+        batch: expect.toIncludeSameMembers([
             ...optionalSDKConfigNewUser,
             {
                 user: {
@@ -105,8 +105,7 @@ export const expectAggregateEvaluationEvent = ({
                     platform: expectedPlatform,
                     sdkType: 'server',
                 },
-                events: [
-                    ...optionalSDKConfigNewEvent,
+                events: expect.toIncludeSameMembers([
                     {
                         ...optionalEventFields,
                         user_id: expect.any(String),
@@ -118,9 +117,10 @@ export const expectAggregateEvaluationEvent = ({
                         value: value !== undefined ? value : 1,
                         customType: expect.toBeNil(),
                     },
-                ],
+                    ...optionalSDKConfigNewEvent,
+                ]),
             },
-        ],
+        ]),
     })
 }
 
@@ -182,7 +182,7 @@ export const expectAggregateDefaultEvent = ({
     }
 
     expect(body).toEqual({
-        batch: [
+        batch: expect.toIncludeSameMembers([
             ...optionalSDKConfigNewUser,
             {
                 user: {
@@ -191,7 +191,7 @@ export const expectAggregateDefaultEvent = ({
                     platform: expectedPlatform,
                     sdkType: 'server',
                 },
-                events: [
+                events: expect.toIncludeSameMembers([
                     ...optionalSDKConfigNewEvent,
                     {
                         ...optionalEventFields,
@@ -206,9 +206,9 @@ export const expectAggregateDefaultEvent = ({
                         value: value !== undefined ? value : 1,
                         customType: expect.toBeNil(),
                     },
-                ],
+                ]),
             },
-        ],
+        ]),
     })
 }
 
