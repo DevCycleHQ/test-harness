@@ -380,6 +380,7 @@ describe('Multithreading Tests', () => {
                     etag: null,
                     rayId: null,
                     lastModified: null,
+                    skipSDKConfigEvent: true
                 })
             })
         })
