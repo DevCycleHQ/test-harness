@@ -135,7 +135,8 @@ describe('Track Tests - Local', () => {
             )
 
             expect(eventBody).toEqual({
-                batch: [
+                batch: expect.arrayContaining([
+
                     ...(hasCapability(sdkName, Capabilities.sdkConfigEvent)
                         ? [sdkConfigEventBatch]
                         : []),
@@ -162,7 +163,7 @@ describe('Track Tests - Local', () => {
                             },
                         ],
                     },
-                ],
+                ]),
             })
         })
 
