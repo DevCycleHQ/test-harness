@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/devcyclehq/go-server-sdk/v2/api"
 	"net/http"
 	"sync"
 	"time"
@@ -45,9 +46,9 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request: missing clientId", http.StatusBadRequest)
 		return
 	}
-	var onInitializedChannel chan bool
+	var clientEventChannel chan api.ClientEvent
 	if !reqBody.WaitForInitialization {
-		onInitializedChannel = make(chan bool)
+		clientEventChannel = make(chan api.ClientEvent, 100)
 	}
 
 	options := devcycle.Options{
@@ -58,9 +59,9 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		ConfigPollingIntervalMS: time.Duration(reqBody.Options.ConfigPollingIntervalMS * 1000000),
 		EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
 		EnableCloudBucketing:    reqBody.EnableCloudBucketing,
-		OnInitializedChannel:    onInitializedChannel,
+		ClientEventHandler:      clientEventChannel,
 		// TODO: Properly implement SSE tests. Currently the init delay on config pull breaks tests.
-		//DisableRealtimeUpdates: true,
+		EnableBetaRealtimeUpdates: false,
 	}
 
 	var res clientResponseBody
