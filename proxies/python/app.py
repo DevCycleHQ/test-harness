@@ -20,9 +20,11 @@ dataStore = {
     'commandResults': {},
 }
 
+
 @app.route("/")
 def root():
     return "Hello, World!"
+
 
 @app.route("/spec")
 def spec():
@@ -32,6 +34,7 @@ def spec():
         "version": sdk_version(),
         "capabilities": ["EdgeDB", "CloudBucketing"]
     }
+
 
 @app.post("/client")
 def client():
@@ -62,6 +65,7 @@ def user():
             "stack": traceback.format_exc()
         }
 
+
 @app.post('/<path:location>')
 def command(location):
     logger.info("LOCATION REQUEST: %s", request)
@@ -85,4 +89,3 @@ def command(location):
                 "exception": message,
                 "stack": traceback.format_exc()
             }
-

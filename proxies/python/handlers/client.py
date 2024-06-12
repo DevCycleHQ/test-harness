@@ -12,7 +12,7 @@ def handle_client(body, data_store):
 
     options = options if options else {}
 
-    if (client_id == None):
+    if client_id is None:
         error = {
             "message": "Invalid request: missing clientId"
         }

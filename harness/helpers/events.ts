@@ -28,10 +28,13 @@ const addSDKConfigEventBatch = (sdkName: string, expectedPlatform: string) => {
                           type: 'sdkConfig',
                           target: expect.any(String),
                           value: expect.any(Number),
-                          featureVars: expect.toBeOneOf([{
-                              '6386813a59f1b81cc9e6c68d':
-                                  '6386813a59f1b81cc9e6c693',
-                          }, {}]),
+                          featureVars: expect.toBeOneOf([
+                              {
+                                  '6386813a59f1b81cc9e6c68d':
+                                      '6386813a59f1b81cc9e6c693',
+                              },
+                              {},
+                          ]),
                           metaData: expect.objectContaining({
                               clientUUID: expect.any(String),
                               resStatus: 200,

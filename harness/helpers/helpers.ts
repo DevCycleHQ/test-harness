@@ -11,6 +11,8 @@ import {
     callVariableValue,
     sendCommand,
 } from './commands'
+import { config_sse } from '../mockData'
+import { ProxyClientOptions } from './proxyClientOptions'
 
 const oldFetch = fetch
 
@@ -155,7 +157,7 @@ const createClient = async (
     waitForInitialization: boolean,
     clientId: string,
     sdkKey?: string | null,
-    options?: object,
+    options?: ProxyClientOptions,
 ) => {
     return await fetch(`${url}/client`, {
         method: 'POST',
@@ -273,14 +275,23 @@ class BaseTestClient {
 
 export class LocalTestClient extends BaseTestClient {
     private shouldFailInit = false
+    private options: ProxyClientOptions
 
+    constructor(sdkName: string, scope?: Scope) {
+        super(sdkName)
+        if (scope) {
+            this.setupMockConfig(scope)
+        }
+    }
+    
     async createClient(
         waitForInitialization: boolean,
-        options: Record<string, unknown> = {},
+        options: ProxyClientOptions = {},
         sdkKey?: string | null,
         shouldFail = false,
     ) {
         this.shouldFailInit = shouldFail
+        this.options = options
         if (sdkKey !== undefined) {
             this.sdkKey = sdkKey
         } else if (process.env.TEST_HARNESS_SDK_KEY) {
@@ -296,6 +307,7 @@ export class LocalTestClient extends BaseTestClient {
                 eventsAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
                 configCDNURI: `${getMockServerUrl()}/client/${this.clientId}`,
                 bucketingAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
+
                 ...options,
             },
         )
@@ -415,11 +427,23 @@ export class LocalTestClient extends BaseTestClient {
 
         return result
     }
+
+    getValidConfigPath() {
+        return `/client/${this.clientId}/config/v1/server/${this.sdkKey}.json`
+    }
+
+    setupMockConfig(scope: Scope) {
+        scope.get(this.getValidConfigPath()).reply(200, this.getValidConfig())
+    }
+
+    getValidConfig() {
+        return config_sse(getMockServerUrl(), `/client/${this.clientId}/sse`)
+    }
 }
 
 export class CloudTestClient extends BaseTestClient {
     async createClient(
-        options: Record<string, unknown> = {},
+        options: ProxyClientOptions = {},
         sdkKey?: string | null,
         shouldFail = false,
     ) {

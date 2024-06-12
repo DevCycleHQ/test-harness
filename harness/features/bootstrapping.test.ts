@@ -1,6 +1,10 @@
-import {describeCapability, getSDKScope, hasCapability, LocalTestClient} from '../helpers'
+import {
+    describeCapability,
+    getSDKScope,
+    hasCapability,
+    LocalTestClient,
+} from '../helpers'
 import { Capabilities } from '../types'
-import { config } from '../mockData'
 import immutable from 'object-path-immutable'
 
 describe('Bootstrapping Tests', () => {
@@ -11,17 +15,14 @@ describe('Bootstrapping Tests', () => {
 
         describe('not enabled client', () => {
             beforeEach(async () => {
-                testClient = new LocalTestClient(sdkName)
-                scope
-                    .get(
-                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                    )
-                    .reply(200, config)
+                testClient = new LocalTestClient(sdkName, scope)
 
                 if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
                     scope
                         .post(`/client/${testClient.clientId}/v1/events/batch`)
-                        .reply(201, {message: 'Successfully received events.'})
+                        .reply(201, {
+                            message: 'Successfully received events.',
+                        })
                 }
 
                 await testClient.createClient(true, {
@@ -43,23 +44,20 @@ describe('Bootstrapping Tests', () => {
 
         describe('initialized client', () => {
             beforeEach(async () => {
-                testClient = new LocalTestClient(sdkName)
-                scope
-                    .get(
-                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                    )
-                    .reply(200, config)
+                testClient = new LocalTestClient(sdkName, scope)
 
                 if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
                     scope
                         .post(`/client/${testClient.clientId}/v1/events/batch`)
-                        .reply(201, {message: 'Successfully received events.'})
+                        .reply(201, {
+                            message: 'Successfully received events.',
+                        })
                 }
 
                 // create a different config clientside so we can make sure the bootstrapping method is using the right one
                 const clientsideConfig = {
                     ...immutable.set(
-                        config,
+                        testClient.getValidConfig(),
                         'features.0.variations.0.variables.1.value',
                         'new string',
                     ),

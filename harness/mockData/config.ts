@@ -236,6 +236,20 @@ export const config: ConfigBody = {
     ably: {
         apiKey: 'fakekey',
     },
+    sse: {
+        hostname: 'fakehost',
+        path: '/fakepath',
+    },
+}
+
+export const config_sse = (hostname: string, path: string): ConfigBody => {
+    return {
+        ...config,
+        sse: {
+            hostname,
+            path,
+        },
+    }
 }
 
 export const expectedFeaturesVariationOn = {

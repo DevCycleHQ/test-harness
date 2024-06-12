@@ -2,6 +2,7 @@ from devcycle_python_sdk.models.user import DevCycleUser
 
 from ..helpers.camelcase import camel_case_dict, snake_case_dict
 
+
 def handle_user(body, data_store):
     user = DevCycleUser(**snake_case_dict(body))
     user_storage_id = str(len(data_store['users'].values()))
@@ -17,4 +18,4 @@ def handle_user(body, data_store):
     return {
         "entityType": "User",
         "data": camelcase_user
-    }, 201, { "Location": "user/" + user_storage_id }
+    }, 201, {"Location": "user/" + user_storage_id}
