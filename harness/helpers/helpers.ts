@@ -11,8 +11,10 @@ import {
     callVariableValue,
     sendCommand,
 } from './commands'
-import { config_sse } from '../mockData'
+import { config_sse, SSEMessage } from '../mockData'
 import { ProxyClientOptions } from './proxyClientOptions'
+import SseStream from 'ssestream'
+import { sseStreams } from '../mockServer'
 
 const oldFetch = fetch
 
@@ -438,6 +440,17 @@ export class LocalTestClient extends BaseTestClient {
 
     getValidConfig() {
         return config_sse(getMockServerUrl(), `/client/${this.clientId}/sse`)
+    }
+
+    getSSEStream(): SseStream {
+        return sseStreams[this.clientId]
+    }
+    sendSSEMessage(message: SSEMessage) {
+        const sseStream = this.getSSEStream()
+        if (!sseStream) {
+            throw new Error('SSE Stream not initialized')
+        }
+        sseStream.write(JSON.stringify(message))
     }
 }
 
