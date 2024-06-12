@@ -1,5 +1,3 @@
-import { getMockServerUrl } from './helpers'
-
 export type ProxyClientOptions = {
     eventsAPIURI?: string
     configCDNURI?: string
@@ -11,4 +9,5 @@ export type ProxyClientOptions = {
     enableRealtimeUpdates?: boolean
     logLevel?: string
     enableClientBootstrapping?: boolean
+    enableSSE?: boolean
 }

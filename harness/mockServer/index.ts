@@ -29,11 +29,11 @@ export const assertNoUnmatchedRequests = async (
             const testName = testNameMap[clientId]
             console.error(
                 `Unmatched requests from test case ${testName} ` +
-                    currentUnmatchedRequests,
+                currentUnmatchedRequests,
             )
             throw new Error(
                 `Unexpected requests received from test case ${testName} ` +
-                    currentUnmatchedRequests,
+                currentUnmatchedRequests,
             )
         }
     }
@@ -43,6 +43,12 @@ export function initialize() {
     const app = new Koa()
     const router = new Router()
 
+    router.param('clientId', (clientId, ctx, next) => {
+        ctx.clientId = clientId
+        return next()
+    }).all('/client/:clientId/sse', async (ctx) => {
+        console.log(ctx.body)
+    })
     router.all('/(.*)', async (ctx) => {
         const { headers, request } = ctx
 
@@ -66,7 +72,7 @@ export function initialize() {
             } else {
                 response = await axios[request.method.toLowerCase()](
                     `https://myfakenockurl${ctx.request.url}`,
-                    request.body,
+                    ctx.request.body,
                     {
                         headers,
                     },
