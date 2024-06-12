@@ -18,6 +18,7 @@ type clientRequestBodyOptions struct {
 	ConfigPollingIntervalMS int64  `json:"configPollingIntervalMS"`
 	EventFlushIntervalMS    int64  `json:"eventFlushIntervalMS"`
 	EnableCloudBucketing    bool   `json:"enableCloudBucketing"`
+	EnableRealtimeUpdates   bool   `json:"enableRealtimeUpdates"`
 }
 
 type clientRequestBody struct {

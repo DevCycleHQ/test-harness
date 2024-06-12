@@ -1,6 +1,6 @@
 import { LocalTestClient, getSDKScope, hasCapability } from '../helpers'
 import { Capabilities } from '../types'
-import { config, expectedFeaturesVariationOn } from '../mockData/config'
+import { expectedFeaturesVariationOn } from '../mockData'
 
 describe('allFeatures Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
@@ -10,7 +10,7 @@ describe('allFeatures Tests - Local', () => {
 
         beforeEach(async () => {
             testClient = new LocalTestClient(sdkName)
-            const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
+            const configRequestUrl = testClient.getValidConfigPath()
             scope.get(configRequestUrl).times(2).reply(500)
             await testClient.createClient(true, {
                 configPollingIntervalMS: 60000,
@@ -31,13 +31,7 @@ describe('allFeatures Tests - Local', () => {
         let testClient: LocalTestClient
 
         beforeEach(async () => {
-            testClient = new LocalTestClient(sdkName)
-            scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
-                .reply(200, config)
-
+            testClient = new LocalTestClient(sdkName, scope)
             if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
                 scope
                     .post(`/client/${testClient.clientId}/v1/events/batch`)

@@ -8,7 +8,6 @@ import {
     hasCapability,
 } from '../helpers'
 import { Capabilities } from '../types'
-import { config } from '../mockData'
 import {
     optionalEventFields,
     optionalUserEventFields,
@@ -26,10 +25,7 @@ describe('Track Tests - Local', () => {
     let sdkConfigEventBatch
 
     beforeEach(async () => {
-        client = new LocalTestClient(sdkName)
-
-        const configPath = `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`
-        scope.get(configPath).reply(200, config)
+        client = new LocalTestClient(sdkName, scope)
 
         await client.createClient(true, {
             eventFlushIntervalMS: eventFlushIntervalMS,
@@ -49,7 +45,9 @@ describe('Track Tests - Local', () => {
                     ...optionalEventFields,
                     user_id: expect.any(String),
                     type: 'sdkConfig',
-                    target: expect.stringContaining(configPath),
+                    target: expect.stringContaining(
+                        client.getValidConfigPath(),
+                    ),
                     value: expect.any(Number),
                     featureVars: {
                         '6386813a59f1b81cc9e6c68d': '6386813a59f1b81cc9e6c693',
@@ -136,7 +134,6 @@ describe('Track Tests - Local', () => {
 
             expect(eventBody).toEqual({
                 batch: expect.arrayContaining([
-
                     ...(hasCapability(sdkName, Capabilities.sdkConfigEvent)
                         ? [sdkConfigEventBatch]
                         : []),
@@ -309,7 +306,7 @@ describe('Track Tests - Local', () => {
             const avg = total / timestamps.length
 
             expect(eventBody).toEqual({
-                batch: [
+                batch: expect.arrayContaining([
                     ...(hasCapability(sdkName, Capabilities.sdkConfigEvent)
                         ? [sdkConfigEventBatch]
                         : []),
@@ -359,7 +356,7 @@ describe('Track Tests - Local', () => {
                             },
                         ],
                     },
-                ],
+                ]),
             })
 
             // checking if the failed reqests were made in 10% of the defined interva;

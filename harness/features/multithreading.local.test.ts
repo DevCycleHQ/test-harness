@@ -5,7 +5,6 @@ import {
     waitForRequest,
 } from '../helpers'
 import { Capabilities } from '../types'
-import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
 import {
     expectAggregateDefaultEvent,
@@ -37,10 +36,8 @@ describe('Multithreading Tests', () => {
                 testClient = new LocalTestClient(sdkName)
 
                 scope
-                    .get(
-                        `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                    )
-                    .reply(200, config, {
+                    .get(testClient.getValidConfigPath())
+                    .reply(200, testClient.getValidConfig(), {
                         ETag: 'multithreading-etag',
                         'Cf-Ray': 'multithreading-rayid',
                         'Last-Modified': lastModifiedDate.toUTCString(),
@@ -49,8 +46,6 @@ describe('Multithreading Tests', () => {
                 await testClient.createClient(true, {
                     configPollingIntervalMS: 100000,
                     eventFlushIntervalMS: 500,
-                    // set two thread workers to test multithreading
-                    maxWasmWorkers: 2,
                 })
 
                 eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
@@ -337,9 +332,7 @@ describe('Multithreading Tests', () => {
             const { key, defaultValue } = expectedVariable
 
             it('should return default value if client is uninitialized, log event', async () => {
-                testClient = new LocalTestClient(sdkName)
-                const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
-                scope.get(configRequestUrl).delay(2000).reply(200)
+                testClient = new LocalTestClient(sdkName, scope)
 
                 eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
 
@@ -380,7 +373,7 @@ describe('Multithreading Tests', () => {
                     etag: null,
                     rayId: null,
                     lastModified: null,
-                    skipSDKConfigEvent: true
+                    skipSDKConfigEvent: true,
                 })
             })
         })

@@ -6,7 +6,6 @@ import {
     LocalTestClient,
 } from '../helpers'
 import { Capabilities } from '../types'
-import { config } from '../mockData'
 import { VariableType } from '@devcycle/types'
 import {
     expectAggregateDefaultEvent,
@@ -74,10 +73,8 @@ describe('Variable Tests - Local', () => {
             // conflicting. This one is used to mock the config that the local client is going to use
             // locally in all of its methods.
             scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
-                .reply(200, config, {
+                .get(testClient.getValidConfigPath())
+                .reply(200, testClient.getValidConfig(), {
                     ETag: 'local-var-etag',
                     'Cf-Ray': 'local-ray-id',
                     'Last-Modified': lastModifiedDate.toUTCString(),
@@ -448,9 +445,11 @@ describe('Variable Tests - Local', () => {
                 'should return %s default value if client is uninitialized, log event',
                 async (method) => {
                     testClient = new LocalTestClient(sdkName)
-                    const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
 
-                    scope.get(configRequestUrl).delay(2000).reply(200)
+                    scope
+                        .get(testClient.getValidConfigPath())
+                        .delay(2000)
+                        .reply(200)
 
                     eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
 

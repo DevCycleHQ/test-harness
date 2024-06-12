@@ -5,7 +5,7 @@ import {
     hasCapability,
 } from '../helpers'
 import { Capabilities } from '../types'
-import { config, variables } from '../mockData'
+import { variables } from '../mockData'
 
 describe('allVariables Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
@@ -14,11 +14,9 @@ describe('allVariables Tests - Local', () => {
         const delayClient = new LocalTestClient(sdkName)
 
         let interceptor = scope
-            .get(
-                `/client/${delayClient.clientId}/config/v1/server/${delayClient.sdkKey}.json`,
-            )
+            .get(delayClient.getValidConfigPath())
             .delay(2000)
-        interceptor.reply(200, config)
+        interceptor.reply(200, delayClient.getValidConfig())
 
         if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
             interceptor = scope.post(
@@ -51,12 +49,7 @@ describe('allVariables Tests - Local', () => {
     })
 
     it('should return a variable map for a bucketed user', async () => {
-        const client = new LocalTestClient(sdkName)
-        scope
-            .get(
-                `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`,
-            )
-            .reply(200, config)
+        const client = new LocalTestClient(sdkName, scope)
 
         if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
             scope

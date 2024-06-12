@@ -6,20 +6,13 @@ import {
     getSDKScope,
 } from '../helpers'
 import { Capabilities } from '../types'
-import { config } from '../mockData'
 
 describe('Client Custom Data Tests', () => {
     const { sdkName, scope } = getSDKScope()
 
     describeCapability(sdkName, Capabilities.clientCustomData)(sdkName, () => {
         it('should set client custom data and use it for segmentation', async () => {
-            const client = new LocalTestClient(sdkName)
-
-            scope
-                .get(
-                    `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`,
-                )
-                .reply(200, config)
+            const client = new LocalTestClient(sdkName, scope)
 
             scope.post(`/client/${client.clientId}/v1/events/batch`).reply(201)
 
@@ -51,11 +44,9 @@ describe('Client Custom Data Tests', () => {
 
         it('should do nothing when client has not initialized', async () => {
             const client = new LocalTestClient(sdkName)
-            const configCall = scope.get(
-                `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`,
-            )
+            const configCall = scope.get(client.getValidConfigPath())
 
-            configCall.delay(1000).reply(200, config)
+            configCall.delay(1000).reply(200, client.getValidConfig())
 
             const customData = { 'should-bucket': true }
             await client.createClient(false)

@@ -9,20 +9,12 @@ import {
     expectAggregateDefaultEvent,
 } from '../helpers'
 import { Capabilities } from '../types'
-import { config, shouldBucketUser } from '../mockData'
+import { shouldBucketUser } from '../mockData'
 
 const lastModifiedDate = new Date()
 
 describe('Initialize Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
-
-    const addClientSDKRequestMock = (client: LocalTestClient) => {
-        return scope
-            .get(
-                `/client/${client.clientId}/config/v1/server/${client.sdkKey}.json`,
-            )
-            .reply(200, config)
-    }
 
     const addEventsBatchMock = (client: LocalTestClient) => {
         if (hasCapability(sdkName, Capabilities.sdkConfigEvent)) {
@@ -60,8 +52,7 @@ describe('Initialize Tests - Local', () => {
     })
 
     it('initializes correctly on valid data', async () => {
-        const testClient = new LocalTestClient(sdkName)
-        addClientSDKRequestMock(testClient)
+        const testClient = new LocalTestClient(sdkName, scope)
         addEventsBatchMock(testClient)
 
         const response = await testClient.createClient(true, {
@@ -73,8 +64,7 @@ describe('Initialize Tests - Local', () => {
     })
 
     it('calls initialize promise/callback when config is successfully retrieved', async () => {
-        const testClient = new LocalTestClient(sdkName)
-        addClientSDKRequestMock(testClient)
+        const testClient = new LocalTestClient(sdkName, scope)
         addEventsBatchMock(testClient)
 
         await testClient.createClient(true, {
@@ -85,12 +75,7 @@ describe('Initialize Tests - Local', () => {
     it('calls initialize promise/callback when config fails to be retrieved', async () => {
         const testClient = new LocalTestClient(sdkName)
 
-        scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
-            .times(2)
-            .reply(500)
+        scope.get(testClient.getValidConfigPath()).times(2).reply(500)
 
         await testClient.createClient(true, {
             configPollingIntervalMS: 10000,
@@ -100,22 +85,15 @@ describe('Initialize Tests - Local', () => {
     it('defaults variable when config fails to be retrieved, and then recovers', async () => {
         const testClient = new LocalTestClient(sdkName)
 
-        scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
-            .times(2)
-            .reply(500)
+        scope.get(testClient.getValidConfigPath()).times(2).reply(500)
         scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
 
         await testClient.createClient(true, {
             configPollingIntervalMS: 3000,
         })
         scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
-            .reply(200, config)
+            .get(testClient.getValidConfigPath())
+            .reply(200, testClient.getValidConfig)
         const variable = await testClient.callVariable(
             shouldBucketUser,
             sdkName,
@@ -142,11 +120,7 @@ describe('Initialize Tests - Local', () => {
         async () => {
             const testClient = new LocalTestClient(sdkName)
 
-            scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
-                .reply(403)
+            scope.get(testClient.getValidConfigPath()).reply(403)
 
             const response = await testClient.createClient(
                 true,
@@ -166,11 +140,9 @@ describe('Initialize Tests - Local', () => {
     it('fetches config again after 3 seconds when config polling interval is overriden', async () => {
         const testClient = new LocalTestClient(sdkName)
         scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
+            .get(testClient.getValidConfigPath())
             .times(2)
-            .reply(200, config)
+            .reply(200, testClient.getValidConfig)
         addEventsBatchMock(testClient)
 
         await testClient.createClient(true, {
@@ -187,10 +159,8 @@ describe('Initialize Tests - Local', () => {
     it('uses the same config if the etag matches', async () => {
         const testClient = new LocalTestClient(sdkName)
         scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
-            .reply(200, config, {
+            .get(testClient.getValidConfigPath())
+            .reply(200, testClient.getValidConfig(), {
                 ETag: 'test-etag',
                 'Last-Modified': lastModifiedDate.toUTCString(),
             })
@@ -198,9 +168,7 @@ describe('Initialize Tests - Local', () => {
 
         if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
             scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
+                .get(testClient.getValidConfigPath())
                 .matchHeader('If-None-Match', 'test-etag')
                 .matchHeader(
                     'If-Modified-Since',
@@ -209,9 +177,7 @@ describe('Initialize Tests - Local', () => {
                 .reply(304, {})
         } else {
             scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
+                .get(testClient.getValidConfigPath())
                 .matchHeader('If-None-Match', 'test-etag')
                 .reply(304, {})
         }
@@ -242,20 +208,9 @@ describe('Initialize Tests - Local', () => {
     })
 
     it('uses the same config if the refetch fails, after retrying once', async () => {
-        const testClient = new LocalTestClient(sdkName)
+        const testClient = new LocalTestClient(sdkName, scope)
 
-        scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
-            .reply(200, config)
-
-        scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
-            .times(2)
-            .reply(503, {})
+        scope.get(testClient.getValidConfigPath()).times(2).reply(503, {})
 
         await testClient.createClient(true, {
             configPollingIntervalMS: 1000,
@@ -279,18 +234,9 @@ describe('Initialize Tests - Local', () => {
     })
 
     it('uses the same config if the response is invalid JSON', async () => {
-        const testClient = new LocalTestClient(sdkName)
-        scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
-            .reply(200, config)
+        const testClient = new LocalTestClient(sdkName, scope)
 
-        scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
-            .reply(200, "I'm not JSON!")
+        scope.get(testClient.getValidConfigPath()).reply(200, "I'm not JSON!")
 
         await testClient.createClient(true, {
             configPollingIntervalMS: 1000,
@@ -314,18 +260,11 @@ describe('Initialize Tests - Local', () => {
     })
 
     it('uses the same config if the response is valid JSON but invalid data', async () => {
-        const testClient = new LocalTestClient(sdkName)
+        const testClient = new LocalTestClient(sdkName, scope)
         addEventsBatchMock(testClient)
-        scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
-            .reply(200, config)
 
         scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
+            .get(testClient.getValidConfigPath())
             .reply(200, '{"snatch_movie_quote": "d\'ya like dags?"}')
 
         await testClient.createClient(true, {
@@ -355,11 +294,9 @@ describe('Initialize Tests - Local', () => {
     it('uses the new config when etag changes, and flushes existing events', async () => {
         const testClient = new LocalTestClient(sdkName)
         scope
-            .get(
-                `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-            )
+            .get(testClient.getValidConfigPath())
             .times(1)
-            .reply(200, config, {
+            .reply(200, testClient.getValidConfig(), {
                 ETag: 'first-etag',
                 'Cf-Ray': 'first-ray',
                 'Last-Modified': lastModifiedDate.toUTCString(),
@@ -368,9 +305,7 @@ describe('Initialize Tests - Local', () => {
         const secondLastModifiedDate = new Date()
         if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
             scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
+                .get(testClient.getValidConfigPath())
                 .times(1)
                 .matchHeader('If-None-Match', (value) => {
                     return value === 'first-etag'
@@ -380,7 +315,7 @@ describe('Initialize Tests - Local', () => {
                 })
                 .reply(
                     200,
-                    { ...config, features: [] },
+                    { ...testClient.getValidConfig(), features: [] },
                     {
                         ETag: 'second-etag',
                         'Cf-Ray': 'second-ray',
@@ -389,9 +324,7 @@ describe('Initialize Tests - Local', () => {
                 )
 
             scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
+                .get(testClient.getValidConfigPath())
                 .matchHeader('If-None-Match', (value) => {
                     return value === 'second-etag'
                 })
@@ -401,23 +334,19 @@ describe('Initialize Tests - Local', () => {
                 .reply(304, {})
         } else {
             scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
+                .get(testClient.getValidConfigPath())
                 .times(1)
                 .matchHeader('If-None-Match', (value) => {
                     return value === 'first-etag'
                 })
                 .reply(
                     200,
-                    { ...config, features: [] },
+                    { ...testClient.getValidConfig(), features: [] },
                     { ETag: 'second-etag', 'Cf-Ray': 'second-ray' },
                 )
 
             scope
-                .get(
-                    `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`,
-                )
+                .get(testClient.getValidConfigPath())
                 .matchHeader('If-None-Match', (value) => {
                     return value === 'second-etag'
                 })
@@ -468,7 +397,7 @@ describe('Initialize Tests - Local', () => {
         await eventResult.wait()
         await secondEventResult.wait()
         expect(scope.pendingMocks().length).toEqual(0)
-
+        const config = testClient.getValidConfig()
         if (hasCapability(sdkName, Capabilities.etagReporting)) {
             expectAggregateEvaluationEvent({
                 body: eventResult.body,
