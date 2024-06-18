@@ -35,7 +35,10 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         let client: DevCycleClient | DevCycleCloudClient
 
         if (!enableCloudBucketing) {
-            client = initializeDevCycle(sdkKey, { ...options })
+            client = initializeDevCycle(sdkKey, {
+                ...options,
+                logLevel: 'debug',
+            })
             if (waitForInitialization) {
                 try {
                     await client.onClientInitialized()
