@@ -5,4 +5,4 @@ source 'https://rubygems.org'
 
 gem 'puma'
 gem 'sinatra'
-gem 'devcycle-ruby-server-sdk'
+gem 'devcycle-ruby-server-sdk', github: 'DevCycleHQ/ruby-server-sdk', ref: '84e61b4adbfc4d92ed021f3afbebbaf4099314f8'

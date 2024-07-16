@@ -303,7 +303,9 @@ describe('Initialize Tests - Local', () => {
             })
 
         const secondLastModifiedDate = new Date()
+        secondLastModifiedDate.setHours(lastModifiedDate.getHours() - 1)
         if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
+            // Should not set config to older timestamp
             scope
                 .get(testClient.getValidConfigPath())
                 .times(1)
@@ -326,10 +328,37 @@ describe('Initialize Tests - Local', () => {
             scope
                 .get(testClient.getValidConfigPath())
                 .matchHeader('If-None-Match', (value) => {
-                    return value === 'second-etag'
+                    return value === 'first-etag'
                 })
                 .matchHeader('If-Modified-Since', (value) => {
-                    return value === secondLastModifiedDate.toUTCString()
+                    return value === lastModifiedDate.toUTCString()
+                })
+                .reply(304, {})
+            scope
+                .get(testClient.getValidConfigPath())
+                .times(1)
+                .matchHeader('If-None-Match', (value) => {
+                    return value === 'first-etag'
+                })
+                .matchHeader('If-Modified-Since', (value) => {
+                    return value === lastModifiedDate.toUTCString()
+                })
+                .reply(
+                    200,
+                    { ...testClient.getValidConfig(), features: [] },
+                    {
+                        ETag: 'second-etag',
+                        'Cf-Ray': 'second-ray',
+                        'Last-Modified': new Date().toUTCString(),
+                    },
+                )
+            scope
+                .get(testClient.getValidConfigPath())
+                .matchHeader('If-None-Match', (value) => {
+                    return value === 'first-etag'
+                })
+                .matchHeader('If-Modified-Since', (value) => {
+                    return value === lastModifiedDate.toUTCString()
                 })
                 .reply(304, {})
         } else {
