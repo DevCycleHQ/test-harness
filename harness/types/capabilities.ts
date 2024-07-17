@@ -59,7 +59,6 @@ let sdkCapabilities: { [key: string]: string[] } = {
     ],
     Ruby: [
         Capabilities.clientCustomData,
-        Capabilities.clientUUID,
         Capabilities.lastModifiedHeader
     ],
     PHP: [Capabilities.cloudProxy],
