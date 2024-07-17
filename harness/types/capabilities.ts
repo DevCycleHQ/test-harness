@@ -57,7 +57,11 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.sdkConfigEvent,
         Capabilities.clientUUID,
     ],
-    Ruby: [Capabilities.clientCustomData],
+    Ruby: [
+        Capabilities.clientCustomData,
+        Capabilities.clientUUID,
+        Capabilities.lastModifiedHeader
+    ],
     PHP: [Capabilities.cloudProxy],
 }
 
