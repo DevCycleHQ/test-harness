@@ -350,7 +350,7 @@ describe('Initialize Tests - Local', () => {
         )
 
         await testClient.createClient(true, {
-            configPollingIntervalMS: 2000,
+            configPollingIntervalMS: 1000,
             eventFlushIntervalMS: 500,
         })
 
