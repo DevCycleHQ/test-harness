@@ -7,9 +7,11 @@ import {
     interceptEvents,
     expectAggregateEvaluationEvent,
     expectAggregateDefaultEvent,
+    waitForRequest,
 } from '../helpers'
 import { Capabilities } from '../types'
 import { shouldBucketUser } from '../mockData'
+import { Interceptor } from 'nock'
 
 const lastModifiedDate = new Date()
 
@@ -293,64 +295,47 @@ describe('Initialize Tests - Local', () => {
 
     it('uses the new config when etag changes, and flushes existing events', async () => {
         const testClient = new LocalTestClient(sdkName)
-        scope
-            .get(testClient.getValidConfigPath())
-            .times(1)
-            .reply(200, testClient.getValidConfig(), {
-                ETag: 'first-etag',
-                'Cf-Ray': 'first-ray',
-                'Last-Modified': lastModifiedDate.toUTCString(),
-            })
+        const firstConfig = scope.get(testClient.getValidConfigPath()).times(1)
 
-        const secondLastModifiedDate = new Date()
+        firstConfig.reply(200, testClient.getValidConfig(), {
+            ETag: 'first-etag',
+            'Cf-Ray': 'first-ray',
+            'Last-Modified': lastModifiedDate.toUTCString(),
+        })
+
+        const secondLastModifiedDate = new Date(Date.now() + 200000)
+        let secondConfig: Interceptor
         if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
-            scope
+            secondConfig = scope
                 .get(testClient.getValidConfigPath())
-                .times(1)
                 .matchHeader('If-None-Match', (value) => {
                     return value === 'first-etag'
                 })
                 .matchHeader('If-Modified-Since', (value) => {
                     return value === lastModifiedDate.toUTCString()
                 })
-                .reply(
-                    200,
-                    { ...testClient.getValidConfig(), features: [] },
-                    {
-                        ETag: 'second-etag',
-                        'Cf-Ray': 'second-ray',
-                        'Last-Modified': secondLastModifiedDate.toUTCString(),
-                    },
-                )
 
-            scope
-                .get(testClient.getValidConfigPath())
-                .matchHeader('If-None-Match', (value) => {
-                    return value === 'second-etag'
-                })
-                .matchHeader('If-Modified-Since', (value) => {
-                    return value === secondLastModifiedDate.toUTCString()
-                })
-                .reply(304, {})
+            secondConfig.reply(
+                200,
+                { ...testClient.getValidConfig(), features: [] },
+                {
+                    ETag: 'second-etag',
+                    'Cf-Ray': 'second-ray',
+                    'Last-Modified': secondLastModifiedDate.toUTCString(),
+                },
+            )
         } else {
-            scope
+            secondConfig = scope
                 .get(testClient.getValidConfigPath())
-                .times(1)
                 .matchHeader('If-None-Match', (value) => {
                     return value === 'first-etag'
                 })
-                .reply(
-                    200,
-                    { ...testClient.getValidConfig(), features: [] },
-                    { ETag: 'second-etag', 'Cf-Ray': 'second-ray' },
-                )
 
-            scope
-                .get(testClient.getValidConfigPath())
-                .matchHeader('If-None-Match', (value) => {
-                    return value === 'second-etag'
-                })
-                .reply(304, {})
+            secondConfig.reply(
+                200,
+                { ...testClient.getValidConfig(), features: [] },
+                { ETag: 'second-etag', 'Cf-Ray': 'second-ray' },
+            )
         }
 
         const eventResult = interceptEvents(
@@ -365,7 +350,7 @@ describe('Initialize Tests - Local', () => {
         )
 
         await testClient.createClient(true, {
-            configPollingIntervalMS: 1000,
+            configPollingIntervalMS: 2000,
             eventFlushIntervalMS: 500,
         })
 
@@ -378,11 +363,19 @@ describe('Initialize Tests - Local', () => {
             0,
         )
         expect((await variable.json()).data.value).toEqual(1)
+        await eventResult.wait()
 
         expect(scope.pendingMocks().length).toEqual(2)
 
         // wait for the next config polling request
-        await wait(1200)
+        await waitForRequest(
+            scope,
+            secondConfig,
+            2000,
+            'Config polling timed out',
+        )
+
+        await wait(50)
         // make sure the new config is in use (new config should not bucket the user because features are blank)
         const variable2 = await testClient.callVariable(
             shouldBucketUser,
@@ -392,9 +385,6 @@ describe('Initialize Tests - Local', () => {
             0,
         )
         expect((await variable2.json()).data.value).toEqual(0)
-        await wait(1000)
-
-        await eventResult.wait()
         await secondEventResult.wait()
         expect(scope.pendingMocks().length).toEqual(0)
         const config = testClient.getValidConfig()

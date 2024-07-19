@@ -192,13 +192,9 @@ export const waitForRequest = async (
         return
     }
 
-    const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => {
-            reject(new Error(timeoutMessage))
-        }, timeout)
-    })
-
     let callback
+
+    const timeoutError = new Error(timeoutMessage)
 
     await Promise.race([
         new Promise((resolve) => {
@@ -211,7 +207,11 @@ export const waitForRequest = async (
             }
             scope.on('request', callback)
         }),
-        timeoutPromise,
+        new Promise((_, reject) => {
+            setTimeout(() => {
+                reject(timeoutError)
+            }, timeout)
+        }),
     ]).finally(() => {
         scope.off('request', callback)
     })
@@ -283,7 +283,7 @@ export class LocalTestClient extends BaseTestClient {
             this.setupMockConfig(scope)
         }
     }
-    
+
     async createClient(
         waitForInitialization: boolean,
         options: ProxyClientOptions = {},
