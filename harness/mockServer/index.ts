@@ -51,6 +51,7 @@ export function initialize() {
                 'Forwarding Request to Nock Server: ',
                 request.method,
                 ctx.request.url,
+                ctx.request.headers,
             )
         }
 
