@@ -24,7 +24,7 @@ jobs:
         steps:
             - uses: actions/setup-node@v3
               with:
-                  node-version: 20
+                  node-version: 22
             - uses: actions/checkout@v2
               with:
                   fetch-depth: 0
