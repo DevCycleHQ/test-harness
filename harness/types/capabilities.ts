@@ -41,6 +41,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.sdkConfigEvent,
+        Capabilities.clientUUID,
     ],
     Java: [
         Capabilities.cloud,
