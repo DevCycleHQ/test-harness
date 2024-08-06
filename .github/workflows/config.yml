@@ -17,7 +17,7 @@ on:
 jobs:
     run-tests:
         runs-on:
-            labels: ubuntu-latest-4-core
+            labels: ubuntu-latest
         name: Run Tests
         env:
             DOCKER_HOST_IP: '172.17.0.1'
@@ -31,7 +31,7 @@ jobs:
             - name: Write variables to .env file
               run: |
                   if [ ! -f ".env" ]
-                  then 
+                  then
                       echo "SDK_GITHUB_SHA='${{ github.event.inputs.sha }}'" >> ".env"
                       echo "SDKS_TO_TEST='${{ github.event.inputs.sdk }}'" >> ".env"
                   fi
