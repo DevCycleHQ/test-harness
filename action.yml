@@ -13,6 +13,8 @@ runs:
         - uses: actions/checkout@v3.3.0
           with:
               repository: DevCycleHQ/test-harness
+        - name: 'Install Docker'
+          run: sudo apt install docker-compose
         - uses: actions/setup-node@v3
           with:
               node-version: 22
