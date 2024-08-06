@@ -22,6 +22,8 @@ jobs:
         env:
             DOCKER_HOST_IP: '172.17.0.1'
         steps:
+            - name: 'Install Docker'
+              run: sudo apt install docker-compose
             - uses: actions/setup-node@v3
               with:
                   node-version: 22
@@ -31,7 +33,7 @@ jobs:
             - name: Write variables to .env file
               run: |
                   if [ ! -f ".env" ]
-                  then 
+                  then
                       echo "SDK_GITHUB_SHA='${{ github.event.inputs.sha }}'" >> ".env"
                       echo "SDKS_TO_TEST='${{ github.event.inputs.sdk }}'" >> ".env"
                   fi
