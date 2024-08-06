@@ -14,6 +14,7 @@ runs:
           with:
               repository: DevCycleHQ/test-harness
         - name: 'Install Docker'
+          shell: bash
           run: sudo apt install docker-compose
         - uses: actions/setup-node@v3
           with:
