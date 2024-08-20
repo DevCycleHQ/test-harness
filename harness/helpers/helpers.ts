@@ -1,5 +1,5 @@
 import { Interceptor, Scope } from 'nock'
-import { SDKCapabilities } from '../types'
+import { Capabilities, SDKCapabilities } from '../types'
 import { getServerScope, resetServerScope } from '../nock'
 import { v4 as uuidv4 } from 'uuid'
 import {
@@ -429,7 +429,9 @@ export class LocalTestClient extends BaseTestClient {
     }
 
     getValidConfigPath() {
-        return `/client/${this.clientId}/config/v1/server/${this.sdkKey}.json`
+        const version = hasCapability(this.sdkName, Capabilities.v2Config) ? 'v2' : 'v1'
+        return `/client/${this.clientId}/config/${version}/server/${this.sdkKey}.json`
+
     }
 
     setupMockConfig(scope: Scope) {

@@ -13,6 +13,7 @@ export const Capabilities = {
     bootstrapping: 'Bootstrapping',
     sdkConfigEvent: 'SDKConfigEvent',
     clientUUID: 'ClientUUID',
+    v2Config: 'V2Config',
 }
 
 let sdkCapabilities: { [key: string]: string[] } = {
@@ -58,6 +59,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.lastModifiedHeader,
         Capabilities.sdkConfigEvent,
         Capabilities.clientUUID,
+        Capabilities.v2Config,
     ],
     Ruby: [Capabilities.clientCustomData],
     PHP: [Capabilities.cloudProxy],
