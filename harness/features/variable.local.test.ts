@@ -446,8 +446,9 @@ describe('Variable Tests - Local', () => {
                 async (method) => {
                     testClient = new LocalTestClient(sdkName)
 
+                    const configRequestUrl = testClient.getValidConfigPath()
                     scope
-                        .get(testClient.getValidConfigPath())
+                        .get(configRequestUrl)
                         .delay(2000)
                         .reply(200)
 
@@ -503,7 +504,7 @@ describe('Variable Tests - Local', () => {
                 'should return default value for %s if client config failed, log event',
                 async (method) => {
                     testClient = new LocalTestClient(sdkName)
-                    const configRequestUrl = `/client/${testClient.clientId}/config/v1/server/${testClient.sdkKey}.json`
+                    const configRequestUrl = testClient.getValidConfigPath()
 
                     scope
                         .get(configRequestUrl)
