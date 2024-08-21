@@ -24,6 +24,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.bootstrapping,
         Capabilities.sdkConfigEvent,
         Capabilities.clientUUID,
+        Capabilities.v2Config,
     ],
     'OF-NodeJS': [
         Capabilities.edgeDB,
@@ -31,11 +32,13 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.lastModifiedHeader,
         Capabilities.sdkConfigEvent,
         Capabilities.clientUUID,
+        Capabilities.v2Config,
     ],
     Python: [
         Capabilities.cloud,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
+        Capabilities.v2Config,
     ],
     DotNet: [
         Capabilities.cloud,
@@ -48,6 +51,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.cloud,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
+        Capabilities.v2Config,
     ],
     Go: [
         Capabilities.cloud,
@@ -61,7 +65,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.clientUUID,
         Capabilities.v2Config,
     ],
-    Ruby: [Capabilities.clientCustomData],
+    Ruby: [Capabilities.clientCustomData, Capabilities.v2Config],
     PHP: [Capabilities.cloudProxy],
 }
 
