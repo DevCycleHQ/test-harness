@@ -64,9 +64,12 @@ describe('Bootstrapping Tests', () => {
                     clientSDKKey: 'client-key',
                 }
 
+                const version = hasCapability(sdkName, Capabilities.v2Config)
+                    ? 'v2'
+                    : 'v1'
                 scope
                     .get(
-                        `/client/${testClient.clientId}/config/v1/server/bootstrap/${testClient.sdkKey}.json`,
+                        `/client/${testClient.clientId}/config/${version}/server/bootstrap/${testClient.sdkKey}.json`,
                     )
                     .reply(200, clientsideConfig)
 
