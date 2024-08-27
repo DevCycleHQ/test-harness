@@ -86,15 +86,16 @@ describe('Initialize Tests - Local', () => {
 
     it('defaults variable when config fails to be retrieved, and then recovers', async () => {
         const testClient = new LocalTestClient(sdkName)
+        const configRequestUrl = testClient.getValidConfigPath()
 
-        scope.get(testClient.getValidConfigPath()).times(2).reply(500)
+        scope.get(configRequestUrl).times(2).reply(500)
         scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
 
         await testClient.createClient(true, {
             configPollingIntervalMS: 3000,
         })
         scope
-            .get(testClient.getValidConfigPath())
+            .get(configRequestUrl)
             .reply(200, testClient.getValidConfig)
         const variable = await testClient.callVariable(
             shouldBucketUser,
@@ -160,8 +161,9 @@ describe('Initialize Tests - Local', () => {
 
     it('uses the same config if the etag matches', async () => {
         const testClient = new LocalTestClient(sdkName)
+        const configRequestUrl = testClient.getValidConfigPath()
         scope
-            .get(testClient.getValidConfigPath())
+            .get(configRequestUrl)
             .reply(200, testClient.getValidConfig(), {
                 ETag: 'test-etag',
                 'Last-Modified': lastModifiedDate.toUTCString(),
@@ -170,7 +172,7 @@ describe('Initialize Tests - Local', () => {
 
         if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
             scope
-                .get(testClient.getValidConfigPath())
+                .get(configRequestUrl)
                 .matchHeader('If-None-Match', 'test-etag')
                 .matchHeader(
                     'If-Modified-Since',
@@ -179,7 +181,7 @@ describe('Initialize Tests - Local', () => {
                 .reply(304, {})
         } else {
             scope
-                .get(testClient.getValidConfigPath())
+                .get(configRequestUrl)
                 .matchHeader('If-None-Match', 'test-etag')
                 .reply(304, {})
         }
@@ -295,7 +297,8 @@ describe('Initialize Tests - Local', () => {
 
     it('uses the new config when etag changes, and flushes existing events', async () => {
         const testClient = new LocalTestClient(sdkName)
-        const firstConfig = scope.get(testClient.getValidConfigPath()).times(1)
+        const configRequestUrl = testClient.getValidConfigPath()
+        const firstConfig = scope.get(configRequestUrl).times(1)
 
         firstConfig.reply(200, testClient.getValidConfig(), {
             ETag: 'first-etag',
@@ -307,7 +310,7 @@ describe('Initialize Tests - Local', () => {
         let secondConfig: Interceptor
         if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {
             secondConfig = scope
-                .get(testClient.getValidConfigPath())
+                .get(configRequestUrl)
                 .matchHeader('If-None-Match', (value) => {
                     return value === 'first-etag'
                 })
@@ -326,7 +329,7 @@ describe('Initialize Tests - Local', () => {
             )
         } else {
             secondConfig = scope
-                .get(testClient.getValidConfigPath())
+                .get(configRequestUrl)
                 .matchHeader('If-None-Match', (value) => {
                     return value === 'first-etag'
                 })
