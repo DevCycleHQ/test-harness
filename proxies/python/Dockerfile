@@ -11,8 +11,8 @@ ENV PYTHON_SDK_VERSION $PYTHON_SDK_VERSION
 
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install git
+RUN apt-get update -y && \
+    apt-get install -y git
 
 COPY requirements.txt ./
 COPY install.sh ./
