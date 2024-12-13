@@ -88,15 +88,13 @@ describe('Initialize Tests - Local', () => {
         const testClient = new LocalTestClient(sdkName)
         const configRequestUrl = testClient.getValidConfigPath()
 
-        scope.get(configRequestUrl).times(2).reply(500)
+        // a 500 is a recoverable error so it will retry the connection and potentially make more requests than expected.
+        scope.get(configRequestUrl).times(3).reply(500)
         scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
-
         await testClient.createClient(true, {
-            configPollingIntervalMS: 1000,
+            configPollingIntervalMS: 2000,
         })
-        scope
-            .get(configRequestUrl)
-            .reply(200, testClient.getValidConfig)
+
         const variable = await testClient.callVariable(
             shouldBucketUser,
             sdkName,
@@ -105,7 +103,9 @@ describe('Initialize Tests - Local', () => {
             0,
         )
         expect((await variable.json()).data.value).toEqual(0)
-        await wait(1100)
+        scope.get(configRequestUrl).reply(200, testClient.getValidConfig)
+
+        await wait(2300)
         const variable2 = await testClient.callVariable(
             shouldBucketUser,
             sdkName,
