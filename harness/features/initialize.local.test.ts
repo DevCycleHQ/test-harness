@@ -105,7 +105,7 @@ describe('Initialize Tests - Local', () => {
             0,
         )
         expect((await variable.json()).data.value).toEqual(0)
-        await wait(3100)
+        await wait(1100)
         const variable2 = await testClient.callVariable(
             shouldBucketUser,
             sdkName,
