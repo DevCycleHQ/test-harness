@@ -128,7 +128,7 @@ public class ClientController : ControllerBase
                         .Build();
 
                         await task;
-                        if (eventArgs != null && !eventArgs.Success) {
+                        if (eventArgs != null && eventArgs.Errors.Count > 0) {
                             throw eventArgs.Errors[0];
                         }
                 } else {
