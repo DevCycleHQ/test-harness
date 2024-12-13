@@ -92,7 +92,7 @@ describe('Initialize Tests - Local', () => {
         scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
 
         await testClient.createClient(true, {
-            configPollingIntervalMS: 3000,
+            configPollingIntervalMS: 1000,
         })
         scope
             .get(configRequestUrl)
