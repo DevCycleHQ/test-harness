@@ -66,5 +66,8 @@
         "classNameTemplate": "{classname}",
         "titleTemplate": "{title}"
     },
-    "packageManager": "yarn@4.1.1"
+    "packageManager": "yarn@4.1.1",
+    "resolutions": {
+        "cross-spawn@^7.0.*": "^7.0.5"
+    }
 }
