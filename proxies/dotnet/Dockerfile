@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 
 ARG SDK_GITHUB_SHA
 ENV SDK_GITHUB_SHA $SDK_GITHUB_SHA
