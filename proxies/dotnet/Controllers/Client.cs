@@ -124,7 +124,7 @@ public class ClientController : ControllerBase
                             task.Start();
                         })
                         .SetOptions(ClientBody.Options)
-                        .SetLogger(LoggerFactory.Create(builder => builder.AddConsole()))
+                        .SetLogger(LoggerFactory.Create(builder => builder.AddConsole().SetMinimumLevel(LogLevel.Trace)))
                         .Build();
 
                         await task;
