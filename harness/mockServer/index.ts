@@ -2,6 +2,7 @@ import Koa from 'koa'
 import Router from '@koa/router'
 import axios from 'axios'
 import bodyParser from 'koa-bodyparser'
+import SseStream from 'ssestream'
 
 // NOTE: This file is excecuted by the jest environment, which does not share a memory space / module cache with the
 // jest test files. This means that any things you want to be able to access from test context
@@ -9,7 +10,7 @@ import bodyParser from 'koa-bodyparser'
 // through that
 
 let unmatchedRequests = []
-
+export const sseStreams: Map<string, SseStream> = new Map()
 export const assertNoUnmatchedRequests = async (
     currentClientId,
     testNameMap,
@@ -29,11 +30,11 @@ export const assertNoUnmatchedRequests = async (
             const testName = testNameMap[clientId]
             console.error(
                 `Unmatched requests from test case ${testName} ` +
-                    currentUnmatchedRequests,
+                currentUnmatchedRequests,
             )
             throw new Error(
                 `Unexpected requests received from test case ${testName} ` +
-                    currentUnmatchedRequests,
+                currentUnmatchedRequests,
             )
         }
     }
@@ -43,6 +44,21 @@ export function initialize() {
     const app = new Koa()
     const router = new Router()
 
+    router.param('clientId', (clientId, ctx, next) => {
+        ctx.clientId = clientId
+        return next()
+    }).all('/client/:clientId/sse', async (ctx) => {
+        console.log(ctx.body)
+        let sseStream = sseStreams[ctx.clientId]
+        if (!sseStream) {
+            sseStream = new SseStream(ctx.req)
+            sseStreams[ctx.clientId] = sseStream
+        }
+        sseStream.pipe(ctx.res)
+        ctx.res.on('close', () => {
+            sseStream.unpipe(ctx.res)
+        })
+    })
     router.all('/(.*)', async (ctx) => {
         const { headers, request } = ctx
 
@@ -67,7 +83,7 @@ export function initialize() {
             } else {
                 response = await axios[request.method.toLowerCase()](
                     `https://myfakenockurl${ctx.request.url}`,
-                    request.body,
+                    ctx.request.body,
                     {
                         headers,
                     },
