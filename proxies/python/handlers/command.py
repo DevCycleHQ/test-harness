@@ -66,9 +66,10 @@ def handle_command(path, body, data_store):
             "message": "Invalid request: missing command"
         }, 400
 
-    command = snake_case(command)
+    command = snake_case(command).replace('\r\n', '').replace('\n', '')
+    sanitized_params = [str(param).replace('\r\n', '').replace('\n', '') for param in parsed_params]
 
-    logger.info("[COMMAND] " + command + " " + str(parsed_params))
+    logger.info("[COMMAND] " + command + " " + str(sanitized_params))
 
     result = invoke_command(stored_entity, command, parsed_params)
 
