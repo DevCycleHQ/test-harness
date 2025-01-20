@@ -48,9 +48,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@file:../../../js-sdks/dist/sdk/nodejs::locator=root-workspace-0b6124%40workspace%3A.":
+"@devcycle/nodejs-server-sdk@npm:^1.39.0":
   version: 1.39.0
-  resolution: "@devcycle/nodejs-server-sdk@file:../../../js-sdks/dist/sdk/nodejs#../../../js-sdks/dist/sdk/nodejs::hash=bafbe1&locator=root-workspace-0b6124%40workspace%3A."
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.39.0"
   dependencies:
     "@devcycle/bucketing-assembly-script": "npm:^1.29.0"
     "@devcycle/js-cloud-server-sdk": "npm:^1.19.0"
@@ -64,7 +64,7 @@ __metadata:
   peerDependenciesMeta:
     "@openfeature/multi-provider":
       optional: true
-  checksum: 10/32e9ab300202585c03c48cfdb351f36deb0626ff47a48f5591acb58def80090d6c0555b4be9d11afd4d8ac316e1fc7d93ee222c9de4fb827b8656d229c3b708c
+  checksum: 10/d1e9a9b2d851f2bd3c4d50a1ed3f42863fa876168876c9caa1d2d4b814afeeb06d27c5834ffac2142e1d8c75bf736976a5261317a137cf5b215725a6f093e54f
   languageName: node
   linkType: hard
 
@@ -1007,7 +1007,7 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     "@devcycle/js-client-sdk": "npm:^1.33.0"
-    "@devcycle/nodejs-server-sdk": ../../../js-sdks/dist/sdk/nodejs
+    "@devcycle/nodejs-server-sdk": "npm:^1.39.0"
     "@types/koa": "npm:^2.13.5"
     "@types/koa-bodyparser": "npm:^4.3.10"
     "@types/koa-router": "npm:^7.4.4"
