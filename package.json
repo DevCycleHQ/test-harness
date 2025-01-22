@@ -12,6 +12,7 @@
         "start:dotnet": "cd proxies/dotnet && dotnet run",
         "start:java": "cd proxies/java && ./gradlew bootRun",
         "start:ruby": "cd proxies/ruby && bundle exec ruby app.rb",
+        "start:python": "cd proxies/python && python3 -m flask --app app run --host=0.0.0.0 -p 3000",
         "use-local": "scripts/use-local.sh"
     },
     "version": "1.0.0",

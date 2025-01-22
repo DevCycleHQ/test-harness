@@ -32,6 +32,7 @@ def handle_client(body, data_store):
             config_polling_interval_ms=options.get('configPollingIntervalMS', 1000),
             events_api_uri=options.get('eventsAPIURI', ''),
             event_flush_interval_ms=options.get('eventFlushIntervalMS', 10000),
+            disable_realtime_updates=True,
         )
 
         dvc_client = DevCycleLocalClient(sdk_key, dvc_options)
