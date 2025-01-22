@@ -26,8 +26,6 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
 
     try {
         let asyncError
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore disableRealTimeUpdates needs to get released in the updated types release.
         const dvcClient = initializeDevCycle(sdkKey, {
             ...options,
             enableCloudBucketing,

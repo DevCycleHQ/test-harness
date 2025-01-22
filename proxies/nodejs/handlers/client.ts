@@ -37,8 +37,6 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         if (!enableCloudBucketing) {
             client = initializeDevCycle(sdkKey, {
                 ...options,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore disableRealTimeUpdates needs to get released in the updated types release.
                 disableRealTimeUpdates: true,
             })
             if (waitForInitialization) {

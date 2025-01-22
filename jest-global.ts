@@ -1,25 +1,5 @@
 import { getSDKs } from './harness/types'
 import testContainersSetup from '@eresearchqut/jest-testcontainers/dist/setup'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
-
-async function checkDockerCommand() {
-    try {
-        await execAsync('docker compose version')
-        return 'docker compose'
-    } catch {
-        try {
-            await execAsync('docker-compose version')
-            return 'docker-compose'
-        } catch {
-            throw new Error(
-                'Neither docker compose nor docker-compose commands are available',
-            )
-        }
-    }
-}
 
 async function setup(opts) {
     const sdks = getSDKs()
@@ -32,17 +12,8 @@ async function setup(opts) {
         .join(',')
 
     if (process.env.LOCAL_MODE === '1') {
-        // In LOCAL_MODE, we don't need to set up any containers
-        return Promise.resolve()
-    }
-
-    try {
-        // Check which docker compose command is available and set it in the environment
-        process.env.DOCKER_COMPOSE_COMMAND = await checkDockerCommand()
-        console.log(`Using ${process.env.DOCKER_COMPOSE_COMMAND} command`)
-    } catch (error) {
-        console.error('Docker compose command check failed:', error.message)
-        throw error
+        // Effectively disable all docker containers by setting a profile that none of them use
+        process.env.COMPOSE_PROFILES = 'local'
     }
 
     console.log(`Set COMPOSE_PROFILES to ${process.env.COMPOSE_PROFILES}`)
