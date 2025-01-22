@@ -25,9 +25,6 @@ public class ClientOptions : DevCycleLocalOptions
     [JsonProperty("enableEdgeDB")]
     public bool? EnableEdgeDB { get; set; }
 
-    [JsonProperty("disableRealtimeUpdates")]
-    public bool? DisableRealtimeUpdates { get; set; }
-
     public override string ToString()
     {
         var sb = new StringBuilder();
@@ -38,7 +35,7 @@ public class ClientOptions : DevCycleLocalOptions
         sb.Append("  ConfigCDNURLOverride: ").Append(ConfigCDNURLOverride).Append("\n");
         sb.Append("  EventsAPIURLOverride: ").Append(EventsAPIURLOverride).Append("\n");
         sb.Append("  EnableEdgeDB: ").Append(EnableEdgeDB).Append("\n");
-        sb.Append("  DisableRealtimeUpdates: ").Append(DisableRealtimeUpdates).Append("\n");
+        sb.Append("  DisableRealtimeUpdates: ").Append(base.DisableRealtimeUpdates).Append("\n");
         sb.Append("}");
         return sb.ToString();
     }
@@ -103,12 +100,10 @@ public class ClientController : ControllerBase
             {
                 if (ClientBody.Options == null)
                 {
-                    ClientBody.Options = new ClientOptions { DisableRealtimeUpdates = true };
+                    ClientBody.Options = new ClientOptions();
                 }
-                else if (ClientBody.Options.DisableRealtimeUpdates != null)
-                {
-                    ClientBody.Options.DisableRealtimeUpdates = true;
-                }
+                ClientBody.Options.DisableRealtimeUpdates = true;
+                Console.WriteLine($"DisableRealtimeUpdates set to: {ClientBody.Options.DisableRealtimeUpdates}");
 
                 if (ClientBody.Options.ConfigCDNURLOverride != null)
                 {
