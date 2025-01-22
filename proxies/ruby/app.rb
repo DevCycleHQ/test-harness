@@ -43,7 +43,7 @@ post '/client' do
       events_api_uri: options.fetch('eventsAPIURI', ''),
       config_polling_interval_ms: options.fetch('configPollingIntervalMS', 10_000),
       event_flush_interval_ms: options.fetch('eventFlushIntervalMS', 10_000),
-      disable_real_time_updates: true,
+      disable_realtime_updates: true,
     )
 
     data_store[:clients][client_id] = DevCycle::DVCClient.new(sdk_key, dvc_options, wait_for_initialization)
