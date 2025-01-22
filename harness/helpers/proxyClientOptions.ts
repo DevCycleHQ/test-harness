@@ -9,6 +9,7 @@ export type ProxyClientOptions = {
     eventFlushIntervalMS?: number
     enableCloudBucketing?: boolean
     enableRealtimeUpdates?: boolean
+    disableRealtimeUpdates?: boolean
     logLevel?: string
     enableClientBootstrapping?: boolean
 }
