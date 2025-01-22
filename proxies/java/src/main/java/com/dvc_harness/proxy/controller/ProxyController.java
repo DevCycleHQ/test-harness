@@ -46,6 +46,7 @@ public class ProxyController {
                 DataStore.CloudClients.put(body.clientId, client);
             } else {
                 DevCycleLocalOptions.DevCycleLocalOptionsBuilder builder = DevCycleLocalOptions.builder();
+                builder.disableRealTimeUpdates(true);
 
                 if (body.options != null) {
                     if (body.options.configCDNURI != null) {
