@@ -92,7 +92,7 @@ describe('Initialize Tests - Local', () => {
         scope.get(configRequestUrl).times(3).reply(500)
         scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
         await testClient.createClient(true, {
-            configPollingIntervalMS: 2000,
+            configPollingIntervalMS: 2500,
         })
 
         const variable = await testClient.callVariable(
@@ -162,12 +162,10 @@ describe('Initialize Tests - Local', () => {
     it('uses the same config if the etag matches', async () => {
         const testClient = new LocalTestClient(sdkName)
         const configRequestUrl = testClient.getValidConfigPath()
-        scope
-            .get(configRequestUrl)
-            .reply(200, testClient.getValidConfig(), {
-                ETag: 'test-etag',
-                'Last-Modified': lastModifiedDate.toUTCString(),
-            })
+        scope.get(configRequestUrl).reply(200, testClient.getValidConfig(), {
+            ETag: 'test-etag',
+            'Last-Modified': lastModifiedDate.toUTCString(),
+        })
         addEventsBatchMock(testClient)
 
         if (hasCapability(sdkName, Capabilities.lastModifiedHeader)) {

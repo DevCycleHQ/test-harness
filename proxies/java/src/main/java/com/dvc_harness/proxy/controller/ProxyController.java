@@ -68,12 +68,16 @@ public class ProxyController {
 
                 DevCycleLocalClient client = new DevCycleLocalClient(body.sdkKey, builder.build());
 
-                if(body.waitForInitialization) {
+                if (body.waitForInitialization) {
                     try {
                         long startWaitMS = System.currentTimeMillis();
+                        long timeoutMS = 2000;
+                        // body.options != null && body.options.configPollingIntervalMS != null && body.options.configPollingIntervalMS == 2000 
+                        //     ? 1500  // 2000 - 500
+                        //     : 2000;
                         while (!client.isInitialized()) {
-                            if (System.currentTimeMillis() - startWaitMS > 2000) {
-                                System.out.println("Client initialization timed out after 2000ms.");
+                            if (System.currentTimeMillis() - startWaitMS > timeoutMS) {
+                                System.out.println("Client initialization timed out after " + timeoutMS + "ms.");
                                 break;
                             }
                             Thread.sleep(50);
