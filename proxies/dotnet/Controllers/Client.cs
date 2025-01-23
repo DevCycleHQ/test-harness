@@ -35,6 +35,7 @@ public class ClientOptions : DevCycleLocalOptions
         sb.Append("  ConfigCDNURLOverride: ").Append(ConfigCDNURLOverride).Append("\n");
         sb.Append("  EventsAPIURLOverride: ").Append(EventsAPIURLOverride).Append("\n");
         sb.Append("  EnableEdgeDB: ").Append(EnableEdgeDB).Append("\n");
+        sb.Append("  DisableRealtimeUpdates: ").Append(base.DisableRealtimeUpdates).Append("\n");
         sb.Append("}");
         return sb.ToString();
     }
@@ -97,7 +98,14 @@ public class ClientController : ControllerBase
             }
             else
             {
-                if (ClientBody.Options?.ConfigCDNURLOverride != null)
+                if (ClientBody.Options == null)
+                {
+                    ClientBody.Options = new ClientOptions();
+                }
+                ClientBody.Options.DisableRealtimeUpdates = true;
+                Console.WriteLine($"DisableRealtimeUpdates set to: {ClientBody.Options.DisableRealtimeUpdates}");
+
+                if (ClientBody.Options.ConfigCDNURLOverride != null)
                 {
                     ClientBody.Options.CdnUri = ClientBody.Options.ConfigCDNURLOverride;
                 }

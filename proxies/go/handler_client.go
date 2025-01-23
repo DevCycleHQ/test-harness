@@ -18,7 +18,7 @@ type clientRequestBodyOptions struct {
 	ConfigPollingIntervalMS int64  `json:"configPollingIntervalMS"`
 	EventFlushIntervalMS    int64  `json:"eventFlushIntervalMS"`
 	EnableCloudBucketing    bool   `json:"enableCloudBucketing"`
-	EnableRealtimeUpdates   bool   `json:"enableRealtimeUpdates"`
+	DisableRealTimeUpdates  bool   `json:"disableRealtimeUpdates"`
 }
 
 type clientRequestBody struct {
@@ -61,8 +61,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		EventFlushIntervalMS:    time.Duration(reqBody.Options.EventFlushIntervalMS * 1000000),
 		EnableCloudBucketing:    reqBody.EnableCloudBucketing,
 		ClientEventHandler:      clientEventChannel,
-		// TODO: Properly implement SSE tests. Currently the init delay on config pull breaks tests.
-		EnableBetaRealtimeUpdates: false,
+		DisableRealtimeUpdates:  true,
 	}
 
 	var res clientResponseBody

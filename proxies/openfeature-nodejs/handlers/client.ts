@@ -29,6 +29,7 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
         const dvcClient = initializeDevCycle(sdkKey, {
             ...options,
             enableCloudBucketing,
+            disableRealTimeUpdates: true,
         })
 
         try {
