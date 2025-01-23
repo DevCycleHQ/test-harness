@@ -92,7 +92,7 @@ describe('Initialize Tests - Local', () => {
         scope.get(configRequestUrl).times(3).reply(500)
         scope.post(`/client/${testClient.clientId}/v1/events/batch`).reply(201)
         await testClient.createClient(true, {
-            configPollingIntervalMS: 2500,
+            configPollingIntervalMS: 2300,
         })
 
         const variable = await testClient.callVariable(
@@ -105,7 +105,7 @@ describe('Initialize Tests - Local', () => {
         expect((await variable.json()).data.value).toEqual(0)
         scope.get(configRequestUrl).reply(200, testClient.getValidConfig)
 
-        await wait(2300)
+        await wait(2500)
         const variable2 = await testClient.callVariable(
             shouldBucketUser,
             sdkName,
