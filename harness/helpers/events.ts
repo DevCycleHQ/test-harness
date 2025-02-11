@@ -8,10 +8,14 @@ import {
     hasCapability,
     waitForRequest,
 } from './helpers'
-import { Capabilities } from '../types'
+import { Capabilities, SDKPlatformMap } from '../types'
 import { Scope } from 'nock'
 
-const addSDKConfigEventBatch = (sdkName: string, expectedPlatform: string) => {
+const addSDKConfigEventBatch = (
+    sdkName: string,
+    expectedPlatform: string,
+    sdkPlatform: string,
+) => {
     return hasCapability(sdkName, Capabilities.sdkConfigEvent)
         ? [
               {
@@ -19,6 +23,7 @@ const addSDKConfigEventBatch = (sdkName: string, expectedPlatform: string) => {
                       ...optionalUserEventFields,
                       platform: expectedPlatform,
                       sdkType: 'server',
+                      sdkPlatform: sdkPlatform,
                       user_id: expect.any(String),
                   },
                   events: [
@@ -73,6 +78,9 @@ export const expectAggregateEvaluationEvent = ({
         _feature: featureId,
         _variation: variationId,
     }
+    const sdkPlatform = hasCapability(sdkName, Capabilities.sdkPlatform)
+        ? SDKPlatformMap[sdkName]
+        : undefined
 
     if (hasCapability(sdkName, Capabilities.etagReporting)) {
         metadata.configEtag = etag
@@ -89,11 +97,13 @@ export const expectAggregateEvaluationEvent = ({
             optionalSDKConfigNewEvent = addSDKConfigEventBatch(
                 sdkName,
                 expectedPlatform,
+                sdkPlatform,
             )[0].events
         } else {
             optionalSDKConfigNewUser = addSDKConfigEventBatch(
                 sdkName,
                 expectedPlatform,
+                sdkPlatform,
             )
         }
     }
@@ -107,6 +117,7 @@ export const expectAggregateEvaluationEvent = ({
                     user_id: expect.any(String),
                     platform: expectedPlatform,
                     sdkType: 'server',
+                    sdkPlatform: sdkPlatform,
                 },
                 events: expect.toIncludeSameMembers([
                     {
@@ -154,6 +165,10 @@ export const expectAggregateDefaultEvent = ({
     )
         ? { defaultReason }
         : {}
+    const sdkPlatform = hasCapability(sdkName, Capabilities.sdkPlatform)
+        ? SDKPlatformMap[sdkName]
+        : undefined
+
     if (hasCapability(sdkName, Capabilities.etagReporting)) {
         if (etag) {
             metadata.configEtag = etag
@@ -175,11 +190,13 @@ export const expectAggregateDefaultEvent = ({
             optionalSDKConfigNewEvent = addSDKConfigEventBatch(
                 sdkName,
                 expectedPlatform,
+                sdkPlatform,
             )[0].events
         } else {
             optionalSDKConfigNewUser = addSDKConfigEventBatch(
                 sdkName,
                 expectedPlatform,
+                sdkPlatform,
             )
         }
     }
@@ -193,6 +210,7 @@ export const expectAggregateDefaultEvent = ({
                     user_id: expect.any(String),
                     platform: expectedPlatform,
                     sdkType: 'server',
+                    sdkPlatform: sdkPlatform,
                 },
                 events: expect.arrayContaining([
                     ...optionalSDKConfigNewEvent,

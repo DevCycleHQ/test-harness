@@ -7,7 +7,7 @@ import {
     getSDKScope,
     hasCapability,
 } from '../helpers'
-import { Capabilities } from '../types'
+import { Capabilities, SDKPlatformMap } from '../types'
 import {
     optionalEventFields,
     optionalUserEventFields,
@@ -18,6 +18,9 @@ describe('Track Tests - Local', () => {
     const validUserId = 'user1'
 
     const expectedPlatform = getPlatformBySdkName(sdkName)
+    const expectedSDKPlatform = hasCapability(sdkName, Capabilities.sdkPlatform)
+        ? SDKPlatformMap[sdkName]
+        : undefined
 
     const eventFlushIntervalMS = 1000
 
@@ -38,6 +41,7 @@ describe('Track Tests - Local', () => {
                 ...optionalUserEventFields,
                 platform: expectedPlatform,
                 sdkType: 'server',
+                sdkPlatform: expectedSDKPlatform,
                 user_id: expect.any(String),
             },
             events: [
@@ -142,6 +146,7 @@ describe('Track Tests - Local', () => {
                             ...optionalUserEventFields,
                             platform: expectedPlatform,
                             sdkType: 'server',
+                            sdkPlatform: expectedSDKPlatform,
                             user_id: validUserId,
                         },
                         events: [
@@ -210,6 +215,7 @@ describe('Track Tests - Local', () => {
                             ...optionalUserEventFields,
                             platform: expectedPlatform,
                             sdkType: 'server',
+                            sdkPlatform: expectedSDKPlatform,
                             user_id: validUserId,
                         },
                         events: [
@@ -315,6 +321,7 @@ describe('Track Tests - Local', () => {
                             ...optionalUserEventFields,
                             platform: expectedPlatform,
                             sdkType: 'server',
+                            sdkPlatform: expectedSDKPlatform,
                             user_id: validUserId,
                         },
                         events: [
