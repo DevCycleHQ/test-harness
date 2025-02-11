@@ -4,6 +4,9 @@ inputs:
     sdks-to-test:
         description: 'Which SDKs to test'
         required: true
+    sdk-capabilities:
+        description: 'Which capabilities to test'
+        required: false
     sdk-github-sha:
         description: 'The SHA ref of the SDK to test - used in PRs. If not specified; sdk-version is used'
         required: false
@@ -29,7 +32,7 @@ runs:
           env:
               SDK_GITHUB_SHA: ${{ inputs.sdk-github-sha }}
               SDKS_TO_TEST: ${{ inputs.sdks-to-test }}
-
+              SDK_CAPABILITIES: ${{ inputs.sdk-capabilities }}
         - uses: actions/upload-artifact@v4
           if: success() || failure()
           with:
