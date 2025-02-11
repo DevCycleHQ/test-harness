@@ -14,6 +14,11 @@ export const Capabilities = {
     sdkConfigEvent: 'SDKConfigEvent',
     clientUUID: 'ClientUUID',
     v2Config: 'V2Config',
+    sdkPlatform: 'SDKPlatform',
+}
+
+export const SDKPlatformMap = {
+    'OF-NodeJS': 'nodejs-of',
 }
 
 let sdkCapabilities: { [key: string]: string[] } = {
@@ -33,6 +38,8 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.sdkConfigEvent,
         Capabilities.clientUUID,
         Capabilities.v2Config,
+        // Comment out until changes are merged, will use SDK_CAPABILITIES to override
+        // Capabilities.sdkPlatform,
     ],
     Python: [
         Capabilities.cloud,
