@@ -1,4 +1,4 @@
-FROM ruby:3.1 as builder
+FROM ruby as builder
 
 ARG RUBY_SDK_VERSION
 ENV RUBY_SDK_VERSION $RUBY_SDK_VERSION
