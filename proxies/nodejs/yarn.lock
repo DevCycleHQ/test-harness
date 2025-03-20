@@ -48,9 +48,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:^1.42.2":
-  version: 1.42.2
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.42.2"
+"@devcycle/nodejs-server-sdk@npm:^1.43.0":
+  version: 1.43.0
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.43.0"
   dependencies:
     "@devcycle/bucketing-assembly-script": "npm:^1.32.2"
     "@devcycle/js-cloud-server-sdk": "npm:^1.22.2"
@@ -65,7 +65,7 @@ __metadata:
   peerDependenciesMeta:
     "@openfeature/multi-provider":
       optional: true
-  checksum: 10/7aa565210d0cb5570b9468d35938aa384cfe4763f10b11509afaf80bb836951514122a84958584c7657a1b4f72e2fb191d2abe28560a84d32d71939b77e878f6
+  checksum: 10/da263b14b049e3aa47cf44d2e27124e64fb29667b32f6712b39fb5ba78e7a7636e0373eb9e09cfa7f5c87b9f891c5092146d1d4b2507decfda88377a7b60825a
   languageName: node
   linkType: hard
 
@@ -1024,7 +1024,7 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     "@devcycle/js-client-sdk": "npm:^1.36.2"
-    "@devcycle/nodejs-server-sdk": "npm:^1.42.2"
+    "@devcycle/nodejs-server-sdk": "npm:^1.43.0"
     "@types/koa": "npm:^2.13.5"
     "@types/koa-bodyparser": "npm:^4.3.10"
     "@types/koa-router": "npm:^7.4.4"
