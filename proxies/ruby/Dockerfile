@@ -9,6 +9,13 @@ ENV SDK_GITHUB_SHA $SDK_GITHUB_SHA
 ARG SDKS_TO_TEST
 ENV SDKS_TO_TEST $SDKS_TO_TEST
 
+# Install dependencies required for native gem extensions
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libclang-dev \
+    llvm-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY Gemfile ./
 COPY install.sh ./
