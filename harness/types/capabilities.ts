@@ -30,6 +30,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.sdkConfigEvent,
         Capabilities.clientUUID,
         Capabilities.v2Config,
+        Capabilities.clientCustomData,
     ],
     'OF-NodeJS': [
         Capabilities.edgeDB,

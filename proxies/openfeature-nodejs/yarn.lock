@@ -14,57 +14,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:^1.31.0":
-  version: 1.31.0
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.31.0"
+"@devcycle/bucketing-assembly-script@npm:^1.32.2":
+  version: 1.32.2
+  resolution: "@devcycle/bucketing-assembly-script@npm:1.32.2"
   dependencies:
     protobufjs: "npm:^7.4.0"
-  checksum: 10/0083362c1f396616f97661d4de7ab8df97212d6da98a02ff016b0dbbc41033bf4ffcfb803b7600b71292f8acb3501f3a725fa07cdf9ca1889e520866729cea82
+  checksum: 10/3562fc2a2b370d08e98eb8dec9f901ee648a60cd84248bad9d8579270d25dcbb1c52e4015a750564dea095bb9398ba9be8cb883e0d85cf293808031439fa2511
   languageName: node
   linkType: hard
 
-"@devcycle/js-cloud-server-sdk@npm:^1.21.0":
-  version: 1.21.0
-  resolution: "@devcycle/js-cloud-server-sdk@npm:1.21.0"
+"@devcycle/js-cloud-server-sdk@npm:^1.22.2":
+  version: 1.22.2
+  resolution: "@devcycle/js-cloud-server-sdk@npm:1.22.2"
   dependencies:
-    "@devcycle/types": "npm:^1.22.0"
+    "@devcycle/types": "npm:^1.23.2"
     cross-fetch: "npm:^4.0.0"
     fetch-retry: "npm:^5.0.6"
     lodash: "npm:^4.17.21"
-  checksum: 10/7829a5cb82296902b018890b03a2417c8ee17dd0520f51df42b7d224427a1c2782ef3d13b01c7689c66ba3464e8d1aa8f33437f65f47f8b6354938c4efb0fd9e
+  checksum: 10/41927d37b87e81f1487a013a9c0b79529823fb270c1a5441e56f8a2d6c6cd0a43d1f5e777e320810bdc84e1bf350ad2df931b3398ef2f12b6b123e15d79b4ad4
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:^1.41.0":
-  version: 1.41.0
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.41.0"
+"@devcycle/nodejs-server-sdk@npm:^1.43.0":
+  version: 1.43.0
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.43.0"
   dependencies:
-    "@devcycle/bucketing-assembly-script": "npm:^1.31.0"
-    "@devcycle/js-cloud-server-sdk": "npm:^1.21.0"
-    "@devcycle/types": "npm:^1.22.0"
+    "@devcycle/bucketing-assembly-script": "npm:^1.32.2"
+    "@devcycle/js-cloud-server-sdk": "npm:^1.22.2"
+    "@devcycle/types": "npm:^1.23.2"
+    "@openfeature/core": "npm:^1.7.2"
+    "@openfeature/server-sdk": "npm:^1.17.1"
     cross-fetch: "npm:^4.0.0"
     eventsource: "npm:^2.0.2"
     fetch-retry: "npm:^5.0.6"
   peerDependencies:
-    "@openfeature/multi-provider": ^0.1.1
-    "@openfeature/server-sdk": ^1.17.0
+    "@openfeature/multi-provider": ^0.1.2
   peerDependenciesMeta:
     "@openfeature/multi-provider":
       optional: true
-  checksum: 10/0e68eff48451644407f3597543fbcf2a0818f69c3ce8e3dfa2552b4f107f543c7d981a9d8ad6a00c2d12f66632a0d9e7800ed0abd20a599b385cd42c1d81ca6c
+  checksum: 10/da263b14b049e3aa47cf44d2e27124e64fb29667b32f6712b39fb5ba78e7a7636e0373eb9e09cfa7f5c87b9f891c5092146d1d4b2507decfda88377a7b60825a
   languageName: node
   linkType: hard
 
-"@devcycle/types@npm:^1.22.0":
-  version: 1.22.0
-  resolution: "@devcycle/types@npm:1.22.0"
+"@devcycle/types@npm:^1.23.2":
+  version: 1.23.2
+  resolution: "@devcycle/types@npm:1.23.2"
   dependencies:
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.1"
     iso-639-1: "npm:^2.1.13"
     lodash: "npm:^4.17.21"
     reflect-metadata: "npm:^0.1.13"
-  checksum: 10/d9ae954c9c93e0ddfcc6f479f8113df3a8df1fa0215e7a69aa54d04d166266e679fc672c0f472cfd79f132f5d58475843ffab3c74a04f0f9730463c1f439ce92
+  checksum: 10/2c204a9a82dd51582303a1c86a1ece22d8b830a45a4819f29f54d93b858a7fa3a76c2967f7f43061afe23a7a4c432ecfa1dd91ad6a26256b8cc072745f5ab245
   languageName: node
   linkType: hard
 
@@ -92,10 +93,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openfeature/core@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "@openfeature/core@npm:1.7.0"
-  checksum: 10/78acd24c5b07f42d936066ff7c00e22367bebca2518db1785865b43e51b20ed4d7c5a8dff6cdfb6d364b7752f15d866e228db87e445d381385d1a8cb2dd50960
+"@openfeature/core@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "@openfeature/core@npm:1.7.2"
+  checksum: 10/4a9c33f12cab6caf193ab809f4ca1c0b46ef78f7a722fadf0643672274ad8bd8e4d47961ea2a8b7c47eafc678b6cff48a39240a56e0fa76fa27eca15a76e52e0
   languageName: node
   linkType: hard
 
@@ -1009,8 +1010,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": "npm:^1.41.0"
-    "@openfeature/core": "npm:^1.7.0"
+    "@devcycle/nodejs-server-sdk": "npm:^1.43.0"
+    "@openfeature/core": "npm:^1.7.2"
     "@openfeature/server-sdk": "npm:^1.17.1"
     "@types/koa": "npm:^2.13.5"
     "@types/koa-bodyparser": "npm:^4.3.10"

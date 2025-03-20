@@ -1,7 +1,7 @@
 {
     "dependencies": {
-        "@devcycle/nodejs-server-sdk": "^1.41.0",
-        "@openfeature/core": "^1.7.0",
+        "@devcycle/nodejs-server-sdk": "^1.43.0",
+        "@openfeature/core": "^1.7.2",
         "@openfeature/server-sdk": "^1.17.1",
         "@types/koa": "^2.13.5",
         "@types/koa-bodyparser": "^4.3.10",
