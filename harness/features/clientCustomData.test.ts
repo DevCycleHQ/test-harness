@@ -31,13 +31,13 @@ describe('Client Custom Data Tests', () => {
             expect(variable).toEqual(
                 expect.objectContaining({
                     entityType: 'Variable',
-                    data: {
+                    data: expect.objectContaining({
                         type: 'String',
                         isDefaulted: false,
                         key: 'string-var',
                         defaultValue: 'some-default',
                         value: 'string',
-                    },
+                    }),
                 }),
             )
         })

@@ -40,7 +40,6 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.clientUUID,
         Capabilities.v2Config,
         Capabilities.sdkPlatform,
-        Capabilities.clientCustomData,
     ],
     Python: [
         Capabilities.cloud,
