@@ -5,6 +5,7 @@ import {
     DVCVariable,
 } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
+import { IMiddleware } from 'koa-router'
 import { getEntityFromType, DataStore, EntityTypes } from '../entityTypes'
 import { dataStore } from '../app'
 
@@ -30,10 +31,10 @@ type LocationRequestBody = {
 
 type ParsedParams = any[]
 
-export const handleLocation = async (ctx: Koa.ParameterizedContext) => {
+export const handleLocation: IMiddleware = async (ctx) => {
     const body = ctx.request.body as LocationRequestBody
     const { command, params, isAsync } = body
-    const entity = (ctx.request as RequestWithEntity).entity
+    const entity = (ctx.request as unknown as RequestWithEntity).entity
 
     if (process.env.LOG_LEVEL === 'debug') {
         console.log(`handleLocation request body, for command: ${command}`)
@@ -44,10 +45,8 @@ export const handleLocation = async (ctx: Koa.ParameterizedContext) => {
         const parsedParams: ParsedParams = parseParams(body, params, dataStore)
         if (parsedParams.includes(undefined)) {
             ctx.status = 404
-            ctx.body = {
-                message: 'Invalid request: missing entity from param',
-            }
-            return ctx
+            ctx.body = { message: 'Invalid request: missing entity from param' }
+            return
         }
 
         let result
@@ -87,16 +86,10 @@ export const handleLocation = async (ctx: Koa.ParameterizedContext) => {
         console.error(error)
         if (isAsync) {
             ctx.status = 200
-            ctx.body = {
-                asyncError: error.message,
-                stack: error.stack,
-            }
+            ctx.body = { asyncError: error.message, stack: error.stack }
         } else {
             ctx.status = 200
-            ctx.body = {
-                exception: error.message,
-                stack: error.stack,
-            }
+            ctx.body = { exception: error.message, stack: error.stack }
         }
     }
 }
@@ -154,27 +147,20 @@ const invokeCommand = (
     return entity[command](...params)
 }
 
-export const validateLocationReqMiddleware = async (
-    ctx: Koa.ParameterizedContext,
-    next,
-) => {
+export const validateLocationReqMiddleware: IMiddleware = async (ctx, next) => {
     const entity = getEntityFromLocation(ctx.request.url, dataStore)
     const body = ctx.request.body as LocationRequestBody
 
     if (entity === undefined) {
         ctx.status = 404
-        ctx.body = {
-            message: 'Invalid request: missing entity',
-        }
-        return ctx
+        ctx.body = { message: 'Invalid request: missing entity' }
+        return
     }
     if (body.command === undefined) {
         ctx.status = 404
-        ctx.body = {
-            message: 'Invalid request: missing command',
-        }
-        return ctx
+        ctx.body = { message: 'Invalid request: missing command' }
+        return
     }
-    ;(ctx.request as RequestWithEntity).entity = entity
+    ;(ctx.request as unknown as RequestWithEntity).entity = entity
     await next()
 }

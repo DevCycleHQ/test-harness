@@ -2,6 +2,7 @@ import Koa from 'koa'
 import { initializeDevCycle } from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
 import { OpenFeature } from '@openfeature/server-sdk'
+import Router from 'koa-router'
 
 type ClientRequestBody = {
     clientId: string
@@ -11,16 +12,17 @@ type ClientRequestBody = {
     options: { [key: string]: string }
 }
 
-export const handleClient = async (ctx: Koa.ParameterizedContext) => {
-    const { clientId, sdkKey, enableCloudBucketing, options } = <
-        ClientRequestBody
-    >ctx.request.body
+type State = any
+type Context = Koa.DefaultContext & {
+    request: Koa.Request & { body: ClientRequestBody }
+}
+
+export const handleClient: Router.IMiddleware<State, Context> = async (ctx) => {
+    const { clientId, sdkKey, enableCloudBucketing, options } = ctx.request.body
 
     if (clientId === undefined) {
         ctx.status = 400
-        ctx.body = {
-            message: 'Invalid request: missing clientId',
-        }
+        ctx.body = { message: 'Invalid request: missing clientId' }
         return ctx
     }
 

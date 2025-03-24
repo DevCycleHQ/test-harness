@@ -8,15 +8,16 @@ import {
 } from './handlers/location'
 import { DataStore } from './entityTypes'
 
-export const dataStore: DataStore = {
-    clients: {},
-    commandResults: {},
-}
+type State = any
+type Context = Koa.DefaultContext
+
+export const dataStore: DataStore = { clients: {}, commandResults: {} }
+
 async function start() {
-    const app = new Koa()
+    const app = new Koa<State, Context>()
     app.use(bodyParser())
 
-    const router = new Router()
+    const router = new Router<State, Context>()
 
     router.get('/spec', (ctx) => {
         ctx.status = 200

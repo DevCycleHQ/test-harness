@@ -8,18 +8,18 @@ import {
 } from './handlers/location'
 import { DataStore } from './entityTypes'
 
-export const dataStore: DataStore = {
-    clients: {},
-    commandResults: {},
-}
+type State = any
+type Context = Koa.DefaultContext
+
+export const dataStore: DataStore = { clients: {}, commandResults: {} }
 
 async function start() {
-    const app = new Koa()
+    const app = new Koa<State, Context>()
     app.use(bodyParser())
 
-    const router = new Router()
+    const router = new Router<State, Context>()
 
-    router.get('/spec', (ctx) => {
+    router.get('/spec', async (ctx) => {
         ctx.status = 200
         ctx.body = {
             name: 'NodeJS',
@@ -31,7 +31,8 @@ async function start() {
     router.post('/client', handleClient)
     router.post('/:location*', validateLocationReqMiddleware, handleLocation)
 
-    app.use(router.routes()).use(router.allowedMethods())
+    app.use(router.routes())
+    app.use(router.allowedMethods())
 
     // Server!
     console.log('Server started on port 3000')
