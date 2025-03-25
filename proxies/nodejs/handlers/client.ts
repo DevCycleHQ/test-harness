@@ -4,6 +4,7 @@ import {
     DevCycleCloudClient,
     initializeDevCycle,
 } from '@devcycle/nodejs-server-sdk'
+import { IMiddleware } from 'koa-router'
 import { dataStore } from '../app'
 
 type ClientRequestBody = {
@@ -14,7 +15,7 @@ type ClientRequestBody = {
     options: { [key: string]: string }
 }
 
-export const handleClient = async (ctx: Koa.ParameterizedContext) => {
+export const handleClient: IMiddleware = async (ctx) => {
     const {
         clientId,
         sdkKey,
@@ -24,10 +25,8 @@ export const handleClient = async (ctx: Koa.ParameterizedContext) => {
     } = <ClientRequestBody>ctx.request.body
     if (clientId === undefined) {
         ctx.status = 400
-        ctx.body = {
-            message: 'Invalid request: missing clientId',
-        }
-        return ctx
+        ctx.body = { message: 'Invalid request: missing clientId' }
+        return
     }
 
     try {

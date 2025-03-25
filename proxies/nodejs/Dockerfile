@@ -17,6 +17,7 @@ RUN ln -sf python3 /usr/bin/python
 
 COPY . /app
 WORKDIR /app
+RUN corepack enable
 RUN yarn
 RUN ./install.sh
 ENTRYPOINT yarn ts-node app.ts

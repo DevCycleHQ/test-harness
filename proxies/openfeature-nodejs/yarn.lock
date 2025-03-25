@@ -14,58 +14,61 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:^1.32.2":
-  version: 1.32.2
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.32.2"
+"@devcycle/bucketing-assembly-script@npm:^1.33.0":
+  version: 1.33.0
+  resolution: "@devcycle/bucketing-assembly-script@npm:1.33.0"
   dependencies:
     protobufjs: "npm:^7.4.0"
-  checksum: 10/3562fc2a2b370d08e98eb8dec9f901ee648a60cd84248bad9d8579270d25dcbb1c52e4015a750564dea095bb9398ba9be8cb883e0d85cf293808031439fa2511
+  checksum: 10/d24f6624da9de7ba8a7ee62327bdfa27c2adb842d347170074cc0d701234bf25cdb849889aee3f1f625619eb3e1ff58ca7577bd0d366f9a7f5bcaa4cc396ed1c
   languageName: node
   linkType: hard
 
-"@devcycle/js-cloud-server-sdk@npm:^1.22.2":
-  version: 1.22.2
-  resolution: "@devcycle/js-cloud-server-sdk@npm:1.22.2"
+"@devcycle/js-cloud-server-sdk@npm:^1.23.0":
+  version: 1.23.0
+  resolution: "@devcycle/js-cloud-server-sdk@npm:1.23.0"
   dependencies:
-    "@devcycle/types": "npm:^1.23.2"
+    "@devcycle/types": "npm:^1.24.0"
     cross-fetch: "npm:^4.0.0"
     fetch-retry: "npm:^5.0.6"
     lodash: "npm:^4.17.21"
-  checksum: 10/41927d37b87e81f1487a013a9c0b79529823fb270c1a5441e56f8a2d6c6cd0a43d1f5e777e320810bdc84e1bf350ad2df931b3398ef2f12b6b123e15d79b4ad4
+  checksum: 10/fda1cad9f30d20fe82696ea8c1d9d5d354c54ded1acd00ff782393bd7a6692f770baa93386b377d18d07c6d97cce363d4c550caee278301effa85baf7f96e211
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:^1.43.0":
-  version: 1.43.0
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.43.0"
+"@devcycle/nodejs-server-sdk@npm:^1.44.0":
+  version: 1.44.0
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.44.0"
   dependencies:
-    "@devcycle/bucketing-assembly-script": "npm:^1.32.2"
-    "@devcycle/js-cloud-server-sdk": "npm:^1.22.2"
-    "@devcycle/types": "npm:^1.23.2"
+    "@devcycle/bucketing-assembly-script": "npm:^1.33.0"
+    "@devcycle/js-cloud-server-sdk": "npm:^1.23.0"
+    "@devcycle/types": "npm:^1.24.0"
     "@openfeature/core": "npm:^1.7.2"
     "@openfeature/server-sdk": "npm:^1.17.1"
     cross-fetch: "npm:^4.0.0"
     eventsource: "npm:^2.0.2"
     fetch-retry: "npm:^5.0.6"
   peerDependencies:
+    "@devcycle/js-client-sdk": ^1.36.2
     "@openfeature/multi-provider": ^0.1.2
   peerDependenciesMeta:
+    "@devcycle/js-client-sdk":
+      optional: true
     "@openfeature/multi-provider":
       optional: true
-  checksum: 10/da263b14b049e3aa47cf44d2e27124e64fb29667b32f6712b39fb5ba78e7a7636e0373eb9e09cfa7f5c87b9f891c5092146d1d4b2507decfda88377a7b60825a
+  checksum: 10/527ac491adc0dcfa2852654b895003f3d33cf9a7bc14e4a3cd3854646edca747e2ed0d8ffb447774691c0be32899f2bf294b580606818406ac059a8dfec02885
   languageName: node
   linkType: hard
 
-"@devcycle/types@npm:^1.23.2":
-  version: 1.23.2
-  resolution: "@devcycle/types@npm:1.23.2"
+"@devcycle/types@npm:^1.24.0":
+  version: 1.24.0
+  resolution: "@devcycle/types@npm:1.24.0"
   dependencies:
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.1"
     iso-639-1: "npm:^2.1.13"
     lodash: "npm:^4.17.21"
     reflect-metadata: "npm:^0.1.13"
-  checksum: 10/2c204a9a82dd51582303a1c86a1ece22d8b830a45a4819f29f54d93b858a7fa3a76c2967f7f43061afe23a7a4c432ecfa1dd91ad6a26256b8cc072745f5ab245
+  checksum: 10/72d20fc364e3f3202dd3ea3731be118d5200a25844002b20354203c1304e03ac3a24c4d6d3d8d30f5ebba27c40d283fbd51efd4d15fea01103b7ece20757b96d
   languageName: node
   linkType: hard
 
@@ -301,12 +304,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-bodyparser@npm:^4.3.10":
-  version: 4.3.10
-  resolution: "@types/koa-bodyparser@npm:4.3.10"
+"@types/koa-bodyparser@npm:^4.3.12":
+  version: 4.3.12
+  resolution: "@types/koa-bodyparser@npm:4.3.12"
   dependencies:
     "@types/koa": "npm:*"
-  checksum: 10/4b4cd176815a6c1fb0d593bfea03de1285e606d3a96e56ad3691144e35061750ed95e4ecf2ff8e25599d360a93646e29dbb167fdfaaa73ccf87ca5b6141ff0db
+  checksum: 10/645cc253c6b9b2e98252b1cdc75a4812cd6d3c228e426f9893a755324b7a6936559ec659a0ff288cb2642340b3cc4e2110167f24b84efc8e3b89c04fe67ed883
   languageName: node
   linkType: hard
 
@@ -319,16 +322,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-router@npm:^7.4.4":
-  version: 7.4.4
-  resolution: "@types/koa-router@npm:7.4.4"
+"@types/koa-router@npm:^7.4.8":
+  version: 7.4.8
+  resolution: "@types/koa-router@npm:7.4.8"
   dependencies:
     "@types/koa": "npm:*"
-  checksum: 10/9fde5d7cc2897b7df3341cfbfcd3814fe1e956c16ef388090510d0355a60fb1877731ff2a5adb0c4eb43c376c77271b79f561b54b6c3ba39a6510efb1d31b383
+  checksum: 10/d9bd6c8c8869a5757dd0b8208fdd06402359a5b8f6a40706e89f81b2c0b796ae3561761913b9743dccff5508e04bca88ce14e05c6fdf8b45b1cccec2ed996fe8
   languageName: node
   linkType: hard
 
-"@types/koa@npm:*, @types/koa@npm:^2.13.5":
+"@types/koa@npm:*":
   version: 2.13.5
   resolution: "@types/koa@npm:2.13.5"
   dependencies:
@@ -341,6 +344,22 @@ __metadata:
     "@types/koa-compose": "npm:*"
     "@types/node": "npm:*"
   checksum: 10/1c7b1ff5d5d482d8459c59c9901917aaf503440307825bfe935ea6baba1ce686c8e9671dbcec82bea199bb8d7f78ab145b610cd59dec04fa2e259387679f6e22
+  languageName: node
+  linkType: hard
+
+"@types/koa@npm:^2.15.0":
+  version: 2.15.0
+  resolution: "@types/koa@npm:2.15.0"
+  dependencies:
+    "@types/accepts": "npm:*"
+    "@types/content-disposition": "npm:*"
+    "@types/cookies": "npm:*"
+    "@types/http-assert": "npm:*"
+    "@types/http-errors": "npm:*"
+    "@types/keygrip": "npm:*"
+    "@types/koa-compose": "npm:*"
+    "@types/node": "npm:*"
+  checksum: 10/2be9dff1ef66bf15b037386c188893761a8fb46390a5e1d2a2031d9e1ba4473e40ddfbd625980a504bd804d7148b3e230c18e240503f33eac3b6e5e830645d30
   languageName: node
   linkType: hard
 
@@ -551,6 +570,18 @@ __metadata:
     supports-color:
       optional: true
   checksum: 10/0073c3bcbd9cb7d71dd5f6b55be8701af42df3e56e911186dfa46fac3a5b9eb7ce7f377dd1d3be6db8977221f8eb333d945216f645cf56f6b688cd484837d255
+  languageName: node
+  linkType: hard
+
+"debug@npm:^4.3.4":
+  version: 4.4.0
+  resolution: "debug@npm:4.4.0"
+  dependencies:
+    ms: "npm:^2.1.3"
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 10/1847944c2e3c2c732514b93d11886575625686056cd765336212dc15de2d2b29612b6cd80e1afba767bb8e1803b778caf9973e98169ef1a24a7a7009e1820367
   languageName: node
   linkType: hard
 
@@ -765,13 +796,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-bodyparser@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "koa-bodyparser@npm:4.3.0"
+"koa-bodyparser@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "koa-bodyparser@npm:4.4.1"
   dependencies:
     co-body: "npm:^6.0.0"
     copy-to: "npm:^2.0.1"
-  checksum: 10/c227fe0fb5a55b98fc91d865e80229b60178d216d53b732b07833eb38f48a7ed6aa768a083bc06e359db33298547e9a65842fbe9d3f0fdaf5149fe0becafc88f
+    type-is: "npm:^1.6.18"
+  checksum: 10/c741a99ccacc92ee126edad121fed2d200753348e0dedfd65ec67fcfa513b4db9f791ef3200817358ab2c120bcf8e73488cbd0b7f3c7d522a0b21bbb647ce616
   languageName: node
   linkType: hard
 
@@ -792,21 +824,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-router@npm:^12.0.0":
-  version: 12.0.0
-  resolution: "koa-router@npm:12.0.0"
+"koa-router@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "koa-router@npm:12.0.1"
   dependencies:
+    debug: "npm:^4.3.4"
     http-errors: "npm:^2.0.0"
     koa-compose: "npm:^4.1.0"
     methods: "npm:^1.1.2"
     path-to-regexp: "npm:^6.2.1"
-  checksum: 10/4f898b40316cce7ab700c239429f057030cb35cd023c0a619d30ade4c9590c25acd9aace4466f022ca87d366fd0ba95b0e3ff7e2669397110c304dd66cb7117c
+  checksum: 10/5c733289f58f74c91e5f9c8925fe369325b650038eafea2fde9d9cd5f9d775df0bd308313c6381995668ad428ca50725a13db002256f7f2232ed0f08b4e1f8a9
   languageName: node
   linkType: hard
 
-"koa@npm:^2.13.4":
-  version: 2.15.4
-  resolution: "koa@npm:2.15.4"
+"koa@npm:^2.16.0":
+  version: 2.16.0
+  resolution: "koa@npm:2.16.0"
   dependencies:
     accepts: "npm:^1.3.5"
     cache-content-type: "npm:^1.0.0"
@@ -831,7 +864,7 @@ __metadata:
     statuses: "npm:^1.5.0"
     type-is: "npm:^1.6.16"
     vary: "npm:^1.1.2"
-  checksum: 10/98de77173822f0a28c0f5d1ebd261ab02f3f905d40602e51957a0c7202122647a60c5b6c59be03361dd24bf6a5685eac97af84b306914efd057751e71f93cb0f
+  checksum: 10/88284e5da49cd54a2db663c818f5370d00f32b6aefbe5ecfc75bdaf7937d3b08cfbb884d07564b8e2b856dfe74d930997a6bdca2e2090dc2bfae0fa8af56a214
   languageName: node
   linkType: hard
 
@@ -897,6 +930,13 @@ __metadata:
   version: 2.1.2
   resolution: "ms@npm:2.1.2"
   checksum: 10/673cdb2c3133eb050c745908d8ce632ed2c02d85640e2edb3ace856a2266a813b30c613569bf3354fdf4ea7d1a1494add3bfa95e2713baa27d0c2c71fc44f58f
+  languageName: node
+  linkType: hard
+
+"ms@npm:^2.1.3":
+  version: 2.1.3
+  resolution: "ms@npm:2.1.3"
+  checksum: 10/aa92de608021b242401676e35cfa5aa42dd70cbdc082b916da7fb925c542173e36bce97ea3e804923fe92c0ad991434e4a38327e15a1b5b5f945d66df615ae6d
   languageName: node
   linkType: hard
 
@@ -1010,17 +1050,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": "npm:^1.43.0"
+    "@devcycle/nodejs-server-sdk": "npm:^1.44.0"
     "@openfeature/core": "npm:^1.7.2"
     "@openfeature/server-sdk": "npm:^1.17.1"
-    "@types/koa": "npm:^2.13.5"
-    "@types/koa-bodyparser": "npm:^4.3.10"
-    "@types/koa-router": "npm:^7.4.4"
-    koa: "npm:^2.13.4"
-    koa-bodyparser: "npm:^4.3.0"
-    koa-router: "npm:^12.0.0"
-    ts-node: "npm:^10.9.1"
-    typescript: "npm:^4.9.3"
+    "@types/koa": "npm:^2.15.0"
+    "@types/koa-bodyparser": "npm:^4.3.12"
+    "@types/koa-router": "npm:^7.4.8"
+    koa: "npm:^2.16.0"
+    koa-bodyparser: "npm:^4.4.1"
+    koa-router: "npm:^12.0.1"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^4.9.5"
   languageName: unknown
   linkType: soft
 
@@ -1084,9 +1124,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.9.1":
-  version: 10.9.1
-  resolution: "ts-node@npm:10.9.1"
+"ts-node@npm:^10.9.2":
+  version: 10.9.2
+  resolution: "ts-node@npm:10.9.2"
   dependencies:
     "@cspotcode/source-map-support": "npm:^0.8.0"
     "@tsconfig/node10": "npm:^1.0.7"
@@ -1118,7 +1158,7 @@ __metadata:
     ts-node-script: dist/bin-script.js
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
-  checksum: 10/bee56d4dc96ccbafc99dfab7b73fbabc62abab2562af53cdea91c874a301b9d11e42bc33c0a032a6ed6d813dbdc9295ec73dde7b73ea4ebde02b0e22006f7e04
+  checksum: 10/a91a15b3c9f76ac462f006fa88b6bfa528130dcfb849dd7ef7f9d640832ab681e235b8a2bc58ecde42f72851cc1d5d4e22c901b0c11aa51001ea1d395074b794
   languageName: node
   linkType: hard
 
@@ -1129,7 +1169,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-is@npm:^1.6.16":
+"type-is@npm:^1.6.16, type-is@npm:^1.6.18":
   version: 1.6.18
   resolution: "type-is@npm:1.6.18"
   dependencies:
@@ -1139,23 +1179,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.9.3":
-  version: 4.9.3
-  resolution: "typescript@npm:4.9.3"
+"typescript@npm:^4.9.5":
+  version: 4.9.5
+  resolution: "typescript@npm:4.9.5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/dda600a5a37b945ad1fff76f0c874e7bfda3fd56cfc43b9f328780d602b6e7127b4342bbc6ad68ccf7bf6645047be329586ea1b393a80fb942d608a796aba0de
+  checksum: 10/458f7220ab11e0fc191514cc41be1707645ec9a8c2d609448a448e18c522cef9646f58728f6811185a4c35613dacdf6c98cf8965c88b3541d0288c47291e4300
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^4.9.3#optional!builtin<compat/typescript>":
-  version: 4.9.3
-  resolution: "typescript@patch:typescript@npm%3A4.9.3#optional!builtin<compat/typescript>::version=4.9.3&hash=a66ed4"
+"typescript@patch:typescript@npm%3A^4.9.5#optional!builtin<compat/typescript>":
+  version: 4.9.5
+  resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/cc7506c7cb5419b3e64bff50082307ed31d0de163ed6ccd9f418e94c364ebde2aba3f57087ac431805410855421917718a1a6ed85f46620cf03c87e86d1ce9c5
+  checksum: 10/5659316360b5cc2d6f5931b346401fa534107b68b60179cf14970e27978f0936c1d5c46f4b5b8175f8cba0430f522b3ce355b4b724c0ea36ce6c0347fab25afd
   languageName: node
   linkType: hard
 
