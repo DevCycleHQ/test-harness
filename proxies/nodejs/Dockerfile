@@ -10,7 +10,8 @@ ARG SDKS_TO_TEST
 ENV SDKS_TO_TEST $SDKS_TO_TEST
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh protoc python3 py3-pip make g++
+    apk add --no-cache bash git openssh protoc python3 py3-pip make g++ \
+    pkgconf build-base cairo-dev pango-dev giflib-dev jpeg-dev
 
 # Set Python alias if necessary
 RUN ln -sf python3 /usr/bin/python
