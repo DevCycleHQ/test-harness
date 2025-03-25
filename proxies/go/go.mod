@@ -1,6 +1,6 @@
 module github.com/devcyclehq/test-harness/proxies/go
 
-go 1.22.2
+go 1.23.0
 
 require (
 	github.com/devcyclehq/go-server-sdk/v2 v2.19.0
