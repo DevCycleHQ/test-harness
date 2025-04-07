@@ -11,13 +11,14 @@ jobs:
             - uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: '22.x'
-                  cache: 'yarn'
 
             - name: Enable Corepack
               run: corepack enable
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'yarn'
 
             - name: Set Git author
               shell: bash

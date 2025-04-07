@@ -13,19 +13,27 @@ inputs:
 runs:
     using: 'composite'
     steps:
-        - uses: actions/checkout@v3.3.0
+        - uses: actions/checkout@v4
           with:
               repository: DevCycleHQ/test-harness
+
         - name: 'Install Docker'
           shell: bash
           run: sudo apt install docker-compose
-        - uses: actions/setup-node@v3
+
+        - name: Enable Corepack
+          shell: bash
+          run: corepack enable
+
+        - uses: actions/setup-node@v4
           with:
               node-version: 22
               cache: 'yarn'
+
         - name: Install Dependencies
           shell: bash
           run: yarn install
+
         - name: Run All Tests
           shell: bash
           run: yarn test:ci
@@ -33,6 +41,7 @@ runs:
               SDK_GITHUB_SHA: ${{ inputs.sdk-github-sha }}
               SDKS_TO_TEST: ${{ inputs.sdks-to-test }}
               SDK_CAPABILITIES: ${{ inputs.sdk-capabilities }}
+
         - uses: actions/upload-artifact@v4
           if: success() || failure()
           with:
