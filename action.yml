@@ -16,16 +16,23 @@ runs:
         - uses: actions/checkout@v3.3.0
           with:
               repository: DevCycleHQ/test-harness
+
         - name: 'Install Docker'
           shell: bash
           run: sudo apt install docker-compose
+
         - uses: actions/setup-node@v3
           with:
               node-version: 22
-              cache: 'yarn'
+              
+        - name: Enable Corepack
+          shell: bash
+          run: corepack enable
+              
         - name: Install Dependencies
           shell: bash
           run: yarn install
+
         - name: Run All Tests
           shell: bash
           run: yarn test:ci
@@ -33,6 +40,7 @@ runs:
               SDK_GITHUB_SHA: ${{ inputs.sdk-github-sha }}
               SDKS_TO_TEST: ${{ inputs.sdks-to-test }}
               SDK_CAPABILITIES: ${{ inputs.sdk-capabilities }}
+              
         - uses: actions/upload-artifact@v4
           if: success() || failure()
           with:
