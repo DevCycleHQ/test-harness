@@ -22,13 +22,14 @@ jobs:
         env:
             DOCKER_HOST_IP: '172.17.0.1'
         steps:
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: 22
-
             - uses: actions/checkout@v4
               with:
                   fetch-depth: 0
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'yarn'
 
             - name: Enable Corepack
               run: corepack enable
