@@ -5,7 +5,7 @@ import {
     DVCVariable,
 } from '@devcycle/nodejs-server-sdk'
 import Koa from 'koa'
-import { IMiddleware } from 'koa-router'
+import { IMiddleware } from '@koa/router'
 import { getEntityFromType, DataStore, EntityTypes } from '../entityTypes'
 import { dataStore } from '../app'
 

@@ -85,6 +85,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hapi/bourne@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@hapi/bourne@npm:3.0.0"
+  checksum: 10/b3b5d7bdf511fe27b7b8b01b9457f125646665bef72a78848c69170efdea19c2b72522246a87ede6cd811e51e7a556ceff194e46fb1393c6c8c796431c1810b6
+  languageName: node
+  linkType: hard
+
 "@jridgewell/resolve-uri@npm:^3.0.3":
   version: 3.1.0
   resolution: "@jridgewell/resolve-uri@npm:3.1.0"
@@ -106,6 +113,30 @@ __metadata:
     "@jridgewell/resolve-uri": "npm:^3.0.3"
     "@jridgewell/sourcemap-codec": "npm:^1.4.10"
   checksum: 10/83deafb8e7a5ca98993c2c6eeaa93c270f6f647a4c0dc00deb38c9cf9b2d3b7bf15e8839540155247ef034a052c0ec4466f980bf0c9e2ab63b97d16c0cedd3ff
+  languageName: node
+  linkType: hard
+
+"@koa/bodyparser@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@koa/bodyparser@npm:5.1.1"
+  dependencies:
+    co-body: "npm:^6.1.0"
+    lodash.merge: "npm:^4.6.2"
+    type-is: "npm:^1.6.18"
+  peerDependencies:
+    koa: ^2.14.1
+  checksum: 10/9d604d2a6aa4e84c650aa7ad68ca1f58b54cc27172693412ca4428d3787d86dd40e234c0e0549895abefb25a8217cd09c6d17467dd66b442333bce9477db42d4
+  languageName: node
+  linkType: hard
+
+"@koa/router@npm:^13.0.1":
+  version: 13.1.0
+  resolution: "@koa/router@npm:13.1.0"
+  dependencies:
+    http-errors: "npm:^2.0.0"
+    koa-compose: "npm:^4.1.0"
+    path-to-regexp: "npm:^6.3.0"
+  checksum: 10/b5de0745b266dd8cda5873ace9594ca4b020ef6fe0e94e1de81f11a7498d0fcc106c8d972513ad52493b196b5e111ed1d07b318cf4ca4156b85a99ea5d3a3f98
   languageName: node
   linkType: hard
 
@@ -317,30 +348,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-bodyparser@npm:^4.3.12":
-  version: 4.3.12
-  resolution: "@types/koa-bodyparser@npm:4.3.12"
-  dependencies:
-    "@types/koa": "npm:*"
-  checksum: 10/645cc253c6b9b2e98252b1cdc75a4812cd6d3c228e426f9893a755324b7a6936559ec659a0ff288cb2642340b3cc4e2110167f24b84efc8e3b89c04fe67ed883
-  languageName: node
-  linkType: hard
-
 "@types/koa-compose@npm:*":
   version: 3.2.5
   resolution: "@types/koa-compose@npm:3.2.5"
   dependencies:
     "@types/koa": "npm:*"
   checksum: 10/0f46016227c9d17fd4ff5fb1fbec7f658a95dbf36f15e08d4f3aae8f24599c8069cadff6c2d6af5350d56e4c234b634066636bb2eaa216d5c29f453858c1f798
-  languageName: node
-  linkType: hard
-
-"@types/koa-router@npm:^7.4.8":
-  version: 7.4.8
-  resolution: "@types/koa-router@npm:7.4.8"
-  dependencies:
-    "@types/koa": "npm:*"
-  checksum: 10/d9bd6c8c8869a5757dd0b8208fdd06402359a5b8f6a40706e89f81b2c0b796ae3561761913b9743dccff5508e04bca88ce14e05c6fdf8b45b1cccec2ed996fe8
   languageName: node
   linkType: hard
 
@@ -506,15 +519,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"co-body@npm:^6.0.0":
-  version: 6.1.0
-  resolution: "co-body@npm:6.1.0"
+"co-body@npm:^6.1.0":
+  version: 6.2.0
+  resolution: "co-body@npm:6.2.0"
   dependencies:
+    "@hapi/bourne": "npm:^3.0.0"
     inflation: "npm:^2.0.0"
     qs: "npm:^6.5.2"
     raw-body: "npm:^2.3.3"
     type-is: "npm:^1.6.16"
-  checksum: 10/2484710f70941b42512a349fab0fac8a16430fd56d88ad0de1d8dde129d66597de9d0a8edd8d8164683c55a3fd998457dc74a04a03de2281def8abaaecd1317e
+  checksum: 10/644761ad8abbcbc15f0a76634b17abda928fec01aa7bfdee23f4e65c0d49c6ea63738d1ed7fca1f92a52bd76cd08f8031d788a65ab00842744d50f03536c7b36
   languageName: node
   linkType: hard
 
@@ -548,13 +562,6 @@ __metadata:
     depd: "npm:~2.0.0"
     keygrip: "npm:~1.1.0"
   checksum: 10/4816461a38d907b20f3fb7a2bc4741fe580e7a195f3e248ef7025cb3be56a07638a0f4e72553a5f535554ca30172c8a3245c63ac72c9737cec034e9a47773392
-  languageName: node
-  linkType: hard
-
-"copy-to@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "copy-to@npm:2.0.1"
-  checksum: 10/05ea12875bdc96ae053a3b30148e9d992026035ff2bfcc0b615e8d49d1cf8fc3d1f40843f9a4b7b1b6d9118eeebcba31e621076d7de525828aa9c07d22a81dab
   languageName: node
   linkType: hard
 
@@ -797,17 +804,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-bodyparser@npm:^4.4.1":
-  version: 4.4.1
-  resolution: "koa-bodyparser@npm:4.4.1"
-  dependencies:
-    co-body: "npm:^6.0.0"
-    copy-to: "npm:^2.0.1"
-    type-is: "npm:^1.6.18"
-  checksum: 10/c741a99ccacc92ee126edad121fed2d200753348e0dedfd65ec67fcfa513b4db9f791ef3200817358ab2c120bcf8e73488cbd0b7f3c7d522a0b21bbb647ce616
-  languageName: node
-  linkType: hard
-
 "koa-compose@npm:^4.1.0":
   version: 4.1.0
   resolution: "koa-compose@npm:4.1.0"
@@ -822,17 +818,6 @@ __metadata:
     co: "npm:^4.6.0"
     koa-compose: "npm:^4.1.0"
   checksum: 10/7385b3391995f59c1312142e110d5dff677f9850dbfbcf387cd36a7b0af03b5d26e82b811eb9bb008b4f3e661cdab1f8817596e46b1929da2cf6e97a2f7456ed
-  languageName: node
-  linkType: hard
-
-"koa-router@npm:^13.0.1":
-  version: 13.0.1
-  resolution: "koa-router@npm:13.0.1"
-  dependencies:
-    http-errors: "npm:^2.0.0"
-    koa-compose: "npm:^4.1.0"
-    path-to-regexp: "npm:^8.1.0"
-  checksum: 10/d595cf1db0318ae770200301963a76935be8b4bbdd3348f9643fa27844370b8e1437821060dbe976f093b6949d81afb73aabeae61288259813de9228c2508feb
   languageName: node
   linkType: hard
 
@@ -871,6 +856,13 @@ __metadata:
   version: 1.10.55
   resolution: "libphonenumber-js@npm:1.10.55"
   checksum: 10/a249458ada40263d938f328bf8b91907c3e66333dd4d0d177d31ce0bcdcc787c1a9bd39611a3cd8815519af64008e1f1858495897396e02085da42ee0495536f
+  languageName: node
+  linkType: hard
+
+"lodash.merge@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "lodash.merge@npm:4.6.2"
+  checksum: 10/d0ea2dd0097e6201be083865d50c3fb54fbfbdb247d9cc5950e086c991f448b7ab0cdab0d57eacccb43473d3f2acd21e134db39f22dac2d6c9ba6bf26978e3d6
   languageName: node
   linkType: hard
 
@@ -976,10 +968,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:^8.1.0":
-  version: 8.2.0
-  resolution: "path-to-regexp@npm:8.2.0"
-  checksum: 10/23378276a172b8ba5f5fb824475d1818ca5ccee7bbdb4674701616470f23a14e536c1db11da9c9e6d82b82c556a817bbf4eee6e41b9ed20090ef9427cbb38e13
+"path-to-regexp@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "path-to-regexp@npm:6.3.0"
+  checksum: 10/6822f686f01556d99538b350722ef761541ec0ce95ca40ce4c29e20a5b492fe8361961f57993c71b2418de12e604478dcf7c430de34b2c31a688363a7a944d9c
   languageName: node
   linkType: hard
 
@@ -1037,12 +1029,10 @@ __metadata:
   dependencies:
     "@devcycle/js-client-sdk": "npm:^1.37.0"
     "@devcycle/nodejs-server-sdk": "npm:^1.44.0"
+    "@koa/bodyparser": "npm:^5.1.1"
+    "@koa/router": "npm:^13.0.1"
     "@types/koa": "npm:^2.15.0"
-    "@types/koa-bodyparser": "npm:^4.3.12"
-    "@types/koa-router": "npm:^7.4.8"
     koa: "npm:^2.16.1"
-    koa-bodyparser: "npm:^4.4.1"
-    koa-router: "npm:^13.0.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.8.3"
   languageName: unknown

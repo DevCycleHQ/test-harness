@@ -4,7 +4,7 @@ import {
     DevCycleCloudClient,
     initializeDevCycle,
 } from '@devcycle/nodejs-server-sdk'
-import { IMiddleware } from 'koa-router'
+import { IMiddleware } from '@koa/router'
 import { dataStore } from '../app'
 
 type ClientRequestBody = {

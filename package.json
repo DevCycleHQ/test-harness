@@ -24,6 +24,7 @@
     "devDependencies": {
         "@devcycle/types": "^1.24.0",
         "@eresearchqut/jest-testcontainers": "^3.7.1",
+        "@koa/bodyparser": "^5.1.1",
         "@koa/router": "^13.0.1",
         "@types/jest": "^29.5.14",
         "@typescript-eslint/eslint-plugin": "^5.62.0",
@@ -38,7 +39,6 @@
         "jest-junit": "^15.0.0",
         "jest-serial-runner": "^1.2.1",
         "koa": "^2.16.1",
-        "koa-bodyparser": "^4.4.1",
         "lint-staged": "^15.5.0",
         "nock": "^13.5.6",
         "prettier": "^3.5.3",

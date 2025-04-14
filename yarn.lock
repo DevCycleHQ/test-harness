@@ -406,6 +406,7 @@ __metadata:
   dependencies:
     "@devcycle/types": "npm:^1.24.0"
     "@eresearchqut/jest-testcontainers": "npm:^3.7.1"
+    "@koa/bodyparser": "npm:^5.1.1"
     "@koa/router": "npm:^13.0.1"
     "@types/jest": "npm:^29.5.14"
     "@typescript-eslint/eslint-plugin": "npm:^5.62.0"
@@ -421,7 +422,6 @@ __metadata:
     jest-junit: "npm:^15.0.0"
     jest-serial-runner: "npm:^1.2.1"
     koa: "npm:^2.16.1"
-    koa-bodyparser: "npm:^4.4.1"
     lint-staged: "npm:^15.5.0"
     nock: "npm:^13.5.6"
     object-path-immutable: "npm:^4.1.2"
@@ -864,6 +864,19 @@ __metadata:
     "@jridgewell/resolve-uri": "npm:^3.1.0"
     "@jridgewell/sourcemap-codec": "npm:^1.4.14"
   checksum: 10/dced32160a44b49d531b80a4a2159dceab6b3ddf0c8e95a0deae4b0e894b172defa63d5ac52a19c2068e1fe7d31ea4ba931fbeec103233ecb4208953967120fc
+  languageName: node
+  linkType: hard
+
+"@koa/bodyparser@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@koa/bodyparser@npm:5.1.1"
+  dependencies:
+    co-body: "npm:^6.1.0"
+    lodash.merge: "npm:^4.6.2"
+    type-is: "npm:^1.6.18"
+  peerDependencies:
+    koa: ^2.14.1
+  checksum: 10/9d604d2a6aa4e84c650aa7ad68ca1f58b54cc27172693412ca4428d3787d86dd40e234c0e0549895abefb25a8217cd09c6d17467dd66b442333bce9477db42d4
   languageName: node
   linkType: hard
 
@@ -2223,7 +2236,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"co-body@npm:^6.0.0":
+"co-body@npm:^6.1.0":
   version: 6.2.0
   resolution: "co-body@npm:6.2.0"
   dependencies:
@@ -2346,13 +2359,6 @@ __metadata:
     depd: "npm:~2.0.0"
     keygrip: "npm:~1.1.0"
   checksum: 10/4816461a38d907b20f3fb7a2bc4741fe580e7a195f3e248ef7025cb3be56a07638a0f4e72553a5f535554ca30172c8a3245c63ac72c9737cec034e9a47773392
-  languageName: node
-  linkType: hard
-
-"copy-to@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "copy-to@npm:2.0.1"
-  checksum: 10/05ea12875bdc96ae053a3b30148e9d992026035ff2bfcc0b615e8d49d1cf8fc3d1f40843f9a4b7b1b6d9118eeebcba31e621076d7de525828aa9c07d22a81dab
   languageName: node
   linkType: hard
 
@@ -4612,17 +4618,6 @@ __metadata:
   version: 3.0.3
   resolution: "kleur@npm:3.0.3"
   checksum: 10/0c0ecaf00a5c6173d25059c7db2113850b5457016dfa1d0e3ef26da4704fbb186b4938d7611246d86f0ddf1bccf26828daa5877b1f232a65e7373d0122a83e7f
-  languageName: node
-  linkType: hard
-
-"koa-bodyparser@npm:^4.4.1":
-  version: 4.4.1
-  resolution: "koa-bodyparser@npm:4.4.1"
-  dependencies:
-    co-body: "npm:^6.0.0"
-    copy-to: "npm:^2.0.1"
-    type-is: "npm:^1.6.18"
-  checksum: 10/c741a99ccacc92ee126edad121fed2d200753348e0dedfd65ec67fcfa513b4db9f791ef3200817358ab2c120bcf8e73488cbd0b7f3c7d522a0b21bbb647ce616
   languageName: node
   linkType: hard
 

@@ -12,7 +12,7 @@ import {
     JsonValue,
 } from '@openfeature/server-sdk'
 import Koa from 'koa'
-import Router from 'koa-router'
+import Router from '@koa/router'
 import {
     getEntityFromType,
     DataStore,
