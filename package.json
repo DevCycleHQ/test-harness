@@ -24,7 +24,7 @@
     "devDependencies": {
         "@devcycle/types": "^1.24.0",
         "@eresearchqut/jest-testcontainers": "^3.7.1",
-        "@koa/router": "^12.0.2",
+        "@koa/router": "^13.0.1",
         "@types/jest": "^29.5.14",
         "@typescript-eslint/eslint-plugin": "^5.62.0",
         "@typescript-eslint/parser": "^5.62.0",
@@ -37,7 +37,7 @@
         "jest-extended": "^3.2.4",
         "jest-junit": "^15.0.0",
         "jest-serial-runner": "^1.2.1",
-        "koa": "^2.16.0",
+        "koa": "^2.16.1",
         "koa-bodyparser": "^4.4.1",
         "lint-staged": "^15.5.0",
         "nock": "^13.5.6",
@@ -46,7 +46,7 @@
         "prettier-eslint-cli": "^8.0.1",
         "ts-jest": "^29.3.0",
         "ts-node": "^10.9.2",
-        "typescript": "^4.9.5"
+        "typescript": "^5.8.3"
     },
     "dependencies": {
         "dotenv": "^16.4.7",
@@ -67,7 +67,7 @@
         "classNameTemplate": "{classname}",
         "titleTemplate": "{title}"
     },
-    "packageManager": "yarn@4.6.0",
+    "packageManager": "yarn@4.9.1",
     "resolutions": {
         "cross-spawn@^7.0.*": "^7.0.5",
         "tar-fs@~2.0.1": "^2.1.2"
