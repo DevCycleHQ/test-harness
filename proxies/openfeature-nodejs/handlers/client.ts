@@ -2,7 +2,7 @@ import Koa from 'koa'
 import { initializeDevCycle } from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
 import { OpenFeature } from '@openfeature/server-sdk'
-import Router from 'koa-router'
+import Router from '@koa/router'
 
 type ClientRequestBody = {
     clientId: string

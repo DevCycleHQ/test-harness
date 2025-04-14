@@ -72,6 +72,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hapi/bourne@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@hapi/bourne@npm:3.0.0"
+  checksum: 10/b3b5d7bdf511fe27b7b8b01b9457f125646665bef72a78848c69170efdea19c2b72522246a87ede6cd811e51e7a556ceff194e46fb1393c6c8c796431c1810b6
+  languageName: node
+  linkType: hard
+
 "@jridgewell/resolve-uri@npm:^3.0.3":
   version: 3.1.0
   resolution: "@jridgewell/resolve-uri@npm:3.1.0"
@@ -93,6 +100,30 @@ __metadata:
     "@jridgewell/resolve-uri": "npm:^3.0.3"
     "@jridgewell/sourcemap-codec": "npm:^1.4.10"
   checksum: 10/83deafb8e7a5ca98993c2c6eeaa93c270f6f647a4c0dc00deb38c9cf9b2d3b7bf15e8839540155247ef034a052c0ec4466f980bf0c9e2ab63b97d16c0cedd3ff
+  languageName: node
+  linkType: hard
+
+"@koa/bodyparser@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@koa/bodyparser@npm:5.1.1"
+  dependencies:
+    co-body: "npm:^6.1.0"
+    lodash.merge: "npm:^4.6.2"
+    type-is: "npm:^1.6.18"
+  peerDependencies:
+    koa: ^2.14.1
+  checksum: 10/9d604d2a6aa4e84c650aa7ad68ca1f58b54cc27172693412ca4428d3787d86dd40e234c0e0549895abefb25a8217cd09c6d17467dd66b442333bce9477db42d4
+  languageName: node
+  linkType: hard
+
+"@koa/router@npm:^13.1.0":
+  version: 13.1.0
+  resolution: "@koa/router@npm:13.1.0"
+  dependencies:
+    http-errors: "npm:^2.0.0"
+    koa-compose: "npm:^4.1.0"
+    path-to-regexp: "npm:^6.3.0"
+  checksum: 10/b5de0745b266dd8cda5873ace9594ca4b020ef6fe0e94e1de81f11a7498d0fcc106c8d972513ad52493b196b5e111ed1d07b318cf4ca4156b85a99ea5d3a3f98
   languageName: node
   linkType: hard
 
@@ -304,30 +335,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-bodyparser@npm:^4.3.12":
-  version: 4.3.12
-  resolution: "@types/koa-bodyparser@npm:4.3.12"
-  dependencies:
-    "@types/koa": "npm:*"
-  checksum: 10/645cc253c6b9b2e98252b1cdc75a4812cd6d3c228e426f9893a755324b7a6936559ec659a0ff288cb2642340b3cc4e2110167f24b84efc8e3b89c04fe67ed883
-  languageName: node
-  linkType: hard
-
 "@types/koa-compose@npm:*":
   version: 3.2.5
   resolution: "@types/koa-compose@npm:3.2.5"
   dependencies:
     "@types/koa": "npm:*"
   checksum: 10/0f46016227c9d17fd4ff5fb1fbec7f658a95dbf36f15e08d4f3aae8f24599c8069cadff6c2d6af5350d56e4c234b634066636bb2eaa216d5c29f453858c1f798
-  languageName: node
-  linkType: hard
-
-"@types/koa-router@npm:^7.4.8":
-  version: 7.4.8
-  resolution: "@types/koa-router@npm:7.4.8"
-  dependencies:
-    "@types/koa": "npm:*"
-  checksum: 10/d9bd6c8c8869a5757dd0b8208fdd06402359a5b8f6a40706e89f81b2c0b796ae3561761913b9743dccff5508e04bca88ce14e05c6fdf8b45b1cccec2ed996fe8
   languageName: node
   linkType: hard
 
@@ -493,15 +506,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"co-body@npm:^6.0.0":
-  version: 6.1.0
-  resolution: "co-body@npm:6.1.0"
+"co-body@npm:^6.1.0":
+  version: 6.2.0
+  resolution: "co-body@npm:6.2.0"
   dependencies:
+    "@hapi/bourne": "npm:^3.0.0"
     inflation: "npm:^2.0.0"
     qs: "npm:^6.5.2"
     raw-body: "npm:^2.3.3"
     type-is: "npm:^1.6.16"
-  checksum: 10/2484710f70941b42512a349fab0fac8a16430fd56d88ad0de1d8dde129d66597de9d0a8edd8d8164683c55a3fd998457dc74a04a03de2281def8abaaecd1317e
+  checksum: 10/644761ad8abbcbc15f0a76634b17abda928fec01aa7bfdee23f4e65c0d49c6ea63738d1ed7fca1f92a52bd76cd08f8031d788a65ab00842744d50f03536c7b36
   languageName: node
   linkType: hard
 
@@ -538,13 +552,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copy-to@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "copy-to@npm:2.0.1"
-  checksum: 10/05ea12875bdc96ae053a3b30148e9d992026035ff2bfcc0b615e8d49d1cf8fc3d1f40843f9a4b7b1b6d9118eeebcba31e621076d7de525828aa9c07d22a81dab
-  languageName: node
-  linkType: hard
-
 "create-require@npm:^1.1.0":
   version: 1.1.1
   resolution: "create-require@npm:1.1.1"
@@ -570,18 +577,6 @@ __metadata:
     supports-color:
       optional: true
   checksum: 10/0073c3bcbd9cb7d71dd5f6b55be8701af42df3e56e911186dfa46fac3a5b9eb7ce7f377dd1d3be6db8977221f8eb333d945216f645cf56f6b688cd484837d255
-  languageName: node
-  linkType: hard
-
-"debug@npm:^4.3.4":
-  version: 4.4.0
-  resolution: "debug@npm:4.4.0"
-  dependencies:
-    ms: "npm:^2.1.3"
-  peerDependenciesMeta:
-    supports-color:
-      optional: true
-  checksum: 10/1847944c2e3c2c732514b93d11886575625686056cd765336212dc15de2d2b29612b6cd80e1afba767bb8e1803b778caf9973e98169ef1a24a7a7009e1820367
   languageName: node
   linkType: hard
 
@@ -796,17 +791,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-bodyparser@npm:^4.4.1":
-  version: 4.4.1
-  resolution: "koa-bodyparser@npm:4.4.1"
-  dependencies:
-    co-body: "npm:^6.0.0"
-    copy-to: "npm:^2.0.1"
-    type-is: "npm:^1.6.18"
-  checksum: 10/c741a99ccacc92ee126edad121fed2d200753348e0dedfd65ec67fcfa513b4db9f791ef3200817358ab2c120bcf8e73488cbd0b7f3c7d522a0b21bbb647ce616
-  languageName: node
-  linkType: hard
-
 "koa-compose@npm:^4.1.0":
   version: 4.1.0
   resolution: "koa-compose@npm:4.1.0"
@@ -824,22 +808,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-router@npm:^12.0.1":
-  version: 12.0.1
-  resolution: "koa-router@npm:12.0.1"
-  dependencies:
-    debug: "npm:^4.3.4"
-    http-errors: "npm:^2.0.0"
-    koa-compose: "npm:^4.1.0"
-    methods: "npm:^1.1.2"
-    path-to-regexp: "npm:^6.2.1"
-  checksum: 10/5c733289f58f74c91e5f9c8925fe369325b650038eafea2fde9d9cd5f9d775df0bd308313c6381995668ad428ca50725a13db002256f7f2232ed0f08b4e1f8a9
-  languageName: node
-  linkType: hard
-
-"koa@npm:^2.16.0":
-  version: 2.16.0
-  resolution: "koa@npm:2.16.0"
+"koa@npm:^2.16.1":
+  version: 2.16.1
+  resolution: "koa@npm:2.16.1"
   dependencies:
     accepts: "npm:^1.3.5"
     cache-content-type: "npm:^1.0.0"
@@ -864,7 +835,7 @@ __metadata:
     statuses: "npm:^1.5.0"
     type-is: "npm:^1.6.16"
     vary: "npm:^1.1.2"
-  checksum: 10/88284e5da49cd54a2db663c818f5370d00f32b6aefbe5ecfc75bdaf7937d3b08cfbb884d07564b8e2b856dfe74d930997a6bdca2e2090dc2bfae0fa8af56a214
+  checksum: 10/f33b95227e48bffd3a682996e6cf72c4ae2992671529c6c914b76d28172219c9cbd8201b16cc028dc25fafc8f1dc9391a6e7e045740a10ee7d89a5631031a974
   languageName: node
   linkType: hard
 
@@ -872,6 +843,13 @@ __metadata:
   version: 1.10.55
   resolution: "libphonenumber-js@npm:1.10.55"
   checksum: 10/a249458ada40263d938f328bf8b91907c3e66333dd4d0d177d31ce0bcdcc787c1a9bd39611a3cd8815519af64008e1f1858495897396e02085da42ee0495536f
+  languageName: node
+  linkType: hard
+
+"lodash.merge@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "lodash.merge@npm:4.6.2"
+  checksum: 10/d0ea2dd0097e6201be083865d50c3fb54fbfbdb247d9cc5950e086c991f448b7ab0cdab0d57eacccb43473d3f2acd21e134db39f22dac2d6c9ba6bf26978e3d6
   languageName: node
   linkType: hard
 
@@ -903,13 +881,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"methods@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "methods@npm:1.1.2"
-  checksum: 10/a385dd974faa34b5dd021b2bbf78c722881bf6f003bfe6d391d7da3ea1ed625d1ff10ddd13c57531f628b3e785be38d3eed10ad03cebd90b76932413df9a1820
-  languageName: node
-  linkType: hard
-
 "mime-db@npm:1.52.0":
   version: 1.52.0
   resolution: "mime-db@npm:1.52.0"
@@ -930,13 +901,6 @@ __metadata:
   version: 2.1.2
   resolution: "ms@npm:2.1.2"
   checksum: 10/673cdb2c3133eb050c745908d8ce632ed2c02d85640e2edb3ace856a2266a813b30c613569bf3354fdf4ea7d1a1494add3bfa95e2713baa27d0c2c71fc44f58f
-  languageName: node
-  linkType: hard
-
-"ms@npm:^2.1.3":
-  version: 2.1.3
-  resolution: "ms@npm:2.1.3"
-  checksum: 10/aa92de608021b242401676e35cfa5aa42dd70cbdc082b916da7fb925c542173e36bce97ea3e804923fe92c0ad991434e4a38327e15a1b5b5f945d66df615ae6d
   languageName: node
   linkType: hard
 
@@ -991,7 +955,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:^6.2.1":
+"path-to-regexp@npm:^6.3.0":
   version: 6.3.0
   resolution: "path-to-regexp@npm:6.3.0"
   checksum: 10/6822f686f01556d99538b350722ef761541ec0ce95ca40ce4c29e20a5b492fe8361961f57993c71b2418de12e604478dcf7c430de34b2c31a688363a7a944d9c
@@ -1051,16 +1015,14 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     "@devcycle/nodejs-server-sdk": "npm:^1.44.0"
+    "@koa/bodyparser": "npm:^5.1.1"
+    "@koa/router": "npm:^13.1.0"
     "@openfeature/core": "npm:^1.7.2"
     "@openfeature/server-sdk": "npm:^1.17.1"
     "@types/koa": "npm:^2.15.0"
-    "@types/koa-bodyparser": "npm:^4.3.12"
-    "@types/koa-router": "npm:^7.4.8"
-    koa: "npm:^2.16.0"
-    koa-bodyparser: "npm:^4.4.1"
-    koa-router: "npm:^12.0.1"
+    koa: "npm:^2.16.1"
     ts-node: "npm:^10.9.2"
-    typescript: "npm:^4.9.5"
+    typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
 
@@ -1179,23 +1141,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.9.5":
-  version: 4.9.5
-  resolution: "typescript@npm:4.9.5"
+"typescript@npm:^5.8.3":
+  version: 5.8.3
+  resolution: "typescript@npm:5.8.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/458f7220ab11e0fc191514cc41be1707645ec9a8c2d609448a448e18c522cef9646f58728f6811185a4c35613dacdf6c98cf8965c88b3541d0288c47291e4300
+  checksum: 10/65c40944c51b513b0172c6710ee62e951b70af6f75d5a5da745cb7fab132c09ae27ffdf7838996e3ed603bb015dadd099006658046941bd0ba30340cc563ae92
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^4.9.5#optional!builtin<compat/typescript>":
-  version: 4.9.5
-  resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
+"typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>":
+  version: 5.8.3
+  resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/5659316360b5cc2d6f5931b346401fa534107b68b60179cf14970e27978f0936c1d5c46f4b5b8175f8cba0430f522b3ce355b4b724c0ea36ce6c0347fab25afd
+  checksum: 10/b9b1e73dabac5dc730c041325dbd9c99467c1b0d239f1b74ec3b90d831384af3e2ba973946232df670519147eb51a2c20f6f96163cea2b359f03de1e2091cc4f
   languageName: node
   linkType: hard
 

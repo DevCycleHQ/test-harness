@@ -1,7 +1,7 @@
 import Koa from 'koa'
 import Router from '@koa/router'
 import axios from 'axios'
-import bodyParser from 'koa-bodyparser'
+import bodyParser from '@koa/bodyparser'
 
 // NOTE: This file is excecuted by the jest environment, which does not share a memory space / module cache with the
 // jest test files. This means that any things you want to be able to access from test context

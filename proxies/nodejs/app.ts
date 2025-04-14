@@ -1,6 +1,6 @@
 import Koa from 'koa'
-import Router from 'koa-router'
-import bodyParser from 'koa-bodyparser'
+import Router from '@koa/router'
+import bodyParser from '@koa/bodyparser'
 import { handleClient } from './handlers/client'
 import {
     handleLocation,
