@@ -6,7 +6,8 @@ import {
     getSDKScope,
 } from '../helpers'
 import { Capabilities } from '../types'
-import { variables } from '../mockData'
+import { getMockedVariables } from '../mockData'
+import { hasCapability } from '../helpers'
 
 describe('allVariables Tests - Cloud', () => {
     const { sdkName, scope } = getSDKScope()
@@ -61,7 +62,12 @@ describe('allVariables Tests - Cloud', () => {
         it('should return a variable map', async () => {
             scope
                 .post(`/client/${client.clientId}/v1/variables`)
-                .reply(200, variables)
+                .reply(
+                    200,
+                    getMockedVariables(
+                        hasCapability(sdkName, Capabilities.variablesFeatureId),
+                    ),
+                )
             const response = await client.callAllVariables({
                 user_id: 'test_user',
                 email: 'user@gmail.com',
@@ -69,7 +75,11 @@ describe('allVariables Tests - Cloud', () => {
             const { data: variablesMap, entityType } = await response.json()
 
             expect(entityType).toEqual('Object')
-            expect(variablesMap).toEqual(variables)
+            expect(variablesMap).toEqual(
+                getMockedVariables(
+                    hasCapability(sdkName, Capabilities.variablesFeatureId),
+                ),
+            )
         })
 
         it('should make a request to the variables endpoint with edgeDB param to false', async () => {
@@ -78,7 +88,12 @@ describe('allVariables Tests - Cloud', () => {
                 .query((queryObj) => {
                     return !queryObj.enableEdgeDB
                 })
-                .reply(200, variables)
+                .reply(
+                    200,
+                    getMockedVariables(
+                        hasCapability(sdkName, Capabilities.variablesFeatureId),
+                    ),
+                )
 
             await client.callAllVariables({
                 user_id: 'test_user',
@@ -93,7 +108,12 @@ describe('allVariables Tests - Cloud', () => {
                 .query((queryObj) => {
                     return queryObj.enableEdgeDB === 'true'
                 })
-                .reply(200, variables)
+                .reply(
+                    200,
+                    getMockedVariables(
+                        hasCapability(sdkName, Capabilities.variablesFeatureId),
+                    ),
+                )
 
             await client.createClient({
                 enableEdgeDB: true,

@@ -5,7 +5,7 @@ import {
     hasCapability,
 } from '../helpers'
 import { Capabilities } from '../types'
-import { variables } from '../mockData'
+import { getMockedVariables } from '../mockData'
 
 describe('allVariables Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
@@ -70,6 +70,10 @@ describe('allVariables Tests - Local', () => {
         const { data: variablesMap, entityType } = await response.json()
 
         expect(entityType).toEqual('Object')
-        expect(variablesMap).toEqual(variables)
+        expect(variablesMap).toEqual(
+            getMockedVariables(
+                hasCapability(sdkName, Capabilities.variablesFeatureId),
+            ),
+        )
     })
 })
