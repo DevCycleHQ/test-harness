@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Testing and Mocks
+
+- In this project, test files are almost always placed directly in feature or module directories using the `.test.ts`, `.test.js`, `.spec.ts`, or `.spec.js` suffix.
+- The use of `__tests__/` folders is rare; the suffix-based convention is the primary approach.
+- Test and script files themselves are excluded from this rule.
+- Mock implementations are placed in `__mocks__/` directories within each package or module, such as [harness/mockData/](mdc:harness/mockData) or [harness/mockServer/](mdc:harness/mockServer).
+- This convention is followed in both the main test harness and all SDK proxies.

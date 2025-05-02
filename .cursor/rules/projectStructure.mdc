@@ -1,0 +1,26 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Project Structure Guide
+
+- The project root contains configuration files for building, linting, formatting, and testing, such as [package.json](mdc:package.json), [jest.config.ts](mdc:jest.config.ts), and [.eslintrc.json](mdc:.eslintrc.json).
+- The main source code for the test harness is under the [harness/](mdc:harness) directory, which contains:
+  - [features/](mdc:harness/features): Test features and scenarios
+  - [helpers/](mdc:harness/helpers): Shared test utilities and helpers
+  - [mockData/](mdc:harness/mockData): Mock data for tests
+  - [mockServer/](mdc:harness/mockServer): Mock server implementations
+  - [types/](mdc:harness/types): Shared type definitions
+- The [proxies/](mdc:proxies) directory contains language-specific SDK proxies for integration testing, including:
+  - [dotnet/](mdc:proxies/dotnet)
+  - [go/](mdc:proxies/go)
+  - [java/](mdc:proxies/java)
+  - [nodejs/](mdc:proxies/nodejs)
+  - [openfeature-nodejs/](mdc:proxies/openfeature-nodejs)
+  - [php/](mdc:proxies/php)
+  - [python/](mdc:proxies/python)
+  - [ruby/](mdc:proxies/ruby)
+- Each language-specific proxy may contain its own handlers, helpers, and configuration as needed for integration with the test harness.
+- Documentation is found in the [docs/](mdc:docs) directory, with templates in [docs/widdershins/templates/](mdc:docs/widdershins/templates).
+- The main [README.md](mdc:README.md) at the project root provides an overview of the repository and usage instructions.

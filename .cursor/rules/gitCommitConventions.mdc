@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Git Commit Message Conventions
+
+- All git commit messages in this project must follow the Conventional Commits specification.
+- A commit message should be structured as `<type>(<scope>): <description>`, where:
+  - `type` is one of: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert`.
+  - `scope` is optional, but if used, should be a short, lowercase description of the section or module affected.
+  - `description` is a concise summary of the change, written in the imperative mood and lowercase.
+- In this project, scopes are rarely used; most commit messages omit the scope and use the format `<type>: <description>`.
+- Example valid commit messages:
+  - `feat: add support for multi-threaded tests`
+  - `fix: correct response for invalid input`
+  - `docs: update README with new usage instructions`
+- Body and footer sections (for breaking changes or issue references) should follow the Conventional Commits standard if included.
