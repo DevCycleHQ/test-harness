@@ -22,6 +22,7 @@ alwaysApply: true
 - Use of Aviator CLI (`av`) is optional, but recommended for managing stacked branches and pull requests:
   - To create a new stacked branch:
     - `av branch chore-fix-invalid-input`
+  - After creating the branch, create commits using `git commit` following the Conventional Commits specification.
   - To synchronize and git push your stack after changes:
     - `av sync --push=yes`
   - To create a pull request for your branch:
