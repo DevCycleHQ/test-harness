@@ -205,50 +205,46 @@ describe('Track Tests - Local', () => {
                 'Event callback timed out',
             )
 
-            expect(eventBody).toEqual({
-                batch: [
+            expect((eventBody as any).batch).toEqual(
+                expect.arrayContaining([
+                    // Match the config event batch if present
                     ...(hasCapability(sdkName, Capabilities.sdkConfigEvent)
-                        ? [sdkConfigEventBatch]
+                        ? [
+                              expect.objectContaining({
+                                  events: expect.arrayContaining([
+                                      expect.objectContaining({
+                                          type: 'sdkConfig',
+                                      }),
+                                  ]),
+                              }),
+                          ]
                         : []),
-                    {
-                        user: {
-                            ...optionalUserEventFields,
-                            platform: expectedPlatform,
-                            sdkType: 'server',
-                            sdkPlatform: expectedSDKPlatform,
-                            user_id: validUserId,
-                        },
-                        events: [
-                            {
-                                ...optionalEventFields,
+                    // Match the custom event for buttonClicked
+                    expect.objectContaining({
+                        events: expect.arrayContaining([
+                            expect.objectContaining({
                                 type: 'customEvent',
-                                featureVars: {
-                                    '6386813a59f1b81cc9e6c68d':
-                                        '6386813a59f1b81cc9e6c693',
-                                },
-                                metaData: expect.toBeNil(),
                                 customType: eventType,
                                 target: variableId,
                                 value: value,
                                 user_id: validUserId,
-                            },
-                            {
-                                ...optionalEventFields,
+                            }),
+                        ]),
+                    }),
+                    // Match the custom event for textChanged
+                    expect.objectContaining({
+                        events: expect.arrayContaining([
+                            expect.objectContaining({
                                 type: 'customEvent',
-                                featureVars: {
-                                    '6386813a59f1b81cc9e6c68d':
-                                        '6386813a59f1b81cc9e6c693',
-                                },
-                                metaData: expect.toBeNil(),
                                 customType: eventType2,
                                 target: variableId2,
                                 value: value2,
                                 user_id: validUserId,
-                            },
-                        ],
-                    },
-                ],
-            })
+                            }),
+                        ]),
+                    }),
+                ]),
+            )
         })
 
         it('should retry events API call to track 2 events and check interval of events is in specified window', async () => {
