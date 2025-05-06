@@ -15,6 +15,7 @@ export const Capabilities = {
     clientUUID: 'ClientUUID',
     v2Config: 'V2Config',
     sdkPlatform: 'SDKPlatform',
+    variablesFeatureId: 'VariableFeatureId',
 }
 
 export const SDKPlatformMap = {
