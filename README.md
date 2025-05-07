@@ -76,6 +76,8 @@ LOCAL_MODE=1 SDKS_TO_TEST=nodejs yarn test
 
 This will point the test harness at a proxy running at http://localhost:3000, and disable all the containers in docker-compose. See [these instructions](docs/LOCAL.md) for details on how to run the proxy for each SDK.
 
+If you'd like to optionally target local SDK versions, see the relevant sections in `docs/LOCAL.md` for exact examples and steps for each proxy.
+
 A specific version of docker-compose may be required to support the profiles in the docker-compose.yml config file. 1.29.2 seems to work.
 
 You may still need to run the package manager for the particular proxy (e.g. `yarn`, `go mod tidy` etc.)
