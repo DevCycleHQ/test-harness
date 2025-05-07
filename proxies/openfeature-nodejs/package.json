@@ -1,7 +1,7 @@
 {
     "dependencies": {
-        "@devcycle/js-client-sdk": "file:../../../js-sdks/dist/sdk/js",
-        "@devcycle/nodejs-server-sdk": "file:../../../js-sdks/dist/sdk/nodejs",
+        "@devcycle/js-client-sdk": "^1.38.0",
+        "@devcycle/nodejs-server-sdk": "^1.45.0",
         "@koa/bodyparser": "^5.1.1",
         "@koa/router": "^13.1.0",
         "@openfeature/core": "^1.8.0",
@@ -12,10 +12,6 @@
     },
     "devDependencies": {
         "typescript": "^5.8.3"
-    },
-    "resolutions": {
-        "@devcycle/bucketing-assembly-script": "file:../../../js-sdks/lib/shared/bucketing-assembly-script",
-        "@devcycle/types": "file:../../../js-sdks/dist/lib/shared/types"
     },
     "packageManager": "yarn@4.9.1"
 }
