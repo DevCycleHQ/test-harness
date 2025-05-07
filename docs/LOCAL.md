@@ -9,21 +9,21 @@ Follow the steps in that repo for installing dependencies and building the SDKs.
 
 Then, in the `test-harness` repo, make the following changes in the `proxies/nodejs` folder.
 Change the dependency in the `package.json` file to point to the local SDK, and set `resolutions`
-to override the version of the dependent packages that will be used to the local ones eg.:
+to override the version of the dependent packages that will be used to the local ones. 
+For Yarn 4+ (the standard in this repo), use the `file:` protocol for local dependencies, for example:
 
 ```json
 "dependencies": {
-  "@devcycle/nodejs-server-sdk": "portal:../../../js-sdks/dist/sdk/nodejs",
-  "@devcycle/js-client-sdk": "portal:../../../js-sdks/dist/sdk/js",
-...
+  "@devcycle/nodejs-server-sdk": "file:../../../js-sdks/dist/sdk/nodejs",
+  "@devcycle/js-client-sdk": "file:../../../js-sdks/dist/sdk/js"
 },
 "resolutions": {
-  "@devcycle/bucketing-assembly-script": "portal:../../../js-sdks/lib/shared/bucketing-assembly-script",
-  "@devcycle/types": "portal:../../../js-sdks/dist/lib/shared/types",
+  "@devcycle/bucketing-assembly-script": "file:../../../js-sdks/lib/shared/bucketing-assembly-script",
+  "@devcycle/types": "file:../../../js-sdks/dist/lib/shared/types"
 }
 ```
 
-then:
+After updating dependencies, run `yarn` inside the `proxies/nodejs` folder to ensure the local SDKs are linked.
 
 1. Run `yarn` inside the `proxies/nodejs` folder
 2. Set the environment variable `LOCAL_MODE` to `1`
@@ -33,21 +33,21 @@ then:
 
 ## OpenFeature NodeJS
 
-follow the same steps as NodeJS above, but set the environment variable `SDKS_TO_TEST` to `of-nodejs`,
-and use `yarn start:of-nodejs`. Also in the `package.json` file in `proxies/openfeature-nodejs`,
-change the dependency to point to the local SDK, and set `resolutions`:
+Follow the same steps as NodeJS above, but set the environment variable `SDKS_TO_TEST` to `of-nodejs`,
+and use `yarn start:of-nodejs`. In the `package.json` file in `proxies/openfeature-nodejs`, use the `file:` protocol for local dependencies as shown below (matching the current setup):
 
 ```json
 "dependencies": {
-  ...
-  "@devcycle/bucketing-assembly-script": "portal:../../../js-sdks/lib/shared/bucketing-assembly-script",
+  "@devcycle/js-client-sdk": "file:../../../js-sdks/dist/sdk/js",
+  "@devcycle/nodejs-server-sdk": "file:../../../js-sdks/dist/sdk/nodejs",
 },
 "resolutions": {
-  "@devcycle/nodejs-server-sdk": "portal:../../../js-sdks/dist/sdk/nodejs",
-  "@devcycle/types": "portal:../../../js-sdks/dist/lib/shared/types",
-  "@devcycle/openfeature-nodejs-provider": "portal:../../../js-sdks/dist/sdk/openfeature-nodejs-provider"
+  "@devcycle/bucketing-assembly-script": "file:../../../js-sdks/lib/shared/bucketing-assembly-script",
+  "@devcycle/types": "file:../../../js-sdks/dist/lib/shared/types"
 }
 ```
+
+After updating dependencies, run `yarn` inside the `proxies/openfeature-nodejs` folder to ensure the local SDKs are linked.
 
 ## DotNet
 
