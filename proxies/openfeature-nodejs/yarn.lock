@@ -14,37 +14,50 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:^1.33.0":
-  version: 1.33.0
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.33.0"
+"@devcycle/bucketing-assembly-script@npm:^1.34.0":
+  version: 1.34.0
+  resolution: "@devcycle/bucketing-assembly-script@npm:1.34.0"
   dependencies:
     protobufjs: "npm:^7.4.0"
-  checksum: 10/d24f6624da9de7ba8a7ee62327bdfa27c2adb842d347170074cc0d701234bf25cdb849889aee3f1f625619eb3e1ff58ca7577bd0d366f9a7f5bcaa4cc396ed1c
+  checksum: 10/97a0263b2772a5a73c86b3bd53be4d2ebd19b8aff8aa4d067709086c6d796017131888d5af28d5c3b1e0f981091523b9a7eb79d40555984affcc6866744f7f2d
   languageName: node
   linkType: hard
 
-"@devcycle/js-cloud-server-sdk@npm:^1.23.0":
-  version: 1.23.0
-  resolution: "@devcycle/js-cloud-server-sdk@npm:1.23.0"
+"@devcycle/js-client-sdk@npm:^1.38.0":
+  version: 1.38.0
+  resolution: "@devcycle/js-client-sdk@npm:1.38.0"
   dependencies:
-    "@devcycle/types": "npm:^1.24.0"
-    cross-fetch: "npm:^4.0.0"
+    "@devcycle/types": "npm:^1.25.0"
     fetch-retry: "npm:^5.0.6"
     lodash: "npm:^4.17.21"
-  checksum: 10/fda1cad9f30d20fe82696ea8c1d9d5d354c54ded1acd00ff782393bd7a6692f770baa93386b377d18d07c6d97cce363d4c550caee278301effa85baf7f96e211
+    ua-parser-js: "npm:^1.0.40"
+    uuid: "npm:^8.3.2"
+  checksum: 10/a8fb6433b510ae0a30d077fff0044354cf5db3a7ec95ffc4cbb34ef94918e81a145d84f3bb4fc0abad2da615f2dc400cabcfd0a407a39a41aa392b9eeaa55672
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:^1.44.0":
-  version: 1.44.0
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.44.0"
+"@devcycle/js-cloud-server-sdk@npm:^1.24.0":
+  version: 1.24.0
+  resolution: "@devcycle/js-cloud-server-sdk@npm:1.24.0"
   dependencies:
-    "@devcycle/bucketing-assembly-script": "npm:^1.33.0"
-    "@devcycle/js-cloud-server-sdk": "npm:^1.23.0"
-    "@devcycle/types": "npm:^1.24.0"
+    "@devcycle/types": "npm:^1.25.0"
+    cross-fetch: "npm:^4.1.0"
+    fetch-retry: "npm:^5.0.6"
+    lodash: "npm:^4.17.21"
+  checksum: 10/0b403ced8d439042fdd393ce385d44faeca82beb1b827beff19aead4bd0f168345128f0f6061397db1349c21087e8f867ffbc4a292a46ccd60f964d23398d0ae
+  languageName: node
+  linkType: hard
+
+"@devcycle/nodejs-server-sdk@npm:^1.45.0":
+  version: 1.45.0
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.45.0"
+  dependencies:
+    "@devcycle/bucketing-assembly-script": "npm:^1.34.0"
+    "@devcycle/js-cloud-server-sdk": "npm:^1.24.0"
+    "@devcycle/types": "npm:^1.25.0"
     "@openfeature/core": "npm:^1.7.2"
     "@openfeature/server-sdk": "npm:^1.17.1"
-    cross-fetch: "npm:^4.0.0"
+    cross-fetch: "npm:^4.1.0"
     eventsource: "npm:^2.0.2"
     fetch-retry: "npm:^5.0.6"
   peerDependencies:
@@ -55,20 +68,20 @@ __metadata:
       optional: true
     "@openfeature/multi-provider":
       optional: true
-  checksum: 10/527ac491adc0dcfa2852654b895003f3d33cf9a7bc14e4a3cd3854646edca747e2ed0d8ffb447774691c0be32899f2bf294b580606818406ac059a8dfec02885
+  checksum: 10/94f1fe276d37e78bca03a4a64db01b488c3d0ac20d7e3708524c8264c4f900ebb99c80869c4ebc71ad4d3255be0b06d7b24e0875c605899e68254b3189d2b3f3
   languageName: node
   linkType: hard
 
-"@devcycle/types@npm:^1.24.0":
-  version: 1.24.0
-  resolution: "@devcycle/types@npm:1.24.0"
+"@devcycle/types@npm:^1.25.0":
+  version: 1.25.0
+  resolution: "@devcycle/types@npm:1.25.0"
   dependencies:
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.1"
-    iso-639-1: "npm:^2.1.13"
+    iso-639-1: "npm:^2.1.15"
     lodash: "npm:^4.17.21"
-    reflect-metadata: "npm:^0.1.13"
-  checksum: 10/72d20fc364e3f3202dd3ea3731be118d5200a25844002b20354203c1304e03ac3a24c4d6d3d8d30f5ebba27c40d283fbd51efd4d15fea01103b7ece20757b96d
+    reflect-metadata: "npm:^0.1.14"
+  checksum: 10/136c1bc948a4a8565d6291f623661964ecb9bbe80e1219df404c839c378355cc3b20fb60ccf28286cc75cff129232a9d6399f8fd6395e01af3d86cde8cefa8f0
   languageName: node
   linkType: hard
 
@@ -134,12 +147,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@openfeature/core@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "@openfeature/core@npm:1.8.0"
+  checksum: 10/99d307f5920cdb36c917bca052aedcf375b0d96efcca6497311ce0b0f8c68aba0bca44105b8b3a1950bf7cf64f5fc388a3d7ce197713b578edc00c679ac265fd
+  languageName: node
+  linkType: hard
+
 "@openfeature/server-sdk@npm:^1.17.1":
   version: 1.17.1
   resolution: "@openfeature/server-sdk@npm:1.17.1"
   peerDependencies:
     "@openfeature/core": ^1.7.0
   checksum: 10/9cb16a9ede9579e20203abfb1a020f174d1fbc19e949fe79f78d59893a53008eba57e86d1701ce14fc84ef8abcf16cfb512eb09e4b31574a7b62abc71b3666a4
+  languageName: node
+  linkType: hard
+
+"@openfeature/server-sdk@npm:^1.18.0":
+  version: 1.18.0
+  resolution: "@openfeature/server-sdk@npm:1.18.0"
+  peerDependencies:
+    "@openfeature/core": ^1.7.0
+  checksum: 10/96d8a3726dc8ac99e400d88cc2678d36353ada6ed480164b2f604f78f9c09bfe07e57ee1f877b3b63f43ec7a394390b42c90ae3336c0d03c6b9a9d27741db96e
   languageName: node
   linkType: hard
 
@@ -559,12 +588,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "cross-fetch@npm:4.0.0"
+"cross-fetch@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "cross-fetch@npm:4.1.0"
   dependencies:
-    node-fetch: "npm:^2.6.12"
-  checksum: 10/e231a71926644ef122d334a3a4e73d9ba3ba4b480a8a277fb9badc434c1ba905b3d60c8034e18b348361a09afbec40ba9371036801ba2b675a7b84588f9f55d8
+    node-fetch: "npm:^2.7.0"
+  checksum: 10/07624940607b64777d27ec9c668ddb6649e8c59ee0a5a10e63a51ce857e2bbb1294a45854a31c10eccb91b65909a5b199fcb0217339b44156f85900a7384f489
   languageName: node
   linkType: hard
 
@@ -775,7 +804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iso-639-1@npm:^2.1.13":
+"iso-639-1@npm:^2.1.15":
   version: 2.1.15
   resolution: "iso-639-1@npm:2.1.15"
   checksum: 10/32f6cfdfa5e85eef54cb2df77829e6678e9479e9b6a7fdb7e75ba0005957d4da35ff315b69c354e216ba46044e4437b1823362d27dff14bcefbb408b2a66e2f8
@@ -911,7 +940,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.12":
+"node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -1003,10 +1032,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reflect-metadata@npm:^0.1.13":
-  version: 0.1.13
-  resolution: "reflect-metadata@npm:0.1.13"
-  checksum: 10/732570da35d2d96f8fdd5aac60fb263aa92f6512eaded5962b052bd9e90f22a9dec5aaf0d7ff4bfe97646c9530e8444e8435c2d80b24d0bdf938b5d47f6f5b83
+"reflect-metadata@npm:^0.1.14":
+  version: 0.1.14
+  resolution: "reflect-metadata@npm:0.1.14"
+  checksum: 10/fcab9c17ec3b9fea0e2f748c2129aceb57c24af6d8d13842b8a77c8c79dde727d7456ce293e76e8d7b267d1dbf93eea4c5b3c9101299a789a075824f2e40f1ee
   languageName: node
   linkType: hard
 
@@ -1014,11 +1043,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/nodejs-server-sdk": "npm:^1.44.0"
+    "@devcycle/js-client-sdk": "npm:^1.38.0"
+    "@devcycle/nodejs-server-sdk": "npm:^1.45.0"
     "@koa/bodyparser": "npm:^5.1.1"
     "@koa/router": "npm:^13.1.0"
-    "@openfeature/core": "npm:^1.7.2"
-    "@openfeature/server-sdk": "npm:^1.17.1"
+    "@openfeature/core": "npm:^1.8.0"
+    "@openfeature/server-sdk": "npm:^1.18.0"
     "@types/koa": "npm:^2.15.0"
     koa: "npm:^2.16.1"
     ts-node: "npm:^10.9.2"
@@ -1161,10 +1191,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ua-parser-js@npm:^1.0.40":
+  version: 1.0.40
+  resolution: "ua-parser-js@npm:1.0.40"
+  bin:
+    ua-parser-js: script/cli.js
+  checksum: 10/7fced5f74ed570c83addffd4d367888d90c58803ff4bdd4a7b04b3f01d293263b8605e92ac560eb1c6a201ef3b11fcc46f3dbcbe764fbe54974924d542bc0135
+  languageName: node
+  linkType: hard
+
 "unpipe@npm:1.0.0":
   version: 1.0.0
   resolution: "unpipe@npm:1.0.0"
   checksum: 10/4fa18d8d8d977c55cb09715385c203197105e10a6d220087ec819f50cb68870f02942244f1017565484237f1f8c5d3cd413631b1ae104d3096f24fdfde1b4aa2
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 10/9a5f7aa1d6f56dd1e8d5f2478f855f25c645e64e26e347a98e98d95781d5ed20062d6cca2eecb58ba7c84bc3910be95c0451ef4161906abaab44f9cb68ffbdd1
   languageName: node
   linkType: hard
 
