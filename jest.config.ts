@@ -25,7 +25,6 @@ const projects = [
             JEST_PROJECT_SDK_TO_TEST: 'OF-NodeJS',
             LOCAL_HOST_BINDING: '0.0.0.0',
         },
-        runner: 'jest-serial-runner',
     },
     {
         ...commonConfig,
