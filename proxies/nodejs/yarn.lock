@@ -14,47 +14,47 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devcycle/bucketing-assembly-script@npm:^1.34.0":
-  version: 1.34.0
-  resolution: "@devcycle/bucketing-assembly-script@npm:1.34.0"
+"@devcycle/bucketing-assembly-script@npm:^1.35.0":
+  version: 1.35.0
+  resolution: "@devcycle/bucketing-assembly-script@npm:1.35.0"
   dependencies:
     protobufjs: "npm:^7.4.0"
-  checksum: 10/97a0263b2772a5a73c86b3bd53be4d2ebd19b8aff8aa4d067709086c6d796017131888d5af28d5c3b1e0f981091523b9a7eb79d40555984affcc6866744f7f2d
+  checksum: 10/79d807401e59cefd2db8226823046118eb78213377c6d5c8641eecaf58c8158cbbe9d3adf95fe4e37b719f01c1fb557b077517cc84e0e80df3cfc0ec74e5cf21
   languageName: node
   linkType: hard
 
-"@devcycle/js-client-sdk@npm:^1.38.0":
-  version: 1.38.0
-  resolution: "@devcycle/js-client-sdk@npm:1.38.0"
+"@devcycle/js-client-sdk@npm:^1.39.0":
+  version: 1.39.0
+  resolution: "@devcycle/js-client-sdk@npm:1.39.0"
   dependencies:
-    "@devcycle/types": "npm:^1.25.0"
+    "@devcycle/types": "npm:^1.26.0"
     fetch-retry: "npm:^5.0.6"
     lodash: "npm:^4.17.21"
     ua-parser-js: "npm:^1.0.40"
     uuid: "npm:^8.3.2"
-  checksum: 10/a8fb6433b510ae0a30d077fff0044354cf5db3a7ec95ffc4cbb34ef94918e81a145d84f3bb4fc0abad2da615f2dc400cabcfd0a407a39a41aa392b9eeaa55672
+  checksum: 10/755ce6c4e9fb55253db731b3dcf93731d39d2b0b8038cc9390d7e43405c691b5133e9f33b6474d9060f8f3c6f55f08d9ebe500e243db6e5d5468d090c2b6fa4e
   languageName: node
   linkType: hard
 
-"@devcycle/js-cloud-server-sdk@npm:^1.24.0":
-  version: 1.24.0
-  resolution: "@devcycle/js-cloud-server-sdk@npm:1.24.0"
+"@devcycle/js-cloud-server-sdk@npm:^1.25.0":
+  version: 1.25.0
+  resolution: "@devcycle/js-cloud-server-sdk@npm:1.25.0"
   dependencies:
-    "@devcycle/types": "npm:^1.25.0"
+    "@devcycle/types": "npm:^1.26.0"
     cross-fetch: "npm:^4.1.0"
     fetch-retry: "npm:^5.0.6"
     lodash: "npm:^4.17.21"
-  checksum: 10/0b403ced8d439042fdd393ce385d44faeca82beb1b827beff19aead4bd0f168345128f0f6061397db1349c21087e8f867ffbc4a292a46ccd60f964d23398d0ae
+  checksum: 10/bac5761ea15885c37d251989b7aaba61e7d6d83ed246b7650505c543e1b1efc7c4bd1dd539f906eae9843d776446649e6eaa5dc8678a290301ea5c3c1a60843d
   languageName: node
   linkType: hard
 
-"@devcycle/nodejs-server-sdk@npm:^1.45.0":
-  version: 1.45.0
-  resolution: "@devcycle/nodejs-server-sdk@npm:1.45.0"
+"@devcycle/nodejs-server-sdk@npm:^1.46.0":
+  version: 1.46.0
+  resolution: "@devcycle/nodejs-server-sdk@npm:1.46.0"
   dependencies:
-    "@devcycle/bucketing-assembly-script": "npm:^1.34.0"
-    "@devcycle/js-cloud-server-sdk": "npm:^1.24.0"
-    "@devcycle/types": "npm:^1.25.0"
+    "@devcycle/bucketing-assembly-script": "npm:^1.35.0"
+    "@devcycle/js-cloud-server-sdk": "npm:^1.25.0"
+    "@devcycle/types": "npm:^1.26.0"
     "@openfeature/core": "npm:^1.7.2"
     "@openfeature/server-sdk": "npm:^1.17.1"
     cross-fetch: "npm:^4.1.0"
@@ -68,20 +68,20 @@ __metadata:
       optional: true
     "@openfeature/multi-provider":
       optional: true
-  checksum: 10/94f1fe276d37e78bca03a4a64db01b488c3d0ac20d7e3708524c8264c4f900ebb99c80869c4ebc71ad4d3255be0b06d7b24e0875c605899e68254b3189d2b3f3
+  checksum: 10/0261a95c372efefcecdc4351d3edb559b69a5dc25d933dfebf77a5aaeb0648f1474ce89c6e79dfd354e81236f1d3b74271e7dfd9e704000cf1ab1f22d64700ab
   languageName: node
   linkType: hard
 
-"@devcycle/types@npm:^1.25.0":
-  version: 1.25.0
-  resolution: "@devcycle/types@npm:1.25.0"
+"@devcycle/types@npm:^1.26.0":
+  version: 1.26.0
+  resolution: "@devcycle/types@npm:1.26.0"
   dependencies:
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.1"
     iso-639-1: "npm:^2.1.15"
     lodash: "npm:^4.17.21"
     reflect-metadata: "npm:^0.1.14"
-  checksum: 10/136c1bc948a4a8565d6291f623661964ecb9bbe80e1219df404c839c378355cc3b20fb60ccf28286cc75cff129232a9d6399f8fd6395e01af3d86cde8cefa8f0
+  checksum: 10/7da641f3032ee7cb909645d241dbfdeb8d0960645d5ec6902f1f1f871d7bd4a9a61afdcbf0de534fcdd7d486839caf62df7b6384cbb4cee801ef6ac017a924cb
   languageName: node
   linkType: hard
 
@@ -1027,8 +1027,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@devcycle/js-client-sdk": "npm:^1.38.0"
-    "@devcycle/nodejs-server-sdk": "npm:^1.45.0"
+    "@devcycle/js-client-sdk": "npm:^1.39.0"
+    "@devcycle/nodejs-server-sdk": "npm:^1.46.0"
     "@koa/bodyparser": "npm:^5.1.1"
     "@koa/router": "npm:^13.0.1"
     "@types/koa": "npm:^2.15.0"
