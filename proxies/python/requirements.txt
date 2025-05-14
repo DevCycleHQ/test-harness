@@ -1,2 +1,2 @@
-Flask==3.1.0
+Flask==3.1.1
 devcycle-python-server-sdk==3.8.0
