@@ -43,6 +43,7 @@ runs:
               SDK_CAPABILITIES: ${{ inputs.sdk-capabilities }}
 
         - uses: actions/upload-artifact@v4
+          continue-on-error: true
           if: success() || failure()
           with:
               name: test-results
@@ -50,6 +51,7 @@ runs:
 
         - name: Test Report
           uses: dorny/test-reporter@v1
+          continue-on-error: true
           if: ${{ github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name }} && (success() || failure())
           with:
               name: Test Report # Name of the check run which will be created
