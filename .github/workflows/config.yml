@@ -14,6 +14,9 @@ on:
                 type: string
                 description: The title of the PR that triggered this test harness run
 
+permissions:
+    contents: read
+
 jobs:
     run-tests:
         runs-on:
