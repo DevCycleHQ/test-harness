@@ -404,7 +404,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@devcycle/test-harness@workspace:."
   dependencies:
-    "@devcycle/types": "npm:^1.24.0"
+    "@devcycle/types": "npm:^1.26.0"
     "@eresearchqut/jest-testcontainers": "npm:^3.7.1"
     "@koa/bodyparser": "npm:^5.1.1"
     "@koa/router": "npm:^13.0.1"
@@ -435,16 +435,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@devcycle/types@npm:^1.24.0":
-  version: 1.24.0
-  resolution: "@devcycle/types@npm:1.24.0"
+"@devcycle/types@npm:^1.26.0":
+  version: 1.26.0
+  resolution: "@devcycle/types@npm:1.26.0"
   dependencies:
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.1"
-    iso-639-1: "npm:^2.1.13"
+    iso-639-1: "npm:^2.1.15"
     lodash: "npm:^4.17.21"
-    reflect-metadata: "npm:^0.1.13"
-  checksum: 10/72d20fc364e3f3202dd3ea3731be118d5200a25844002b20354203c1304e03ac3a24c4d6d3d8d30f5ebba27c40d283fbd51efd4d15fea01103b7ece20757b96d
+    reflect-metadata: "npm:^0.1.14"
+  checksum: 10/7da641f3032ee7cb909645d241dbfdeb8d0960645d5ec6902f1f1f871d7bd4a9a61afdcbf0de534fcdd7d486839caf62df7b6384cbb4cee801ef6ac017a924cb
   languageName: node
   linkType: hard
 
@@ -3932,7 +3932,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iso-639-1@npm:^2.1.13":
+"iso-639-1@npm:^2.1.15":
   version: 2.1.15
   resolution: "iso-639-1@npm:2.1.15"
   checksum: 10/32f6cfdfa5e85eef54cb2df77829e6678e9479e9b6a7fdb7e75ba0005957d4da35ff315b69c354e216ba46044e4437b1823362d27dff14bcefbb408b2a66e2f8
@@ -5789,7 +5789,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reflect-metadata@npm:^0.1.13":
+"reflect-metadata@npm:^0.1.14":
   version: 0.1.14
   resolution: "reflect-metadata@npm:0.1.14"
   checksum: 10/fcab9c17ec3b9fea0e2f748c2129aceb57c24af6d8d13842b8a77c8c79dde727d7456ce293e76e8d7b267d1dbf93eea4c5b3c9101299a789a075824f2e40f1ee
