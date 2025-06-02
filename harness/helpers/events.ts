@@ -89,7 +89,7 @@ export const expectAggregateEvaluationEvent = ({
         metadata.clientUUID = expect.any(String)
     }
     if (hasCapability(sdkName, Capabilities.evalReasons)) {
-        // Eval reasoning is specific to each test and is outside the scope of testing in general for these vents.
+        // Eval reasoning is specific to each test and is outside the scope of testing in general for these events.
         metadata.eval = expect.any(Object)
     }
 
