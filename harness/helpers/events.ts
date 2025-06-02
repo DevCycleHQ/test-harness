@@ -88,6 +88,10 @@ export const expectAggregateEvaluationEvent = ({
         metadata.configLastModified = lastModified
         metadata.clientUUID = expect.any(String)
     }
+    if (hasCapability(sdkName, Capabilities.evalReasons)) {
+        // Eval reasoning is specific to each test and is outside the scope of testing in general for these vents.
+        metadata.eval = expect.any(Object)
+    }
 
     let optionalSDKConfigNewUser = []
     let optionalSDKConfigNewEvent = []
@@ -180,6 +184,10 @@ export const expectAggregateDefaultEvent = ({
             metadata.configLastModified = lastModified
         }
         metadata.clientUUID = expect.any(String)
+    }
+    if (hasCapability(sdkName, Capabilities.evalReasons)) {
+        // Eval reasoning is specific to each test and is outside the scope of testing in general for these vents.
+        metadata.eval = expect.any(Object)
     }
 
     let optionalSDKConfigNewUser = []
