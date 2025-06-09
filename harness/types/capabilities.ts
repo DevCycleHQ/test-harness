@@ -16,6 +16,7 @@ export const Capabilities = {
     v2Config: 'V2Config',
     sdkPlatform: 'SDKPlatform',
     variablesFeatureId: 'VariableFeatureId',
+    evalReasons: 'EvalReasons',
 }
 
 export const SDKPlatformMap = {
