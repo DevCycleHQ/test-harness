@@ -6,6 +6,7 @@ import {
     expectErrorMessageToBe,
     getSDKScope,
     cleanupCurrentClient,
+    hasCapability,
 } from '../helpers'
 import { Capabilities, SDKCapabilities } from '../types'
 
@@ -210,6 +211,11 @@ describe('Variable Tests - Cloud', () => {
         it.each(callVariableMethods)(
             'should return default if mock server returns %s mismatching default value type',
             async (method) => {
+                const hasCloudEvalReason = hasCapability(
+                    sdkName,
+                    Capabilities.cloudEvalReason,
+                )
+
                 scope
                     .post(
                         `/client/${testClient.clientId}/v1/variables/var_key`,
@@ -232,7 +238,6 @@ describe('Variable Tests - Cloud', () => {
                     variablesForTypes['string'].defaultValue,
                 )
                 const variable = await variableResponse.json()
-
                 // We can expect that the object we mocked out earlier is going to be
                 // what is returned to us from the proxy server and verify the entityType
                 // is of type "Variable"
@@ -244,6 +249,14 @@ describe('Variable Tests - Cloud', () => {
                         defaultValue: variablesForTypes['string'].defaultValue,
                         type: variablesForTypes['string'].type,
                         isDefaulted: true,
+                        ...(hasCloudEvalReason
+                            ? {
+                                  eval: {
+                                      reason: 'DEFAULT',
+                                      details: 'Variable Type Mismatch',
+                                  },
+                              }
+                            : {}),
                     },
                 })
             },
@@ -255,6 +268,11 @@ describe('Variable Tests - Cloud', () => {
             it.each(callVariableMethods)(
                 `should return default ${type} %s if mock server returns undefined`,
                 async (method) => {
+                    const hasCloudEvalReason = hasCapability(
+                        sdkName,
+                        Capabilities.cloudEvalReason,
+                    )
+
                     scope
                         .post(
                             `/client/${testClient.clientId}/v1/variables/var_key`,
@@ -281,6 +299,14 @@ describe('Variable Tests - Cloud', () => {
                             defaultValue: variablesForTypes[type].defaultValue,
                             type: variablesForTypes[type].type,
                             isDefaulted: true,
+                            ...(hasCloudEvalReason
+                                ? {
+                                      eval: {
+                                          reason: 'DEFAULT',
+                                          details: 'Error',
+                                      },
+                                  }
+                                : {}),
                         },
                     })
                 },
@@ -325,6 +351,11 @@ describe('Variable Tests - Cloud', () => {
                 `should return defaulted ${type} %s if mock server returns an internal error, \
                 after retrying 5 times`,
                 async (method) => {
+                    const hasCloudEvalReason = hasCapability(
+                        sdkName,
+                        Capabilities.cloudEvalReason,
+                    )
+
                     scope
                         .post(
                             `/client/${testClient.clientId}/v1/variables/var_key`,
@@ -353,6 +384,14 @@ describe('Variable Tests - Cloud', () => {
                             isDefaulted: true,
                             defaultValue: variablesForTypes[type].defaultValue,
                             type: variablesForTypes[type].type,
+                            ...(hasCloudEvalReason
+                                ? {
+                                      eval: {
+                                          reason: 'DEFAULT',
+                                          details: 'Error',
+                                      },
+                                  }
+                                : {}),
                         },
                     })
                 },
