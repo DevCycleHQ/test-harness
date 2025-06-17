@@ -66,6 +66,7 @@ describe('allVariables Tests - Cloud', () => {
                     200,
                     getMockedVariables(
                         hasCapability(sdkName, Capabilities.variablesFeatureId),
+                        hasCapability(sdkName, Capabilities.evalReason),
                     ),
                 )
             const response = await client.callAllVariables({
@@ -78,6 +79,7 @@ describe('allVariables Tests - Cloud', () => {
             expect(variablesMap).toEqual(
                 getMockedVariables(
                     hasCapability(sdkName, Capabilities.variablesFeatureId),
+                    hasCapability(sdkName, Capabilities.evalReason),
                 ),
             )
         })
@@ -92,6 +94,7 @@ describe('allVariables Tests - Cloud', () => {
                     200,
                     getMockedVariables(
                         hasCapability(sdkName, Capabilities.variablesFeatureId),
+                        hasCapability(sdkName, Capabilities.evalReason),
                     ),
                 )
 
@@ -112,6 +115,7 @@ describe('allVariables Tests - Cloud', () => {
                     200,
                     getMockedVariables(
                         hasCapability(sdkName, Capabilities.variablesFeatureId),
+                        hasCapability(sdkName, Capabilities.evalReason),
                     ),
                 )
 
