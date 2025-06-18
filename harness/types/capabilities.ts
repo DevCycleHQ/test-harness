@@ -36,7 +36,6 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.clientCustomData,
         Capabilities.variablesFeatureId,
         Capabilities.cloudEvalReason,
-        Capabilities.evalReason,
     ],
     'OF-NodeJS': [
         Capabilities.edgeDB,
@@ -47,7 +46,6 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.v2Config,
         Capabilities.sdkPlatform,
         Capabilities.variablesFeatureId,
-        Capabilities.evalReason,
     ],
     Python: [
         Capabilities.cloud,
