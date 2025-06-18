@@ -2,6 +2,7 @@ import { BucketedUserConfig, VariableType } from '@devcycle/types'
 
 export function getMockedVariables(
     hasVariablesFeatureId: boolean,
+    hasEvalReason: boolean,
 ): BucketedUserConfig['variables'] {
     return {
         'bool-var': {
@@ -12,6 +13,14 @@ export function getMockedVariables(
             ...(hasVariablesFeatureId
                 ? { _feature: '638680d6fcb67b96878d90e6' }
                 : {}),
+            ...(hasEvalReason
+                ? {
+                      eval: {
+                          details: 'Custom Data -> should-bucket',
+                          reason: 'TARGETING_MATCH',
+                      },
+                  }
+                : {}),
         },
         'string-var': {
             _id: '638681f059f1b81cc9e6c7fb',
@@ -21,6 +30,14 @@ export function getMockedVariables(
             ...(hasVariablesFeatureId
                 ? { _feature: '638680d6fcb67b96878d90e6' }
                 : {}),
+            ...(hasEvalReason
+                ? {
+                      eval: {
+                          details: 'Custom Data -> should-bucket',
+                          reason: 'TARGETING_MATCH',
+                      },
+                  }
+                : {}),
         },
         'number-var': {
             _id: '638681f059f1b81cc9e6c7fc',
@@ -29,6 +46,14 @@ export function getMockedVariables(
             value: 1,
             ...(hasVariablesFeatureId
                 ? { _feature: '638680d6fcb67b96878d90e6' }
+                : {}),
+            ...(hasEvalReason
+                ? {
+                      eval: {
+                          details: 'Custom Data -> should-bucket',
+                          reason: 'TARGETING_MATCH',
+                      },
+                  }
                 : {}),
         },
         'json-var': {
@@ -41,6 +66,14 @@ export function getMockedVariables(
             ...(hasVariablesFeatureId
                 ? { _feature: '638680d6fcb67b96878d90e6' }
                 : {}),
+            ...(hasEvalReason
+                ? {
+                      eval: {
+                          details: 'Custom Data -> should-bucket',
+                          reason: 'TARGETING_MATCH',
+                      },
+                  }
+                : {}),
         },
         'schedule-feature': {
             _id: '6386813a59f1b81cc9e6c68f',
@@ -50,6 +83,14 @@ export function getMockedVariables(
             ...(hasVariablesFeatureId
                 ? { _feature: '6386813a59f1b81cc9e6c68d' }
                 : {}),
+            ...(hasEvalReason
+                ? {
+                      eval: {
+                          details: 'All Users',
+                          reason: 'TARGETING_MATCH',
+                      },
+                  }
+                : {}),
         },
         'unicode-var': {
             _id: '638681f059f1b81cc9e6c7fe',
@@ -58,6 +99,14 @@ export function getMockedVariables(
             value: '↑↑↓↓←→←→BA 🤖',
             ...(hasVariablesFeatureId
                 ? { _feature: '638680d6fcb67b96878d90e6' }
+                : {}),
+            ...(hasEvalReason
+                ? {
+                      eval: {
+                          details: 'Custom Data -> should-bucket',
+                          reason: 'TARGETING_MATCH',
+                      },
+                  }
                 : {}),
         },
     }

@@ -73,6 +73,7 @@ describe('allVariables Tests - Local', () => {
         expect(variablesMap).toEqual(
             getMockedVariables(
                 hasCapability(sdkName, Capabilities.variablesFeatureId),
+                hasCapability(sdkName, Capabilities.evalReason),
             ),
         )
     })
