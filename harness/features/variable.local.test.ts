@@ -6,7 +6,12 @@ import {
     LocalTestClient,
 } from '../helpers'
 import { Capabilities } from '../types'
-import { VariableType } from '@devcycle/types'
+import {
+    VariableType,
+    EVAL_REASONS,
+    EVAL_REASON_DETAILS,
+    DEFAULT_REASON_DETAILS,
+} from '@devcycle/types'
 import {
     expectAggregateDefaultEvent,
     expectAggregateEvaluationEvent,
@@ -137,6 +142,15 @@ describe('Variable Tests - Local', () => {
                             defaultValue: defaultValue,
                             value: variationOn,
                             evalReason: expect.toBeNil(),
+                            ...(hasCapability(sdkName, Capabilities.evalReason)
+                                ? {
+                                      eval: {
+                                          details: `${EVAL_REASON_DETAILS.CUSTOM_DATA} -> should-bucket`,
+                                          reason: EVAL_REASONS.TARGETING_MATCH,
+                                          target_id: '638680d659f1b81cc9e6c5ab',
+                                      },
+                                  }
+                                : {}),
                         },
                     })
 
@@ -192,6 +206,7 @@ describe('Variable Tests - Local', () => {
                         wrongTypeDefault === '1'
                             ? VariableType.string
                             : VariableType.number,
+                        DEFAULT_REASON_DETAILS.USER_NOT_TARGETED,
                     )
 
                     await eventResult.wait()
@@ -244,6 +259,7 @@ describe('Variable Tests - Local', () => {
                         method,
                         defaultValue,
                         variableType,
+                        DEFAULT_REASON_DETAILS.USER_NOT_TARGETED,
                     )
 
                     await eventResult.wait()
@@ -286,6 +302,7 @@ describe('Variable Tests - Local', () => {
                         method,
                         defaultValue,
                         variableType,
+                        DEFAULT_REASON_DETAILS.USER_NOT_TARGETED,
                     )
 
                     await eventResult.wait()
@@ -415,6 +432,15 @@ describe('Variable Tests - Local', () => {
                         defaultValue: 'default',
                         value: '↑↑↓↓←→←→BA 🤖',
                         evalReason: expect.toBeNil(),
+                        ...(hasCapability(sdkName, Capabilities.evalReason)
+                            ? {
+                                  eval: {
+                                      details: `${EVAL_REASON_DETAILS.CUSTOM_DATA} -> should-bucket`,
+                                      reason: EVAL_REASONS.TARGETING_MATCH,
+                                      target_id: '638680d659f1b81cc9e6c5ab',
+                                  },
+                              }
+                            : {}),
                     },
                     logs: [],
                 })
@@ -447,10 +473,7 @@ describe('Variable Tests - Local', () => {
                     testClient = new LocalTestClient(sdkName)
 
                     const configRequestUrl = testClient.getValidConfigPath()
-                    scope
-                        .get(configRequestUrl)
-                        .delay(2000)
-                        .reply(200)
+                    scope.get(configRequestUrl).delay(2000).reply(200)
 
                     eventsUrl = `/client/${testClient.clientId}/v1/events/batch`
 
@@ -490,7 +513,7 @@ describe('Variable Tests - Local', () => {
                     expectAggregateDefaultEvent({
                         body: eventResult.body,
                         variableKey: key,
-                        defaultReason: 'MISSING_CONFIG',
+                        defaultReason: 'MISSING_CONFIG2',
                         value: 1,
                         etag: null,
                         rayId: null,
@@ -592,6 +615,7 @@ describe('Variable Tests - Local', () => {
         method: string,
         defaultValue: ValueTypes,
         type: VariableType,
+        details = DEFAULT_REASON_DETAILS.MISSING_CONFIG,
     ) => {
         expectVariableResponse(variable, method, {
             entityType: 'Variable',
@@ -602,6 +626,14 @@ describe('Variable Tests - Local', () => {
                 key: key,
                 type,
                 evalReason: expect.toBeNil(),
+                ...(hasCapability(sdkName, Capabilities.evalReason)
+                    ? {
+                          eval: {
+                              reason: EVAL_REASONS.DEFAULT,
+                              details,
+                          },
+                      }
+                    : {}),
             },
             logs: [],
         })
