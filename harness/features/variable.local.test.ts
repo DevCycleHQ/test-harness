@@ -513,7 +513,7 @@ describe('Variable Tests - Local', () => {
                     expectAggregateDefaultEvent({
                         body: eventResult.body,
                         variableKey: key,
-                        defaultReason: 'MISSING_CONFIG2',
+                        defaultReason: 'MISSING_CONFIG',
                         value: 1,
                         etag: null,
                         rayId: null,
