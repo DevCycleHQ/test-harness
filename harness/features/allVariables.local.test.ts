@@ -3,12 +3,15 @@ import {
     waitForRequest,
     getSDKScope,
     hasCapability,
+    describeCapability,
 } from '../helpers'
 import { Capabilities } from '../types'
 import { getMockedVariables } from '../mockData'
 
 describe('allVariables Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
+
+    describeCapability(sdkName, Capabilities.allVariables)(sdkName, () => {
 
     it('should return an empty object if client is not initialized', async () => {
         const delayClient = new LocalTestClient(sdkName)
@@ -76,5 +79,6 @@ describe('allVariables Tests - Local', () => {
                 hasCapability(sdkName, Capabilities.evalReason),
             ),
         )
+    })
     })
 })

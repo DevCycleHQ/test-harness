@@ -1,9 +1,11 @@
-import { LocalTestClient, getSDKScope, hasCapability } from '../helpers'
+import { LocalTestClient, getSDKScope, hasCapability, describeCapability } from '../helpers'
 import { Capabilities } from '../types'
 import { expectedFeaturesVariationOn } from '../mockData'
 
 describe('allFeatures Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
+
+    describeCapability(sdkName, Capabilities.allFeatures)(sdkName, () => {
 
     describe('uninitialized client', () => {
         let testClient: LocalTestClient
@@ -63,5 +65,6 @@ describe('allFeatures Tests - Local', () => {
             const features = (await featuresResponse.json()).data
             expect(features).toMatchObject(expectedFeaturesVariationOn)
         })
+    })
     })
 })
