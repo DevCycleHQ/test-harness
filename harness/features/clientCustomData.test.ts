@@ -1,4 +1,9 @@
 import {
+    DEFAULT_REASON_DETAILS,
+    EVAL_REASON_DETAILS,
+    EVAL_REASONS,
+} from '@devcycle/types'
+import {
     LocalTestClient,
     describeCapability,
     hasCapability,
@@ -37,6 +42,15 @@ describe('Client Custom Data Tests', () => {
                         key: 'string-var',
                         defaultValue: 'some-default',
                         value: 'string',
+                        ...(hasCapability(sdkName, Capabilities.evalReason)
+                            ? {
+                                  eval: {
+                                      details: `${EVAL_REASON_DETAILS.CUSTOM_DATA} -> should-bucket`,
+                                      reason: EVAL_REASONS.TARGETING_MATCH,
+                                      target_id: '638680d659f1b81cc9e6c5ab',
+                                  },
+                              }
+                            : {}),
                     }),
                 }),
             )
@@ -77,6 +91,15 @@ describe('Client Custom Data Tests', () => {
                         key: 'string-var',
                         defaultValue: 'some-default',
                         value: 'some-default',
+                        ...(hasCapability(sdkName, Capabilities.evalReason)
+                            ? {
+                                  eval: {
+                                      details:
+                                          DEFAULT_REASON_DETAILS.MISSING_CONFIG,
+                                      reason: EVAL_REASONS.DEFAULT,
+                                  },
+                              }
+                            : {}),
                     },
                 }),
             )

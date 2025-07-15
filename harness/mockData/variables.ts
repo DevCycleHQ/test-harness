@@ -1,4 +1,4 @@
-import { BucketedUserConfig, VariableType } from '@devcycle/types'
+import { BucketedUserConfig, EVAL_REASONS, VariableType } from '@devcycle/types'
 
 export function getMockedVariables(
     hasVariablesFeatureId: boolean,
@@ -17,7 +17,7 @@ export function getMockedVariables(
                 ? {
                       eval: {
                           details: 'Custom Data -> should-bucket',
-                          reason: 'TARGETING_MATCH',
+                          reason: EVAL_REASONS.TARGETING_MATCH,
                           target_id: '638680d659f1b81cc9e6c5ab',
                       },
                   }
@@ -35,7 +35,7 @@ export function getMockedVariables(
                 ? {
                       eval: {
                           details: 'Custom Data -> should-bucket',
-                          reason: 'TARGETING_MATCH',
+                          reason: EVAL_REASONS.TARGETING_MATCH,
                           target_id: '638680d659f1b81cc9e6c5ab',
                       },
                   }
@@ -53,7 +53,7 @@ export function getMockedVariables(
                 ? {
                       eval: {
                           details: 'Custom Data -> should-bucket',
-                          reason: 'TARGETING_MATCH',
+                          reason: EVAL_REASONS.TARGETING_MATCH,
                           target_id: '638680d659f1b81cc9e6c5ab',
                       },
                   }
@@ -73,7 +73,7 @@ export function getMockedVariables(
                 ? {
                       eval: {
                           details: 'Custom Data -> should-bucket',
-                          reason: 'TARGETING_MATCH',
+                          reason: EVAL_REASONS.TARGETING_MATCH,
                           target_id: '638680d659f1b81cc9e6c5ab',
                       },
                   }
@@ -91,7 +91,7 @@ export function getMockedVariables(
                 ? {
                       eval: {
                           details: 'All Users',
-                          reason: 'TARGETING_MATCH',
+                          reason: EVAL_REASONS.TARGETING_MATCH,
                           target_id: '6386813a59f1b81cc9e6c6b6',
                       },
                   }
@@ -109,7 +109,7 @@ export function getMockedVariables(
                 ? {
                       eval: {
                           details: 'Custom Data -> should-bucket',
-                          reason: 'TARGETING_MATCH',
+                          reason: EVAL_REASONS.TARGETING_MATCH,
                           target_id: '638680d659f1b81cc9e6c5ab',
                       },
                   }
