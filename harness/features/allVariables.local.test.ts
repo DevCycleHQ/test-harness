@@ -76,7 +76,9 @@ describe('allVariables Tests - Local', () => {
             expect(variablesMap).toEqual(
                 getMockedVariables(
                     hasCapability(sdkName, Capabilities.variablesFeatureId),
-                    hasCapability(sdkName, Capabilities.evalReason),
+                    hasCapability(sdkName, Capabilities.evalReason) ||
+                        // TODO: this is just to get tests to pass since docker container now has latest wasm code returning eval reasons
+                        hasCapability(sdkName, Capabilities.tempEvalReason),
                 ),
             )
         })
