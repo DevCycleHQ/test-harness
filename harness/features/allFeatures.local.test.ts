@@ -10,6 +10,7 @@ import { expectedFeaturesVariationOn } from '../mockData'
 describe('allFeatures Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
 
+    //TODO: when tests are updated for OF-NodeJS eval capability, remove this allFeatures capability wrapper
     describeCapability(sdkName, Capabilities.allFeatures)(sdkName, () => {
         describe('uninitialized client', () => {
             let testClient: LocalTestClient

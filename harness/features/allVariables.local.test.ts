@@ -11,6 +11,7 @@ import { getMockedVariables } from '../mockData'
 describe('allVariables Tests - Local', () => {
     const { sdkName, scope } = getSDKScope()
 
+    //TODO: when tests are updated for OF-NodeJS eval capability, remove this allVariables capability wrapper
     describeCapability(sdkName, Capabilities.allVariables)(sdkName, () => {
         it('should return an empty object if client is not initialized', async () => {
             const delayClient = new LocalTestClient(sdkName)

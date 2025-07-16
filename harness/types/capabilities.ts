@@ -26,6 +26,7 @@ export const SDKPlatformMap = {
     'OF-NodeJS': 'nodejs-of',
 }
 
+//TODO: when tests are updated for OF-NodeJS eval capability, remove concept of allVariables/allFeatures as a capability
 let sdkCapabilities: { [key: string]: string[] } = {
     NodeJS: [
         Capabilities.edgeDB,
