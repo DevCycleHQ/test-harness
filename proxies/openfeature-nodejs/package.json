@@ -4,7 +4,7 @@
         "@devcycle/nodejs-server-sdk": "^1.51.0",
         "@koa/bodyparser": "^5.1.1",
         "@koa/router": "^13.1.0",
-        "@openfeature/core": "^1.8.0",
+        "@openfeature/core": "^1.8.1",
         "@openfeature/server-sdk": "^1.18.0",
         "@types/koa": "^2.15.0",
         "koa": "^2.16.1",
