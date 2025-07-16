@@ -34,6 +34,7 @@ describe('Initialize Tests - Local', () => {
         expectErrorMessageToBe(
             exception,
             'Missing SDK key! Call initialize with a valid SDK key',
+            'Invalid SDK key provided. Please call initialize with a valid server SDK key',
         )
     })
 

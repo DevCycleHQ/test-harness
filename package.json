@@ -23,7 +23,7 @@
     "author": "DevCycle <engineering@devcycle.com>",
     "license": "MIT",
     "devDependencies": {
-        "@devcycle/types": "^1.29.0",
+        "@devcycle/types": "^1.30.2",
         "@eresearchqut/jest-testcontainers": "^3.7.1",
         "@koa/bodyparser": "^5.1.1",
         "@koa/router": "^13.0.1",
