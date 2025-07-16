@@ -32,8 +32,6 @@ export const handleClient: Router.IMiddleware<State, Context> = async (ctx) => {
             ...options,
             enableCloudBucketing,
             disableRealTimeUpdates: true,
-            // TODO: remove this once the Provider is updated to set the sdkPlatform
-            sdkPlatform: 'nodejs-of',
         })
 
         try {

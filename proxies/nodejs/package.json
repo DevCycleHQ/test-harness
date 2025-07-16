@@ -1,7 +1,7 @@
 {
     "dependencies": {
-        "@devcycle/js-client-sdk": "^1.44.0",
-        "@devcycle/nodejs-server-sdk": "^1.51.0",
+        "@devcycle/js-client-sdk": "^1.45.1",
+        "@devcycle/nodejs-server-sdk": "^1.52.1",
         "@koa/bodyparser": "^5.1.1",
         "@koa/router": "^13.0.1",
         "@types/koa": "^2.15.0",
