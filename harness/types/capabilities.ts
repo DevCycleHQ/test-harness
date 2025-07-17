@@ -37,7 +37,6 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.v2Config,
         Capabilities.clientCustomData,
         Capabilities.variablesFeatureId,
-        Capabilities.evalReason,
         Capabilities.allVariables,
         Capabilities.allFeatures,
     ],
@@ -50,7 +49,6 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.v2Config,
         Capabilities.sdkPlatform,
         Capabilities.variablesFeatureId,
-        Capabilities.evalReason,
     ],
     Python: [
         Capabilities.cloud,
