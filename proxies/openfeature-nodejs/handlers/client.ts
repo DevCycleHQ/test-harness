@@ -1,5 +1,5 @@
 import Koa from 'koa'
-import { initializeDevCycle } from '@devcycle/nodejs-server-sdk'
+import { DevCycleProvider } from '@devcycle/nodejs-server-sdk'
 import { dataStore } from '../app'
 import { OpenFeature } from '@openfeature/server-sdk'
 import Router from '@koa/router'
@@ -28,28 +28,29 @@ export const handleClient: Router.IMiddleware<State, Context> = async (ctx) => {
 
     try {
         let asyncError
-        const dvcClient = initializeDevCycle(sdkKey, {
+        const dvcProvider = new DevCycleProvider(sdkKey, {
             ...options,
             enableCloudBucketing,
             disableRealTimeUpdates: true,
         })
 
         try {
-            await OpenFeature.setProviderAndWait(
-                await dvcClient.getOpenFeatureProvider(),
-            )
+            await OpenFeature.setProviderAndWait(dvcProvider)
         } catch (e) {
             asyncError = e
         }
         const openFeatureClient = OpenFeature.getClient()
 
-        dataStore.clients[clientId] = { dvcClient, openFeatureClient }
-        ctx.status = 201
-        ctx.set('Location', `client/${clientId}`)
-
         if (asyncError) {
-            ctx.body = { asyncError: asyncError.message }
+            ctx.status = 200
+            ctx.body = { exception: asyncError.message }
         } else {
+            dataStore.clients[clientId] = {
+                dvcClient: dvcProvider.devcycleClient,
+                openFeatureClient,
+            }
+            ctx.status = 201
+            ctx.set('Location', `client/${clientId}`)
             ctx.body = { message: 'success' }
         }
     } catch (error) {
