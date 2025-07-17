@@ -19,6 +19,7 @@ export const Capabilities = {
     evalReason: 'EvalReason',
     allVariables: 'AllVariables',
     allFeatures: 'AllFeatures',
+    tempEvalReason: 'tempEvalReason',
 }
 
 export const SDKPlatformMap = {
@@ -39,6 +40,8 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.variablesFeatureId,
         Capabilities.allVariables,
         Capabilities.allFeatures,
+        //TODO: remove this when node released and use evalReason
+        Capabilities.tempEvalReason,
     ],
     'OF-NodeJS': [
         Capabilities.edgeDB,
