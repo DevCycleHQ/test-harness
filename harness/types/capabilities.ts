@@ -17,12 +17,15 @@ export const Capabilities = {
     sdkPlatform: 'SDKPlatform',
     variablesFeatureId: 'VariableFeatureId',
     evalReason: 'EvalReason',
+    allVariables: 'AllVariables',
+    allFeatures: 'AllFeatures',
 }
 
 export const SDKPlatformMap = {
     'OF-NodeJS': 'nodejs-of',
 }
 
+//TODO: when tests are updated for OF-NodeJS eval capability, remove concept of allVariables/allFeatures as a capability
 let sdkCapabilities: { [key: string]: string[] } = {
     NodeJS: [
         Capabilities.edgeDB,
@@ -35,6 +38,8 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.clientCustomData,
         Capabilities.variablesFeatureId,
         Capabilities.evalReason,
+        Capabilities.allVariables,
+        Capabilities.allFeatures,
     ],
     'OF-NodeJS': [
         Capabilities.edgeDB,
@@ -51,12 +56,16 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.v2Config,
+        Capabilities.allVariables,
+        Capabilities.allFeatures,
     ],
     DotNet: [
         Capabilities.cloud,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.v2Config,
+        Capabilities.allVariables,
+        Capabilities.allFeatures,
         //Capabilities.sdkConfigEvent,
         //Capabilities.clientUUID,
     ],
@@ -65,6 +74,8 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.v2Config,
+        Capabilities.allVariables,
+        Capabilities.allFeatures,
     ],
     Go: [
         Capabilities.cloud,
@@ -77,13 +88,21 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.sdkConfigEvent,
         Capabilities.clientUUID,
         Capabilities.v2Config,
+        Capabilities.allVariables,
+        Capabilities.allFeatures,
     ],
     Ruby: [
         Capabilities.clientCustomData,
         Capabilities.v2Config,
         Capabilities.variablesFeatureId,
+        Capabilities.allVariables,
+        Capabilities.allFeatures,
     ],
-    PHP: [Capabilities.cloudProxy],
+    PHP: [
+        Capabilities.cloudProxy,
+        Capabilities.allVariables,
+        Capabilities.allFeatures,
+    ],
 }
 
 export const getCapabilities = () => {

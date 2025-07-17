@@ -55,6 +55,8 @@ describe('SDKCapabilities Unit Tests', () => {
                 'SDKConfigEvent',
                 'ClientUUID',
                 'V2Config',
+                'AllVariables',
+                'AllFeatures',
             ],
         })
     })
@@ -77,6 +79,8 @@ describe('SDKCapabilities Unit Tests', () => {
             'SDKConfigEvent',
             'ClientUUID',
             'V2Config',
+            'AllVariables',
+            'AllFeatures',
         ])
     })
 })
