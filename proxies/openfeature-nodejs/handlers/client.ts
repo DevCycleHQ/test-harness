@@ -41,16 +41,16 @@ export const handleClient: Router.IMiddleware<State, Context> = async (ctx) => {
         }
         const openFeatureClient = OpenFeature.getClient()
 
-        dataStore.clients[clientId] = {
-            dvcClient: dvcProvider.devcycleClient,
-            openFeatureClient,
-        }
-        ctx.status = 201
-        ctx.set('Location', `client/${clientId}`)
-
         if (asyncError) {
-            ctx.body = { asyncError: asyncError.message }
+            ctx.status = 200
+            ctx.body = { exception: asyncError.message }
         } else {
+            dataStore.clients[clientId] = {
+                dvcClient: dvcProvider.devcycleClient,
+                openFeatureClient,
+            }
+            ctx.status = 201
+            ctx.set('Location', `client/${clientId}`)
             ctx.body = { message: 'success' }
         }
     } catch (error) {
