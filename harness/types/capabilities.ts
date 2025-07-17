@@ -16,7 +16,6 @@ export const Capabilities = {
     v2Config: 'V2Config',
     sdkPlatform: 'SDKPlatform',
     variablesFeatureId: 'VariableFeatureId',
-    cloudEvalReason: 'CloudEvalReason',
     evalReason: 'EvalReason',
 }
 
@@ -35,7 +34,6 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.v2Config,
         Capabilities.clientCustomData,
         Capabilities.variablesFeatureId,
-        Capabilities.cloudEvalReason,
         Capabilities.evalReason,
     ],
     'OF-NodeJS': [

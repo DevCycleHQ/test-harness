@@ -240,6 +240,7 @@ class DVCVariable implements DVCVariableInterface<any> {
         public defaultValue: DVCVariableInterface<any>['value'],
         public isDefaulted: DVCVariableInterface<any>['isDefaulted'],
         public type: DVCVariableInterface<any>['type'],
+        public reason?: string,
     ) {}
 }
 
@@ -264,14 +265,16 @@ const dvcVariableFromEvaluationDetails = <T extends FlagValue>(
         }
     }
 
+    const isDefaulted = evalDetails.reason === StandardResolutionReasons.DEFAULT
     const dvcVar = new DVCVariable(
         evalDetails.flagKey,
         evalDetails.value as DVCVariable['value'],
         defaultValue as DVCVariable['value'],
-        evalDetails.reason !== StandardResolutionReasons.TARGETING_MATCH,
+        isDefaulted,
         // Capitalize first letter of type
         (varType.charAt(0).toUpperCase() +
             varType.slice(1)) as DVCVariable['type'],
+        evalDetails.reason,
     )
     console.log(`dvcVar: ${JSON.stringify(dvcVar)}`)
     return dvcVar
