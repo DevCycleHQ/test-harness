@@ -1,3 +1,4 @@
+import { EVAL_REASONS } from '@devcycle/types'
 import {
     forEachVariableType,
     variablesForTypes,
@@ -49,6 +50,16 @@ describe('Variable Tests - Cloud', () => {
                       },
             ),
         )
+    }
+    function getEvalReason(
+        sdkName: string,
+        reason: string,
+        details?: string,
+        target_id?: string,
+    ) {
+        return sdkName === 'OF-NodeJS'
+            ? { reason }
+            : { eval: { reason, details, target_id } }
     }
 
     // This describeCapability only runs if the SDK has the "cloud" capability.
@@ -250,12 +261,11 @@ describe('Variable Tests - Cloud', () => {
                         type: variablesForTypes['string'].type,
                         isDefaulted: true,
                         ...(hasCloudEvalReason
-                            ? {
-                                  eval: {
-                                      reason: 'DEFAULT',
-                                      details: 'Variable Type Mismatch',
-                                  },
-                              }
+                            ? getEvalReason(
+                                  sdkName,
+                                  EVAL_REASONS.DEFAULT,
+                                  'Variable Type Mismatch',
+                              )
                             : {}),
                     },
                 })
@@ -300,12 +310,11 @@ describe('Variable Tests - Cloud', () => {
                             type: variablesForTypes[type].type,
                             isDefaulted: true,
                             ...(hasCloudEvalReason
-                                ? {
-                                      eval: {
-                                          reason: 'DEFAULT',
-                                          details: 'Error',
-                                      },
-                                  }
+                                ? getEvalReason(
+                                      sdkName,
+                                      EVAL_REASONS.DEFAULT,
+                                      'Error',
+                                  )
                                 : {}),
                         },
                     })
@@ -316,6 +325,10 @@ describe('Variable Tests - Cloud', () => {
                 `should return ${type} %s if mock server returns \
                 proper variable matching default value type`,
                 async (method) => {
+                    const hasCloudEvalReason = hasCapability(
+                        sdkName,
+                        Capabilities.cloudEvalReason,
+                    )
                     scope
                         .post(
                             `/client/${testClient.clientId}/v1/variables/var_key`,
@@ -342,6 +355,9 @@ describe('Variable Tests - Cloud', () => {
                             defaultValue: variablesForTypes[type].defaultValue,
                             isDefaulted: false,
                             type: variablesForTypes[type].type,
+                            ...(hasCloudEvalReason && sdkName === 'OF-NodeJS'
+                                ? { reason: EVAL_REASONS.TARGETING_MATCH }
+                                : {}),
                         },
                     })
                 },
@@ -385,12 +401,11 @@ describe('Variable Tests - Cloud', () => {
                             defaultValue: variablesForTypes[type].defaultValue,
                             type: variablesForTypes[type].type,
                             ...(hasCloudEvalReason
-                                ? {
-                                      eval: {
-                                          reason: 'DEFAULT',
-                                          details: 'Error',
-                                      },
-                                  }
+                                ? getEvalReason(
+                                      sdkName,
+                                      EVAL_REASONS.DEFAULT,
+                                      'Error',
+                                  )
                                 : {}),
                         },
                     })

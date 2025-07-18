@@ -143,13 +143,12 @@ describe('Variable Tests - Local', () => {
                             value: variationOn,
                             evalReason: expect.toBeNil(),
                             ...(hasCapability(sdkName, Capabilities.evalReason)
-                                ? {
-                                      eval: {
-                                          details: `${EVAL_REASON_DETAILS.CUSTOM_DATA} -> should-bucket`,
-                                          reason: EVAL_REASONS.TARGETING_MATCH,
-                                          target_id: '638680d659f1b81cc9e6c5ab',
-                                      },
-                                  }
+                                ? getEvalReason(
+                                      sdkName,
+                                      EVAL_REASONS.TARGETING_MATCH,
+                                      `${EVAL_REASON_DETAILS.CUSTOM_DATA} -> should-bucket`,
+                                      '638680d659f1b81cc9e6c5ab',
+                                  )
                                 : {}),
                         },
                     })
@@ -433,13 +432,12 @@ describe('Variable Tests - Local', () => {
                         value: '↑↑↓↓←→←→BA 🤖',
                         evalReason: expect.toBeNil(),
                         ...(hasCapability(sdkName, Capabilities.evalReason)
-                            ? {
-                                  eval: {
-                                      details: `${EVAL_REASON_DETAILS.CUSTOM_DATA} -> should-bucket`,
-                                      reason: EVAL_REASONS.TARGETING_MATCH,
-                                      target_id: '638680d659f1b81cc9e6c5ab',
-                                  },
-                              }
+                            ? getEvalReason(
+                                  sdkName,
+                                  EVAL_REASONS.TARGETING_MATCH,
+                                  `${EVAL_REASON_DETAILS.CUSTOM_DATA} -> should-bucket`,
+                                  '638680d659f1b81cc9e6c5ab',
+                              )
                             : {}),
                     },
                     logs: [],
@@ -627,15 +625,19 @@ describe('Variable Tests - Local', () => {
                 type,
                 evalReason: expect.toBeNil(),
                 ...(hasCapability(sdkName, Capabilities.evalReason)
-                    ? {
-                          eval: {
-                              reason: EVAL_REASONS.DEFAULT,
-                              details,
-                          },
-                      }
+                    ? getEvalReason(sdkName, EVAL_REASONS.DEFAULT, details)
                     : {}),
             },
-            logs: [],
         })
+    }
+    function getEvalReason(
+        sdkName: string,
+        reason: string,
+        details?: string,
+        target_id?: string,
+    ) {
+        return sdkName === 'OF-NodeJS'
+            ? { reason }
+            : { eval: { reason, details, target_id } }
     }
 })
