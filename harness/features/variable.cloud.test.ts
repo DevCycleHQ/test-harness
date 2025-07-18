@@ -367,9 +367,9 @@ describe('Variable Tests - Cloud', () => {
                 `should return defaulted ${type} %s if mock server returns an internal error, \
                 after retrying 5 times`,
                 async (method) => {
-                    const hasEvalReason = hasCapability(
+                    const hasCloudEvalReason = hasCapability(
                         sdkName,
-                        Capabilities.evalReason,
+                        Capabilities.cloudEvalReason,
                     )
 
                     scope
@@ -400,7 +400,7 @@ describe('Variable Tests - Cloud', () => {
                             isDefaulted: true,
                             defaultValue: variablesForTypes[type].defaultValue,
                             type: variablesForTypes[type].type,
-                            ...(hasEvalReason
+                            ...(hasCloudEvalReason
                                 ? getEvalReason(
                                       sdkName,
                                       EVAL_REASONS.DEFAULT,
