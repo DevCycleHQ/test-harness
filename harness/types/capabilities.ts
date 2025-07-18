@@ -16,6 +16,7 @@ export const Capabilities = {
     v2Config: 'V2Config',
     sdkPlatform: 'SDKPlatform',
     variablesFeatureId: 'VariableFeatureId',
+    cloudEvalReason: 'CloudEvalReason',
     evalReason: 'EvalReason',
     allVariables: 'AllVariables',
     allFeatures: 'AllFeatures',
@@ -38,6 +39,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.v2Config,
         Capabilities.clientCustomData,
         Capabilities.variablesFeatureId,
+        Capabilities.cloudEvalReason,
         Capabilities.allVariables,
         Capabilities.allFeatures,
         //TODO: remove this when node released and use evalReason

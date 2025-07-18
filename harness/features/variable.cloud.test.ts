@@ -222,9 +222,9 @@ describe('Variable Tests - Cloud', () => {
         it.each(callVariableMethods)(
             'should return default if mock server returns %s mismatching default value type',
             async (method) => {
-                const hasEvalReason = hasCapability(
+                const hasCloudEvalReason = hasCapability(
                     sdkName,
-                    Capabilities.evalReason,
+                    Capabilities.cloudEvalReason,
                 )
 
                 scope
@@ -260,7 +260,7 @@ describe('Variable Tests - Cloud', () => {
                         defaultValue: variablesForTypes['string'].defaultValue,
                         type: variablesForTypes['string'].type,
                         isDefaulted: true,
-                        ...(hasEvalReason
+                        ...(hasCloudEvalReason
                             ? getEvalReason(
                                   sdkName,
                                   EVAL_REASONS.DEFAULT,
@@ -278,9 +278,9 @@ describe('Variable Tests - Cloud', () => {
             it.each(callVariableMethods)(
                 `should return default ${type} %s if mock server returns undefined`,
                 async (method) => {
-                    const hasEvalReason = hasCapability(
+                    const hasCloudEvalReason = hasCapability(
                         sdkName,
-                        Capabilities.evalReason,
+                        Capabilities.cloudEvalReason,
                     )
 
                     scope
@@ -309,7 +309,7 @@ describe('Variable Tests - Cloud', () => {
                             defaultValue: variablesForTypes[type].defaultValue,
                             type: variablesForTypes[type].type,
                             isDefaulted: true,
-                            ...(hasEvalReason
+                            ...(hasCloudEvalReason
                                 ? getEvalReason(
                                       sdkName,
                                       EVAL_REASONS.DEFAULT,
@@ -325,9 +325,9 @@ describe('Variable Tests - Cloud', () => {
                 `should return ${type} %s if mock server returns \
                 proper variable matching default value type`,
                 async (method) => {
-                    const hasEvalReason = hasCapability(
+                    const hasCloudEvalReason = hasCapability(
                         sdkName,
-                        Capabilities.evalReason,
+                        Capabilities.cloudEvalReason,
                     )
                     scope
                         .post(
@@ -355,7 +355,7 @@ describe('Variable Tests - Cloud', () => {
                             defaultValue: variablesForTypes[type].defaultValue,
                             isDefaulted: false,
                             type: variablesForTypes[type].type,
-                            ...(hasEvalReason && sdkName === 'OF-NodeJS'
+                            ...(hasCloudEvalReason && sdkName === 'OF-NodeJS'
                                 ? { reason: EVAL_REASONS.TARGETING_MATCH }
                                 : {}),
                         },
