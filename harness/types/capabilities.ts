@@ -55,6 +55,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.sdkPlatform,
         Capabilities.variablesFeatureId,
         Capabilities.evalReason,
+        Capabilities.cloudEvalReason,
     ],
     Python: [
         Capabilities.cloud,
