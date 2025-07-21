@@ -241,6 +241,7 @@ class DVCVariable implements DVCVariableInterface<any> {
         public isDefaulted: DVCVariableInterface<any>['isDefaulted'],
         public type: DVCVariableInterface<any>['type'],
         public reason?: string,
+        public flagMetadata?: Record<string, string | number | boolean>,
     ) {}
 }
 
@@ -275,6 +276,7 @@ const dvcVariableFromEvaluationDetails = <T extends FlagValue>(
         (varType.charAt(0).toUpperCase() +
             varType.slice(1)) as DVCVariable['type'],
         evalDetails.reason,
+        evalDetails.flagMetadata,
     )
     console.log(`dvcVar: ${JSON.stringify(dvcVar)}`)
     return dvcVar

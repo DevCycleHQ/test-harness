@@ -58,7 +58,18 @@ describe('Variable Tests - Cloud', () => {
         target_id?: string,
     ) {
         return sdkName === 'OF-NodeJS'
-            ? { reason }
+            ? {
+                  reason,
+                  flagMetadata: hasCapability(
+                      sdkName,
+                      Capabilities.flagMetadata,
+                  )
+                      ? {
+                            evalReasonDetails: details || '',
+                            evalReasonTargetId: target_id || '',
+                        }
+                      : {},
+              }
             : { eval: { reason, details, target_id } }
     }
 
@@ -356,7 +367,10 @@ describe('Variable Tests - Cloud', () => {
                             isDefaulted: false,
                             type: variablesForTypes[type].type,
                             ...(hasCloudEvalReason && sdkName === 'OF-NodeJS'
-                                ? { reason: EVAL_REASONS.TARGETING_MATCH }
+                                ? {
+                                      reason: EVAL_REASONS.TARGETING_MATCH,
+                                      flagMetadata: {},
+                                  }
                                 : {}),
                         },
                     })

@@ -637,7 +637,18 @@ describe('Variable Tests - Local', () => {
         target_id?: string,
     ) {
         return sdkName === 'OF-NodeJS'
-            ? { reason }
+            ? {
+                  reason,
+                  flagMetadata: hasCapability(
+                      sdkName,
+                      Capabilities.flagMetadata,
+                  )
+                      ? {
+                            evalReasonDetails: details || '',
+                            evalReasonTargetId: target_id || '',
+                        }
+                      : {},
+              }
             : { eval: { reason, details, target_id } }
     }
 })

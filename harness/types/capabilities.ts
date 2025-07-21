@@ -21,6 +21,7 @@ export const Capabilities = {
     allVariables: 'AllVariables',
     allFeatures: 'AllFeatures',
     tempEvalReason: 'tempEvalReason',
+    flagMetadata: 'flagMetadata',
 }
 
 export const SDKPlatformMap = {
