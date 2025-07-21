@@ -639,15 +639,16 @@ describe('Variable Tests - Local', () => {
         return sdkName === 'OF-NodeJS'
             ? {
                   reason,
-                  flagMetadata: hasCapability(
-                      sdkName,
-                      Capabilities.flagMetadata,
-                  )
+                  ...(hasCapability(sdkName, Capabilities.flagMetadata)
                       ? {
-                            evalReasonDetails: details || '',
-                            evalReasonTargetId: target_id || '',
+                            flagMetadata: {
+                                ...(details && { evalReasonDetails: details }),
+                                ...(target_id && {
+                                    evalReasonTargetId: target_id,
+                                }),
+                            },
                         }
-                      : {},
+                      : { flagMetadata: {} }),
               }
             : { eval: { reason, details, target_id } }
     }
