@@ -60,14 +60,15 @@ describe('Variable Tests - Cloud', () => {
         return sdkName === 'OF-NodeJS'
             ? {
                   reason,
-                  ...(hasCapability(sdkName, Capabilities.flagMetadata)
+                  flagMetadata: hasCapability(
+                      sdkName,
+                      Capabilities.flagMetadata,
+                  )
                       ? {
-                            flagMetadata: {
-                                evalReasonDetails: details || '',
-                                evalReasonTargetId: target_id || '',
-                            },
+                            evalReasonDetails: details || '',
+                            evalReasonTargetId: target_id || '',
                         }
-                      : {}),
+                      : {},
               }
             : { eval: { reason, details, target_id } }
     }
