@@ -108,6 +108,12 @@ export const expectAggregateEvaluationEvent = ({
         }
     }
 
+    if (hasCapability(sdkName, Capabilities.eventsEvalReason)) {
+        metadata.evalReason = expect.objectContaining(
+            expect.objectContaining<Record<string, number>>({}),
+        )
+    }
+
     expect(body).toEqual({
         batch: expect.toIncludeSameMembers([
             ...optionalSDKConfigNewUser,
@@ -198,6 +204,12 @@ export const expectAggregateDefaultEvent = ({
                 expectedPlatform,
                 sdkPlatform,
             )
+        }
+    }
+
+    if (hasCapability(sdkName, Capabilities.eventsEvalReason)) {
+        metadata.evalReason = {
+            DEFAULT: expect.any(Number),
         }
     }
 
