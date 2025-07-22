@@ -109,7 +109,9 @@ export const expectAggregateEvaluationEvent = ({
     }
 
     if (hasCapability(sdkName, Capabilities.eventsEvalReason)) {
-        metadata.eval = expect.objectContaining<Record<string, number>>
+        metadata.eval = expect.objectContaining({
+            TARGETING_MATCH: expect.any(Number),
+        })
     }
 
     expect(body).toEqual({
