@@ -109,9 +109,7 @@ export const expectAggregateEvaluationEvent = ({
     }
 
     if (hasCapability(sdkName, Capabilities.eventsEvalReason)) {
-        metadata.evalReason = expect.objectContaining(
-            expect.objectContaining<Record<string, number>>({}),
-        )
+        metadata.eval = expect.objectContaining<Record<string, number>>
     }
 
     expect(body).toEqual({
@@ -208,8 +206,10 @@ export const expectAggregateDefaultEvent = ({
     }
 
     if (hasCapability(sdkName, Capabilities.eventsEvalReason)) {
-        metadata.evalReason = {
-            DEFAULT: expect.any(Number),
+        // Included in this capability as it included in the same PR
+        metadata._variation = 'DEFAULT'
+        metadata.eval = {
+            DEFAULT: value !== undefined ? value : 1,
         }
     }
 
