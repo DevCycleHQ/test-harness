@@ -41,11 +41,11 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.v2Config,
         Capabilities.clientCustomData,
         Capabilities.variablesFeatureId,
-        Capabilities.cloudEvalReason,
         Capabilities.allVariables,
         Capabilities.allFeatures,
-        //TODO: remove this when node released and use evalReason
-        Capabilities.tempEvalReason,
+        Capabilities.cloudEvalReason,
+        Capabilities.evalReason,
+        Capabilities.eventsEvalReason,
     ],
     'OF-NodeJS': [
         Capabilities.edgeDB,
@@ -56,8 +56,10 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.v2Config,
         Capabilities.sdkPlatform,
         Capabilities.variablesFeatureId,
-        Capabilities.evalReason,
         Capabilities.cloudEvalReason,
+        Capabilities.evalReason,
+        Capabilities.eventsEvalReason,
+        Capabilities.flagMetadata,
     ],
     Python: [
         Capabilities.cloud,
