@@ -20,7 +20,6 @@ export const Capabilities = {
     evalReason: 'EvalReason',
     allVariables: 'AllVariables',
     allFeatures: 'AllFeatures',
-    tempEvalReason: 'tempEvalReason',
     eventsEvalReason: 'EventsEvalReason',
     flagMetadata: 'flagMetadata',
 }
