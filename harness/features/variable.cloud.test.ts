@@ -72,6 +72,7 @@ describe('Variable Tests - Cloud', () => {
                       : { flagMetadata: {} }),
               }
             : {
+                  evalReason: expect.toBeNil(),
                   eval: {
                       reason,
                       details,
@@ -299,13 +300,13 @@ describe('Variable Tests - Cloud', () => {
                         ...dvcEvalReason,
                     })
 
-                const defaultVariable = variablesForTypes['string']()
+                const mockedVariable = variablesForTypes['string']()
                 const variableResponse = await callVariableMethod(method)(
                     { user_id: 'user1' },
                     sdkName,
                     'var_key',
                     'string',
-                    defaultVariable.defaultValue,
+                    mockedVariable.defaultValue,
                 )
                 const variable = await variableResponse.json()
                 // We can expect that the object we mocked out earlier is going to be
@@ -315,11 +316,10 @@ describe('Variable Tests - Cloud', () => {
                     entityType: 'Variable',
                     data: {
                         key: 'var_key',
-                        value: defaultVariable.value,
-                        defaultValue: defaultVariable.defaultValue,
-                        type: defaultVariable.type,
+                        value: mockedVariable.defaultValue,
+                        defaultValue: mockedVariable.defaultValue,
+                        type: mockedVariable.type,
                         isDefaulted: true,
-                        evalReason: expect.toBeNil(),
                         ...dvcEvalReason,
                     },
                 })
@@ -350,12 +350,13 @@ describe('Variable Tests - Cloud', () => {
                         .matchHeader('authorization', testClient.sdkKey)
                         .reply(200, undefined)
 
+                    const mockedVariable = variablesForTypes[type]()
                     const variableResponse = await callVariableMethod(method)(
                         { user_id: 'user1' },
                         sdkName,
                         'var_key',
                         'string',
-                        variablesForTypes[type].defaultValue,
+                        mockedVariable.defaultValue,
                     )
                     const variable = await variableResponse.json()
 
@@ -363,11 +364,10 @@ describe('Variable Tests - Cloud', () => {
                         entityType: 'Variable',
                         data: {
                             key: 'var_key',
-                            value: variablesForTypes[type].defaultValue,
-                            defaultValue: variablesForTypes[type].defaultValue,
-                            type: variablesForTypes[type].type,
+                            value: mockedVariable.defaultValue,
+                            defaultValue: mockedVariable.defaultValue,
+                            type: mockedVariable.type,
                             isDefaulted: true,
-                            evalReason: expect.toBeNil(),
                             ...dvcEvalReason,
                         },
                     })
@@ -400,12 +400,13 @@ describe('Variable Tests - Cloud', () => {
                         .matchHeader('authorization', testClient.sdkKey)
                         .reply(200, variablesForTypes[type](dvcEvalReason))
 
+                    const mockedVariable = variablesForTypes[type]()
                     const variableResponse = await callVariableMethod(method)(
                         { user_id: 'user1' },
                         sdkName,
                         'var_key',
                         type,
-                        variablesForTypes[type].defaultValue,
+                        mockedVariable.defaultValue,
                     )
                     const variable = await variableResponse.json()
 
@@ -413,11 +414,10 @@ describe('Variable Tests - Cloud', () => {
                         entityType: 'Variable',
                         data: {
                             key: 'var_key',
-                            value: variablesForTypes[type].value,
-                            defaultValue: variablesForTypes[type].defaultValue,
+                            value: mockedVariable.value,
+                            defaultValue: mockedVariable.defaultValue,
                             isDefaulted: false,
-                            type: variablesForTypes[type].type,
-                            evalReason: expect.toBeNil(),
+                            type: mockedVariable.type,
                             ...dvcEvalReason,
                         },
                     })
@@ -447,12 +447,13 @@ describe('Variable Tests - Cloud', () => {
                         .times(6)
                         .reply(500)
 
+                    const mockedVariable = variablesForTypes[type]()
                     const variableResponse = await callVariableMethod(method)(
                         { user_id: 'user1' },
                         sdkName,
                         'var_key',
                         type,
-                        variablesForTypes[type].defaultValue,
+                        mockedVariable.defaultValue,
                     )
                     const variable = await variableResponse.json()
 
@@ -460,11 +461,10 @@ describe('Variable Tests - Cloud', () => {
                         entityType: 'Variable',
                         data: {
                             key: 'var_key',
-                            value: variablesForTypes[type].defaultValue,
+                            value: mockedVariable.defaultValue,
                             isDefaulted: true,
-                            defaultValue: variablesForTypes[type].defaultValue,
-                            type: variablesForTypes[type].type,
-                            evalReason: expect.toBeNil(),
+                            defaultValue: mockedVariable.defaultValue,
+                            type: mockedVariable.type,
                             ...dvcEvalReason,
                         },
                     })

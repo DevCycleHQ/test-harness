@@ -128,8 +128,7 @@ export const variablesForTypes = {
         type: 'String',
         defaultValue: 'default_value',
         isDefaulted: false,
-        evalReason: null,
-        ...evalReason,
+        ...(evalReason && { ...evalReason }),
     }),
     number: (evalReason?: EvalReason) => ({
         key: 'var_key',
@@ -137,8 +136,7 @@ export const variablesForTypes = {
         value: 1,
         defaultValue: 0,
         isDefaulted: false,
-        evalReason: null,
-        ...evalReason,
+        ...(evalReason && { ...evalReason }),
     }),
     boolean: (evalReason?: EvalReason) => ({
         key: 'var_key',
@@ -146,8 +144,7 @@ export const variablesForTypes = {
         value: true,
         defaultValue: false,
         isDefaulted: false,
-        evalReason: null,
-        ...evalReason,
+        ...(evalReason && { ...evalReason }),
     }),
     JSON: (evalReason?: EvalReason) => ({
         key: 'var_key',
@@ -155,8 +152,7 @@ export const variablesForTypes = {
         value: { key: 'value1' },
         defaultValue: {},
         isDefaulted: false,
-        evalReason: null,
-        ...evalReason,
+        ...(evalReason && { ...evalReason }),
     }),
 }
 
