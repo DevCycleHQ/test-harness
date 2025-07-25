@@ -9,7 +9,7 @@ import {
     cleanupCurrentClient,
     hasCapability,
 } from '../helpers'
-import { Capabilities, SDKCapabilities } from '../types'
+import { Capabilities } from '../types'
 
 describe('Variable Tests - Cloud', () => {
     // This helper method fetches the current SDK we are testing for the current jest project (see jest.config.js).
@@ -71,7 +71,14 @@ describe('Variable Tests - Cloud', () => {
                         }
                       : { flagMetadata: {} }),
               }
-            : { eval: { reason, details, target_id } }
+            : {
+                  evalReason: expect.toBeNil(),
+                  eval: {
+                      reason,
+                      details,
+                      target_id: target_id ? target_id : expect.toBeNil(),
+                  },
+              }
     }
 
     // This describeCapability only runs if the SDK has the "cloud" capability.
@@ -162,6 +169,21 @@ describe('Variable Tests - Cloud', () => {
                 // conflicting. We can match on specific criteria, like headers and the query params
                 // to specify which call we want to mock, and reply with a status code and an object
                 // as a response
+
+                const hasCloudEvalReason = hasCapability(
+                    sdkName,
+                    Capabilities.cloudEvalReason,
+                )
+
+                const dvcEvalReason = hasCloudEvalReason
+                    ? getEvalReason(
+                          sdkName,
+                          EVAL_REASONS.TARGETING_MATCH,
+                          'All Users',
+                          'test_target_id',
+                      )
+                    : {}
+
                 scope
                     .post(
                         `/client/${testClient.clientId}/v1/variables/var_key`,
@@ -178,6 +200,7 @@ describe('Variable Tests - Cloud', () => {
                         defaultValue: 'default_value',
                         type: 'String',
                         isDefaulted: false,
+                        ...dvcEvalReason,
                     })
                 const variableResponse = await callVariableMethod(method)(
                     { user_id: 'user1' },
@@ -203,6 +226,20 @@ describe('Variable Tests - Cloud', () => {
                     enableEdgeDB: true,
                 })
 
+                const hasCloudEvalReason = hasCapability(
+                    sdkName,
+                    Capabilities.cloudEvalReason,
+                )
+
+                const dvcEvalReason = hasCloudEvalReason
+                    ? getEvalReason(
+                          sdkName,
+                          EVAL_REASONS.TARGETING_MATCH,
+                          'All Users',
+                          'test_target_id',
+                      )
+                    : {}
+
                 scope
                     .post(
                         `/client/${testClient.clientId}/v1/variables/var_key`,
@@ -219,6 +256,7 @@ describe('Variable Tests - Cloud', () => {
                         defaultValue: 'default_value',
                         type: 'String',
                         isDefaulted: false,
+                        ...dvcEvalReason,
                     })
                 const variableResponse = await callVariableMethod(method)(
                     { user_id: 'user1' },
@@ -239,6 +277,14 @@ describe('Variable Tests - Cloud', () => {
                     Capabilities.cloudEvalReason,
                 )
 
+                const dvcEvalReason = hasCloudEvalReason
+                    ? getEvalReason(
+                          sdkName,
+                          EVAL_REASONS.DEFAULT,
+                          'Variable Type Mismatch',
+                      )
+                    : {}
+
                 scope
                     .post(
                         `/client/${testClient.clientId}/v1/variables/var_key`,
@@ -251,14 +297,16 @@ describe('Variable Tests - Cloud', () => {
                         value: 5,
                         type: 'Number',
                         isDefaulted: false,
+                        ...dvcEvalReason,
                     })
 
+                const mockedVariable = variablesForTypes['string']()
                 const variableResponse = await callVariableMethod(method)(
                     { user_id: 'user1' },
                     sdkName,
                     'var_key',
                     'string',
-                    variablesForTypes['string'].defaultValue,
+                    mockedVariable.defaultValue,
                 )
                 const variable = await variableResponse.json()
                 // We can expect that the object we mocked out earlier is going to be
@@ -268,17 +316,11 @@ describe('Variable Tests - Cloud', () => {
                     entityType: 'Variable',
                     data: {
                         key: 'var_key',
-                        value: variablesForTypes['string'].defaultValue,
-                        defaultValue: variablesForTypes['string'].defaultValue,
-                        type: variablesForTypes['string'].type,
+                        value: mockedVariable.defaultValue,
+                        defaultValue: mockedVariable.defaultValue,
+                        type: mockedVariable.type,
                         isDefaulted: true,
-                        ...(hasCloudEvalReason
-                            ? getEvalReason(
-                                  sdkName,
-                                  EVAL_REASONS.DEFAULT,
-                                  'Variable Type Mismatch',
-                              )
-                            : {}),
+                        ...dvcEvalReason,
                     },
                 })
             },
@@ -295,6 +337,10 @@ describe('Variable Tests - Cloud', () => {
                         Capabilities.cloudEvalReason,
                     )
 
+                    const dvcEvalReason = hasCloudEvalReason
+                        ? getEvalReason(sdkName, EVAL_REASONS.DEFAULT, 'Error')
+                        : {}
+
                     scope
                         .post(
                             `/client/${testClient.clientId}/v1/variables/var_key`,
@@ -304,12 +350,13 @@ describe('Variable Tests - Cloud', () => {
                         .matchHeader('authorization', testClient.sdkKey)
                         .reply(200, undefined)
 
+                    const mockedVariable = variablesForTypes[type]()
                     const variableResponse = await callVariableMethod(method)(
                         { user_id: 'user1' },
                         sdkName,
                         'var_key',
                         'string',
-                        variablesForTypes[type].defaultValue,
+                        mockedVariable.defaultValue,
                     )
                     const variable = await variableResponse.json()
 
@@ -317,15 +364,71 @@ describe('Variable Tests - Cloud', () => {
                         entityType: 'Variable',
                         data: {
                             key: 'var_key',
-                            value: variablesForTypes[type].defaultValue,
-                            defaultValue: variablesForTypes[type].defaultValue,
-                            type: variablesForTypes[type].type,
+                            value: mockedVariable.defaultValue,
+                            defaultValue: mockedVariable.defaultValue,
+                            type: mockedVariable.type,
                             isDefaulted: true,
+                            ...dvcEvalReason,
+                        },
+                    })
+                },
+            )
+
+            it.each(callVariableMethods)(
+                `should return ${type} %s if mock server returns proper variable matching default value type`,
+                async (method) => {
+                    const hasCloudEvalReason = hasCapability(
+                        sdkName,
+                        Capabilities.cloudEvalReason,
+                    )
+
+                    // Mock the API response using `nodejs` as the SDK as this is the consistent response format from the DevCycle Bucketing API
+                    const mockDvcBucketingAPIEvalReason = hasCloudEvalReason
+                        ? getEvalReason(
+                              'nodejs',
+                              EVAL_REASONS.TARGETING_MATCH,
+                              'All Users',
+                              'test_target_id',
+                          )
+                        : {}
+                    scope
+                        .post(
+                            `/client/${testClient.clientId}/v1/variables/var_key`,
+                            (body) => body.user_id === 'user1',
+                        )
+                        .matchHeader('Content-Type', 'application/json')
+                        .matchHeader('authorization', testClient.sdkKey)
+                        .reply(
+                            200,
+                            variablesForTypes[type](
+                                mockDvcBucketingAPIEvalReason,
+                            ),
+                        )
+
+                    const mockedVariable = variablesForTypes[type]()
+                    const variableResponse = await callVariableMethod(method)(
+                        { user_id: 'user1' },
+                        sdkName,
+                        'var_key',
+                        type,
+                        mockedVariable.defaultValue,
+                    )
+                    const variable = await variableResponse.json()
+
+                    expectVariableResponse(variable, method, {
+                        entityType: 'Variable',
+                        data: {
+                            key: 'var_key',
+                            value: mockedVariable.value,
+                            defaultValue: mockedVariable.defaultValue,
+                            isDefaulted: false,
+                            type: mockedVariable.type,
                             ...(hasCloudEvalReason
                                 ? getEvalReason(
                                       sdkName,
-                                      EVAL_REASONS.DEFAULT,
-                                      'Error',
+                                      EVAL_REASONS.TARGETING_MATCH,
+                                      'All Users',
+                                      'test_target_id',
                                   )
                                 : {}),
                         },
@@ -334,58 +437,16 @@ describe('Variable Tests - Cloud', () => {
             )
 
             it.each(callVariableMethods)(
-                `should return ${type} %s if mock server returns \
-                proper variable matching default value type`,
+                'should return defaulted ${type} %s if mock server returns an internal error, after retrying 5 times',
                 async (method) => {
                     const hasCloudEvalReason = hasCapability(
                         sdkName,
                         Capabilities.cloudEvalReason,
                     )
-                    scope
-                        .post(
-                            `/client/${testClient.clientId}/v1/variables/var_key`,
-                            (body) => body.user_id === 'user1',
-                        )
-                        .matchHeader('Content-Type', 'application/json')
-                        .matchHeader('authorization', testClient.sdkKey)
-                        .reply(200, variablesForTypes[type])
 
-                    const variableResponse = await callVariableMethod(method)(
-                        { user_id: 'user1' },
-                        sdkName,
-                        'var_key',
-                        type,
-                        variablesForTypes[type].defaultValue,
-                    )
-                    const variable = await variableResponse.json()
-
-                    expectVariableResponse(variable, method, {
-                        entityType: 'Variable',
-                        data: {
-                            key: 'var_key',
-                            value: variablesForTypes[type].value,
-                            defaultValue: variablesForTypes[type].defaultValue,
-                            isDefaulted: false,
-                            type: variablesForTypes[type].type,
-                            ...(hasCloudEvalReason && sdkName === 'OF-NodeJS'
-                                ? {
-                                      reason: EVAL_REASONS.TARGETING_MATCH,
-                                      flagMetadata: {},
-                                  }
-                                : {}),
-                        },
-                    })
-                },
-            )
-
-            it.each(callVariableMethods)(
-                `should return defaulted ${type} %s if mock server returns an internal error, \
-                after retrying 5 times`,
-                async (method) => {
-                    const hasCloudEvalReason = hasCapability(
-                        sdkName,
-                        Capabilities.cloudEvalReason,
-                    )
+                    const dvcEvalReason = hasCloudEvalReason
+                        ? getEvalReason(sdkName, EVAL_REASONS.DEFAULT, 'Error')
+                        : {}
 
                     scope
                         .post(
@@ -398,12 +459,13 @@ describe('Variable Tests - Cloud', () => {
                         .times(6)
                         .reply(500)
 
+                    const mockedVariable = variablesForTypes[type]()
                     const variableResponse = await callVariableMethod(method)(
                         { user_id: 'user1' },
                         sdkName,
                         'var_key',
                         type,
-                        variablesForTypes[type].defaultValue,
+                        mockedVariable.defaultValue,
                     )
                     const variable = await variableResponse.json()
 
@@ -411,17 +473,11 @@ describe('Variable Tests - Cloud', () => {
                         entityType: 'Variable',
                         data: {
                             key: 'var_key',
-                            value: variablesForTypes[type].defaultValue,
+                            value: mockedVariable.defaultValue,
                             isDefaulted: true,
-                            defaultValue: variablesForTypes[type].defaultValue,
-                            type: variablesForTypes[type].type,
-                            ...(hasCloudEvalReason
-                                ? getEvalReason(
-                                      sdkName,
-                                      EVAL_REASONS.DEFAULT,
-                                      'Error',
-                                  )
-                                : {}),
+                            defaultValue: mockedVariable.defaultValue,
+                            type: mockedVariable.type,
+                            ...dvcEvalReason,
                         },
                     })
                 },
