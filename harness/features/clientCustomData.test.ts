@@ -93,6 +93,7 @@ describe('Client Custom Data Tests', () => {
                         value: 'some-default',
                         ...(hasCapability(sdkName, Capabilities.evalReason)
                             ? {
+                                  evalReason: expect.toBeNil(),
                                   eval: {
                                       details:
                                           DEFAULT_REASON_DETAILS.MISSING_CONFIG,
