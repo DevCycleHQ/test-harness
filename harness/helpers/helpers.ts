@@ -13,6 +13,7 @@ import {
 } from './commands'
 import { config_sse } from '../mockData'
 import { ProxyClientOptions } from './proxyClientOptions'
+import { EvalReason } from '@devcycle/types'
 
 const oldFetch = fetch
 
@@ -121,34 +122,42 @@ export const forEachVariableType = (tests) => {
 }
 
 export const variablesForTypes = {
-    string: {
+    string: (evalReason?: EvalReason) => ({
         key: 'var_key',
         value: 'value1',
         type: 'String',
         defaultValue: 'default_value',
         isDefaulted: false,
-    },
-    number: {
+        evalReason: null,
+        ...evalReason,
+    }),
+    number: (evalReason?: EvalReason) => ({
         key: 'var_key',
         type: 'Number',
         value: 1,
         defaultValue: 0,
         isDefaulted: false,
-    },
-    boolean: {
+        evalReason: null,
+        ...evalReason,
+    }),
+    boolean: (evalReason?: EvalReason) => ({
         key: 'var_key',
         type: 'Boolean',
         value: true,
         defaultValue: false,
         isDefaulted: false,
-    },
-    JSON: {
+        evalReason: null,
+        ...evalReason,
+    }),
+    JSON: (evalReason?: EvalReason) => ({
         key: 'var_key',
         type: 'JSON',
         value: { key: 'value1' },
         defaultValue: {},
         isDefaulted: false,
-    },
+        evalReason: null,
+        ...evalReason,
+    }),
 }
 
 const createClient = async (
@@ -429,9 +438,10 @@ export class LocalTestClient extends BaseTestClient {
     }
 
     getValidConfigPath() {
-        const version = hasCapability(this.sdkName, Capabilities.v2Config) ? 'v2' : 'v1'
+        const version = hasCapability(this.sdkName, Capabilities.v2Config)
+            ? 'v2'
+            : 'v1'
         return `/client/${this.clientId}/config/${version}/server/${this.sdkKey}.json`
-
     }
 
     setupMockConfig(scope: Scope) {
