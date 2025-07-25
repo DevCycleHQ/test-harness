@@ -382,15 +382,15 @@ describe('Variable Tests - Cloud', () => {
                         Capabilities.cloudEvalReason,
                     )
 
-                    const dvcEvalReason = hasCloudEvalReason
+                    // Mock the API response using `nodejs` as the SDK as this is the consistent response format from the DevCycle Bucketing API
+                    const mockDvcBucketingAPIEvalReason = hasCloudEvalReason
                         ? getEvalReason(
-                              sdkName,
+                              'nodejs',
                               EVAL_REASONS.TARGETING_MATCH,
                               'All Users',
                               'test_target_id',
                           )
                         : {}
-
                     scope
                         .post(
                             `/client/${testClient.clientId}/v1/variables/var_key`,
@@ -398,7 +398,12 @@ describe('Variable Tests - Cloud', () => {
                         )
                         .matchHeader('Content-Type', 'application/json')
                         .matchHeader('authorization', testClient.sdkKey)
-                        .reply(200, variablesForTypes[type](dvcEvalReason))
+                        .reply(
+                            200,
+                            variablesForTypes[type](
+                                mockDvcBucketingAPIEvalReason,
+                            ),
+                        )
 
                     const mockedVariable = variablesForTypes[type]()
                     const variableResponse = await callVariableMethod(method)(
@@ -418,7 +423,14 @@ describe('Variable Tests - Cloud', () => {
                             defaultValue: mockedVariable.defaultValue,
                             isDefaulted: false,
                             type: mockedVariable.type,
-                            ...dvcEvalReason,
+                            ...(hasCloudEvalReason
+                                ? getEvalReason(
+                                      sdkName,
+                                      EVAL_REASONS.TARGETING_MATCH,
+                                      'All Users',
+                                      'test_target_id',
+                                  )
+                                : {}),
                         },
                     })
                 },
