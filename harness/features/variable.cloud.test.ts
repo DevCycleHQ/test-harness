@@ -277,11 +277,13 @@ describe('Variable Tests - Cloud', () => {
                     Capabilities.cloudEvalReason,
                 )
 
-                const dvcEvalReason = hasCloudEvalReason
+                // Mock the API response using `nodejs` as the SDK as this is the consistent response format from the DevCycle Bucketing API
+                const mockDvcBucketingAPIEvalReason = hasCloudEvalReason
                     ? getEvalReason(
-                          sdkName,
-                          EVAL_REASONS.DEFAULT,
-                          'Variable Type Mismatch',
+                          'nodejs',
+                          EVAL_REASONS.TARGETING_MATCH,
+                          'All Users',
+                          'variable_mismatch_target_id',
                       )
                     : {}
 
@@ -297,7 +299,7 @@ describe('Variable Tests - Cloud', () => {
                         value: 5,
                         type: 'Number',
                         isDefaulted: false,
-                        ...dvcEvalReason,
+                        ...mockDvcBucketingAPIEvalReason,
                     })
 
                 const mockedVariable = variablesForTypes['string']()
@@ -320,7 +322,13 @@ describe('Variable Tests - Cloud', () => {
                         defaultValue: mockedVariable.defaultValue,
                         type: mockedVariable.type,
                         isDefaulted: true,
-                        ...dvcEvalReason,
+                        ...(hasCloudEvalReason
+                            ? getEvalReason(
+                                  sdkName,
+                                  EVAL_REASONS.DEFAULT,
+                                  'Variable Type Mismatch',
+                              )
+                            : {}),
                     },
                 })
             },
