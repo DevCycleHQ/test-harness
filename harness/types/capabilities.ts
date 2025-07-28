@@ -110,6 +110,10 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.variablesFeatureId,
         Capabilities.allVariables,
         Capabilities.allFeatures,
+        Capabilities.variablesFeatureId,
+        Capabilities.cloudEvalReason,
+        Capabilities.evalReason,
+        Capabilities.eventsEvalReason,
     ],
     PHP: [
         Capabilities.cloudProxy,
