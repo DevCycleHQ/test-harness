@@ -85,6 +85,10 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.v2Config,
         Capabilities.allVariables,
         Capabilities.allFeatures,
+        Capabilities.variablesFeatureId,
+        Capabilities.cloudEvalReason,
+        Capabilities.evalReason,
+        Capabilities.eventsEvalReason,
     ],
     Go: [
         Capabilities.cloud,
