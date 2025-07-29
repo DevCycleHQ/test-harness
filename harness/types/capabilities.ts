@@ -96,6 +96,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.v2Config,
     ],
     Ruby: [
+        Capabilities.cloud,
         Capabilities.clientCustomData,
         Capabilities.v2Config,
         Capabilities.variablesFeatureId,
