@@ -61,6 +61,9 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.v2Config,
+        Capabilities.cloudEvalReason,
+        Capabilities.evalReason,
+        Capabilities.eventsEvalReason,
     ],
     DotNet: [
         Capabilities.cloud,
