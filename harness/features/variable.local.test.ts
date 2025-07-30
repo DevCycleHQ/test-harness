@@ -636,7 +636,7 @@ describe('Variable Tests - Local', () => {
         details?: string,
         target_id?: string,
     ) {
-        return sdkName === 'OF-NodeJS'
+        return hasCapability(sdkName, Capabilities.openFeature)
             ? {
                   reason,
                   ...(hasCapability(sdkName, Capabilities.flagMetadata)

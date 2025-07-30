@@ -40,8 +40,16 @@ export const getConnectionStringForProxy = (proxy: string) => {
         return `http://${global.LOCAL_HOST_BINDING || '0.0.0.0'}:3000`
     }
 
-    const host = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_IP__`]
-    const port = global[`__TESTCONTAINERS_${proxy.toUpperCase()}_PORT_3000__`]
+    // Map OpenFeature SDKs to their base proxy containers
+    let containerName = proxy
+    if (proxy === 'OF-DotNet') {
+        containerName = 'DotNet'
+    } else if (proxy === 'OF-NodeJS') {
+        containerName = 'OF-NodeJS' // Keep as-is since it has its own container
+    }
+
+    const host = global[`__TESTCONTAINERS_${containerName.toUpperCase()}_IP__`]
+    const port = global[`__TESTCONTAINERS_${containerName.toUpperCase()}_PORT_3000__`]
 
     if (!host || !port) {
         throw new Error('Could not find container for proxy: ' + proxy)
@@ -163,19 +171,27 @@ const createClient = async (
     clientId: string,
     sdkKey?: string | null,
     options?: ProxyClientOptions,
+    sdkName?: string,
 ) => {
+    const requestBody: any = {
+        clientId,
+        sdkKey,
+        enableCloudBucketing,
+        waitForInitialization,
+        options,
+    }
+
+    // Add UseOpenFeature flag for SDKs with OpenFeature capability
+    if (sdkName && hasCapability(sdkName, Capabilities.openFeature)) {
+        requestBody.useOpenFeature = true
+    }
+
     return await fetch(`${url}/client`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            clientId,
-            sdkKey,
-            enableCloudBucketing,
-            waitForInitialization,
-            options,
-        }),
+        body: JSON.stringify(requestBody),
     })
 }
 
@@ -315,6 +331,7 @@ export class LocalTestClient extends BaseTestClient {
 
                 ...options,
             },
+            this.sdkName,
         )
 
         await checkFailed(response, shouldFail)
@@ -472,6 +489,7 @@ export class CloudTestClient extends BaseTestClient {
                 bucketingAPIURI: `${getMockServerUrl()}/client/${this.clientId}`,
                 ...options,
             },
+            this.sdkName,
         )
 
         await checkFailed(response, shouldFail)

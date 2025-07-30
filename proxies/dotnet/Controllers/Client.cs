@@ -5,6 +5,7 @@ using DevCycle.SDK.Server.Common.Model.Local;
 using DevCycle.SDK.Server.Common.Model.Cloud;
 using Newtonsoft.Json;
 using System.Text;
+using OpenFeature;
 
 namespace dotnet.Controllers;
 
@@ -52,6 +53,8 @@ public class ClientRequestBody
     public bool? EnableCloudBucketing { get; set; }
 
     public bool? WaitForInitialization { get; set; }
+
+    public bool? UseOpenFeature { get; set; }
 }
 
 [ApiController]
@@ -77,6 +80,8 @@ public class ClientController : ControllerBase
 
         try
         {
+            object dvcClient = null;
+
             if (ClientBody.EnableCloudBucketing ?? false)
             {
                 DevCycleCloudOptions cloudOptions = new DevCycleCloudOptions();
@@ -89,12 +94,14 @@ public class ClientController : ControllerBase
                 if (ClientBody.Options?.BucketingAPIURLOverride != null)
                     RestOptions.BaseUrl = new Uri(ClientBody.Options.BucketingAPIURLOverride);
 
-                DataStore.CloudClients[ClientBody.ClientId] = new DevCycleCloudClientBuilder()
+                dvcClient = new DevCycleCloudClientBuilder()
                     .SetEnvironmentKey(ClientBody.SdkKey)
                     .SetOptions(cloudOptions)
                     .SetLogger(LoggerFactory.Create(builder => builder.AddConsole()))
                     .SetRestClientOptions(RestOptions)
                     .Build();
+
+                DataStore.CloudClients[ClientBody.ClientId] = (DevCycleCloudClient)dvcClient;
             }
             else
             {
@@ -124,7 +131,7 @@ public class ClientController : ControllerBase
                     Task task = new Task(() => {});
                     DevCycle.SDK.Server.Common.Model.DevCycleEventArgs? eventArgs = null;
 
-                    DataStore.LocalClients[ClientBody.ClientId] = new DevCycleLocalClientBuilder()
+                    dvcClient = new DevCycleLocalClientBuilder()
                         .SetEnvironmentKey(ClientBody.SdkKey)
                         .SetInitializedSubscriber((o, e) =>
                         {
@@ -140,12 +147,32 @@ public class ClientController : ControllerBase
                             throw eventArgs.Errors[0];
                         }
                 } else {
-                    DataStore.LocalClients[ClientBody.ClientId] = new DevCycleLocalClientBuilder()
+                    dvcClient = new DevCycleLocalClientBuilder()
                         .SetEnvironmentKey(ClientBody.SdkKey)
                         .SetOptions(ClientBody.Options)
                         .SetLogger(LoggerFactory.Create(builder => builder.AddConsole()))
                         .Build();
                 }
+
+                DataStore.LocalClients[ClientBody.ClientId] = (DevCycleLocalClient)dvcClient;
+            }
+
+            // If OpenFeature is requested, wrap the client
+            if (ClientBody.UseOpenFeature ?? false)
+            {
+                var provider = ClientBody.EnableCloudBucketing ?? false 
+                    ? ((DevCycleCloudClient)dvcClient).GetOpenFeatureProvider()
+                    : ((DevCycleLocalClient)dvcClient).GetOpenFeatureProvider();
+
+                await Api.Instance.SetProviderAsync(provider);
+                var ofClient = Api.Instance.GetClient();
+
+                DataStore.OpenFeatureClients[ClientBody.ClientId] = new DataStoreClient
+                {
+                    DvcClient = dvcClient,
+                    OpenFeatureClient = ofClient,
+                    IsOpenFeature = true
+                };
             }
 
             Response.Headers.Add("Location", "client/" + ClientBody.ClientId);

@@ -37,6 +37,14 @@ const projects = [
     },
     {
         ...commonConfig,
+        displayName: 'OF-DotNet',
+        globals: {
+            JEST_PROJECT_SDK_TO_TEST: 'OF-DotNet',
+            LOCAL_HOST_BINDING: '0.0.0.0',
+        },
+    },
+    {
+        ...commonConfig,
         displayName: 'Go',
         globals: {
             JEST_PROJECT_SDK_TO_TEST: 'Go',

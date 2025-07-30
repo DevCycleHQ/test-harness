@@ -8,9 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.1" />
-    <PackageReference Include="DevCycle.SDK.Server.Cloud" Version="3.4.0" />
-    <PackageReference Include="DevCycle.SDK.Server.Local" Version="4.4.0" />
+    <PackageReference Include="DevCycle.SDK.Server.Cloud" Version="3.6.0" />
+    <PackageReference Include="DevCycle.SDK.Server.Local" Version="4.6.0" />    
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
+    <PackageReference Include="OpenFeature" Version="2.7.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 

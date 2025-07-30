@@ -121,3 +121,6 @@ jest-*.xml
 .env
 
 **/.DS_Store
+
+# opencode specification
+AGENTS.md

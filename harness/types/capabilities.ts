@@ -20,10 +20,12 @@ export const Capabilities = {
     evalReason: 'EvalReason',
     eventsEvalReason: 'EventsEvalReason',
     flagMetadata: 'flagMetadata',
+    openFeature: 'OpenFeature',
 }
 
 export const SDKPlatformMap = {
     'OF-NodeJS': 'nodejs-of',
+    'OF-DotNet': 'dotnet-of',
 }
 
 //TODO: when tests are updated for OF-NodeJS eval capability, remove concept of allVariables/allFeatures as a capability
@@ -55,6 +57,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.evalReason,
         Capabilities.eventsEvalReason,
         Capabilities.flagMetadata,
+        Capabilities.openFeature,
     ],
     Python: [
         Capabilities.cloud,
@@ -72,6 +75,17 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.eventsEvalReason,
         //Capabilities.sdkConfigEvent,
         //Capabilities.clientUUID,
+    ],
+    'OF-DotNet': [
+        Capabilities.cloud,
+        Capabilities.edgeDB,
+        Capabilities.clientCustomData,
+        Capabilities.v2Config,
+        Capabilities.cloudEvalReason,
+        Capabilities.evalReason,
+        Capabilities.eventsEvalReason,
+        Capabilities.flagMetadata,
+        Capabilities.openFeature,
     ],
     Java: [
         Capabilities.cloud,

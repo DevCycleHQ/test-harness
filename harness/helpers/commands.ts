@@ -1,3 +1,6 @@
+import { Capabilities } from '../types'
+import { hasCapability } from './helpers'
+
 export type CommandBody = {
     command: string
     isAsync?: boolean
@@ -76,7 +79,7 @@ export const performCallVariable = async (
         { value: defaultValue },
     ]
     // Need to pass in the variable type into the OpenFeature provider as it doesn't have a generic variable interface
-    if (sdkName === 'OF-NodeJS') {
+    if (hasCapability(sdkName, Capabilities.openFeature)) {
         params.push({ value: variableType })
     }
     return await sendCommand(url, {
