@@ -1,5 +1,6 @@
 using DevCycle.SDK.Server.Cloud.Api;
 using DevCycle.SDK.Server.Local.Api;
+using dotnet.Models;
 using OpenFeature;
 
 public class DataStoreClient
@@ -13,7 +14,7 @@ class DataStore
 {
     public static Dictionary<string, DevCycleLocalClient> LocalClients;
     public static Dictionary<string, DevCycleCloudClient> CloudClients;
-    public static Dictionary<string, DataStoreClient> OpenFeatureClients;
+    public static Dictionary<string, OpenFeatureClientAdapter> OpenFeatureClients;
 
     public static Dictionary<string, object> Commands;
 
@@ -21,7 +22,7 @@ class DataStore
     {
         CloudClients = new Dictionary<string, DevCycleCloudClient>();
         LocalClients = new Dictionary<string, DevCycleLocalClient>();
-        OpenFeatureClients = new Dictionary<string, DataStoreClient>();
+        OpenFeatureClients = new Dictionary<string, OpenFeatureClientAdapter>();
         Commands = new Dictionary<string, object>();
     }
 }
