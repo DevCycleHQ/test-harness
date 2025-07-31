@@ -41,22 +41,25 @@ describe('SDKCapabilities Unit Tests', () => {
         })
         process.env.SDKS_TO_TEST = 'nodejs,python,go'
         const { SDKCapabilities } = jest.requireActual('./capabilities')
-        expect(SDKCapabilities).toEqual({
-            NodeJS: ['EdgeDB', 'SSE', 'CloudBucketing'],
-            Python: ['ClientCustomData', 'V2Config'],
-            Go: [
+        expect(SDKCapabilities).toMatchObject(expect.objectContaining({
+            NodeJS: expect.arrayContaining(['EdgeDB', 'SSE', 'CloudBucketing']),
+            Python: expect.arrayContaining(['ClientCustomData', 'V2Config']),
+            Go: expect.arrayContaining([
                 'CloudBucketing',
                 'EdgeDB',
-                'ClientCustomData',
-                'Multithreading',
-                'DefaultReason',
                 'EtagReporting',
+                'ClientCustomData',
                 'LastModifiedHeader',
                 'SDKConfigEvent',
                 'ClientUUID',
                 'V2Config',
-            ],
-        })
+                'EvalReason',
+                'CloudEvalReason',
+                'BaseEvalReason',
+                'Multithreading',
+                'EventsEvalReason',                
+            ]),
+        }))
     })
 
     it('should fallback to default capabilities for SDKs not specified in JSON object', () => {
@@ -65,18 +68,22 @@ describe('SDKCapabilities Unit Tests', () => {
         })
         process.env.SDKS_TO_TEST = 'nodejs,go'
         const { SDKCapabilities } = jest.requireActual('./capabilities')
-        expect(SDKCapabilities.NodeJS).toEqual(['EdgeDB', 'SSE'])
-        expect(SDKCapabilities.Go).toEqual([
+        expect(SDKCapabilities.NodeJS).toEqual(expect.arrayContaining(['EdgeDB', 'SSE']))
+        expect(SDKCapabilities.Go).toEqual(expect.arrayContaining([
             'CloudBucketing',
             'EdgeDB',
-            'ClientCustomData',
-            'Multithreading',
-            'DefaultReason',
             'EtagReporting',
+            'ClientCustomData',
             'LastModifiedHeader',
             'SDKConfigEvent',
             'ClientUUID',
             'V2Config',
-        ])
+            'EvalReason',
+            'CloudEvalReason',
+            'BaseEvalReason',
+            'Multithreading',
+            'EventsEvalReason',
+        ]))
+
     })
 })

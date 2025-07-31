@@ -99,6 +99,8 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.evalReason,
         Capabilities.cloudEvalReason,
         Capabilities.baseEvalReason,
+        Capabilities.multithreading,
+        Capabilities.eventsEvalReason,
     ],
     Ruby: [
         Capabilities.clientCustomData,

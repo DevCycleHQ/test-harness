@@ -1,8 +1,10 @@
 import {
     describeCapability,
     getSDKScope,
+    hasCapability,
     LocalTestClient,
     waitForRequest,
+    getEvalReason,
 } from '../helpers'
 import { Capabilities } from '../types'
 import { DEFAULT_REASON_DETAILS,  EVAL_REASONS, VariableType } from '@devcycle/types'
@@ -90,6 +92,10 @@ describe('Multithreading Tests', () => {
                             key,
                             defaultValue: defaultValue,
                             value: variationOn,
+                            evalReason: expect.toBeNil(),
+                            ...(hasCapability(sdkName, Capabilities.evalReason)
+                                ? getEvalReason(sdkName, EVAL_REASONS.TARGETING_MATCH, "", "")
+                                : {}),
                         },
                     }),
                 )
@@ -181,7 +187,7 @@ describe('Multithreading Tests', () => {
                 })
             })
 
-            it.only('should retry events across threads', async () => {
+            it('should retry events across threads', async () => {
                 const eventBodies = []
 
                 scope.post(eventsUrl).reply(500)
@@ -413,7 +419,10 @@ describe('Multithreading Tests', () => {
                 value: defaultValue,
                 key: key,
                 type,
-                eval: getEvalReason(EVAL_REASONS.DEFAULT, details),
+                evalReason: expect.toBeNil(),
+                ...(hasCapability(sdkName, Capabilities.evalReason)
+                    ? getEvalReason(sdkName, EVAL_REASONS.DEFAULT, details)
+                    : {}),
             },
             logs: [],
         })
@@ -430,14 +439,4 @@ describe('Multithreading Tests', () => {
             ),
         )
     }
-
-
-    function getEvalReason(
-        reason: string,
-        details?: string,
-        target_id?: string,
-    ) {
-        return { reason, details, target_id } 
-    }
-
 })

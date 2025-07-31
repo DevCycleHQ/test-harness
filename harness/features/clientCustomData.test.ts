@@ -9,6 +9,7 @@ import {
     hasCapability,
     waitForRequest,
     getSDKScope,
+    getEvalReason,
 } from '../helpers'
 import { Capabilities } from '../types'
 
@@ -43,13 +44,7 @@ describe('Client Custom Data Tests', () => {
                         defaultValue: 'some-default',
                         value: 'string',
                         ...(hasCapability(sdkName, Capabilities.evalReason)
-                            ? {
-                                  eval: {
-                                      details: `${EVAL_REASON_DETAILS.CUSTOM_DATA} -> should-bucket`,
-                                      reason: EVAL_REASONS.TARGETING_MATCH,
-                                      target_id: '638680d659f1b81cc9e6c5ab',
-                                  },
-                              }
+                            ? getEvalReason(sdkName, EVAL_REASONS.TARGETING_MATCH, `${EVAL_REASON_DETAILS.CUSTOM_DATA} -> should-bucket`, '638680d659f1b81cc9e6c5ab')
                             : {}),
                     }),
                 }),
@@ -92,14 +87,7 @@ describe('Client Custom Data Tests', () => {
                         defaultValue: 'some-default',
                         value: 'some-default',
                         ...(hasCapability(sdkName, Capabilities.evalReason)
-                            ? {
-                                  evalReason: expect.toBeNil(),
-                                  eval: {
-                                      details:
-                                          DEFAULT_REASON_DETAILS.MISSING_CONFIG,
-                                      reason: EVAL_REASONS.DEFAULT,
-                                  },
-                              }
+                            ? getEvalReason(sdkName, EVAL_REASONS.DEFAULT, DEFAULT_REASON_DETAILS.MISSING_CONFIG)
                             : {}),
                     },
                 }),
