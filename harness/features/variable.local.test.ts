@@ -4,6 +4,7 @@ import {
     hasCapability,
     interceptEvents,
     LocalTestClient,
+    getEvalReason,
 } from '../helpers'
 import { Capabilities } from '../types'
 import {
@@ -205,7 +206,7 @@ describe('Variable Tests - Local', () => {
                         wrongTypeDefault === '1'
                             ? VariableType.string
                             : VariableType.number,
-                        DEFAULT_REASON_DETAILS.USER_NOT_TARGETED,
+                        sdkName === 'Go' ? DEFAULT_REASON_DETAILS.INVALID_VARIABLE_TYPE : DEFAULT_REASON_DETAILS.USER_NOT_TARGETED,
                     )
 
                     await eventResult.wait()
@@ -216,7 +217,6 @@ describe('Variable Tests - Local', () => {
                         expectAggregateDefaultEvent({
                             body: eventResult.body,
                             variableKey: key,
-                            defaultReason: 'INVALID_VARIABLE_TYPE',
                             etag: 'local-var-etag',
                             rayId: 'local-ray-id',
                             lastModified: lastModifiedDate.toUTCString(),
@@ -266,7 +266,6 @@ describe('Variable Tests - Local', () => {
                     expectAggregateDefaultEvent({
                         body: eventResult.body,
                         variableKey: key,
-                        defaultReason: 'USER_NOT_TARGETED',
                         etag: 'local-var-etag',
                         rayId: 'local-ray-id',
                         lastModified: lastModifiedDate.toUTCString(),
@@ -301,7 +300,7 @@ describe('Variable Tests - Local', () => {
                         method,
                         defaultValue,
                         variableType,
-                        DEFAULT_REASON_DETAILS.USER_NOT_TARGETED,
+                        sdkName === 'Go' ? DEFAULT_REASON_DETAILS.MISSING_VARIABLE : DEFAULT_REASON_DETAILS.USER_NOT_TARGETED,
                     )
 
                     await eventResult.wait()
@@ -309,7 +308,6 @@ describe('Variable Tests - Local', () => {
                     expectAggregateDefaultEvent({
                         body: eventResult.body,
                         variableKey: 'nonexistent',
-                        defaultReason: 'MISSING_VARIABLE',
                         etag: 'local-var-etag',
                         rayId: 'local-ray-id',
                         lastModified: lastModifiedDate.toUTCString(),
@@ -351,7 +349,6 @@ describe('Variable Tests - Local', () => {
                     expectAggregateDefaultEvent({
                         body: eventResult.body,
                         variableKey: 'nonexistent',
-                        defaultReason: 'MISSING_VARIABLE',
                         value: 2,
                         etag: 'local-var-etag',
                         rayId: 'local-ray-id',
@@ -430,7 +427,6 @@ describe('Variable Tests - Local', () => {
                         key: 'unicode-var',
                         defaultValue: 'default',
                         value: '↑↑↓↓←→←→BA 🤖',
-                        evalReason: expect.toBeNil(),
                         ...(hasCapability(sdkName, Capabilities.evalReason)
                             ? getEvalReason(
                                   sdkName,
@@ -511,7 +507,6 @@ describe('Variable Tests - Local', () => {
                     expectAggregateDefaultEvent({
                         body: eventResult.body,
                         variableKey: key,
-                        defaultReason: 'MISSING_CONFIG',
                         value: 1,
                         etag: null,
                         rayId: null,
@@ -571,7 +566,6 @@ describe('Variable Tests - Local', () => {
                     expectAggregateDefaultEvent({
                         body: eventResult.body,
                         variableKey: key,
-                        defaultReason: 'MISSING_CONFIG',
                         value: 1,
                         etag: null,
                         rayId: null,
@@ -629,27 +623,5 @@ describe('Variable Tests - Local', () => {
                     : {}),
             },
         })
-    }
-    function getEvalReason(
-        sdkName: string,
-        reason: string,
-        details?: string,
-        target_id?: string,
-    ) {
-        return sdkName === 'OF-NodeJS'
-            ? {
-                  reason,
-                  ...(hasCapability(sdkName, Capabilities.flagMetadata)
-                      ? {
-                            flagMetadata: {
-                                ...(details && { evalReasonDetails: details }),
-                                ...(target_id && {
-                                    evalReasonTargetId: target_id,
-                                }),
-                            },
-                        }
-                      : { flagMetadata: {} }),
-              }
-            : { eval: { reason, details, target_id } }
     }
 })

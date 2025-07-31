@@ -67,6 +67,7 @@ describe('allVariables Tests - Cloud', () => {
                     getMockedVariables(
                         hasCapability(sdkName, Capabilities.variablesFeatureId),
                         hasCapability(sdkName, Capabilities.evalReason),
+                        hasCapability(sdkName, Capabilities.baseEvalReason),
                     ),
                 )
             const response = await client.callAllVariables({
@@ -80,6 +81,7 @@ describe('allVariables Tests - Cloud', () => {
                 getMockedVariables(
                     hasCapability(sdkName, Capabilities.variablesFeatureId),
                     hasCapability(sdkName, Capabilities.evalReason),
+                    hasCapability(sdkName, Capabilities.baseEvalReason),
                 ),
             )
         })
@@ -95,6 +97,7 @@ describe('allVariables Tests - Cloud', () => {
                     getMockedVariables(
                         hasCapability(sdkName, Capabilities.variablesFeatureId),
                         hasCapability(sdkName, Capabilities.evalReason),
+                        hasCapability(sdkName, Capabilities.baseEvalReason),
                     ),
                 )
 
@@ -116,6 +119,7 @@ describe('allVariables Tests - Cloud', () => {
                     getMockedVariables(
                         hasCapability(sdkName, Capabilities.variablesFeatureId),
                         hasCapability(sdkName, Capabilities.evalReason),
+                        hasCapability(sdkName, Capabilities.baseEvalReason),
                     ),
                 )
 

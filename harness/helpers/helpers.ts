@@ -13,7 +13,7 @@ import {
 } from './commands'
 import { config_sse } from '../mockData'
 import { ProxyClientOptions } from './proxyClientOptions'
-import { EvalReason } from '@devcycle/types'
+import { EVAL_REASONS, EvalReason } from '@devcycle/types'
 
 const oldFetch = fetch
 
@@ -257,6 +257,7 @@ class BaseTestClient {
     constructor(sdkName: string) {
         this.clientId = uuidv4()
         this.sdkName = sdkName
+        // eslint-disable-next-line no-self-assign, @typescript-eslint/no-this-alias
         currentClient = this
         const currentTestName = expect.getState().currentTestName
         if (!currentTestName) {
@@ -275,6 +276,7 @@ class BaseTestClient {
         ).href
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     async close() {}
 }
 
@@ -572,4 +574,37 @@ export const getPlatformBySdkName = (name: string) => {
         return 'NodeJS'
     }
     return name === 'DotNet' ? 'C#' : name
+}
+export const getEvalReason = (
+    sdkName: string,
+    reason: string,
+    details?: string,
+    target_id?: string,
+) => {
+    return sdkName === 'OF-NodeJS'
+        ? {
+              reason,
+              ...(hasCapability(sdkName, Capabilities.flagMetadata)
+                  ? {
+                        flagMetadata: {
+                            ...(details && { evalReasonDetails: details }),
+                            ...(target_id && {
+                                evalReasonTargetId: target_id,
+                            }),
+                        },
+                    }
+                  : { flagMetadata: {} }),
+          }
+        : getBaseEvalReason(sdkName,reason, details, target_id)
+}
+
+const getBaseEvalReason = (sdkName: string, reason: string, details?: string, target_id?: string) => {
+    if (hasCapability(sdkName, Capabilities.baseEvalReason)) {
+        if (reason === EVAL_REASONS.TARGETING_MATCH) {
+            return { eval: { reason, details: "" } }
+        } else {
+            return { eval: { reason, details } }
+        }
+    }
+    return { eval: { reason, details, target_id } }
 }

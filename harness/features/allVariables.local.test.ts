@@ -75,6 +75,7 @@ describe('allVariables Tests - Local', () => {
             getMockedVariables(
                 hasCapability(sdkName, Capabilities.variablesFeatureId),
                 hasCapability(sdkName, Capabilities.evalReason),
+                hasCapability(sdkName, Capabilities.baseEvalReason),
             ),
         )
     })

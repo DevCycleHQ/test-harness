@@ -403,7 +403,6 @@ describe('Initialize Tests - Local', () => {
             expectAggregateDefaultEvent({
                 body: secondEventResult.body,
                 variableKey: 'number-var',
-                defaultReason: 'MISSING_FEATURE',
                 etag: 'second-etag',
                 rayId: 'second-ray',
                 lastModified: secondLastModifiedDate.toUTCString(),
