@@ -54,6 +54,10 @@ describe('SDKCapabilities Unit Tests', () => {
                 'ClientUUID',
                 'V2Config',
                 'Multithreading',
+                'EvalReason',
+                'CloudEvalReason',
+                'BaseEvalReason',
+                'EventsEvalReason',
             ]),
         }))
     })
@@ -75,6 +79,10 @@ describe('SDKCapabilities Unit Tests', () => {
             'ClientUUID',
             'V2Config',
             'Multithreading',
+            'EvalReason',
+            'CloudEvalReason',
+            'BaseEvalReason',
+            'EventsEvalReason',
         ]))
 
     })
