@@ -191,11 +191,9 @@ describe('Multithreading Tests', () => {
                 const eventBodies = []
 
                 scope.post(eventsUrl).reply(500)
-                let counter = 0
 
                 const interceptor2 = scope.post(eventsUrl)
                 interceptor2.reply((uri, body) => {
-                    console.warn('intercepted', body, counter++)
                     eventBodies.push(body)
                     return [201]
                 })
@@ -251,7 +249,6 @@ describe('Multithreading Tests', () => {
                     'Retried event requests not received',
                 )
 
-                console.warn('eventBodies', eventBodies)
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
                 expectAggregateEvaluationEvent({
@@ -319,10 +316,9 @@ describe('Multithreading Tests', () => {
                                         key: 'string-var',
                                         defaultValue: 'some-default',
                                         value: 'string',
-                                        eval: {
-                                            reason: EVAL_REASONS.TARGETING_MATCH,
-                                            details: "",
-                                        }
+                                        ...(hasCapability(sdkName, Capabilities.evalReason)
+                                            ? getEvalReason(sdkName, EVAL_REASONS.TARGETING_MATCH, "", "")
+                                            : {}),
                                     },
                                 }),
                             )

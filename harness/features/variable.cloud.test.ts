@@ -8,6 +8,7 @@ import {
     getSDKScope,
     cleanupCurrentClient,
     hasCapability,
+    getEvalReason,
 } from '../helpers'
 import { Capabilities } from '../types'
 
@@ -51,42 +52,6 @@ describe('Variable Tests - Cloud', () => {
             ),
         )
     }
-    function getEvalReason(
-        sdkName: string,
-        reason: string,
-        details?: string,
-        target_id?: string,
-    ) {
-        return sdkName === 'OF-NodeJS'
-            ? {
-                  reason,
-                  ...(hasCapability(sdkName, Capabilities.flagMetadata)
-                      ? {
-                            flagMetadata: {
-                                ...(details && { evalReasonDetails: details }),
-                                ...(target_id && {
-                                    evalReasonTargetId: target_id,
-                                }),
-                            },
-                        }
-                      : { flagMetadata: {} }),
-              }
-            : {
-                ...getBaseEvalReason(reason, details, target_id),
-                evalReason: expect.toBeNil(),
-              }
-    }
-    function getBaseEvalReason(reason: string, details?: string, target_id?: string) {
-        if (hasCapability(sdkName, Capabilities.baseEvalReason)) {
-            if (reason === EVAL_REASONS.TARGETING_MATCH) {
-                return { eval: { reason, details: "" } }
-            } else {
-                return { eval: { reason, details } }
-            }
-        }
-        return { eval: { reason, details, target_id } }
-    }
-
 
     // This describeCapability only runs if the SDK has the "cloud" capability.
     // Capabilities are located under harness/types/capabilities and follow the same
@@ -287,7 +252,7 @@ describe('Variable Tests - Cloud', () => {
                 // Mock the API response using `nodejs` as the SDK as this is the consistent response format from the DevCycle Bucketing API
                 const mockDvcBucketingAPIEvalReason = hasCloudEvalReason
                     ? getEvalReason(
-                          'nodejs',
+                          'NodeJS',
                           EVAL_REASONS.TARGETING_MATCH,
                           'All Users',
                           'variable_mismatch_target_id',
@@ -400,7 +365,7 @@ describe('Variable Tests - Cloud', () => {
                     // Mock the API response using `nodejs` as the SDK as this is the consistent response format from the DevCycle Bucketing API
                     const mockDvcBucketingAPIEvalReason = hasCloudEvalReason
                         ? getEvalReason(
-                              'nodejs',
+                              'NodeJS',
                               EVAL_REASONS.TARGETING_MATCH,
                               'All Users',
                               'test_target_id',

@@ -600,7 +600,7 @@ export const getEvalReason = (
 
 const getBaseEvalReason = (sdkName: string, reason: string, details?: string, target_id?: string) => {
     if (hasCapability(sdkName, Capabilities.baseEvalReason)) {
-        if (reason === EVAL_REASONS.TARGETING_MATCH) {
+        if (reason !== EVAL_REASONS.DEFAULT) {
             return { eval: { reason, details: "" } }
         } else {
             return { eval: { reason, details } }
