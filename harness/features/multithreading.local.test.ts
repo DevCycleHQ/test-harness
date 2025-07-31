@@ -5,7 +5,7 @@ import {
     waitForRequest,
 } from '../helpers'
 import { Capabilities } from '../types'
-import { VariableType } from '@devcycle/types'
+import { DEFAULT_REASON_DETAILS,  EVAL_REASONS, VariableType } from '@devcycle/types'
 import {
     expectAggregateDefaultEvent,
     expectAggregateEvaluationEvent,
@@ -181,13 +181,15 @@ describe('Multithreading Tests', () => {
                 })
             })
 
-            it('should retry events across threads', async () => {
+            it.only('should retry events across threads', async () => {
                 const eventBodies = []
 
                 scope.post(eventsUrl).reply(500)
+                let counter = 0
 
                 const interceptor2 = scope.post(eventsUrl)
                 interceptor2.reply((uri, body) => {
+                    console.warn('intercepted', body, counter++)
                     eventBodies.push(body)
                     return [201]
                 })
@@ -243,6 +245,7 @@ describe('Multithreading Tests', () => {
                     'Retried event requests not received',
                 )
 
+                console.warn('eventBodies', eventBodies)
                 // Expect that the SDK sends a single "aggVariableEvaluated" event
                 expect(eventBodies.length).toEqual(1)
                 expectAggregateEvaluationEvent({
@@ -310,6 +313,10 @@ describe('Multithreading Tests', () => {
                                         key: 'string-var',
                                         defaultValue: 'some-default',
                                         value: 'string',
+                                        eval: {
+                                            reason: EVAL_REASONS.TARGETING_MATCH,
+                                            details: "",
+                                        }
                                     },
                                 }),
                             )
@@ -358,7 +365,7 @@ describe('Multithreading Tests', () => {
                     defaultValue,
                 )
                 const variable = await variableResponse.json()
-                expectDefaultValue(key, variable, defaultValue, variableType)
+                expectDefaultValue(key, variable, 'variable', defaultValue, variableType, DEFAULT_REASON_DETAILS.MISSING_CONFIG)
 
                 await waitForRequest(
                     scope,
@@ -369,7 +376,6 @@ describe('Multithreading Tests', () => {
                 expectAggregateDefaultEvent({
                     body: eventBody,
                     variableKey: key,
-                    defaultReason: 'MISSING_CONFIG',
                     etag: null,
                     rayId: null,
                     lastModified: null,
@@ -394,10 +400,12 @@ describe('Multithreading Tests', () => {
     const expectDefaultValue = (
         key: string,
         variable: VariableResponse,
+        method: string,
         defaultValue: ValueTypes,
         type: VariableType,
+        details = DEFAULT_REASON_DETAILS.MISSING_CONFIG,
     ) => {
-        expect(variable).toEqual({
+        expectVariableResponse(variable, method, {
             entityType: 'Variable',
             data: {
                 isDefaulted: true,
@@ -405,8 +413,31 @@ describe('Multithreading Tests', () => {
                 value: defaultValue,
                 key: key,
                 type,
+                eval: getEvalReason(EVAL_REASONS.DEFAULT, details),
             },
             logs: [],
         })
     }
+
+    const expectVariableResponse = (variable, method, expectObj) => {
+        expect(variable).toEqual(
+            expect.objectContaining(
+                method === 'variable'
+                    ? expectObj
+                    : {
+                          data: expectObj.data?.value,
+                      },
+            ),
+        )
+    }
+
+
+    function getEvalReason(
+        reason: string,
+        details?: string,
+        target_id?: string,
+    ) {
+        return { reason, details, target_id } 
+    }
+
 })

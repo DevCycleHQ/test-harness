@@ -72,14 +72,21 @@ describe('Variable Tests - Cloud', () => {
                       : { flagMetadata: {} }),
               }
             : {
-                  evalReason: expect.toBeNil(),
-                  eval: {
-                      reason,
-                      details,
-                      target_id: target_id ? target_id : expect.toBeNil(),
-                  },
+                ...getBaseEvalReason(reason, details, target_id),
+                evalReason: expect.toBeNil(),
               }
     }
+    function getBaseEvalReason(reason: string, details?: string, target_id?: string) {
+        if (hasCapability(sdkName, Capabilities.baseEvalReason)) {
+            if (reason === EVAL_REASONS.TARGETING_MATCH) {
+                return { eval: { reason, details: "" } }
+            } else {
+                return { eval: { reason, details } }
+            }
+        }
+        return { eval: { reason, details, target_id } }
+    }
+
 
     // This describeCapability only runs if the SDK has the "cloud" capability.
     // Capabilities are located under harness/types/capabilities and follow the same

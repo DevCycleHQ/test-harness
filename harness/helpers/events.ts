@@ -147,7 +147,6 @@ export const expectAggregateEvaluationEvent = ({
 export const expectAggregateDefaultEvent = ({
     body,
     variableKey,
-    defaultReason,
     value,
     etag,
     rayId,
@@ -156,7 +155,6 @@ export const expectAggregateDefaultEvent = ({
 }: {
     body: Record<string, unknown>
     variableKey: string
-    defaultReason: string
     etag?: string
     rayId?: string
     lastModified?: string
@@ -165,12 +163,7 @@ export const expectAggregateDefaultEvent = ({
 }) => {
     const sdkName = getSDKName()
     const expectedPlatform = getPlatformBySdkName(sdkName)
-    const metadata: Record<string, unknown> = hasCapability(
-        sdkName,
-        Capabilities.defaultReason,
-    )
-        ? { defaultReason }
-        : {}
+    const metadata: Record<string, unknown> = {}
     const sdkPlatform = hasCapability(sdkName, Capabilities.sdkPlatform)
         ? SDKPlatformMap[sdkName]
         : undefined

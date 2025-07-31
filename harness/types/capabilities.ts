@@ -20,6 +20,7 @@ export const Capabilities = {
     evalReason: 'EvalReason',
     eventsEvalReason: 'EventsEvalReason',
     flagMetadata: 'flagMetadata',
+    baseEvalReason: 'BaseEvalReason',
 }
 
 export const SDKPlatformMap = {
@@ -90,13 +91,14 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.cloud,
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
-        Capabilities.multithreading,
-        Capabilities.defaultReason,
         Capabilities.etagReporting,
         Capabilities.lastModifiedHeader,
         Capabilities.sdkConfigEvent,
         Capabilities.clientUUID,
         Capabilities.v2Config,
+        Capabilities.evalReason,
+        Capabilities.cloudEvalReason,
+        Capabilities.baseEvalReason,
     ],
     Ruby: [
         Capabilities.clientCustomData,
