@@ -57,7 +57,7 @@ export function getMockedVariables(
             ...(hasVariablesFeatureId
                 ? { _feature: '6386813a59f1b81cc9e6c68d' }
                 : {}),
-            ...getEvalReason(hasBaseEvalReason, hasEvalReason, EVAL_REASONS.TARGETING_MATCH, 'Custom Data -> should-bucket', '638680d659f1b81cc9e6c5ab'),
+            ...getEvalReason(hasBaseEvalReason, hasEvalReason, EVAL_REASONS.TARGETING_MATCH, 'All Users', '6386813a59f1b81cc9e6c6b6'),
         },
         'unicode-var': {
             _id: '638681f059f1b81cc9e6c7fe',

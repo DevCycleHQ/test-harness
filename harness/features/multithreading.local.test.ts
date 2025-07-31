@@ -316,10 +316,9 @@ describe('Multithreading Tests', () => {
                                         key: 'string-var',
                                         defaultValue: 'some-default',
                                         value: 'string',
-                                        eval: {
-                                            reason: EVAL_REASONS.TARGETING_MATCH,
-                                            details: "",
-                                        }
+                                        ...(hasCapability(sdkName, Capabilities.evalReason)
+                                            ? getEvalReason(sdkName, EVAL_REASONS.TARGETING_MATCH, "", "")
+                                            : {}),
                                     },
                                 }),
                             )
