@@ -163,7 +163,12 @@ export const expectAggregateDefaultEvent = ({
 }) => {
     const sdkName = getSDKName()
     const expectedPlatform = getPlatformBySdkName(sdkName)
-    const metadata: Record<string, unknown> = {}
+    const metadata: Record<string, unknown> = hasCapability(
+        sdkName,
+        Capabilities.defaultReason,
+    )
+        ? { defaultReason : expect.any(String)}
+        : {}
     const sdkPlatform = hasCapability(sdkName, Capabilities.sdkPlatform)
         ? SDKPlatformMap[sdkName]
         : undefined

@@ -92,6 +92,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.edgeDB,
         Capabilities.clientCustomData,
         Capabilities.etagReporting,
+        Capabilities.defaultReason,
         Capabilities.lastModifiedHeader,
         Capabilities.sdkConfigEvent,
         Capabilities.clientUUID,
