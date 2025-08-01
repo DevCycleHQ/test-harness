@@ -595,13 +595,18 @@ export const getEvalReason = (
                     }
                   : { flagMetadata: {} }),
           }
-        : getBaseEvalReason(sdkName,reason, details, target_id)
+        : getBaseEvalReason(sdkName, reason, details, target_id)
 }
 
-const getBaseEvalReason = (sdkName: string, reason: string, details?: string, target_id?: string) => {
+const getBaseEvalReason = (
+    sdkName: string,
+    reason: string,
+    details?: string,
+    target_id?: string,
+) => {
     if (hasCapability(sdkName, Capabilities.baseEvalReason)) {
         if (reason !== EVAL_REASONS.DEFAULT) {
-            return { eval: { reason, details: "" } }
+            return { eval: { reason, details: '' } }
         } else {
             return { eval: { reason, details } }
         }
