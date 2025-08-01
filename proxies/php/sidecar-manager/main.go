@@ -81,14 +81,17 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	proxyInstance := &sdkproxy.ProxyInstance{
-		UnixSocketPath:    fmt.Sprintf("/tmp/%s.sock", reqBody.ClientId),
-		UnixSocketEnabled: true,
-		SDKKey:            reqBody.SdkKey,
+		UnixSocketPath:        fmt.Sprintf("/tmp/%s.sock", reqBody.ClientId),
+		UnixSocketPermissions: "0755",
+		UnixSocketEnabled:     true,
+		SSEEnabled:            false,
+		SDKKey:                reqBody.SdkKey,
+		LogFile:               fmt.Sprintf("/tmp/%s.log", reqBody.ClientId),
 		PlatformData: devcycle.PlatformData{
 			SdkType:         "server",
 			SdkVersion:      "1.0.0",
-			PlatformVersion: "",
-			DeviceModel:     "",
+			PlatformVersion: "1.0.0",
+			DeviceModel:     "SDKProxy",
 			Platform:        "PHP",
 			Hostname:        "test-harness",
 		},
