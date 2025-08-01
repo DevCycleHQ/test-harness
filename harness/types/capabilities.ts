@@ -111,7 +111,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.evalReason,
         Capabilities.eventsEvalReason,
     ],
-    PHP: [Capabilities.cloudProxy],
+    PHP: [Capabilities.cloudProxy, Capabilities.v2Config],
 }
 
 export const getCapabilities = () => {

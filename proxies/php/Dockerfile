@@ -25,7 +25,7 @@ COPY sidecar-manager/go.mod sidecar-manager/go.sum ./
 RUN go mod download && go mod verify
 
 COPY sidecar-manager/main.go /sidecar-manager/main.go
-RUN CGOENABLED=0 go build -tags=native_bucketing -v -o sidecar-manager ./main.go
+RUN go build -v -o sidecar-manager ./main.go
 
 
 FROM alpine:3.17
