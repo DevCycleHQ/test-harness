@@ -31,7 +31,8 @@ public class DVCVariable<T>
             DefaultValue = defaultValue,
             IsDefaulted = variable.Reason == OpenFeature.Constant.Reason.Default,
             Type = Variable<T>.DetermineType(variable.Value),
-            FlagMetadata = serializableMetadata
+            FlagMetadata = serializableMetadata,
+            Reason = variable.Reason
         };
     }
 }

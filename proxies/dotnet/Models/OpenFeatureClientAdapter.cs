@@ -75,25 +75,31 @@ public class OpenFeatureClientAdapter(FeatureClient client)
         };
     }
 
-    private Dictionary<string, object> ParseMetadata(ImmutableMetadata? metadata)
-    {
-        var serializableMetadata = new Dictionary<string, object>();
-        var evalReasonDetails = metadata?.GetString("evalReasonDetails");
-        var evalReasonTargetId = metadata?.GetString("evalReasonTargetId");
-
-        if (!string.IsNullOrEmpty(evalReasonDetails))
-            serializableMetadata["evalReasonDetails"] = evalReasonDetails;
-        if (!string.IsNullOrEmpty(evalReasonTargetId))
-            serializableMetadata["evalReasonTargetId"] = evalReasonTargetId;
-
-        return serializableMetadata;
-    }
-
     private EvaluationContext DvcUserToContext(DevCycleUser user)
     {
         var contextBuilder = EvaluationContext.Builder()
-            .Set("userId", user.UserId ?? "");
-
+                .Set("user_id", user.UserId)
+                .Set("email", user.Email)
+                .Set("name", user.Name)
+                .Set("language", user.Language)
+                .Set("country", user.Country)
+                .Set("appVersion", user.AppVersion)
+                .Set("appBuild", user.AppBuild)
+                .Set("platform", user.Platform)
+                .Set("platformVersion", user.PlatformVersion)
+                .Set("createdDate", user.CreatedDate.ToString())
+                .Set("lastSeenDate", user.LastSeenDate.ToString())
+                .Set("deviceModel", user.DeviceModel)
+                .Set("sdkVersion", user.SdkVersion)
+                .Set("customData", new Structure(user.CustomData.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => new Value(kvp.Value)
+                )))
+                .Set("privateCustomData", new Structure(user.CustomData.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => new Value(kvp.Value)
+                )))
+            ;
         return contextBuilder.Build();
     }
 

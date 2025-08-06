@@ -25,7 +25,6 @@ export const Capabilities = {
 
 export const SDKPlatformMap = {
     'OF-NodeJS': 'nodejs-of',
-    'OF-DotNet': 'dotnet-of',
 }
 
 //TODO: when tests are updated for OF-NodeJS eval capability, remove concept of allVariables/allFeatures as a capability

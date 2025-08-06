@@ -49,7 +49,8 @@ export const getConnectionStringForProxy = (proxy: string) => {
     }
 
     const host = global[`__TESTCONTAINERS_${containerName.toUpperCase()}_IP__`]
-    const port = global[`__TESTCONTAINERS_${containerName.toUpperCase()}_PORT_3000__`]
+    const port =
+        global[`__TESTCONTAINERS_${containerName.toUpperCase()}_PORT_3000__`]
 
     if (!host || !port) {
         throw new Error('Could not find container for proxy: ' + proxy)
@@ -589,5 +590,5 @@ export const getPlatformBySdkName = (name: string) => {
     if (name === 'OF-NodeJS') {
         return 'NodeJS'
     }
-    return name === 'DotNet' ? 'C#' : name
+    return name === 'DotNet' || name === 'OF-DotNet' ? 'C#' : name
 }
