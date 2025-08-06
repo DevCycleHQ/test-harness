@@ -79,7 +79,7 @@ export const performCallVariable = async (
         { value: defaultValue },
     ]
     // Need to pass in the variable type into the OpenFeature provider as it doesn't have a generic variable interface
-    if (hasCapability(sdkName, Capabilities.openFeature)) {
+    if (sdkName == 'OF-Node') {
         params.push({ value: variableType })
     }
     return await sendCommand(url, {

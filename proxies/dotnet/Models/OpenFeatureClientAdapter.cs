@@ -8,52 +8,71 @@ namespace dotnet.Models;
 
 public class OpenFeatureClientAdapter(FeatureClient client)
 {
-    public async Task<DVCVariable<string>> Variable(DevCycleUser user, string key, string defaultValue)
+    public async Task<DVCVariable<T>> Variable<T>(DevCycleUser user, string key, T defaultValue)
     {
-        var result = await client.GetStringDetailsAsync(key, defaultValue, DvcUserToContext(user));
-        return DVCVariable<string>.FromFlagEvaluationDetails<string>(result, defaultValue);
+        var methodName = GetMethodNameForType<T>();
+        var clientMethod = typeof(FeatureClient).GetMethod(methodName);
+
+        if (clientMethod == null)
+            throw new InvalidOperationException($"Method {methodName} not found on FeatureClient");
+
+        var context = DvcUserToContext(user);
+        var convertedDefault = ConvertDefaultValue(defaultValue);
+
+        dynamic task = clientMethod.Invoke(client, new object[] { key, convertedDefault, context });
+        var result = await task;
+
+        return DVCVariable<T>.FromFlagEvaluationDetails<T>(result, defaultValue);
     }
 
-    public async Task<DVCVariable<int>> Variable(DevCycleUser user, string key, int defaultValue)
+    public async Task<T> VariableValue<T>(DevCycleUser user, string key, T defaultValue)
     {
-        var result = await client.GetIntegerDetailsAsync(key, defaultValue, DvcUserToContext(user));
-        return DVCVariable<int>.FromFlagEvaluationDetails<int>(result, defaultValue);
+        var methodName = GetValueMethodNameForType<T>();
+        var clientMethod = typeof(FeatureClient).GetMethod(methodName);
+
+        if (clientMethod == null)
+            throw new InvalidOperationException($"Method {methodName} not found on FeatureClient");
+
+        var context = DvcUserToContext(user);
+        var convertedDefault = ConvertDefaultValue(defaultValue);
+
+        dynamic task = clientMethod.Invoke(client, new object[] { key, convertedDefault, context });
+        var result = await task;
+
+        return result;
     }
 
-    public async Task<DVCVariable<bool>> Variable(DevCycleUser user, string key, bool defaultValue)
+    private string GetMethodNameForType<T>()
     {
-        var result = await client.GetBooleanDetailsAsync(key, defaultValue, DvcUserToContext(user));
-        return DVCVariable<bool>.FromFlagEvaluationDetails<bool>(result, defaultValue);
+        return typeof(T) switch
+        {
+            Type t when t == typeof(string) => "GetStringDetailsAsync",
+            Type t when t == typeof(int) => "GetIntegerDetailsAsync",
+            Type t when t == typeof(bool) => "GetBooleanDetailsAsync",
+            Type t when t == typeof(JObject) => "GetObjectDetailsAsync",
+            _ => throw new ArgumentException($"Unsupported type: {typeof(T)}")
+        };
     }
 
-    public async Task<DVCVariable<Value>> Variable(DevCycleUser user, string key, JObject defaultValue)
+    private string GetValueMethodNameForType<T>()
     {
-        var result = await client.GetObjectDetailsAsync(key, new Value(defaultValue), DvcUserToContext(user));
-        return DVCVariable<Value>.FromFlagEvaluationDetails<Value>(result, new Value(defaultValue));
+        return typeof(T) switch
+        {
+            Type t when t == typeof(string) => "GetStringAsync",
+            Type t when t == typeof(int) => "GetIntegerAsync",
+            Type t when t == typeof(bool) => "GetBooleanAsync",
+            Type t when t == typeof(JObject) => "GetObjectAsync",
+            _ => throw new ArgumentException($"Unsupported type: {typeof(T)}")
+        };
     }
 
-    public async Task<string> VariableValue(DevCycleUser user, string key, string defaultValue)
+    private object ConvertDefaultValue<T>(T defaultValue)
     {
-        var result = await client.GetStringDetailsAsync(key, defaultValue, DvcUserToContext(user));
-        return result.Value;
-    }
-
-    public async Task<int> VariableValue(DevCycleUser user, string key, int defaultValue)
-    {
-        var result = await client.GetIntegerDetailsAsync(key, defaultValue, DvcUserToContext(user));
-        return result.Value;
-    }
-
-    public async Task<bool> VariableValue(DevCycleUser user, string key, bool defaultValue)
-    {
-        var result = await client.GetBooleanDetailsAsync(key, defaultValue, DvcUserToContext(user));
-        return result.Value;
-    }
-
-    public async Task<Value> VariableValue(DevCycleUser user, string key, JObject defaultValue)
-    {
-        var result = await client.GetObjectDetailsAsync(key, new Value(defaultValue), DvcUserToContext(user));
-        return result.Value;
+        return defaultValue switch
+        {
+            JObject jobj => new Value(jobj),
+            _ => defaultValue
+        };
     }
 
     private Dictionary<string, object> ParseMetadata(ImmutableMetadata? metadata)
