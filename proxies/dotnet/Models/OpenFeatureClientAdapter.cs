@@ -8,7 +8,7 @@ namespace dotnet.Models;
 
 public class OpenFeatureClientAdapter(FeatureClient client)
 {
-    public async Task<DVCVariable<T>> Variable<T>(DevCycleUser user, string key, T defaultValue)
+    public async Task<Variable<T>> Variable<T>(DevCycleUser user, string key, T defaultValue)
     {
         var methodName = GetMethodNameForType<T>();
         var clientMethod = typeof(FeatureClient).GetMethod(methodName);
@@ -22,7 +22,7 @@ public class OpenFeatureClientAdapter(FeatureClient client)
         dynamic task = clientMethod.Invoke(client, new object[] { key, convertedDefault, context, null, null });
         var result = await task;
 
-        return DVCVariable<T>.FromFlagEvaluationDetails<T>(result, defaultValue);
+        return Models.Variable<T>.FromFlagEvaluationDetails<T>(result, defaultValue);
     }
 
     public async Task<T> VariableValue<T>(DevCycleUser user, string key, T defaultValue)

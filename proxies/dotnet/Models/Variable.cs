@@ -2,7 +2,7 @@ using DevCycle.SDK.Server.Common.Model;
 using OpenFeature.Model;
 
 namespace dotnet.Models;
-public class DVCVariable<T>
+public class Variable<T>
 {
 
     public string Key;
@@ -13,7 +13,7 @@ public class DVCVariable<T>
     public string? Reason;
     public Dictionary<string, object>? FlagMetadata;
 
-    public static DVCVariable<T> FromFlagEvaluationDetails<T>(FlagEvaluationDetails<T> variable, T defaultValue)
+    public static Variable<T> FromFlagEvaluationDetails<T>(FlagEvaluationDetails<T> variable, T defaultValue)
     {
         var serializableMetadata = new Dictionary<string, object>();
         var evalReasonDetails = variable.FlagMetadata?.GetString("evalReasonDetails");
@@ -24,13 +24,13 @@ public class DVCVariable<T>
         if (!string.IsNullOrEmpty(evalReasonTargetId))
             serializableMetadata["evalReasonTargetId"] = evalReasonTargetId;
 
-        return new DVCVariable<T>
+        return new Variable<T>
         {
             Key = variable.FlagKey,
             Value = variable.Value,
             DefaultValue = defaultValue,
             IsDefaulted = variable.Reason == OpenFeature.Constant.Reason.Default,
-            Type = Variable<T>.DetermineType(variable.Value),
+            Type = DevCycle.SDK.Server.Common.Model.Variable<T>.DetermineType(variable.Value),
             FlagMetadata = serializableMetadata,
             Reason = variable.Reason
         };
