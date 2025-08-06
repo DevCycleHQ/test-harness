@@ -238,9 +238,19 @@ public class LocationController : ControllerBase
         MethodInfo? commandMethod = entity.GetType().GetMethod(parsedCommand);
         if (command == "variable" || command == "variableValue")
         {
-            Type defaultValueClass = parsedParams[parsedParams.Count - 1].GetType();
+            // For OpenFeature clients, the last parameter is the variable type string, 
+            // but the actual defaultValue is the second-to-last parameter
+            int defaultValueIndex = parsedParams.Count > 3 ? parsedParams.Count - 2 : parsedParams.Count - 1;
+            Type defaultValueClass = parsedParams[defaultValueIndex].GetType();
             // have to set the generic type for defaultValue before invoke
             commandMethod = commandMethod?.MakeGenericMethod(defaultValueClass);
+            
+            // Remove the extra variableType parameter for non-OpenFeature clients
+            // OpenFeature adapter methods don't use the variableType parameter
+            if (parsedParams.Count > 3)
+            {
+                parsedParams.RemoveAt(parsedParams.Count - 1);
+            }
         }
         else if (parsedCommand == "SetClientCustomData")
         {

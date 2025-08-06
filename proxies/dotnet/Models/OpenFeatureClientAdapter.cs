@@ -1,4 +1,5 @@
 using DevCycle.SDK.Server.Common.Model;
+using Newtonsoft.Json.Linq;
 using OpenFeature;
 using OpenFeature.Model;
 
@@ -7,56 +8,74 @@ namespace dotnet.Models;
 
 public class OpenFeatureClientAdapter(FeatureClient client)
 {
-    public async Task<DVCVariable<T>> Variable<T>(DevCycleUser user, string key, T defaultValue)
+    public async Task<DVCVariable<string>> Variable(DevCycleUser user, string key, string defaultValue)
     {
-        var context = ConvertUserToEvaluationContext(user);
-        var type = DevCycle.SDK.Server.Common.Model.Variable<T>.DetermineType(defaultValue);
-
-        dynamic variableEval = type switch
-        {
-            TypeEnum.String => await client.GetStringDetailsAsync(key, (string)(object)defaultValue!, context),
-            TypeEnum.Number => await client.GetIntegerDetailsAsync(key, (int)(object)defaultValue!, context),
-            TypeEnum.Boolean => await client.GetBooleanDetailsAsync(key, (bool)(object)defaultValue!, context),
-            TypeEnum.JSON => await client.GetObjectDetailsAsync(key, (Value)(object)defaultValue!, context),
-            _ => throw new ArgumentException($"Unsupported type: {type}")
-        };
-
-        return DVCVariable<T>.FromFlagEvaluationDetails<T>(variableEval, defaultValue);
+        var result = await client.GetStringDetailsAsync(key, defaultValue, DvcUserToContext(user));
+        return DVCVariable<string>.FromFlagEvaluationDetails<string>(result, defaultValue);
     }
 
-    private EvaluationContext ConvertUserToEvaluationContext(DevCycleUser user)
+    public async Task<DVCVariable<int>> Variable(DevCycleUser user, string key, int defaultValue)
+    {
+        var result = await client.GetIntegerDetailsAsync(key, defaultValue, DvcUserToContext(user));
+        return DVCVariable<int>.FromFlagEvaluationDetails<int>(result, defaultValue);
+    }
+
+    public async Task<DVCVariable<bool>> Variable(DevCycleUser user, string key, bool defaultValue)
+    {
+        var result = await client.GetBooleanDetailsAsync(key, defaultValue, DvcUserToContext(user));
+        return DVCVariable<bool>.FromFlagEvaluationDetails<bool>(result, defaultValue);
+    }
+
+    public async Task<DVCVariable<Value>> Variable(DevCycleUser user, string key, JObject defaultValue)
+    {
+        var result = await client.GetObjectDetailsAsync(key, new Value(defaultValue), DvcUserToContext(user));
+        return DVCVariable<Value>.FromFlagEvaluationDetails<Value>(result, new Value(defaultValue));
+    }
+
+    public async Task<string> VariableValue(DevCycleUser user, string key, string defaultValue)
+    {
+        var result = await client.GetStringDetailsAsync(key, defaultValue, DvcUserToContext(user));
+        return result.Value;
+    }
+
+    public async Task<int> VariableValue(DevCycleUser user, string key, int defaultValue)
+    {
+        var result = await client.GetIntegerDetailsAsync(key, defaultValue, DvcUserToContext(user));
+        return result.Value;
+    }
+
+    public async Task<bool> VariableValue(DevCycleUser user, string key, bool defaultValue)
+    {
+        var result = await client.GetBooleanDetailsAsync(key, defaultValue, DvcUserToContext(user));
+        return result.Value;
+    }
+
+    public async Task<Value> VariableValue(DevCycleUser user, string key, JObject defaultValue)
+    {
+        var result = await client.GetObjectDetailsAsync(key, new Value(defaultValue), DvcUserToContext(user));
+        return result.Value;
+    }
+
+    private Dictionary<string, object> ParseMetadata(ImmutableMetadata? metadata)
+    {
+        var serializableMetadata = new Dictionary<string, object>();
+        var evalReasonDetails = metadata?.GetString("evalReasonDetails");
+        var evalReasonTargetId = metadata?.GetString("evalReasonTargetId");
+
+        if (!string.IsNullOrEmpty(evalReasonDetails))
+            serializableMetadata["evalReasonDetails"] = evalReasonDetails;
+        if (!string.IsNullOrEmpty(evalReasonTargetId))
+            serializableMetadata["evalReasonTargetId"] = evalReasonTargetId;
+
+        return serializableMetadata;
+    }
+
+    private EvaluationContext DvcUserToContext(DevCycleUser user)
     {
         var contextBuilder = EvaluationContext.Builder()
-            .Set("targetingKey", user.UserId ?? "");
-
-        if (!string.IsNullOrEmpty(user.Email))
-            contextBuilder.Set("email", user.Email);
-        if (!string.IsNullOrEmpty(user.Name))
-            contextBuilder.Set("name", user.Name);
-        if (!string.IsNullOrEmpty(user.Language))
-            contextBuilder.Set("language", user.Language);
-        if (!string.IsNullOrEmpty(user.Country))
-            contextBuilder.Set("country", user.Country);
-        if (!string.IsNullOrEmpty(user.AppVersion))
-            contextBuilder.Set("appVersion", user.AppVersion);
-        if (user.AppBuild != 0)
-            contextBuilder.Set("appBuild", user.AppBuild.ToString());
-        if (!string.IsNullOrEmpty(user.Platform))
-            contextBuilder.Set("platform", user.Platform);
-        if (!string.IsNullOrEmpty(user.PlatformVersion))
-            contextBuilder.Set("platformVersion", user.PlatformVersion);
-        if (!string.IsNullOrEmpty(user.DeviceModel))
-            contextBuilder.Set("deviceModel", user.DeviceModel);
-
-        // Add custom data
-        if (user.CustomData != null)
-        {
-            foreach (var kvp in user.CustomData)
-            {
-                contextBuilder.Set(kvp.Key, new Value(kvp.Value));
-            }
-        }
+            .Set("userId", user.UserId ?? "");
 
         return contextBuilder.Build();
     }
+
 }

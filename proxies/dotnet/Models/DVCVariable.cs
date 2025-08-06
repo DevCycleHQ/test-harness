@@ -4,6 +4,7 @@ using OpenFeature.Model;
 namespace dotnet.Models;
 public class DVCVariable<T>
 {
+
     public string Key;
     public T Value;
     public T DefaultValue;
