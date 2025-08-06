@@ -169,7 +169,7 @@ public class LocationController : ControllerBase
                 }
                 else if (type == JTokenType.Integer)
                 {
-                    result.Add(param["value"].Value<long>());
+                    result.Add(param["value"].Value<int>());
                 }
                 else if (type == JTokenType.String)
                 {

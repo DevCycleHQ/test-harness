@@ -19,7 +19,7 @@ public class OpenFeatureClientAdapter(FeatureClient client)
         var context = DvcUserToContext(user);
         var convertedDefault = ConvertDefaultValue(defaultValue);
 
-        dynamic task = clientMethod.Invoke(client, new object[] { key, convertedDefault, context });
+        dynamic task = clientMethod.Invoke(client, new object[] { key, convertedDefault, context, null, null });
         var result = await task;
 
         return DVCVariable<T>.FromFlagEvaluationDetails<T>(result, defaultValue);
@@ -36,7 +36,7 @@ public class OpenFeatureClientAdapter(FeatureClient client)
         var context = DvcUserToContext(user);
         var convertedDefault = ConvertDefaultValue(defaultValue);
 
-        dynamic task = clientMethod.Invoke(client, new object[] { key, convertedDefault, context });
+        dynamic task = clientMethod.Invoke(client, new object[] { key, convertedDefault, context, null, null });
         var result = await task;
 
         return result;
@@ -58,10 +58,10 @@ public class OpenFeatureClientAdapter(FeatureClient client)
     {
         return typeof(T) switch
         {
-            Type t when t == typeof(string) => "GetStringAsync",
-            Type t when t == typeof(int) => "GetIntegerAsync",
-            Type t when t == typeof(bool) => "GetBooleanAsync",
-            Type t when t == typeof(JObject) => "GetObjectAsync",
+            Type t when t == typeof(string) => "GetStringValueAsync",
+            Type t when t == typeof(int) => "GetIntegerValueAsync",
+            Type t when t == typeof(bool) => "GetBooleanValueAsync",
+            Type t when t == typeof(JObject) => "GetObjectValueAsync",
             _ => throw new ArgumentException($"Unsupported type: {typeof(T)}")
         };
     }
