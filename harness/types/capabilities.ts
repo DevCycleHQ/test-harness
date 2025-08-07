@@ -6,7 +6,6 @@ export const Capabilities = {
     sse: 'SSE',
     clientCustomData: 'ClientCustomData',
     multithreading: 'Multithreading',
-    defaultReason: 'DefaultReason',
     etagReporting: 'EtagReporting',
     cloudProxy: 'CloudProxy',
     lastModifiedHeader: 'LastModifiedHeader',
