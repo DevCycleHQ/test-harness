@@ -3,7 +3,6 @@ import {
     waitForRequest,
     getSDKScope,
     hasCapability,
-    describeCapability,
 } from '../helpers'
 import { Capabilities } from '../types'
 import { getMockedVariables } from '../mockData'
