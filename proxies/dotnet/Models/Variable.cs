@@ -23,14 +23,16 @@ public class Variable<T>
             serializableMetadata["evalReasonDetails"] = evalReasonDetails;
         if (!string.IsNullOrEmpty(evalReasonTargetId))
             serializableMetadata["evalReasonTargetId"] = evalReasonTargetId;
-
+        var type = typeof(T) != typeof(Value)
+            ? DevCycle.SDK.Server.Common.Model.Variable<T>.DetermineType(variable.Value)
+            : TypeEnum.JSON;
         return new Variable<T>
         {
             Key = variable.FlagKey,
             Value = variable.Value,
             DefaultValue = defaultValue,
             IsDefaulted = variable.Reason == OpenFeature.Constant.Reason.Default,
-            Type = DevCycle.SDK.Server.Common.Model.Variable<T>.DetermineType(variable.Value),
+            Type = type,
             FlagMetadata = serializableMetadata,
             Reason = variable.Reason
         };

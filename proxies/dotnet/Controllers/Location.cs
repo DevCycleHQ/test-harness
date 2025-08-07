@@ -7,6 +7,7 @@ using System.Reflection;
 using System.ComponentModel;
 using Newtonsoft.Json.Linq;
 using dotnet.Models;
+using OpenFeature.Model;
 
 namespace dotnet.Controllers;
 
@@ -177,7 +178,7 @@ public class LocationController : ControllerBase
                 }
                 else if (type == JTokenType.Object)
                 {
-                    result.Add(param["value"]);
+                    result.Add(new Value());
                 }
                 else
                 {
@@ -238,6 +239,10 @@ public class LocationController : ControllerBase
         if (command == "variable" || command == "variableValue")
         {
             Type defaultValueClass = parsedParams[parsedParams.Count - 1].GetType();
+            if (defaultValueClass == typeof(JObject))
+            {
+                defaultValueClass = typeof(Value);
+            }
             // have to set the generic type for defaultValue before invoke
             commandMethod = commandMethod?.MakeGenericMethod(defaultValueClass);
         }
