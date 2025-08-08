@@ -4,7 +4,8 @@ export const Sdks = {
     dotnet: 'DotNet',
     go: 'Go',
     ruby: 'Ruby',
-    php: 'PHP',
+    // TODO: add PHP after SDK proxy is updated
+    // php: 'PHP',
     java: 'Java',
     python: 'Python',
 }

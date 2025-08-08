@@ -6,7 +6,6 @@ export const Capabilities = {
     sse: 'SSE',
     clientCustomData: 'ClientCustomData',
     multithreading: 'Multithreading',
-    defaultReason: 'DefaultReason',
     etagReporting: 'EtagReporting',
     cloudProxy: 'CloudProxy',
     lastModifiedHeader: 'LastModifiedHeader',
@@ -106,12 +105,12 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.clientCustomData,
         Capabilities.v2Config,
         Capabilities.variablesFeatureId,
-        Capabilities.variablesFeatureId,
         Capabilities.cloudEvalReason,
         Capabilities.evalReason,
         Capabilities.eventsEvalReason,
     ],
-    PHP: [Capabilities.cloudProxy],
+    // TODO: add PHP capabilities after SDK proxy is updated
+    // PHP: [Capabilities.cloudProxy],
 }
 
 export const getCapabilities = () => {
