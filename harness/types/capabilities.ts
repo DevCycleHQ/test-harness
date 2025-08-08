@@ -105,12 +105,12 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.clientCustomData,
         Capabilities.v2Config,
         Capabilities.variablesFeatureId,
-        Capabilities.variablesFeatureId,
         Capabilities.cloudEvalReason,
         Capabilities.evalReason,
         Capabilities.eventsEvalReason,
     ],
-    PHP: [Capabilities.cloudProxy],
+    // TODO: add PHP capabilities after SDK proxy is updated
+    // PHP: [Capabilities.cloudProxy],
 }
 
 export const getCapabilities = () => {
