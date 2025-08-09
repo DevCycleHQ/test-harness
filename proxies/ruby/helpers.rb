@@ -60,7 +60,7 @@ end
 def get_entity_type_from_class_name(class_name)
   entity_type = class_name == 'NilClass' ? 'Void' : class_name.split('::').last
   case entity_type
-  when 'DVCClient'
+  when 'DVCClient', 'DVCCloudClient'
     return 'Client'
   when 'Hash'
     return 'Object'
