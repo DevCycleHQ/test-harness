@@ -17,11 +17,13 @@ if [ -n "$SDK_GITHUB_SHA" ] && [[ "$SDKS_TO_TEST" =~ .*"of-nodejs"* ]]; then
     touch js-sdks/dist/sdk/nodejs/yarn.lock
     touch js-sdks/dist/lib/shared/types/yarn.lock
     touch js-sdks/lib/shared/bucketing-assembly-script/yarn.lock
+    touch js-sdks/dist/sdk/js-cloud-server/yarn.lock
 
     echo "yarn link, yarn version: $(yarn -v)"
     yarn link js-sdks/dist/lib/shared/types/
     yarn link js-sdks/lib/shared/bucketing-assembly-script/
     yarn link js-sdks/dist/sdk/nodejs/
+    yarn link js-sdks/dist/sdk/js-cloud-server/
 
     echo "Installed nodejs-server-sdk@$SDK_GITHUB_SHA"
 elif [ -z "$OF_NODEJS_SDK_VERSION" ]; then
