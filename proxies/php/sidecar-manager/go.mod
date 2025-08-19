@@ -1,7 +1,8 @@
 module github.com/devcyclehq/test-harness/php/sidecar-manager
 
-go 1.20
-toolchain go1.24.1
+go 1.23.0
+
+toolchain go1.24.6
 
 require (
 	github.com/devcyclehq/go-server-sdk/v2 v2.11.2
