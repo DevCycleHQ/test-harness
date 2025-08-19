@@ -5,30 +5,27 @@ go 1.23.0
 toolchain go1.24.6
 
 require (
-	github.com/devcyclehq/go-server-sdk/v2 v2.11.2
-	github.com/devcyclehq/local-bucketing-proxy v1.1.1
+	github.com/devcyclehq/go-server-sdk/v2 v2.24.0
+	github.com/gin-gonic/gin v1.9.1
 	github.com/gorilla/mux v1.8.0
 )
 
 require (
-	github.com/bytecodealliance/wasmtime-go/v6 v6.0.0 // indirect
 	github.com/bytedance/sonic v1.10.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.9.1 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.25.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/jarcoal/httpmock v1.2.0 // indirect
-	github.com/jolestar/go-commons-pool/v2 v2.1.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
+	github.com/launchdarkly/eventsource v1.8.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/matryer/try v0.0.0-20161228173917-9ac251b645a2 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect

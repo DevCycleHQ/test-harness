@@ -13,11 +13,10 @@ import (
 	"syscall"
 
 	devcycle "github.com/devcyclehq/go-server-sdk/v2"
-	lbproxy "github.com/devcyclehq/local-bucketing-proxy"
 	"github.com/gorilla/mux"
 )
 
-var proxyInstances = make(map[string]*lbproxy.ProxyInstance)
+var proxyInstances = make(map[string]*ProxyInstance)
 var proxyMutex = &sync.Mutex{}
 
 func main() {
@@ -80,7 +79,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request: missing clientId", http.StatusBadRequest)
 		return
 	}
-	proxyInstance := &lbproxy.ProxyInstance{
+	proxyInstance := &ProxyInstance{
 		UnixSocketPath:    fmt.Sprintf("/tmp/%s.sock", reqBody.ClientId),
 		UnixSocketEnabled: true,
 		SDKKey:            reqBody.SdkKey,
@@ -92,7 +91,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 			Platform:        "PHP",
 			Hostname:        "test-harness",
 		},
-		SDKConfig: lbproxy.SDKConfig{
+		SDKConfig: SDKConfig{
 			EventFlushIntervalMS:    reqBody.Options.EventFlushIntervalMS,
 			ConfigPollingIntervalMS: reqBody.Options.ConfigPollingIntervalMS,
 			ConfigCDNURI:            reqBody.Options.ConfigCDNURI,
@@ -100,7 +99,7 @@ func clientHandler(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	instance, err := lbproxy.NewBucketingProxyInstance(proxyInstance)
+	instance, err := NewBucketingProxyInstance(proxyInstance)
 	if err != nil {
 		res.Exception = err.Error()
 		w.WriteHeader(http.StatusOK)
