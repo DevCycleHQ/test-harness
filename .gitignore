@@ -121,3 +121,6 @@ jest-*.xml
 .env
 
 **/.DS_Store
+
+# Go binaries
+sidecar-manager
