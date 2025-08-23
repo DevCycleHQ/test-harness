@@ -1,0 +1,44 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.0'
+	id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'com.dvc_harness'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+repositories {
+	mavenCentral()
+}
+
+jar {
+    archiveClassifier=''
+    enabled = false
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+
+	if (System.getenv("JAVA_SDK_VERSION") != null && !System.getenv("JAVA_SDK_VERSION").isBlank()) {
+		// use a released version of the SDK from Maven Central
+		logger.info("Using released version of the SDK: ${System.getenv('JAVA_SDK_VERSION')}")
+		implementation("com.devcycle:java-server-sdk:${System.getenv('JAVA_SDK_VERSION')}")
+	} else if (System.getenv("SDK_GITHUB_SHA") != null && !System.getenv("SDK_GITHUB_SHA").isBlank()) {
+		logger.info("Using local copy of the SDK")
+		implementation project(':java-server-sdk')
+	} else if (System.getenv("LOCAL_MODE") != null && System.getenv("LOCAL_MODE") == "1") {
+		logger.info("Using local copy of the SDK")
+		implementation project(':java-server-sdk')
+	} else {
+		// utilize the latest release of the Java Server SDK
+		logger.info("Using latest release the SDK")
+		implementation("com.devcycle:java-server-sdk:latest.release")
+	}
+
+	// OpenFeature dependencies
+	implementation 'dev.openfeature:sdk:1.16.0'
+
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
