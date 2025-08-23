@@ -10,12 +10,17 @@ inputs:
     sdk-github-sha:
         description: 'The SHA ref of the SDK to test - used in PRs. If not specified; sdk-version is used'
         required: false
+    test-harness-head:
+        description: 'The head of the test harness branch to use - used in PRs. If not specified; main is used'
+        required: false
+        default: main
 runs:
     using: 'composite'
     steps:
         - uses: actions/checkout@v4
           with:
               repository: DevCycleHQ/test-harness
+              ref: ${{ inputs.test-harness-head }}
 
         - name: 'Install Docker'
           shell: bash
