@@ -31,7 +31,6 @@
 
 ## Project Structure Guide
 
-- The project root contains configuration files for building, linting, formatting, and testing, such as `package.json`, `jest.config.ts`, and `.eslintrc.json`.
 - The main source code for the test harness is under the `harness/` directory, which contains:
   - `features/`: Test features and scenarios
   - `helpers/`: Shared test utilities and helpers
