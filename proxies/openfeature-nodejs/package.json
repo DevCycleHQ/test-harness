@@ -7,7 +7,7 @@
         "@openfeature/core": "^1.8.1",
         "@openfeature/server-sdk": "^1.18.0",
         "@types/koa": "^2.15.0",
-        "koa": "^3.0.1",
+        "koa": "^3.0.3",
         "ts-node": "^10.9.2"
     },
     "devDependencies": {
