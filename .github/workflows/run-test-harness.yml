@@ -15,6 +15,14 @@ on:
                 description: The title of the PR that triggered this test harness run
 
 jobs:
+    license-check:
+        name: License Check
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - uses: DevCycleHQ/license-action@main
+            with:
+              language: "javascript"
     run-tests:
         runs-on:
             labels: ubicloud-standard-8
