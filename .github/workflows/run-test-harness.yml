@@ -1,5 +1,8 @@
 name: Run Harness Tests
 run-name: ${{ github.event.inputs.title }}
+permissions:
+  contents: read
+  checks: write
 on:
     pull_request:
     workflow_dispatch:
