@@ -28,7 +28,7 @@ jobs:
               language: "javascript"
     run-tests:
         runs-on:
-            labels: ubicloud-standard-8
+            labels: ubuntu-latest-8-core
         name: Run Tests
         env:
             DOCKER_HOST_IP: '172.17.0.1'
