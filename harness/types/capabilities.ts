@@ -102,6 +102,7 @@ let sdkCapabilities: { [key: string]: string[] } = {
         Capabilities.eventsEvalReason,
     ],
     Ruby: [
+        Capabilities.cloud,
         Capabilities.clientCustomData,
         Capabilities.v2Config,
         Capabilities.variablesFeatureId,

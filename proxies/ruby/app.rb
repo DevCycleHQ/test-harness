@@ -16,7 +16,7 @@ get '/spec' do
   {
     name: 'Ruby',
     version: '', # TODO: Add branch name or SDK version here
-    capabilities: %w[EdgeDB LocalBucketing]
+    capabilities: %w[EdgeDB LocalBucketing CloudBucketing]
   }.to_json
 end
 
@@ -29,8 +29,8 @@ post '/client' do
   request.body.rewind
   body = JSON.parse request.body.read
 
-  client_id, sdk_key, wait_for_initialization, options =
-    body.values_at('clientId', 'sdkKey', 'waitForInitialization', 'options')
+  client_id, sdk_key, wait_for_initialization, enable_cloud_bucketing, options =
+    body.values_at('clientId', 'sdkKey', 'waitForInitialization', 'enableCloudBucketing', 'options')
 
   if client_id.nil?
     status 400
@@ -38,15 +38,26 @@ post '/client' do
   end
 
   begin
-    dvc_options = DevCycle::DVCOptions.new(
-      config_cdn_uri: options.fetch('configCDNURI', ''),
-      events_api_uri: options.fetch('eventsAPIURI', ''),
-      config_polling_interval_ms: options.fetch('configPollingIntervalMS', 10_000),
-      event_flush_interval_ms: options.fetch('eventFlushIntervalMS', 10_000),
-      disable_realtime_updates: true,
-    )
+    options ||= {}
+    
+    if enable_cloud_bucketing
+      cloud_options = DevCycle::DVCCloudOptions.new(
+        enable_edge_db: options.fetch('enableEdgeDB', false),
+        bucketing_api_uri: options.fetch('bucketingAPIURI', ''),
+      )
 
-    data_store[:clients][client_id] = DevCycle::DVCClient.new(sdk_key, dvc_options, wait_for_initialization)
+      data_store[:clients][client_id] = DevCycle::DVCCloudClient.new(sdk_key, cloud_options, wait_for_initialization)
+    else
+      dvc_options = DevCycle::DVCOptions.new(
+        config_cdn_uri: options.fetch('configCDNURI', ''),
+        events_api_uri: options.fetch('eventsAPIURI', ''),
+        config_polling_interval_ms: options.fetch('configPollingIntervalMS', 10_000),
+        event_flush_interval_ms: options.fetch('eventFlushIntervalMS', 10_000),
+        disable_realtime_updates: true,
+      )
+
+      data_store[:clients][client_id] = DevCycle::DVCClient.new(sdk_key, dvc_options, wait_for_initialization)
+    end
 
     status 201
     headers 'Location' => "/client/#{client_id}"
