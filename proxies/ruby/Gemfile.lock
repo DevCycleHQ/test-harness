@@ -1,8 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.8.7)
-      public_suffix (>= 2.0.2, < 7.0)
+    addressable (2.9.0)
+      public_suffix (>= 2.0.2, < 8.0)
     base64 (0.3.0)
     bigdecimal (3.1.9)
     concurrent-ruby (1.2.3)
@@ -48,7 +48,7 @@ GEM
       ostruct (>= 0.2)
     openfeature-sdk (0.4.0)
     ostruct (0.6.1)
-    public_suffix (6.0.1)
+    public_suffix (7.0.5)
     puma (6.6.0)
       nio4r (~> 2.0)
     rack (3.2.6)
@@ -56,7 +56,7 @@ GEM
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
       rack (>= 3.0.0, < 4)
-    rack-session (2.1.1)
+    rack-session (2.1.2)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
     rackup (2.2.1)
