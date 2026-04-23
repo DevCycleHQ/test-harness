@@ -431,7 +431,7 @@ __metadata:
     ts-jest: "npm:^29.3.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.8.3"
-    uuid: "npm:14.0.0"
+    uuid: "npm:^14.0.0"
   languageName: unknown
   linkType: soft
 
@@ -6966,7 +6966,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:14.0.0":
+"uuid@npm:^14.0.0":
   version: 14.0.0
   resolution: "uuid@npm:14.0.0"
   bin:
