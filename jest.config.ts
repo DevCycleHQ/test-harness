@@ -5,6 +5,9 @@ const commonConfig = {
     transform: {
         '^.+\\.tsx?$': ['ts-jest', {}],
     },
+    moduleNameMapper: {
+        '^uuid$': '<rootDir>/jest-uuid-cjs.js',
+    },
     globalSetup: './jest-global.ts',
     testEnvironment: './jest-environment.ts',
     setupFilesAfterEnv: ['./jest-setup.js'],
