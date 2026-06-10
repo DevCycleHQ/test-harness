@@ -30,7 +30,7 @@
         "@types/jest": "^29.5.14",
         "@typescript-eslint/eslint-plugin": "^5.62.0",
         "@typescript-eslint/parser": "^5.62.0",
-        "axios": "1.15.2",
+        "axios": "1.16.0",
         "eslint": "^8.57.1",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-prettier": "^5.2.4",
@@ -96,6 +96,7 @@
         "socks": "^2.8.9",
         "follow-redirects@^1.15.11": "^1.16.0",
         "uuid": "^14.0.0",
-        "qs": "^6.15.2"
+        "qs": "^6.15.2",
+        "tmp@^0.2.3": "^0.2.6"
     }
 }
