@@ -4,6 +4,7 @@
     "type": "project",
     "require": {
         "devcycle/php-server-sdk": "dev-main",
+        "guzzlehttp/guzzle": "^7.15.1",
         "open-feature/sdk": "^2.0"
     },
     "license": "MIT",
