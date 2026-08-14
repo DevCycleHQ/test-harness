@@ -17,7 +17,7 @@ inputs:
 runs:
     using: 'composite'
     steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v7
           with:
               repository: DevCycleHQ/test-harness
               ref: ${{ inputs.test-harness-head }}
@@ -30,7 +30,7 @@ runs:
           shell: bash
           run: corepack enable
 
-        - uses: actions/setup-node@v4
+        - uses: actions/setup-node@v7
           with:
               node-version: 22
               cache: 'yarn'
@@ -47,7 +47,7 @@ runs:
               SDKS_TO_TEST: ${{ inputs.sdks-to-test }}
               SDK_CAPABILITIES: ${{ inputs.sdk-capabilities }}
 
-        - uses: actions/upload-artifact@v4
+        - uses: actions/upload-artifact@v7
           continue-on-error: true
           if: success() || failure()
           with:
@@ -55,7 +55,7 @@ runs:
               path: jest-*.xml
 
         - name: Test Report
-          uses: dorny/test-reporter@v1
+          uses: dorny/test-reporter@v3
           continue-on-error: true
           if: ${{ github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name }} && (success() || failure())
           with:
