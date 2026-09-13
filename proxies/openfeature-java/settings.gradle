@@ -1,0 +1,11 @@
+rootProject.name = 'openfeature-java-proxy'
+
+if (System.getenv("SDK_GITHUB_SHA") != null && !System.getenv("SDK_GITHUB_SHA").isBlank()) {
+    logger.info("Using local java-sdks")
+    include ':java-server-sdk'
+    project(':java-server-sdk').projectDir = new File('../../java-sdks/lib/java-server-sdk')
+} else if (System.getenv("LOCAL_MODE") != null && System.getenv("LOCAL_MODE") == "1") {
+    logger.info("Using local java-sdks")
+    include ':java-server-sdk'
+    project(':java-server-sdk').projectDir = new File('../../java-sdks/lib/java-server-sdk')
+}
