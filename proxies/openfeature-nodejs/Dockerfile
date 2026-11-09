@@ -20,7 +20,7 @@ COPY . /app
 WORKDIR /app
 
 RUN echo "Docker: yarn"
-RUN corepack enable
+RUN npm install -g corepack && corepack enable
 RUN yarn
 
 RUN echo "Docker: install.sh"
